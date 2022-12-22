@@ -41,7 +41,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'apps.Employees.apps.EmployeesConfig',
 ]
+
+AUTH_USER_MODEL = 'Employees.CustomUser'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
