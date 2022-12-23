@@ -1,9 +1,12 @@
 from rest_framework import serializers
 from .models import CustomUser
+from apps.Locations.serializers import LocationSerializer
 from django.contrib.auth.hashers import make_password
 
 
 class UserSerializer(serializers.ModelSerializer):
+    location = LocationSerializer(many=False)
+
     class Meta:
         model = CustomUser
         fields = ['username', 'id', 'first_name', 'last_name', 'date_joined', 'password', 'data_set', 'location']
@@ -40,7 +43,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         repeat_password = validated_data['repeat_password']
         if password != repeat_password:
             raise serializers.ValidationError(
-                {'password': 'Пароли не совпадают'})
+                {'password': 'Passwords do not match'})
         user = CustomUser(username=username)
         user.set_password(password)
         user.save()
