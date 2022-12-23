@@ -42,6 +42,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'apps.Employees.apps.EmployeesConfig',
+    'apps.Locations.apps.LocationsConfig'
 ]
 
 AUTH_USER_MODEL = 'Employees.CustomUser'
