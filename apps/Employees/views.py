@@ -10,3 +10,10 @@ class UsersViewSet(ModelViewSet):
     serializer_class = UserSerializer
     queryset = CustomUser.objects.all()
     authentication_classes = [SessionAuthentication, BasicAuthentication]
+
+
+class LocationUserViewSet(ModelViewSet):
+    """List of all location users"""
+    serializer_class = UserSerializer
+    queryset = CustomUser.objects.filter(location_id=1)
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
