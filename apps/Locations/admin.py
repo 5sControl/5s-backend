@@ -16,5 +16,5 @@ class GatesAdmin(admin.ModelAdmin):
 
 @admin.register(Location)
 class LocationsAdmin(admin.ModelAdmin):
-    list_display = ('name', 'id', 'people_id', 'gate_id')
+    list_display = ('name', 'id', 'gate_id')
     list_filter = ("name", 'id')

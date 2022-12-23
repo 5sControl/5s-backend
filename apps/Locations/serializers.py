@@ -17,4 +17,4 @@ class GateSerializer(serializers.ModelSerializer):
 class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
-        fields = ['name', 'id', 'people_id', 'gate_id']
+        fields = ['name', 'id', 'gate_id']
