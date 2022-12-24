@@ -18,7 +18,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 from apps.router import routes
-from .views import RegisterView
+from .views import RegisterView, setcookie, getcookie
 
 
 urlpatterns = [
@@ -28,4 +28,6 @@ urlpatterns = [
 ]
 urlpatterns += [
     path('api-auth/', include('rest_framework.urls')),
+    path('scookie', setcookie),
+    path('gcookie', getcookie),
 ]

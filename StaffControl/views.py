@@ -1,4 +1,4 @@
-
+from django.http import HttpResponse
 from rest_framework import generics
 from apps.Employees.serializers import RegisterSerializer, UserSerializer
 from rest_framework.response import Response
@@ -16,3 +16,14 @@ class RegisterView(generics.GenericAPIView):
                                    context=self.get_serializer_context()).data,
             "message": "User has been successfully created",
         })
+
+
+def setcookie(request):
+    response = HttpResponse("Cookie Set")
+    response.set_cookie('java-tutorial', 'javatpoint.com')
+    return response
+
+
+def getcookie(request):
+    tutorial = request.COOKIES['java-tutorial']
+    return HttpResponse("java tutorials @: " + tutorial)
