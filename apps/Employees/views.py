@@ -1,8 +1,7 @@
-from pip._internal import locations
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from apps.Employees.models import CustomUser
-from apps.Employees.serializers import UserSerializer
+from apps.Employees.models import CustomUser, History
+from apps.Employees.serializers import UserSerializer, HistorySerializer
 
 
 class UsersViewSet(ModelViewSet):
@@ -12,8 +11,8 @@ class UsersViewSet(ModelViewSet):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
 
 
-class LocationUserViewSet(ModelViewSet):
-    """List of all location users"""
-    serializer_class = UserSerializer
-    queryset = CustomUser.objects.filter(location_id=1)
+class HistoryViewSet(ModelViewSet):
+    """List of all History"""
+    serializer_class = HistorySerializer
+    queryset = History.objects.all()
     authentication_classes = [SessionAuthentication, BasicAuthentication]

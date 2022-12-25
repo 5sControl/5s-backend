@@ -1,15 +1,15 @@
 from rest_framework import serializers
-from .models import CustomUser
+from .models import CustomUser, History
 from apps.Locations.serializers import LocationSerializer
 from django.contrib.auth.hashers import make_password
 
 
 class UserSerializer(serializers.ModelSerializer):
-    location = LocationSerializer(many=False)
+    # location = LocationSerializer(many=False)
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'id', 'first_name', 'last_name', 'date_joined', 'password', 'data_set', 'location']
+        fields = ['username', 'id', 'first_name', 'last_name', 'date_joined', 'password', 'dataset', 'location']
 
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data['password'])
@@ -48,3 +48,13 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+
+
+class HistorySerializer(serializers.ModelSerializer):
+    # people = UserSerializer(many=False)
+    # location = LocationSerializer(many=False)
+
+    class Meta:
+        model = History
+        fields = ['people', 'id', 'entry_data', 'release_data', 'dataset_user', 'location', 'image']
+
