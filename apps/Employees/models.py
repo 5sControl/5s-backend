@@ -20,12 +20,12 @@ class History(models.Model):
     people = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True,
                                related_name='people_in_location', default='not known')
     entry_data = models.DateTimeField(auto_now_add=True)
-    release_data = models.DateTimeField(blank=True, null=True)
+    release_data = models.DateTimeField(blank=True, null=True, auto_now_add=False)
     dataset_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
     image = models.ImageField(verbose_name='Image', blank=True, null=True)
 
     def __str__(self):
-        return self.id
+        return self.location.name
 
     class Meta:
         verbose_name = 'History'
