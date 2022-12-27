@@ -5,7 +5,7 @@ from django.contrib.auth.hashers import make_password
 
 
 class UserSerializer(serializers.ModelSerializer):
-    # location = LocationSerializer(many=False)
+    location = LocationSerializer(many=False)
 
     class Meta:
         model = CustomUser
@@ -51,10 +51,9 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class HistorySerializer(serializers.ModelSerializer):
-    # people = UserSerializer(many=False)
-    # location = LocationSerializer(many=False)
+    people = UserSerializer(many=False)
 
     class Meta:
         model = History
-        fields = ['people', 'id', 'entry_date', 'release_date', 'dataset_user', 'location', 'image']
+        fields = ['people', 'id', 'entry_date', 'release_date', 'image']
 
