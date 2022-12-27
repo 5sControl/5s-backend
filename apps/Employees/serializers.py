@@ -57,3 +57,9 @@ class HistorySerializer(serializers.ModelSerializer):
         model = History
         fields = ['people', 'id', 'entry_date', 'release_date', 'image']
 
+
+class EmployeeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'first_name', 'last_name', 'dataset', 'date_joined']
