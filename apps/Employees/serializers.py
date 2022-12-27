@@ -56,5 +56,5 @@ class HistorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = History
-        fields = ['people', 'id', 'entry_data', 'release_data', 'dataset_user', 'location', 'image']
+        fields = ['people', 'id', 'entry_date', 'release_date', 'dataset_user', 'location', 'image']
 
