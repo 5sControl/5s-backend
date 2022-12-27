@@ -16,16 +16,14 @@ class CustomUser(AbstractUser):
 
 
 class History(models.Model):
-    location = models.ForeignKey(Location, related_name='users', on_delete=models.CASCADE, blank=True, null=True)
     people = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True,
                                related_name='people_in_location', default='not known')
     entry_date = models.DateTimeField(auto_now_add=True)
     release_date = models.DateTimeField(default=None)
-    dataset_user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, blank=True, null=True)
     image = models.ImageField(verbose_name='Image', blank=True, null=True, upload_to='images')
 
     def __str__(self):
-        return self.location.name
+        return f'{self.people}'
 
     class Meta:
         verbose_name = 'History'
