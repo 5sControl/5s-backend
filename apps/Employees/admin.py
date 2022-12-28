@@ -1,18 +1,22 @@
 from django.contrib import admin
-from .models import CustomUser, History
+from .models import CustomUser, History, ImageUsers
 from apps.Locations.models import Location
 from django.utils.safestring import mark_safe
 
 
 @admin.register(CustomUser)
 class EmployeeAdmin(admin.ModelAdmin):
-    list_display = ('username', 'id', 'first_name', 'last_name', 'date_joined', 'location')
-    list_filter = ("username", 'id')
+    list_display = ('first_name', 'id', 'last_name', 'date_joined', 'dataset')
+    list_filter = ('id',)
+
+
+@admin.register(ImageUsers)
+class ImageTaskAdmin(admin.ModelAdmin):
+    pass
 
 
 @admin.register(History)
 class HistoryAdmin(admin.ModelAdmin):
-    # location = CustomUser.location
     list_display = ('people', 'id', 'entry_date', 'release_date', 'get_image', 'dataset', 'location')
     list_filter = ('people', 'id')
     readonly_fields = ("get_image",)
