@@ -1,7 +1,13 @@
 from rest_framework import serializers
-from .models import CustomUser, History
+from .models import CustomUser, History, ImageUsers
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
+
+
+class ImageUsersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ImageUsers
+        fields = '__all__'
 
 
 class UserSerializer(serializers.ModelSerializer):

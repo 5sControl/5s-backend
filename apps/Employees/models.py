@@ -3,12 +3,16 @@ from apps.Locations.models import Location
 from django.contrib.auth.models import AbstractUser
 
 
+class ImageUsers(models.Model):
+    image_user = models.ImageField(upload_to='Image')
+
+
 class CustomUser(models.Model):
-    first_name = models.CharField(max_length=40, blank=True)
-    last_name = models.CharField(max_length=40, blank=True)
+    first_name = models.CharField(max_length=40)
+    last_name = models.CharField(max_length=40)
     dataset = models.TextField(verbose_name='Date Set user', blank=True)
     date_joined = models.DateTimeField(auto_now_add=True)
-    image = models.ImageField(verbose_name='photo')
+    image = models.ManyToManyField(ImageUsers)
 
     def __str__(self):
         return self.first_name
