@@ -1,15 +1,14 @@
 from rest_framework import serializers
 from .models import CustomUser, History
-from apps.Locations.serializers import LocationSerializer
+from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 
 
 class UserSerializer(serializers.ModelSerializer):
-    location = LocationSerializer(many=False)
 
     class Meta:
-        model = CustomUser
-        fields = ['username', 'id', 'first_name', 'last_name', 'date_joined', 'password', 'dataset', 'location']
+        model = User
+        fields = ['username', 'id', 'date_joined', 'password']
 
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data['password'])
@@ -29,7 +28,7 @@ class RegisterSerializer(serializers.ModelSerializer):
                                             style={'input_type': 'password'})
 
     class Meta:
-        model = CustomUser
+        model = User
         fields = [
             'username',
             'password',
@@ -44,22 +43,23 @@ class RegisterSerializer(serializers.ModelSerializer):
         if password != repeat_password:
             raise serializers.ValidationError(
                 {'password': 'Passwords do not match'})
-        user = CustomUser(username=username)
+        user = User(username=username)
         user.set_password(password)
         user.save()
         return user
-
-
-class HistorySerializer(serializers.ModelSerializer):
-    people = UserSerializer(many=False)
-
-    class Meta:
-        model = History
-        fields = ['people', 'id', 'entry_date', 'release_date', 'image']
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'first_name', 'last_name', 'dataset', 'date_joined']
+        fields = ['id', 'first_name', 'last_name', 'dataset', 'date_joined', 'image']
+
+
+class HistorySerializer(serializers.ModelSerializer):
+    people = EmployeeSerializer(many=False)
+
+    class Meta:
+        model = History
+        fields = ['people', 'id', 'entry_date', 'release_date', 'location', 'image']
+

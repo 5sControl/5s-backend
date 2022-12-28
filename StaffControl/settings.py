@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     'apps.Locations.apps.LocationsConfig'
 ]
 
-AUTH_USER_MODEL = 'Employees.CustomUser'
+# AUTH_USER_MODEL = 'Employees.CustomUser'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

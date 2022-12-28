@@ -6,8 +6,8 @@ from django.utils.safestring import mark_safe
 
 @admin.register(CustomUser)
 class EmployeeAdmin(admin.ModelAdmin):
-    list_display = ('username', 'id', 'first_name', 'last_name', 'date_joined', 'location')
-    list_filter = ("username", 'id')
+    list_display = ('id', 'first_name', 'last_name', 'date_joined', 'image', 'dataset')
+    list_filter = ('id',)
 
 
 @admin.register(History)
