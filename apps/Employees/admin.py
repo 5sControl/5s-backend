@@ -6,7 +6,7 @@ from django.utils.safestring import mark_safe
 
 @admin.register(CustomUser)
 class EmployeeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'first_name', 'last_name', 'date_joined', 'dataset')
+    list_display = ('first_name', 'id', 'last_name', 'date_joined', 'dataset')
     list_filter = ('id',)
 
 
