@@ -58,28 +58,27 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
+    # image = ImageUsersSerializer(many=True)
 
     class Meta:
-        image = ImageUsersSerializer(many=True)
-
-        def create(self, validated_data):
-            images_data = validated_data.pop('image')
-            image = CustomUser.objects.create(**validated_data)
-            for image_data in images_data:
-                ImageUsers.objects.create(image=image, **image_data)
-            return image
-
         model = CustomUser
         fields = ['id', 'first_name', 'last_name', 'dataset', 'date_joined', 'image']
 
+    def create(self, validated_data):
+        all_images = (validated_data['image'])
+        for image in all_images:
+            print(image.image_user)
+        return CustomUser.objects.create(**validated_data)
+
 
 class HistorySerializer(serializers.ModelSerializer):
-    people = EmployeeSerializer(many=True)
-    location = LocationSerializer(many=True)
+    # people = EmployeeSerializer(many=False)
+    # location = LocationSerializer(many=False)
 
     class Meta:
         model = History
         fields = ['people', 'id', 'location', 'entry_date', 'release_date', 'image']
+
 
     # def create(self, validated_data):
     #     images_data = validated_data.pop('location')
