@@ -10,11 +10,6 @@ class EmployeeAdmin(admin.ModelAdmin):
     list_filter = ('id',)
 
 
-# @admin.register(ImageUsers)
-# class ImageTaskAdmin(admin.ModelAdmin):
-#     pass
-
-
 @admin.register(History)
 class HistoryAdmin(admin.ModelAdmin):
     list_display = ('people', 'id', 'entry_date', 'release_date', 'get_image', 'dataset', 'location')
