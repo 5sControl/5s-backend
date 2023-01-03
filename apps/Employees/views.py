@@ -2,9 +2,9 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 
 from apps.Employees.forms import ContactForm
-from apps.Employees.models import CustomUser, History, ImageUsers
+from apps.Employees.models import CustomUser, History
 from django.contrib.auth.models import User
-from apps.Employees.serializers import UserSerializer, HistorySerializer, EmployeeSerializer, ImageUsersSerializer
+from apps.Employees.serializers import UserSerializer, HistorySerializer, EmployeeSerializer
 from django.views.generic.edit import FormView, CreateView
 
 
@@ -29,11 +29,11 @@ class EmployeeViewSet(ModelViewSet):
     authentication_classes = [SessionAuthentication, BasicAuthentication]
 
 
-class ImageViewSet(ModelViewSet):
-    """List of all image"""
-    serializer_class = ImageUsersSerializer
-    queryset = ImageUsers.objects.all()
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
+# class ImageViewSet(ModelViewSet):
+#     """List of all image"""
+#     serializer_class = ImageUsersSerializer
+#     queryset = ImageUsers.objects.all()
+#     authentication_classes = [SessionAuthentication, BasicAuthentication]
 
 
 class ContactView(CreateView):

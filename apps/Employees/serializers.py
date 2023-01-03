@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import CustomUser, History, ImageUsers
+from .models import CustomUser, History
 from apps.Locations.models import Location
 from apps.Locations.serializers import LocationSerializer
 import os
@@ -11,10 +11,10 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 
 
-class ImageUsersSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ImageUsers
-        fields = ['id', 'image_user']
+# class ImageUsersSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = ImageUsers
+#         fields = ['id', 'image_user']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -69,27 +69,14 @@ class EmployeeSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ['id', 'first_name', 'last_name', 'dataset', 'date_joined', 'image']
 
-    # def save(self, validated_data):
-    #     first_name = validated_data.get('first_name')
-    #     last_name = validated_data.get('last_name')
-    #     dataset =''
-    #     image = []
-    #     for image_data in validated_data.get('image'):
-    #         link = f'{image_data.image_user}'.split('/')[0].lower()
-    #         links = f'{image_data.image_user}'.split('/')[1]
-    #         face_img = face_recognition.load_image_file(f"media/{link}/{links}")
-    #         face_enc = face_recognition.face_encodings(face_img)[0]
-    #         dataset += f'{face_enc}'
-    #         image.append(image_data.id)
-    #
-    #     user = CustomUser(
-    #         first_name=first_name,
-    #         last_name=last_name,
-    #         dataset=dataset,
-    #         image=image,
-    #     )
-    #     user.save()
-    #     return user
+    def create(self, validated_data):
+        user = CustomUser.objects.create(**validated_data)
+        face_img = face_recognition.load_image_file(f"media/photo/{validated_data['image']}")
+        dataset = face_recognition.face_encodings(face_img)[0]
+        user.dataset = dataset
+        user.save()
+        return user
+
 
 class HistorySerializer(serializers.ModelSerializer):
     # people = EmployeeSerializer(many=False)

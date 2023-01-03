@@ -8,8 +8,8 @@ import pickle
 import cv2
 
 
-class ImageUsers(models.Model):
-    image_user = models.ImageField(upload_to='attachments')
+# class ImageUsers(models.Model):
+#     image_user = models.ImageField(upload_to='attachments')
 
 
 class CustomUser(models.Model):
@@ -17,7 +17,8 @@ class CustomUser(models.Model):
     last_name = models.CharField(max_length=40, blank=True, null=True)
     dataset = models.TextField(verbose_name='Date Set user', blank=True, null=True)
     date_joined = models.DateTimeField(auto_now_add=True)
-    image = models.ForeignKey(ImageUsers, on_delete=models.CASCADE, blank=True)
+    # image = models.ForeignKey(ImageUsers, on_delete=models.CASCADE, blank=True)
+    image = models.ImageField(upload_to='photo')
 
 
     # def save(self, *args, **kwargs):
