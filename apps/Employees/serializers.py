@@ -1,15 +1,20 @@
 from rest_framework import serializers
-from .models import CustomUser, History, ImageUsers
+from .models import CustomUser, History
 from apps.Locations.models import Location
 from apps.Locations.serializers import LocationSerializer
+import os
+import face_recognition
+from PIL import Image, ImageDraw
+import pickle
+import cv2
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 
 
-class ImageUsersSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ImageUsers
-        fields = ['id', 'image_user']
+# class ImageUsersSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = ImageUsers
+#         fields = ['id', 'image_user']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -58,17 +63,19 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
-    # image = ImageUsersSerializer(many=True)
+    # image = ImageUsersSerializer(many=True, read_only=False)
 
     class Meta:
         model = CustomUser
         fields = ['id', 'first_name', 'last_name', 'dataset', 'date_joined', 'image']
 
     def create(self, validated_data):
-        all_images = (validated_data['image'])
-        for image in all_images:
-            print(image.image_user)
-        return CustomUser.objects.create(**validated_data)
+        user = CustomUser.objects.create(**validated_data)
+        face_img = face_recognition.load_image_file(f"media/photo/{validated_data['image']}")
+        dataset = face_recognition.face_encodings(face_img)[0]
+        user.dataset = dataset
+        user.save()
+        return user
 
 
 class HistorySerializer(serializers.ModelSerializer):
