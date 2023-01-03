@@ -4,8 +4,9 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from apps.Employees.forms import ContactForm
 from apps.Employees.models import CustomUser, History
 from django.contrib.auth.models import User
-from apps.Employees.serializers import UserSerializer, HistorySerializer, EmployeeSerializer
-from django.views.generic.edit import FormView, CreateView
+from apps.Employees.serializers import UserSerializer, EmployeeSerializer, HistorySerializer
+from apps.Employees.serializers import UserSerializer
+from django.views.generic.edit import CreateView
 
 
 class UsersViewSet(ModelViewSet):
@@ -27,13 +28,6 @@ class EmployeeViewSet(ModelViewSet):
     serializer_class = EmployeeSerializer
     queryset = CustomUser.objects.all()
     authentication_classes = [SessionAuthentication, BasicAuthentication]
-
-
-# class ImageViewSet(ModelViewSet):
-#     """List of all image"""
-#     serializer_class = ImageUsersSerializer
-#     queryset = ImageUsers.objects.all()
-#     authentication_classes = [SessionAuthentication, BasicAuthentication]
 
 
 class ContactView(CreateView):

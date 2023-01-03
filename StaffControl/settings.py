@@ -48,8 +48,6 @@ INSTALLED_APPS = [
     'apps.Locations.apps.LocationsConfig'
 ]
 
-# AUTH_USER_MODEL = 'Employees.CustomUser'
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

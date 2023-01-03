@@ -1,20 +1,9 @@
 from rest_framework import serializers
 from .models import CustomUser, History
-from apps.Locations.models import Location
-from apps.Locations.serializers import LocationSerializer
-import os
 import face_recognition
-from PIL import Image, ImageDraw
-import pickle
-import cv2
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 
-
-# class ImageUsersSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = ImageUsers
-#         fields = ['id', 'image_user']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -63,7 +52,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
-    # image = ImageUsersSerializer(many=True, read_only=False)
+
 
     class Meta:
         model = CustomUser
@@ -79,20 +68,30 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
 
 class HistorySerializer(serializers.ModelSerializer):
-    # people = EmployeeSerializer(many=False)
-    # location = LocationSerializer(many=False)
+
+    def create(self, validated_data):
+        face_img = face_recognition.load_image_file(f"media/photo/{validated_data['image']}")
+        dataset = face_recognition.face_encodings(face_img)[0]
+
+        if CustomUser.objects.filter(dataset=(dataset)):
+            location = validated_data['location']
+            image = validated_data['image']
+            history_data = History.objects.create(location=location, people=CustomUser.objects.get(dataset=dataset), image=image)
+        else:
+            # new user
+            user = CustomUser.objects.create(**validated_data)
+            user.dataset = dataset
+            user.save()
+
+            # history record
+            location = validated_data['location']
+            image = validated_data['image']
+            history_data = History.objects.create(location=location, people=user.objects, image=image)
+
+        return history_data
+
 
     class Meta:
         model = History
-        fields = ['people', 'id', 'location', 'entry_date', 'release_date', 'image']
-
-
-    # def create(self, validated_data):
-    #     images_data = validated_data.pop('location')
-    #     album = History.objects.create(**validated_data)
-    #     for image_data in images_data:
-    #         Location.objects.create(album=album, *image_data)
-    #     for image_data in images_data:
-    #         CustomUser.objects.create(album=album, *image_data)
-    #     return album
-
+        fields = ['people', 'location', 'image', 'release_date']
+        read_only_fields = ['entry_date']
