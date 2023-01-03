@@ -1,15 +1,9 @@
 from rest_framework import serializers
-from .models import CustomUser, History, ImageUsers
-from apps.Locations.models import Location
-from apps.Locations.serializers import LocationSerializer
+from .models import CustomUser, History
+import face_recognition
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 
-
-class ImageUsersSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ImageUsers
-        fields = ['id', 'image_user']
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -59,34 +53,35 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 class EmployeeSerializer(serializers.ModelSerializer):
 
+
     class Meta:
         model = CustomUser
         fields = ['id', 'first_name', 'last_name', 'dataset', 'date_joined', 'image']
 
     def create(self, validated_data):
-        all_images = (validated_data['image'])
-        for image in all_images:
-            print(image.image_user)
-        return CustomUser.objects.create(**validated_data)
+        user = CustomUser.objects.create(**validated_data)
+        face_img = face_recognition.load_image_file(f"media/photo/{validated_data['image']}")
+        dataset = face_recognition.face_encodings(face_img)[0]
+        user.dataset = dataset
+        user.save()
+        return user
 
 
 class HistorySerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = History
-        fields = ['people', 'id', 'location', 'entry_date', 'release_date', 'image']
-    
-
-class CreateHistorySerializer(serializers.ModelSerializer):
-
     def create(self, validated_data):
-        location = validated_data['location']
-        image = validated_data['image']
-        
+        face_img = face_recognition.load_image_file(f"media/photo/{validated_data['image']}")
+        dataset = face_recognition.face_encodings(face_img)[0]
 
-        location.save()
-        return History.objects.create(**validated_data)
+        if CustomUser.objects.filter(dataset=('qweqwe')):
+            ...
+        else:
+            ...
+
+        return ...
+
 
     class Meta:
         model = History
-        fields = ['location', 'image']
+        fields = ['location', 'image', 'release_date']
+        read_only_fields = ['people', 'entry_date']

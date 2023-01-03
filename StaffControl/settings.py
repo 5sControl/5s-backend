@@ -48,8 +48,6 @@ INSTALLED_APPS = [
     'apps.Locations.apps.LocationsConfig'
 ]
 
-# AUTH_USER_MODEL = 'Employees.CustomUser'
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -71,7 +69,7 @@ ROOT_URLCONF = 'StaffControl.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': []  # [BASE_DIR / 'templates']
+        'DIRS': [BASE_DIR / 'templates']
         ,
         'APP_DIRS': True,
         'OPTIONS': {
