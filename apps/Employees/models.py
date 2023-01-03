@@ -1,6 +1,13 @@
 from django.db import models
-from apps.Locations.models import Location
 from django.contrib.auth.models import AbstractUser
+from django.core.files.uploadedfile import InMemoryUploadedFile
+
+from PIL import Image
+from io import BytesIO
+
+from apps.Locations.models import Location
+
+import sys
 
 
 class ImageUsers(models.Model):
@@ -33,6 +40,26 @@ class History(models.Model):
 
     def __str__(self):
         return f'{self.location}'
+
+    def save(self, *args, **kwargs):
+        # Opening the uploaded image
+        im = Image.open(self.image)
+
+        if im.mode == "JPEG":
+            pass
+        elif im.mode in ["RGBA", "P"]:
+            im = im.convert("RGB")
+
+        output = BytesIO()
+        
+        im.save(output, format='JPEG', subsampling=0, quality=95)
+        output.seek(0)
+
+        self.image = InMemoryUploadedFile(output, 'ImageField',
+                                                  "%s.jpg" % self.image.name.split('.')[0], 'image/jpeg',
+                                                  sys.getsizeof(output), None)
+        super(History, self).save()
+
 
     class Meta:
         verbose_name = 'History'
