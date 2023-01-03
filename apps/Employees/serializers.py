@@ -1,15 +1,22 @@
 from rest_framework import serializers
-from .models import CustomUser, History
+from .models import CustomUser, History, ImageUsers
+from apps.Locations.models import Location
 from apps.Locations.serializers import LocationSerializer
+from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 
 
+class ImageUsersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ImageUsers
+        fields = ['id', 'image_user']
+
+
 class UserSerializer(serializers.ModelSerializer):
-    # location = LocationSerializer(many=False)
 
     class Meta:
-        model = CustomUser
-        fields = ['username', 'id', 'first_name', 'last_name', 'date_joined', 'password', 'dataset', 'location']
+        model = User
+        fields = ['username', 'id', 'date_joined', 'password']
 
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data['password'])
@@ -29,7 +36,7 @@ class RegisterSerializer(serializers.ModelSerializer):
                                             style={'input_type': 'password'})
 
     class Meta:
-        model = CustomUser
+        model = User
         fields = [
             'username',
             'password',
@@ -44,17 +51,41 @@ class RegisterSerializer(serializers.ModelSerializer):
         if password != repeat_password:
             raise serializers.ValidationError(
                 {'password': 'Passwords do not match'})
-        user = CustomUser(username=username)
+        user = User(username=username)
         user.set_password(password)
         user.save()
         return user
 
 
+class EmployeeSerializer(serializers.ModelSerializer):
+    # image = ImageUsersSerializer(many=True)
+
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'first_name', 'last_name', 'dataset', 'date_joined', 'image']
+
+    def create(self, validated_data):
+        all_images = (validated_data['image'])
+        for image in all_images:
+            print(image.image_user)
+        return CustomUser.objects.create(**validated_data)
+
+
 class HistorySerializer(serializers.ModelSerializer):
-    # people = UserSerializer(many=False)
+    # people = EmployeeSerializer(many=False)
     # location = LocationSerializer(many=False)
 
     class Meta:
         model = History
-        fields = ['people', 'id', 'entry_data', 'release_data', 'dataset_user', 'location', 'image']
+        fields = ['people', 'id', 'location', 'entry_date', 'release_date', 'image']
+
+
+    # def create(self, validated_data):
+    #     images_data = validated_data.pop('location')
+    #     album = History.objects.create(**validated_data)
+    #     for image_data in images_data:
+    #         Location.objects.create(album=album, *image_data)
+    #     for image_data in images_data:
+    #         CustomUser.objects.create(album=album, *image_data)
+    #     return album
 
