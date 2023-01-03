@@ -6,7 +6,10 @@ from apps.Employees.views import UsersViewSet, HistoryViewSet, EmployeeViewSet, 
 router = DefaultRouter()
 
 router.register(r'users', UsersViewSet, basename='users')
+
 router.register(r'history', HistoryViewSet, basename='stories')
+router.register(r'history', HistoryViewSet, basename='stories')
+
 router.register(r'employ', EmployeeViewSet, basename='employs')
 router.register(r'image', ImageViewSet, basename='images')
 

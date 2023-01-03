@@ -58,7 +58,6 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
-    # image = ImageUsersSerializer(many=True)
 
     class Meta:
         model = CustomUser
@@ -72,20 +71,22 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
 
 class HistorySerializer(serializers.ModelSerializer):
-    # people = EmployeeSerializer(many=False)
-    # location = LocationSerializer(many=False)
 
     class Meta:
         model = History
         fields = ['people', 'id', 'location', 'entry_date', 'release_date', 'image']
+    
 
+class CreateHistorySerializer(serializers.ModelSerializer):
 
-    # def create(self, validated_data):
-    #     images_data = validated_data.pop('location')
-    #     album = History.objects.create(**validated_data)
-    #     for image_data in images_data:
-    #         Location.objects.create(album=album, *image_data)
-    #     for image_data in images_data:
-    #         CustomUser.objects.create(album=album, *image_data)
-    #     return album
+    def create(self, validated_data):
+        location = validated_data['location']
+        image = validated_data['image']
+        
 
+        location.save()
+        return History.objects.create(**validated_data)
+
+    class Meta:
+        model = History
+        fields = ['location', 'image']

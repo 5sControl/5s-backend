@@ -2,7 +2,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from apps.Employees.models import CustomUser, History, ImageUsers
 from django.contrib.auth.models import User
-from apps.Employees.serializers import UserSerializer, HistorySerializer, EmployeeSerializer, ImageUsersSerializer
+from apps.Employees.serializers import UserSerializer, CreateHistorySerializer, EmployeeSerializer, ImageUsersSerializer
 
 class UsersViewSet(ModelViewSet):
     """List of all users"""
@@ -13,7 +13,14 @@ class UsersViewSet(ModelViewSet):
 
 class HistoryViewSet(ModelViewSet):
     """List of all history"""
-    serializer_class = HistorySerializer
+    serializer_class = CreateHistorySerializer
+    queryset = History.objects.all()
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+
+
+class CreateHistoryViewSet(ModelViewSet):
+    """Create history record"""
+    serializer_class = CreateHistorySerializer
     queryset = History.objects.all()
     authentication_classes = [SessionAuthentication, BasicAuthentication]
 
