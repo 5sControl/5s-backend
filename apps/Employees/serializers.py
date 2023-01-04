@@ -1,4 +1,4 @@
-from rest_framework import serializers
+from rest_framework import serializers, response
 from .models import CustomUser, History
 import face_recognition
 from django.contrib.auth.models import User
@@ -68,29 +68,46 @@ class EmployeeSerializer(serializers.ModelSerializer):
 class HistorySerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
+
+        History.objects.create(image=validated_data['image'])
+
         face_img = face_recognition.load_image_file(f"media/photo/{validated_data['image']}")
-        dataset = face_recognition.face_encodings(face_img)[0]
+        if len(face_recognition.face_encodings(face_img)) > 0:
 
-        if CustomUser.objects.filter(dataset=(dataset)):
-            location = validated_data['location']
-            image = validated_data['image']
-            history_data = History.objects.create(location=location,
-                                                  people=CustomUser.objects.get(dataset=dataset), image=image)
-            user = CustomUser.objects.filter(id=history_data.people.id)
-            user.update(status=True)
+            print('[INFO] Finded dataset', face_recognition.face_encodings(face_img))
+            dataset = face_recognition.face_encodings(face_img)[0]
+            if CustomUser.objects.filter(dataset=(dataset)):
+
+                print('[INFO] Get User by dataser and save record')
+                location = validated_data['location']
+                image = validated_data['image']
+                history_data = History.objects.create(location=location,
+                                                    people=CustomUser.objects.get(dataset=dataset), image=image)
+                user = CustomUser.objects.filter(id=history_data.people.id)
+                user.status = True
+                user.update()
+                print('[INFO] Successfully created record')
+                return history_data
+            else:
+
+                print('[INFO] Create Unknown User')
+                print(validated_data)
+                user = CustomUser.objects.create(**validated_data)
+                user.dataset = dataset
+                user.status = True
+                user.save()
+
+                print('[INFO] History record')
+                location = validated_data['location']
+                image = validated_data['image']
+                history_data = History.objects.create(location=location, people=user.objects, image=image)
+
+                print('[INFO] Successfully created record')
+                return history_data
         else:
-            # new user
-            user = CustomUser.objects.create(**validated_data)
-            user.dataset = dataset
-            user.status = True
-            user.save()
+            print('[ERROR] Face wasnt found')
+            return response.Response(status=404)
 
-            # history record
-            location = validated_data['location']
-            image = validated_data['image']
-            history_data = History.objects.create(location=location, people=user.objects, image=image)
-
-        return history_data
 
     class Meta:
         model = History

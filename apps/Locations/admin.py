@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import Cameras, Gate, Location
+from .models import Camera, Gate, Location
 
 
-@admin.register(Cameras)
+@admin.register(Camera)
 class CamerasAdmin(admin.ModelAdmin):
     list_display = ('name', 'id')
     list_filter = ("name", 'id')
