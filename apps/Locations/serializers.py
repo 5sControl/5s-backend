@@ -1,10 +1,10 @@
 from rest_framework import serializers
-from .models import Cameras, Gate, Location
+from .models import Camera, Gate, Location
 
 
 class CameraSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Cameras
+        model = Camera
         fields = ['name', 'id']
 
 
