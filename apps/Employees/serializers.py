@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 
 
-
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -53,10 +52,9 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 class EmployeeSerializer(serializers.ModelSerializer):
 
-
     class Meta:
         model = CustomUser
-        fields = ['id', 'first_name', 'last_name', 'dataset', 'date_joined', 'image']
+        fields = ['id', 'first_name', 'last_name', 'dataset', 'date_joined', 'image', 'status']
 
     def create(self, validated_data):
         user = CustomUser.objects.create(**validated_data)
@@ -76,11 +74,13 @@ class HistorySerializer(serializers.ModelSerializer):
         if CustomUser.objects.filter(dataset=(dataset)):
             location = validated_data['location']
             image = validated_data['image']
-            history_data = History.objects.create(location=location, people=CustomUser.objects.get(dataset=dataset), image=image)
+            history_data = History.objects.create(location=location,
+                                                  people=CustomUser.objects.get(dataset=dataset, status=True), image=image)
         else:
             # new user
             user = CustomUser.objects.create(**validated_data)
             user.dataset = dataset
+            user.status = True
             user.save()
 
             # history record
@@ -89,7 +89,6 @@ class HistorySerializer(serializers.ModelSerializer):
             history_data = History.objects.create(location=location, people=user.objects, image=image)
 
         return history_data
-
 
     class Meta:
         model = History
