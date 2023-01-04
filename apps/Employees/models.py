@@ -32,4 +32,4 @@ class History(models.Model):
 
     class Meta:
         verbose_name = 'History'
-        verbose_name_plural = 'Stories'
+        verbose_name_plural = 'History'
