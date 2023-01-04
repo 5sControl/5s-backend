@@ -58,7 +58,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = CustomUser.objects.create(**validated_data)
-        face_img = face_recognition.load_image_file(f"media/photo/{validated_data['image']}")
+        face_img = face_recognition.load_image_file(f"images/{validated_data['image']}")
         dataset = face_recognition.face_encodings(face_img)[0]
         user.dataset = dataset
         user.save()
@@ -68,7 +68,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 class HistorySerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
-        face_img = face_recognition.load_image_file(f"media/photo/{validated_data['image']}")
+        face_img = face_recognition.load_image_file(f"images/{validated_data['image']}")
         dataset = face_recognition.face_encodings(face_img)[0]
 
         if CustomUser.objects.filter(dataset=(dataset)):

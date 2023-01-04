@@ -7,7 +7,7 @@ class CustomUser(models.Model):
     last_name = models.CharField(default='Unknown', max_length=40, blank=True, null=True)
     dataset = models.TextField(verbose_name='Date Set user', blank=True, null=True)
     date_joined = models.DateTimeField(auto_now_add=True)
-    image = models.ImageField(upload_to='photo')
+    image = models.ImageField()
     status = models.BooleanField(default=False, verbose_name='Status in location',)
 
     def __str__(self):
@@ -25,7 +25,7 @@ class History(models.Model):
                                  on_delete=models.CASCADE, blank=True, null=True)
     entry_date = models.DateTimeField(auto_now_add=True, blank=True)
     release_date = models.DateTimeField(blank=True, null=True)
-    image = models.ImageField(verbose_name='Image', blank=True, null=True, upload_to='images')
+    image = models.ImageField(verbose_name='Image', blank=True, null=True)
 
     def __str__(self):
         return f'{self.location}'
