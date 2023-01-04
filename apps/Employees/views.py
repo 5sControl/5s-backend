@@ -8,6 +8,8 @@ from apps.Employees.serializers import UserSerializer, EmployeeSerializer, Histo
 from apps.Employees.serializers import UserSerializer
 from django.views.generic.edit import CreateView
 
+from apps.Locations.models import Location
+
 
 class UsersViewSet(ModelViewSet):
     """List of all users"""
@@ -20,6 +22,18 @@ class HistoryViewSet(ModelViewSet):
     """List of all history"""
     serializer_class = HistorySerializer
     queryset = History.objects.all()
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+
+
+class PeopleViewSet(ModelViewSet):
+    """List of all history and people"""
+    serializer_class = HistorySerializer
+    data = History.objects.all().values()
+    # print(data)
+    location = Location.objects.filter(id=data[0]['location_id']).values('name')[0]['name']
+    people = CustomUser.objects.filter(id=data[0]['people_id']).values().filter(status=True)
+    # print('people=', people)
+    # queryset = History.objects.all().values()
     authentication_classes = [SessionAuthentication, BasicAuthentication]
 
 

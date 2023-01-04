@@ -1,6 +1,6 @@
 from idlelib.multicall import r
 from rest_framework.routers import DefaultRouter
-from apps.Employees.views import UsersViewSet, HistoryViewSet, EmployeeViewSet, ContactView
+from apps.Employees.views import UsersViewSet, HistoryViewSet, EmployeeViewSet, ContactView, PeopleViewSet
 from django.urls import re_path as url
 from . import views
 # from django.conf.urls import url
@@ -11,6 +11,7 @@ router.register(r'users', UsersViewSet, basename='users')
 router.register(r'history', HistoryViewSet, basename='stories')
 router.register(r'history', HistoryViewSet, basename='stories')
 router.register(r'employ', EmployeeViewSet, basename='employs')
+router.register(r'people', PeopleViewSet, basename='people')
 
 urlpatterns = router.urls
 
