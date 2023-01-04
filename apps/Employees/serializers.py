@@ -77,8 +77,7 @@ class HistorySerializer(serializers.ModelSerializer):
             history_data = History.objects.create(location=location,
                                                   people=CustomUser.objects.get(dataset=dataset), image=image)
             user = CustomUser.objects.filter(id=history_data.people.id)
-            user.status = True
-            user.update()
+            user.update(status=True)
         else:
             # new user
             user = CustomUser.objects.create(**validated_data)
