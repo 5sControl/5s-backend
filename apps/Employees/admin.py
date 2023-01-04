@@ -12,7 +12,7 @@ class EmployeeAdmin(admin.ModelAdmin):
 
 @admin.register(History)
 class HistoryAdmin(admin.ModelAdmin):
-    list_display = ('people', 'id', 'entry_date', 'release_date', 'get_image', 'dataset', 'location')
+    list_display = ('people', 'id', 'entry_date', 'release_date', 'get_image', 'location')
     list_filter = ('people', 'id')
     readonly_fields = ("get_image",)
 
