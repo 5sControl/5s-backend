@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CustomUser, History, ImageUsers
+from .models import CustomUser, History
 from apps.Locations.models import Location
 from django.utils.safestring import mark_safe
 
@@ -8,11 +8,6 @@ from django.utils.safestring import mark_safe
 class EmployeeAdmin(admin.ModelAdmin):
     list_display = ('first_name', 'id', 'last_name', 'date_joined', 'dataset')
     list_filter = ('id',)
-
-
-@admin.register(ImageUsers)
-class ImageTaskAdmin(admin.ModelAdmin):
-    pass
 
 
 @admin.register(History)

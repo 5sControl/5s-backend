@@ -9,8 +9,6 @@ class CameraSerializer(serializers.ModelSerializer):
 
 
 class GateSerializer(serializers.ModelSerializer):
-    camera_input = CameraSerializer(many=False)
-    camera_output = CameraSerializer(many=False)
 
     class Meta:
         model = Gate
@@ -18,7 +16,6 @@ class GateSerializer(serializers.ModelSerializer):
 
 
 class LocationSerializer(serializers.ModelSerializer):
-    gate_id = GateSerializer(many=False)
 
     class Meta:
         model = Location

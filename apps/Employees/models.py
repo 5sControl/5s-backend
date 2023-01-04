@@ -1,28 +1,17 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
-from django.core.files.uploadedfile import InMemoryUploadedFile
-
-from PIL import Image
-from io import BytesIO
-
 from apps.Locations.models import Location
-
-import sys
-
-
-class ImageUsers(models.Model):
-    image_user = models.ImageField(upload_to='Image')
 
 
 class CustomUser(models.Model):
-    first_name = models.CharField(max_length=40, blank=True, null=True)
-    last_name = models.CharField(max_length=40, blank=True, null=True)
+    first_name = models.CharField(default='Unknowm', max_length=40, blank=True, null=True)
+    last_name = models.CharField(default='Unknowm', max_length=40, blank=True, null=True)
     dataset = models.TextField(verbose_name='Date Set user', blank=True, null=True)
     date_joined = models.DateTimeField(auto_now_add=True)
-    image = models.ManyToManyField(ImageUsers, blank=True)
+    image = models.ImageField(upload_to='photo')
+
 
     def __str__(self):
-        return self.first_name
+        return f'{self.first_name} {self.last_name}'
 
     class Meta:
         verbose_name = 'Employee'
@@ -40,26 +29,6 @@ class History(models.Model):
 
     def __str__(self):
         return f'{self.location}'
-
-    def save(self, *args, **kwargs):
-        # Opening the uploaded image
-        im = Image.open(self.image)
-
-        if im.mode == "JPEG":
-            pass
-        elif im.mode in ["RGBA", "P"]:
-            im = im.convert("RGB")
-
-        output = BytesIO()
-        
-        im.save(output, format='JPEG', subsampling=0, quality=95)
-        output.seek(0)
-
-        self.image = InMemoryUploadedFile(output, 'ImageField',
-                                                  "%s.jpg" % self.image.name.split('.')[0], 'image/jpeg',
-                                                  sys.getsizeof(output), None)
-        super(History, self).save()
-
 
     class Meta:
         verbose_name = 'History'
