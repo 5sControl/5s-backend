@@ -1,13 +1,13 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from apps.Locations.models import Cameras, Gate, Location
+from apps.Locations.models import Camera, Gate, Location
 from apps.Locations.serializers import CameraSerializer, GateSerializer, LocationSerializer
 
 
 class CameraViewSet(ModelViewSet):
-    """List of all cameras"""
+    """List of all Camer"""
     serializer_class = CameraSerializer
-    queryset = Cameras.objects.all()
+    queryset = Camera.objects.all()
     authentication_classes = [SessionAuthentication, BasicAuthentication]
 
 
