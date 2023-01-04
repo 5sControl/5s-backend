@@ -3,12 +3,12 @@ from apps.Locations.models import Location
 
 
 class CustomUser(models.Model):
-    first_name = models.CharField(default='Unknowm', max_length=40, blank=True, null=True)
-    last_name = models.CharField(default='Unknowm', max_length=40, blank=True, null=True)
+    first_name = models.CharField(default='Unknown', max_length=40, blank=True, null=True)
+    last_name = models.CharField(default='Unknown', max_length=40, blank=True, null=True)
     dataset = models.TextField(verbose_name='Date Set user', blank=True, null=True)
     date_joined = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(upload_to='photo')
-
+    status = models.BooleanField(default=False, verbose_name='Status in location',)
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
