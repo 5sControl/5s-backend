@@ -3,7 +3,6 @@ from rest_framework.routers import DefaultRouter
 from apps.Employees.views import UsersViewSet, HistoryViewSet, EmployeeViewSet, ContactView, PeopleViewSet
 from django.urls import re_path as url
 from . import views
-# from django.conf.urls import url
 
 router = DefaultRouter()
 

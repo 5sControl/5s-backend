@@ -4,6 +4,8 @@ import face_recognition
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 
+from ..Locations.serializers import LocationSerializer
+
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -110,3 +112,12 @@ class HistorySerializer(serializers.ModelSerializer):
         model = History
         fields = ['people', 'location', 'image', 'release_date']
         read_only_fields = ['entry_date']
+
+
+class PeopleLocationsSerializers(serializers.ModelSerializer):
+    people = EmployeeSerializer(many=False)
+    location = LocationSerializer(many=False)
+
+    class Meta:
+        model = History
+        fields = ['location', 'people']
