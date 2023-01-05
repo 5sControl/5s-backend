@@ -1,9 +1,14 @@
 from rest_framework import serializers, response
+
 from .models import CustomUser, History
-import face_recognition
+from .recognitions import Recognition
+
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 
+from ..Locations.serializers import LocationSerializer
+
+import face_recognition
 
 class UserSerializer(serializers.ModelSerializer):
 
@@ -58,8 +63,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = CustomUser.objects.create(**validated_data)
-        face_img = face_recognition.load_image_file(f"images/{validated_data['image']}")
-        dataset = face_recognition.face_encodings(face_img)[0]
+        dataset = Recognition().dataset_maker(validated_data=validated_data)
         user.dataset = dataset
         user.save()
         return user
@@ -68,7 +72,8 @@ class EmployeeSerializer(serializers.ModelSerializer):
 class HistorySerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
-        face_img = face_recognition.load_image_file(f"media/photo/{validated_data['image']}")
+        # face_img = face_recognition.load_image_file(f"images/{validated_data['image']}")
+        face_img = face_recognition.load_image_file(f"{validated_data['image']}")
         if len(face_recognition.face_encodings(face_img)) > 0:
 
             print('[INFO] Finded dataset', face_recognition.face_encodings(face_img))
@@ -110,3 +115,12 @@ class HistorySerializer(serializers.ModelSerializer):
         model = History
         fields = ['people', 'location', 'image', 'release_date']
         read_only_fields = ['entry_date']
+
+
+class PeopleLocationsSerializers(serializers.ModelSerializer):
+    people = EmployeeSerializer(many=False)
+    location = LocationSerializer(many=False)
+
+    class Meta:
+        model = History
+        fields = ['location', 'people']
