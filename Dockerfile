@@ -1,6 +1,6 @@
 FROM python:3.9
 
-RUN apt update && apt -y install cmake gcc python3-dev musl-dev
+RUN apt update && apt -y install cmake gcc python3-dev musl-dev sudo
 
 WORKDIR /usr/src/app
 
@@ -12,3 +12,9 @@ COPY ./requirements.txt .
 RUN pip3 install -r requirements.txt
 
 COPY . /usr/src/app/
+EXPOSE 8000
+
+RUN ["chmod", "+x", "/usr/src/app/entrypoint.sh"]
+
+# run the command
+ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
