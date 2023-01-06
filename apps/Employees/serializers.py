@@ -1,15 +1,12 @@
 from rest_framework import serializers, response
-
 from .models import CustomUser, History
 from .recognitions import Recognition
-
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
-
 from ..Locations.models import Location
 from ..Locations.serializers import LocationSerializer
-
 import face_recognition
+
 
 class UserSerializer(serializers.ModelSerializer):
 
