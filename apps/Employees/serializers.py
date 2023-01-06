@@ -4,6 +4,7 @@ import face_recognition
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 
+from ..Locations.models import Location
 from ..Locations.serializers import LocationSerializer
 
 
@@ -70,8 +71,8 @@ class EmployeeSerializer(serializers.ModelSerializer):
 class HistorySerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
-        # face_img = face_recognition.load_image_file(f"images/{validated_data['image']}")
-        face_img = face_recognition.load_image_file(f"{validated_data['image']}")
+        face_img = face_recognition.load_image_file(f"images/{validated_data['image']}")  # для локального
+        # face_img = face_recognition.load_image_file(f"{validated_data['image']}")    # для сервера
         if len(face_recognition.face_encodings(face_img)) > 0:
 
             print('[INFO] Finded dataset', face_recognition.face_encodings(face_img))
@@ -79,10 +80,21 @@ class HistorySerializer(serializers.ModelSerializer):
             if CustomUser.objects.filter(dataset=(dataset)):
 
                 print('[INFO] Get User by dataser and save record')
-                location = validated_data['location']
+                #####################
                 image = validated_data['image']
-                history_data = History.objects.create(location=location,
-                                                    people=CustomUser.objects.get(dataset=dataset), image=image)
+                location = Location.objects.get(id=1)
+                history_data = History(
+                    location=location,
+                    people=CustomUser.objects.get(dataset=dataset),
+                    image=image
+                )
+                history_data.save()
+                #####################
+                # location = validated_data['location']
+                # print(type(location))
+                # image = validated_data['image']
+                # history_data = History.objects.create(location=location,
+                #                                     people=CustomUser.objects.get(dataset=dataset), image=image)
                 user = CustomUser.objects.filter(id=history_data.people.id)
                 user.status = True
                 user.update()
@@ -98,9 +110,19 @@ class HistorySerializer(serializers.ModelSerializer):
                 user.save()
 
                 print('[INFO] History record')
-                location = validated_data['location']
+                #####################
                 image = validated_data['image']
-                history_data = History.objects.create(location=location, people=user.objects, image=image)
+                location = Location.objects.get(id=1)
+                history_data = History(
+                    location=location,
+                    people=CustomUser.objects.get(dataset=dataset),
+                    image=image
+                )
+                history_data.save()
+                #####################
+                # location = validated_data['location']
+                # image = validated_data['image']
+                # history_data = History.objects.create(location=location, people=user.objects, image=image)
 
                 print('[INFO] Successfully created record')
                 return history_data
@@ -108,10 +130,9 @@ class HistorySerializer(serializers.ModelSerializer):
             print('[ERROR] Face wasnt found')
             return response.Response(status=404)
 
-
     class Meta:
         model = History
-        fields = ['people', 'location', 'image', 'release_date']
+        fields = ['id', 'people', 'location', 'image', 'release_date']
         read_only_fields = ['entry_date']
 
 
