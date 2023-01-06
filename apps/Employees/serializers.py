@@ -73,15 +73,12 @@ class EmployeeSerializer(serializers.ModelSerializer):
 class HistorySerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
-        # face_img = face_recognition.load_image_file(f"images/{validated_data['image']}")  # для локального
-        face_img = face_recognition.load_image_file(f"{validated_data['image']}")    # для сервера
+        face_img = face_recognition.load_image_file(f"{validated_data['image']}")
         if len(face_recognition.face_encodings(face_img)) > 0:
 
-            print('[INFO] Finded dataset', face_recognition.face_encodings(face_img))
             dataset = face_recognition.face_encodings(face_img)[0]
             if CustomUser.objects.filter(dataset=(dataset)):
 
-                print('[INFO] Get User by dataser and save record')
                 #####################
                 image = validated_data['image']
                 location = Location.objects.get(id=1)
@@ -98,20 +95,17 @@ class HistorySerializer(serializers.ModelSerializer):
                 # history_data = History.objects.create(location=location,
                 #                                     people=CustomUser.objects.get(dataset=dataset), image=image)
                 user = CustomUser.objects.filter(id=history_data.people.id)
-                user.status = True
-                user.update()
-                print('[INFO] Successfully created record')
+                user.update(status=True)
+                print(f"[INFO] history record successfully created with user {user}")
                 return history_data
             else:
 
-                print('[INFO] Create Unknown User')
                 print(validated_data)
                 user = CustomUser.objects.create(**validated_data)
                 user.dataset = dataset
                 user.status = True
                 user.save()
 
-                print('[INFO] History record')
                 #####################
                 image = validated_data['image']
                 location = Location.objects.get(id=1)
@@ -126,7 +120,7 @@ class HistorySerializer(serializers.ModelSerializer):
                 # image = validated_data['image']
                 # history_data = History.objects.create(location=location, people=user.objects, image=image)
 
-                print('[INFO] Successfully created record')
+                print('Unrecognized user record successfully created')
                 return history_data
         else:
             print('[ERROR] Face wasnt found')
