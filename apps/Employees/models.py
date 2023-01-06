@@ -46,7 +46,7 @@ class History(models.Model):
                                  on_delete=models.CASCADE, blank=True, null=True)
     entry_date = models.DateTimeField(auto_now_add=True, blank=True)
     release_date = models.DateTimeField(blank=True, null=True)
-    image = models.ImageField(verbose_name='Image', blank=True, null=True)
+    image = models.CharField(verbose_name='Image', blank=True, null=True, max_length=200)
 
     def __str__(self):
         return f'{self.location}'
