@@ -73,8 +73,8 @@ class EmployeeSerializer(serializers.ModelSerializer):
 class HistorySerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
-        face_img = face_recognition.load_image_file(f"images/{validated_data['image']}")  # для локального
-        # face_img = face_recognition.load_image_file(f"{validated_data['image']}")    # для сервера
+        # face_img = face_recognition.load_image_file(f"images/{validated_data['image']}")  # для локального
+        face_img = face_recognition.load_image_file(f"{validated_data['image']}")    # для сервера
         if len(face_recognition.face_encodings(face_img)) > 0:
 
             print('[INFO] Finded dataset', face_recognition.face_encodings(face_img))
