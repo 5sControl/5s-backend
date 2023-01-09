@@ -72,8 +72,8 @@ class HistorySerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         face_img = face_recognition.load_image_file(f"{validated_data['image']}")
         if len(face_recognition.face_encodings(face_img)) > 0:
-
             dataset = face_recognition.face_encodings(face_img)[0]
+            print(dataset)
             if CustomUser.objects.filter(dataset=(dataset)):
 
                 #####################
@@ -96,8 +96,6 @@ class HistorySerializer(serializers.ModelSerializer):
                 print(f"[INFO] history record successfully created with user {user}")
                 return history_data
             else:
-
-                print(validated_data)
                 user = CustomUser.objects.create(**validated_data)
                 user.dataset = dataset
                 user.status = True
@@ -125,7 +123,7 @@ class HistorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = History
-        fields = ['id', 'people', 'location', 'image', 'release_date']
+        fields = ['id', 'people', 'location', 'image', 'entry_date', 'release_date']
         read_only_fields = ['entry_date']
 
 
@@ -135,4 +133,4 @@ class PeopleLocationsSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = History
-        fields = ['location', 'people']
+        fields = ['id', 'location', 'people']
