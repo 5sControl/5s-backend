@@ -4,7 +4,7 @@ from .recognitions import Recognition
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from ..Locations.models import Location
-from ..Locations.serializers import LocationSerializer
+from ..Locations.serializers import LocationSerializer, CameraSerializer
 import face_recognition
 
 
@@ -70,6 +70,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 class HistorySerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
+        print(validated_data)
         face_img = face_recognition.load_image_file(f"{validated_data['image']}")
         if len(face_recognition.face_encodings(face_img)) > 0:
             dataset = face_recognition.face_encodings(face_img)[0]
@@ -78,8 +79,12 @@ class HistorySerializer(serializers.ModelSerializer):
 
                 #####################
                 image = validated_data['image']
+                camera = validated_data['camera']
+                action = validated_data['action']
                 location = Location.objects.get(id=1)
                 history_data = History(
+                    camera=camera,
+                    action=action,
                     location=location,
                     people=CustomUser.objects.get(dataset=dataset),
                     image=image
@@ -123,7 +128,7 @@ class HistorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = History
-        fields = ['id', 'people', 'location', 'image', 'entry_date', 'release_date']
+        fields = ['id', 'people', 'location', 'image', 'entry_date', 'release_date', 'camera', 'action']
         read_only_fields = ['entry_date']
 
 

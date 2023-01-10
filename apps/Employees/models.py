@@ -1,5 +1,7 @@
+from tabnanny import verbose
+
 from django.db import models
-from apps.Locations.models import Location
+from apps.Locations.models import Location, Camera
 
 import face_recognition
 
@@ -28,6 +30,9 @@ class History(models.Model):
     entry_date = models.DateTimeField(auto_now_add=True)
     release_date = models.DateTimeField(blank=True, null=True)
     image = models.CharField(verbose_name='Image', blank=True, null=True, max_length=200)
+    camera = models.ForeignKey(Camera, on_delete=models.CASCADE, verbose_name='NameCamera')
+    action = models.CharField(verbose_name='action camera', blank=True, null=True, max_length=50)
+
 
     def __str__(self):
         return f'{self.location}'

@@ -4,8 +4,8 @@ from .models import Camera, Gate, Location
 
 @admin.register(Camera)
 class CamerasAdmin(admin.ModelAdmin):
-    list_display = ('name', 'id')
-    list_filter = ("name", 'id')
+    list_display = ('id',)
+    list_filter = ('id',)
 
 
 @admin.register(Gate)
