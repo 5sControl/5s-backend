@@ -70,12 +70,10 @@ class EmployeeSerializer(serializers.ModelSerializer):
 class HistorySerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
-        print(validated_data)
         face_img = face_recognition.load_image_file(f"{validated_data['image']}")
         if len(face_recognition.face_encodings(face_img)) > 0:
             dataset = face_recognition.face_encodings(face_img)[0]
-            print(dataset)
-            if CustomUser.objects.filter(dataset=(dataset)):
+            if CustomUser.objects.all().filter(dataset=dataset):
 
                 #####################
                 image = validated_data['image']
@@ -92,7 +90,6 @@ class HistorySerializer(serializers.ModelSerializer):
                 history_data.save()
                 #####################
                 # location = validated_data['location']
-                # print(type(location))
                 # image = validated_data['image']
                 # history_data = History.objects.create(location=location,
                 #                                     people=CustomUser.objects.get(dataset=dataset), image=image)
@@ -101,16 +98,20 @@ class HistorySerializer(serializers.ModelSerializer):
                 print(f"[INFO] history record successfully created with user {user}")
                 return history_data
             else:
-                user = CustomUser.objects.create(**validated_data)
+                user = CustomUser.objects.create(image=validated_data['image'])
                 user.dataset = dataset
                 user.status = True
                 user.save()
 
                 #####################
                 image = validated_data['image']
+                camera = validated_data['camera']
+                action = validated_data['action']
                 location = Location.objects.get(id=1)
                 history_data = History(
                     location=location,
+                    camera=camera,
+                    action=action,
                     people=CustomUser.objects.get(dataset=dataset),
                     image=image
                 )
