@@ -1,18 +1,21 @@
-from tabnanny import verbose
-
 from django.db import models
 from apps.Locations.models import Location, Camera
 
-import face_recognition
-
+from django.utils.safestring import mark_safe
 
 class CustomUser(models.Model):
     first_name = models.CharField(default='Unknown', max_length=40, blank=True, null=True)
     last_name = models.CharField(default='Unknown', max_length=40, blank=True, null=True)
     dataset = models.TextField(verbose_name='Date Set user', blank=True, null=True)
     date_joined = models.DateTimeField(auto_now_add=True)
-    image = models.ImageField()
+    image = models.ImageField(upload_to="")
     status = models.BooleanField(default=False, verbose_name='Status in location',)
+
+    @property
+    def image_preview(self):
+        if self.image:
+            return mark_safe('<img src="{}" width="450" height="300" />'.format(self.image.url))
+        return ""
 
     def __str__(self):
         return f'{self.first_name} {self.last_name}'
@@ -33,6 +36,11 @@ class History(models.Model):
     camera = models.ForeignKey(Camera, on_delete=models.CASCADE, verbose_name='NameCamera')
     action = models.CharField(verbose_name='action camera', blank=True, null=True, max_length=50)
 
+    @property
+    def image_preview(self):
+        if self.image:
+            return mark_safe('<img src="{}" width="450" height="300" />'.format(self.image.url))
+        return ""
 
     def __str__(self):
         return f'{self.location}'
