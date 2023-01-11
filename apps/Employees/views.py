@@ -8,13 +8,18 @@ from apps.Employees.serializers import UserSerializer, PeopleLocationsSerializer
 from django.views.generic.edit import CreateView
 from rest_framework import viewsets
 from rest_framework.response import Response
-
+from django.views.generic import ListView
 
 class UsersViewSet(ModelViewSet):
     """List of all users"""
     serializer_class = UserSerializer
     queryset = User.objects.all()
     authentication_classes = [SessionAuthentication, BasicAuthentication]
+
+
+class HomePageView(ListView):
+    model = CustomUser
+    template_name = "home.html"
 
 
 class HistoryViewSet(ModelViewSet):
