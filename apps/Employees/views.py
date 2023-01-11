@@ -6,8 +6,8 @@ from django.contrib.auth.models import User
 from apps.Employees.serializers import EmployeeSerializer, HistorySerializer
 from apps.Employees.serializers import UserSerializer, PeopleLocationsSerializers
 from django.views.generic.edit import CreateView
-
-
+from rest_framework import viewsets
+from rest_framework.response import Response
 
 
 class UsersViewSet(ModelViewSet):
@@ -38,9 +38,17 @@ class ContactView(CreateView):
     success_url = '?success'
 
 
-class PeopleViewSet(ModelViewSet):
+class PeopleViewSet(viewsets.ViewSet):
     """List of all history and people"""
-    serializer_class = PeopleLocationsSerializers
-    queryset = History.objects.all()
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
-
+    def list(self, request):
+        local = History.objects.all().values('location_id').union(History.objects.all().values_list('location_id'))
+        users = History.objects.all().filter(people__status=True).values('people_id').distinct()
+        qr = []
+        for loc in local:
+            locate = History.objects.all().filter(location_id=loc['location_id']).values('location__name').distinct()
+            if locate not in qr:
+                qr.append(locate[0])
+        for user in users:
+            qr.append((History.objects.filter(people_id=user['people_id'])
+                       .values('people_id', 'people__first_name', 'people__last_name').distinct())[0])
+        return Response(qr)

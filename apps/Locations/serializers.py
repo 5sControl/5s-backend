@@ -5,7 +5,7 @@ from .models import Camera, Gate, Location
 class CameraSerializer(serializers.ModelSerializer):
     class Meta:
         model = Camera
-        fields = ['name', 'id']
+        fields = ['id']
 
 
 class GateSerializer(serializers.ModelSerializer):
