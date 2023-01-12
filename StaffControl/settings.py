@@ -131,9 +131,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
-        'rest_framework.permissions.AllowAny',
     ]
 }
 
 MEDIA_URL = "/images/"
 MEDIA_ROOT = BASE_DIR / "images/"
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://2b37-134-17-26-206.eu.ngrok.io/'
+]
