@@ -8,6 +8,7 @@ from apps.Employees.serializers import UserSerializer, PeopleLocationsSerializer
 from django.views.generic.edit import CreateView
 from rest_framework import viewsets
 from rest_framework.response import Response
+from apps.Locations.models import Location
 
 
 class UsersViewSet(ModelViewSet):
@@ -47,8 +48,11 @@ class PeopleViewSet(viewsets.ViewSet):
         for loc in local:
             locate = History.objects.all().filter(location_id=loc['location_id']).values('location__name').distinct()
             if locate not in qr:
-                qr.append(locate[0])
-        for user in users:
-            qr.append((History.objects.filter(people_id=user['people_id'])
-                       .values('people_id', 'people__first_name', 'people__last_name').distinct())[0])
-        return Response(qr)
+                loc = [(locate[0])]
+                ds = []
+                for user in users:
+                    ds.append((History.objects.filter(people_id=user['people_id'])
+                               .values('people_id', 'people__first_name', 'people__last_name').distinct())[0])
+                loc.append(ds)
+            qr.append(loc)
+        return Response(Location.objects.all().values('name', 'gate_id'))

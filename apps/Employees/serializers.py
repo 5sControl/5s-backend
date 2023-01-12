@@ -91,7 +91,8 @@ class HistorySerializer(serializers.ModelSerializer):
                     image = validated_data['image']
                     camera = validated_data['camera']
                     action = validated_data['action']
-                    location = Location.objects.get(id=1)
+                    location = Location.objects.get(id=2)
+                    print(type(location))
                     history_data = History(
                         camera=camera,
                         action=action,
@@ -111,6 +112,7 @@ class HistorySerializer(serializers.ModelSerializer):
                     return history_data
                 else:
                     user = CustomUser.objects.create(image=validated_data['image'])
+
                     with open(f'database/dataset/encoding_{user.id}.pickle', 'wb') as file:
                         file.write(pickle.dumps(data))
 
@@ -119,7 +121,6 @@ class HistorySerializer(serializers.ModelSerializer):
                     user.status = True
                     user.save()
 
-                    #####################
                     image = validated_data['image']
                     camera = validated_data['camera']
                     action = validated_data['action']
@@ -132,16 +133,15 @@ class HistorySerializer(serializers.ModelSerializer):
                         image=image
                     )
                     history_data.save()
-                    #####################
                     # location = validated_data['location']
                     # image = validated_data['image']
                     # history_data = History.objects.create(location=location, people=user.objects, image=image)
 
                     print('Unrecognized user record successfully created')
                     return history_data
-            else:
-                print('[ERROR] Face wasnt found')
-                return response.Response(status=404)
+        else:
+            print('[ERROR] Face wasnt found')
+            return response.Response(status=404)
 
     class Meta:
         model = History
