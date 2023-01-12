@@ -1,7 +1,4 @@
 import pickle
-
-import numpy as np
-from numpy.core._multiarray_umath import dtype
 from rest_framework import serializers, response
 from .models import CustomUser, History
 from .recognitions import Recognition
