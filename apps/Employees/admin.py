@@ -14,7 +14,6 @@ class EmployeeAdmin(admin.ModelAdmin):
     image_preview.short_description = 'Image Preview'
     image_preview.allow_tags = True
 
-
 @admin.register(History)
 class HistoryAdmin(admin.ModelAdmin):
     list_display = ('people', 'entry_date', 'release_date', 'location')
