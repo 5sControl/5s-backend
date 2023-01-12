@@ -1,46 +1,55 @@
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from apps.Employees.forms import ContactForm
-from apps.Employees.models import CustomUser, History
-from django.contrib.auth.models import User
-from apps.Employees.serializers import EmployeeSerializer, HistorySerializer
-from apps.Employees.serializers import UserSerializer, PeopleLocationsSerializers
-from django.views.generic.edit import CreateView
-from rest_framework import viewsets
+
 from rest_framework.response import Response
+
+from rest_framework import viewsets, permissions
+
+from django.contrib.auth.models import User
+
+from apps.Employees.serializers import EmployeeSerializer, HistorySerializer
+from apps.Employees.serializers import UserSerializer
+
+from apps.Employees.models import CustomUser, History
 from apps.Locations.models import Location
 
 
 class UsersViewSet(ModelViewSet):
     """List of all users"""
+
     serializer_class = UserSerializer
     queryset = User.objects.all()
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
+
+    permission_classes_by_action = {'get': [permissions.AllowAny],
+                                    'update': [permissions.IsAuthenticated],
+                                    'destroy': [permissions.IsAuthenticated]}
 
 
 class HistoryViewSet(ModelViewSet):
     """List of all history"""
+
     serializer_class = HistorySerializer
     queryset = History.objects.all()
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
+
+    permission_classes_by_action = {'get': [permissions.AllowAny],
+                                    'update': [permissions.IsAuthenticated],
+                                    'destroy': [permissions.IsAuthenticated]}
 
 
 class EmployeeViewSet(ModelViewSet):
     """List of all employee"""
     serializer_class = EmployeeSerializer
     queryset = CustomUser.objects.all()
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
 
-
-class ContactView(CreateView):
-    model = CustomUser
-    form_class = ContactForm
-    template_name = 'contact_form.html'
-    success_url = '?success'
-
+    permission_classes_by_action = {'get': [permissions.AllowAny],
+                                    'post': [permissions.IsAuthenticated],
+                                    'update': [permissions.IsAuthenticated],
+                                    'destroy': [permissions.IsAuthenticated]}
 
 class PeopleViewSet(viewsets.ViewSet):
     """List of all history and people"""
+
+    permission_classes = [permissions.AllowAny]
+
     def list(self, request):
         local = History.objects.all().values('location_id').union(History.objects.all().values_list('location_id'))
         users = History.objects.all().filter(people__status=True).values('people_id').distinct()
