@@ -58,7 +58,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'first_name', 'last_name', 'dataset', 'date_joined', 'image', 'status']
+        fields = ['id', 'first_name', 'last_name', 'dataset', 'date_joined', 'image', 'location', 'status']
 
     def create(self, validated_data):
         user = CustomUser.objects.create(**validated_data)
@@ -76,73 +76,52 @@ class EmployeeSerializer(serializers.ModelSerializer):
 class HistorySerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
-        face_img = face_recognition.load_image_file(f"{validated_data['image']}")
-        if len(face_recognition.face_encodings(face_img)) > 0:
-            d_dataset = face_recognition.face_encodings(face_img)
-            all_people = CustomUser.objects.all().values('dataset')
-            for people in all_people:
-                data = pickle.loads(open(f"{people['dataset']}", "rb").read())
-                result = face_recognition.compare_faces(data, d_dataset)[0]
+        if validated_data['action'] == 'entrance':
+            image = validated_data['image']
+            camera = validated_data['camera']
+            action = validated_data['action']
+            name_file = validated_data['name_file']
+            id_people = int(((f"[{validated_data['name_file']}").split('_')[-1]).split('.')[0])
+            location = Location.objects.filter(gate_id__camera_input__id=validated_data['camera'])[0]
+            history_data = History(
+                camera=camera,
+                action=action,
+                name_file=name_file,
+                location=location,
+                people=CustomUser.objects.get(id=id_people),
+                image=image
+            )
+            history_data.save()
 
-                if result:
-                    image = validated_data['image']
-                    camera = validated_data['camera']
-                    action = validated_data['action']
-                    location = Location.objects.get(id=2)
-                    print(type(location))
-                    history_data = History(
-                        camera=camera,
-                        action=action,
-                        location=location,
-                        people=CustomUser.objects.get(dataset=people['dataset']),
-                        image=image
-                    )
-                    history_data.save()
-                    #####################
-                    # location = validated_data['location']
-                    # image = validated_data['image']
-                    # history_data = History.objects.create(location=location,
-                    #                                     people=CustomUser.objects.get(dataset=dataset), image=image)
-                    user = CustomUser.objects.filter(id=history_data.people.id)
-                    user.update(status=True)
-                    print(f"[INFO] history record successfully created with user {user}")
-                    return history_data
-                else:
-                    user = CustomUser.objects.create(image=validated_data['image'])
-
-                    with open(f'database/dataset/encoding_{user.id}.pickle', 'wb') as file:
-                        file.write(pickle.dumps(data))
-
-                    dataset = f'database/dataset/encoding_{user.id}.pickle'
-                    user.dataset = dataset
-                    user.status = True
-                    user.save()
-
-                    image = validated_data['image']
-                    camera = validated_data['camera']
-                    action = validated_data['action']
-                    location = Location.objects.get(id=1)
-                    history_data = History(
-                        location=location,
-                        camera=camera,
-                        action=action,
-                        people=CustomUser.objects.get(dataset=people['dataset']),
-                        image=image
-                    )
-                    history_data.save()
-                    # location = validated_data['location']
-                    # image = validated_data['image']
-                    # history_data = History.objects.create(location=location, people=user.objects, image=image)
-
-                    print('Unrecognized user record successfully created')
-                    return history_data
+            user = CustomUser.objects.filter(id=id_people)
+            user.update(status=True, location=location)
+            return history_data
         else:
-            print('[ERROR] Face wasnt found')
-            return response.Response(status=404)
+            if validated_data['action'] == 'exit':
+                image = validated_data['image']
+                camera = validated_data['camera']
+                action = validated_data['action']
+                name_file = validated_data['name_file']
+                id_people = int(((f"[{validated_data['name_file']}").split('_')[-1]).split('.')[0])
+                location = Location.objects.filter(gate_id__camera_output__id=validated_data['camera'])[0]
+                history_data = History(
+                    camera=camera,
+                    action=action,
+                    name_file=name_file,
+                    location=location,
+                    people=CustomUser.objects.get(id=id_people),
+                    image=image
+                )
+                history_data.save()
+
+                user = CustomUser.objects.filter(id=id_people)
+                user.update(status=False, location=None)
+                return history_data
+        return
 
     class Meta:
         model = History
-        fields = ['id', 'people', 'location', 'image', 'entry_date', 'release_date', 'camera', 'action']
+        fields = ['id', 'people', 'location', 'image', 'entry_date', 'release_date', 'camera', 'name_file', 'action']
         read_only_fields = ['entry_date']
 
 
