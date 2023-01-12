@@ -11,6 +11,7 @@ from apps.Employees.serializers import UserSerializer
 
 from apps.Employees.models import CustomUser, History
 from apps.Locations.models import Location
+from apps.base.permissions import IsAdminOrReadOnly
 
 
 class UsersViewSet(ModelViewSet):
@@ -19,9 +20,9 @@ class UsersViewSet(ModelViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
-    permission_classes_by_action = {'get': [permissions.AllowAny],
-                                    'update': [permissions.IsAuthenticated],
-                                    'destroy': [permissions.IsAuthenticated]}
+    permission_classes = [
+            permissions.IsAuthenticatedOrReadOnly,
+            IsAdminOrReadOnly,]
 
 
 class HistoryViewSet(ModelViewSet):
@@ -30,25 +31,28 @@ class HistoryViewSet(ModelViewSet):
     serializer_class = HistorySerializer
     queryset = History.objects.all()
 
-    permission_classes_by_action = {'get': [permissions.AllowAny],
-                                    'update': [permissions.IsAuthenticated],
-                                    'destroy': [permissions.IsAuthenticated]}
+    permission_classes = [
+            permissions.IsAuthenticatedOrReadOnly,
+            IsAdminOrReadOnly,]
 
 
 class EmployeeViewSet(ModelViewSet):
     """List of all employee"""
+	
     serializer_class = EmployeeSerializer
     queryset = CustomUser.objects.all()
 
-    permission_classes_by_action = {'get': [permissions.AllowAny],
-                                    'post': [permissions.IsAuthenticated],
-                                    'update': [permissions.IsAuthenticated],
-                                    'destroy': [permissions.IsAuthenticated]}
+    permission_classes = [
+            permissions.IsAuthenticatedOrReadOnly,
+            IsAdminOrReadOnly,]
+
 
 class PeopleViewSet(viewsets.ViewSet):
     """List of all history and people"""
 
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+        IsAdminOrReadOnly,]
 
     def list(self, request):
         local = History.objects.all().values('location_id').union(History.objects.all().values_list('location_id'))
