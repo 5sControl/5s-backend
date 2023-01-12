@@ -10,6 +10,7 @@ import face_recognition
 
 
 class UserSerializer(serializers.ModelSerializer):
+    """Registers a employee"""
 
     class Meta:
         model = User
@@ -26,6 +27,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class RegisterSerializer(serializers.ModelSerializer):
+    """"A register serializer that can be used to register new administrators"""
 
     password = serializers.CharField(write_only=True,
                                      style={'input_type': 'password'})
@@ -55,6 +57,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
+    """Create a Employee with his dataset."""
 
     class Meta:
         model = CustomUser
@@ -74,6 +77,10 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
 
 class HistorySerializer(serializers.ModelSerializer):
+    """
+    Create a History record if employee is authenticated, else
+    write record with this unknown user and make history record
+    """
 
     def create(self, validated_data):
         if validated_data['action'] == 'entrance':
@@ -126,9 +133,8 @@ class HistorySerializer(serializers.ModelSerializer):
 
 
 class PeopleLocationsSerializers(serializers.ModelSerializer):
-    people = EmployeeSerializer(many=False)
-    location = LocationSerializer(many=False)
+    """Displays information of all employees in a given location"""
 
     class Meta:
-        model = History
-        fields = ['id', 'location', 'people']
+        model = CustomUser
+        exclude = ('image', )

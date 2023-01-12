@@ -1,6 +1,6 @@
 from rest_framework.routers import DefaultRouter
-from apps.Employees.views import UsersViewSet, HistoryViewSet, EmployeeViewSet, PeopleViewSet
 
+from .views import EmployeeViewSet, HistoryViewSet, PeopleViewSet, UsersViewSet
 
 router = DefaultRouter()
 
