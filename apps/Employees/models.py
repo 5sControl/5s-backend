@@ -35,6 +35,7 @@ class History(models.Model):
     image = models.CharField(verbose_name='Image', blank=True, null=True, max_length=200)
     camera = models.ForeignKey(Camera, on_delete=models.CASCADE, verbose_name='NameCamera')
     action = models.CharField(verbose_name='action camera', blank=True, null=True, max_length=50)
+    name_file = models.CharField(max_length=100, blank=True, null=True)
 
     @property
     def image_preview(self):
