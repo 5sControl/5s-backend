@@ -3,7 +3,7 @@ from rest_framework import permissions
 from apps.Locations.models import Camera, Gate, Location
 
 from apps.Locations.serializers import CameraSerializer, GateSerializer, LocationSerializer
-
+from apps.base.permissions import IsAdminOrReadOnly
 
 class CameraViewSet(ModelViewSet):
     """List of all Camer"""
@@ -11,9 +11,10 @@ class CameraViewSet(ModelViewSet):
     serializer_class = CameraSerializer
     queryset = Camera.objects.all()
 
-    permission_classes_by_action = {'get': [permissions.AllowAny],
-                                    'update': [permissions.IsAuthenticated],
-                                    'destroy': [permissions.IsAuthenticated]}
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+        IsAdminOrReadOnly,]
+
 
 class GateViewSet(ModelViewSet):
     """List of all gates"""
@@ -21,9 +22,9 @@ class GateViewSet(ModelViewSet):
     serializer_class = GateSerializer
     queryset = Gate.objects.all()
 
-    permission_classes_by_action = {'get': [permissions.AllowAny],
-                                    'update': [permissions.IsAuthenticated],
-                                    'destroy': [permissions.IsAuthenticated]}
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+        IsAdminOrReadOnly,]
 
 class LocationViewSet(ModelViewSet):
     """List of all locations"""
@@ -31,6 +32,6 @@ class LocationViewSet(ModelViewSet):
     serializer_class = LocationSerializer
     queryset = Location.objects.all()
 
-    permission_classes_by_action = {'get': [permissions.AllowAny],
-                                    'update': [permissions.IsAuthenticated],
-                                    'destroy': [permissions.IsAuthenticated]}
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly,
+        IsAdminOrReadOnly,]
