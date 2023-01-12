@@ -137,6 +137,8 @@ REST_FRAMEWORK = {
 MEDIA_URL = "/images/"
 MEDIA_ROOT = BASE_DIR / "images/"
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://2b37-134-17-26-206.eu.ngrok.io/'
-]
+
+CSRF_TRUSTED_ORIGINS = ["*"]
+CORS_ALLOWED_ORIGINS = ["*"]
+
+CORS_ORIGIN_WHITELIST = ("*", )
