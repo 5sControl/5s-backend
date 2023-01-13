@@ -19,7 +19,7 @@ class EmployeeAdmin(admin.ModelAdmin):
 class HistoryAdmin(admin.ModelAdmin):
     list_display = ('people', 'entry_date', 'release_date', 'action', 'location', 'image_tag')
     list_filter = ('people', 'location', 'id', 'entry_date', 'action')
-    readonly_fields = ('people', 'entry_date', 'release_date', 'action', 'location', 'image')
+    readonly_fields = ('people', 'entry_date', 'release_date', 'action', 'location', 'image_tags')
 
     def location(self, obj):
         result = CustomUser.objects.filter(id=obj.people.id).values('location_id')[0]['location_id']
@@ -31,3 +31,6 @@ class HistoryAdmin(admin.ModelAdmin):
 
     def image_tag(self, obj):
         return mark_safe(f'<img src="/{obj.image}" width="50px" height="60px" />')
+
+    def image_tags(self, obj):
+        return mark_safe(f'<img src="/{obj.image}" width="400px" height="400px" />')
