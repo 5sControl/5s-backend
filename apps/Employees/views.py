@@ -17,10 +17,10 @@ class UsersViewSet(ModelViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
-    permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
-        IsAdminOrReadOnly,
-    ]
+    # permission_classes = [
+    #     permissions.IsAuthenticatedOrReadOnly,
+    #     IsAdminOrReadOnly,
+    # ]
 
 
 class EmployeeViewSet(ModelViewSet):
@@ -29,19 +29,19 @@ class EmployeeViewSet(ModelViewSet):
     serializer_class = EmployeeSerializer
     queryset = CustomUser.objects.all()
 
-    permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
-        IsAdminOrReadOnly,
-    ]
+    # permission_classes = [
+    #     permissions.IsAuthenticatedOrReadOnly,
+    #     IsAdminOrReadOnly,
+    # ]
 
 
 class PeopleViewSet(viewsets.ReadOnlyModelViewSet):
     """List of all history and people"""
 
-    permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
-        IsAdminOrReadOnly,
-    ]
+    # permission_classes = [
+    #     permissions.IsAuthenticatedOrReadOnly,
+    #     IsAdminOrReadOnly,
+    # ]
     serializer_class = PeopleLocationsSerializers
 
     def list(self, request, *args, **kwargs):

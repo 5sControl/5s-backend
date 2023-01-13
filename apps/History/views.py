@@ -11,7 +11,7 @@ class HistoryViewSet(viewsets.ModelViewSet):
     serializer_class = HistorySerializer
     queryset = History.objects.all()
 
-    permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
-        IsAdminOrReadOnly,
-    ]
+    # permission_classes = [
+    #     permissions.IsAuthenticatedOrReadOnly,
+    #     IsAdminOrReadOnly,
+    # ]
