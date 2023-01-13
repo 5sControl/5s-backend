@@ -131,15 +131,19 @@ class HistorySerializer(serializers.ModelSerializer):
             camera = validated_data['camera']
             action = validated_data['action']
 
+            release_date = []
             location = []
             if validated_data['action'] == 'entrance':
+                release_date.append(None)
                 location.append(Location.objects.filter(gate_id__camera_input__id=validated_data['camera'])[0])
             else:
                 if validated_data['action'] == 'exit':
+                    release_date.append(f"{datetime.datetime.now()}")
                     location.append(Location.objects.filter(gate_id__camera_output__id=validated_data['camera'])[0])
             history_data = History(
                 camera=camera,
                 action=action,
+                release_date=release_date[0],
                 name_file=None,
                 location=location[0],
                 people=None,
