@@ -1,3 +1,4 @@
+import datetime
 import pickle
 from rest_framework import serializers, response
 from .models import CustomUser, History
@@ -5,8 +6,6 @@ from .recognitions import Recognition
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 from ..Locations.models import Location
-from ..Locations.serializers import LocationSerializer, CameraSerializer
-import face_recognition
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -111,11 +110,13 @@ class HistorySerializer(serializers.ModelSerializer):
             name_file = validated_data['name_file']
             id_people = int(((f"{validated_data['name_file']}").split('_')[-1]).split('.')[0])
             location = Location.objects.filter(gate_id__camera_output__id=validated_data['camera'])[0]
+            release_date = datetime.datetime.now()
             history_data = History(
                 camera=camera,
                 action=action,
                 name_file=name_file,
                 location=location,
+                release_date=release_date,
                 people=CustomUser.objects.get(id=id_people),
                 image=image
             )
