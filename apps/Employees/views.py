@@ -4,10 +4,10 @@ from rest_framework import viewsets, permissions, response
 
 from django.contrib.auth.models import User
 
-from apps.Employees.serializers import EmployeeSerializer, HistorySerializer, PeopleLocationsSerializers
+from apps.Employees.serializers import EmployeeSerializer, PeopleLocationsSerializers
 from apps.Employees.serializers import UserSerializer
 
-from apps.Employees.models import CustomUser, History
+from apps.Employees.models import CustomUser
 from apps.base.permissions import IsAdminOrReadOnly
 
 
@@ -17,22 +17,10 @@ class UsersViewSet(ModelViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
 
-    permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
-        IsAdminOrReadOnly,
-    ]
-
-
-class HistoryViewSet(ModelViewSet):
-    """List of all history"""
-
-    serializer_class = HistorySerializer
-    queryset = History.objects.all()
-
-    permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
-        IsAdminOrReadOnly,
-    ]
+    # permission_classes = [
+    #     permissions.IsAuthenticatedOrReadOnly,
+    #     IsAdminOrReadOnly,
+    # ]
 
 
 class EmployeeViewSet(ModelViewSet):
@@ -41,19 +29,19 @@ class EmployeeViewSet(ModelViewSet):
     serializer_class = EmployeeSerializer
     queryset = CustomUser.objects.all()
 
-    permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
-        IsAdminOrReadOnly,
-    ]
+    # permission_classes = [
+    #     permissions.IsAuthenticatedOrReadOnly,
+    #     IsAdminOrReadOnly,
+    # ]
 
 
 class PeopleViewSet(viewsets.ReadOnlyModelViewSet):
     """List of all history and people"""
 
-    permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly,
-        IsAdminOrReadOnly,
-    ]
+    # permission_classes = [
+    #     permissions.IsAuthenticatedOrReadOnly,
+    #     IsAdminOrReadOnly,
+    # ]
     serializer_class = PeopleLocationsSerializers
 
     def list(self, request, *args, **kwargs):

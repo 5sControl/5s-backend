@@ -1,11 +1,11 @@
 import datetime
 import pickle
-from rest_framework import serializers, response
-from .models import CustomUser, History
+from rest_framework import serializers
+from .models import CustomUser
 from .recognitions import Recognition
+from ..Locations.models import Location
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
-from ..Locations.models import Location
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -73,6 +73,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
         user.dataset = dataset
         user.save()
         return user
+
 
 
 class HistorySerializer(serializers.ModelSerializer):
