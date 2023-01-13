@@ -35,6 +35,7 @@ INSTALLED_APPS = [
 
     'apps.Employees.apps.EmployeesConfig',
     'apps.Locations.apps.LocationsConfig',
+    'apps.History.apps.HistoryConfig',
 ]
 
 MIDDLEWARE = [
