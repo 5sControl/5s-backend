@@ -19,7 +19,7 @@ class EmployeeAdmin(admin.ModelAdmin):
 class HistoryAdmin(admin.ModelAdmin):
     list_display = ('people', 'entry_date', 'release_date', 'action', 'location', 'image_tag')
     list_filter = ('people', 'location', 'id', 'entry_date', 'action')
-    readonly_fields = ('people', 'entry_date', 'release_date', 'action', 'location', 'image')
+    readonly_fields = ('people', 'entry_date', 'release_date', 'action', 'location', 'image_tag')
 
     def location(self, obj):
         result = CustomUser.objects.filter(id=obj.people.id).values('location_id')[0]['location_id']
