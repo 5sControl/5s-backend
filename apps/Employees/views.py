@@ -44,7 +44,10 @@ class PeopleViewSet(viewsets.ReadOnlyModelViewSet):
     # ]
     serializer_class = PeopleLocationsSerializers
 
-    def list(self, request, *args, **kwargs):
+    # def get_queryset(self):
+    #     rerCustomUser.objects.all()
+
+    def list(self, *args, **kwargs):
         locations = []
         users_by_locations = {}
 

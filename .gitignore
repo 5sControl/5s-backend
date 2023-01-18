@@ -167,3 +167,5 @@ cython_debug/
 staff-control-django.code-workspace
 
 images/
+
+database/dataset/encoding_*
