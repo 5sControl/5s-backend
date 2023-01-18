@@ -11,6 +11,8 @@ class HistoryViewSet(viewsets.ModelViewSet):
 
     queryset = History.objects.all()
 
+    serializer_class = HistorySerializer
+
     filter_backends = [filters.SearchFilter]
     search_fields = ['action', 'location__name', 'camera__id',
             'people__first_name', 'people__last_name', 'entry_date']
@@ -48,6 +50,3 @@ class FilteredHistoryModelViewSet(views.APIView):
                 return Response(serializer.data)
             else:
                 return Response({'message': 'Invalid type'})
-
-
-    
