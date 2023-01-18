@@ -60,11 +60,14 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'first_name', 'last_name', 'dataset', 'date_joined', 'image', 'location', 'status']
+        fields = ['id', 'first_name', 'last_name', 'dataset', 'date_joined', 'image1', 'image2', 'image3',
+                  'image4', 'image5', 'location', 'status']
 
     def create(self, validated_data):
-        user = CustomUser.objects.create(**validated_data)
         data = Recognition().dataset_maker(validated_data=validated_data)
+        if data == None:
+            raise serializers.ValidationError
+        user = CustomUser.objects.create(**validated_data)
 
         with open(f'database/dataset/encoding_{user.id}.pickle', 'wb') as file:
             file.write(pickle.dumps(data))

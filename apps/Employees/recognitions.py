@@ -8,11 +8,25 @@ class Recognition:
         This function takes an image and returns a list of face datasets in the image.
         """
 
-        face_img = face_recognition.load_image_file(f"images/{validated_data['image']}")
-        dataset = face_recognition.face_encodings(face_img)[0]
-        print('[INFO] Dataset assembled successfully')
+        dataset = []
+        for i in range(1, 6):
+            face_img = face_recognition.load_image_file(f"images/{validated_data[f'image{i}']}")
+            if i == 5:
+                face_img1 = face_recognition.load_image_file(f"images/{validated_data[f'image1']}")
+            else:
+                face_img1 = face_recognition.load_image_file(f"images/{validated_data[f'image{i+1}']}")
+            face_encoding = face_recognition.face_encodings(face_img)[0]
+            face_encoding1 = face_recognition.face_encodings(face_img1)[0]
+            rez = face_recognition.compare_faces([face_encoding1], face_encoding)
+            if rez[0] == True:
+                dataset.append(face_encoding)
+        try:
+            if len(dataset) == 5:
+                print('[INFO] Dataset assembled successfully')
+                return dataset
+        except:
+            raise Exception
 
-        return dataset
 
     def test_dataset_maker(self, image):
         """
