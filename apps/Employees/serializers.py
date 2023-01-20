@@ -65,7 +65,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         data = Recognition().dataset_maker(validated_data=validated_data)
-        if data == None:
+        if len(data) >= 1:
             raise serializers.ValidationError
         user = CustomUser.objects.create(**validated_data)
 
