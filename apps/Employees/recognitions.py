@@ -21,10 +21,11 @@ class Recognition:
             if rez[0] == True:
                 dataset.append(face_encoding)
         try:
-            if len(dataset) == 5:
+            if len(dataset) != 0:
                 print('[INFO] Dataset assembled successfully')
                 return dataset
         except:
+            print('[ERROR] No photos recognized')
             raise Exception
 
 
