@@ -7,6 +7,8 @@ from rest_framework import serializers
 from ..Locations.models import Location
 from ..Employees.models import CustomUser
 
+from .recognition import face_rec
+
 
 class HistorySerializer(serializers.ModelSerializer):
     """
@@ -17,7 +19,7 @@ class HistorySerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         if validated_data['name_file'] != 'unknown':
 
-            image = validated_data['image']
+            image = face_rec(validated_data=validated_data)
             action = validated_data['action']
             name_file = validated_data['name_file']
             camera = validated_data['camera']
@@ -53,7 +55,7 @@ class HistorySerializer(serializers.ModelSerializer):
             return history_data
 
         elif validated_data['name_file'] == 'unknown':
-            image = validated_data['image']
+            image = face_rec(validated_data=validated_data)
             camera = validated_data['camera']
             action = validated_data['action']
 
