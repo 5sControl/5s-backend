@@ -2,8 +2,7 @@ import datetime
 import pickle
 from rest_framework import serializers
 from .models import CustomUser
-from .recognitions import Recognition
-from ..Locations.models import Location
+from .recognitions import Recognition, face_rec
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
 
@@ -64,10 +63,12 @@ class EmployeeSerializer(serializers.ModelSerializer):
                   'image4', 'image5', 'location', 'status']
 
     def create(self, validated_data):
-        data = Recognition().dataset_maker(validated_data=validated_data)
-        if len(data) >= 1:
-            raise serializers.ValidationError
         user = CustomUser.objects.create(**validated_data)
+
+        data = Recognition().dataset_maker(validated_data=validated_data)
+        if len(data) == 0:
+            user.delete()
+            raise serializers.ValidationError
 
         with open(f'database/dataset/encoding_{user.id}.pickle', 'wb') as file:
             file.write(pickle.dumps(data))
@@ -75,6 +76,8 @@ class EmployeeSerializer(serializers.ModelSerializer):
         dataset = f'database/dataset/encoding_{user.id}.pickle'
         user.dataset = dataset
         user.save()
+        face_rec(validated_data)
+
         return user
 
 

@@ -13,11 +13,9 @@ class Recognition:
         for i in range(1, 6):
             face_img = face_recognition.load_image_file(f"images/{validated_data[f'image{i}']}")
             if i == 5:
-                face_img1 = face_recognition.load_image_file(f"images/{validated_data[f'image1']}")
+                face_img1 = face_recognition.load_image_file(f"images/{validated_data[f'image{1}']}")
             else:
                 face_img1 = face_recognition.load_image_file(f"images/{validated_data[f'image{i+1}']}")
-
-
 
             face_encoding = face_recognition.face_encodings(face_img)[0]
             face_encoding1 = face_recognition.face_encodings(face_img1)[0]
@@ -32,7 +30,6 @@ class Recognition:
             print('[ERROR] No photos recognized')
             raise Exception
 
-
     def test_dataset_maker(self, image):
         """
         This function takes a saved test image and returns a list of face datasets in the image.
@@ -45,17 +42,20 @@ class Recognition:
         return dataset
 
 
-    # def face_rec(validated_data):
-    #
-    #     gal_face_location = face_recognition.face_locations(face_img)
-    #
-    #     pil_img = Image.fromarray(face_img)
-    #     draw1 = ImageDraw.Draw(pil_img)
-    #
-    #     for (top, right, bottom, left) in gal_face_location:
-    #         draw1.rectangle(((left, top), (right, bottom)), outline=(255, 255, 0), width=4)
-    #
-    #     del draw1
-    #     pil_img.save(f"{validated_data['image']}")
-    #     return validated_data['image']
+def face_rec(validated_data):
+    for i in range(1, 6):
+        face_img = face_recognition.load_image_file(f"images/{validated_data[f'image{i}']}")
+        face_location = face_recognition.face_locations(face_img)
+
+        pil_img = Image.fromarray(face_img)
+        draw1 = ImageDraw.Draw(pil_img)
+
+        for (top, right, bottom, left) in face_location:
+            draw1.rectangle(((left, top), (right, bottom)), outline=(255, 255, 0), width=4)
+
+        del draw1
+        pil_img.save(f"images/{validated_data[f'image{i}']}")
+        # return name_image
+
+
 
