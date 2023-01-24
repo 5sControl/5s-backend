@@ -1,3 +1,5 @@
+import os
+
 from rest_framework.viewsets import ModelViewSet
 
 from rest_framework import viewsets, permissions, response
@@ -28,6 +30,13 @@ class EmployeeViewSet(ModelViewSet):
 
     serializer_class = EmployeeSerializer
     queryset = CustomUser.objects.all()
+    http_method_names = ['get', 'post', 'delete', ]
+
+    def destroy(self, request, pk=None, *args, **kwargs):
+        instance = self.get_object()
+        os.remove(f'database/dataset/encoding_{instance.id}.pickle')
+        return super(EmployeeViewSet, self).destroy(request, pk, *args, **kwargs)
+
 
     # permission_classes = [
     #     permissions.IsAuthenticatedOrReadOnly,
@@ -43,9 +52,6 @@ class PeopleViewSet(viewsets.ReadOnlyModelViewSet):
     #     IsAdminOrReadOnly,
     # ]
     serializer_class = PeopleLocationsSerializers
-
-    # def get_queryset(self):
-    #     rerCustomUser.objects.all()
 
     def list(self, *args, **kwargs):
         locations = []
