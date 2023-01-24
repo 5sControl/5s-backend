@@ -30,13 +30,16 @@ class EmployeeViewSet(ModelViewSet):
 
     serializer_class = EmployeeSerializer
     queryset = CustomUser.objects.all()
-    http_method_names = ['get', 'post', 'delete', ]
+    http_method_names = ['get', 'post', 'delete', 'put', ]
 
     def destroy(self, request, pk=None, *args, **kwargs):
         instance = self.get_object()
-        os.remove(f'database/dataset/encoding_{instance.id}.pickle')
-        return super(EmployeeViewSet, self).destroy(request, pk, *args, **kwargs)
-
+        try:
+            os.remove(f'database/dataset/encoding_{instance.id}.pickle')
+        except Exception as exc:
+            print(exc)
+        finally:
+            return super(EmployeeViewSet, self).destroy(request, pk, *args, **kwargs)
 
     # permission_classes = [
     #     permissions.IsAuthenticatedOrReadOnly,

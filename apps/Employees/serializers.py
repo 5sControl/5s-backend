@@ -1,4 +1,4 @@
-import datetime
+import os
 import pickle
 from rest_framework import serializers
 from .models import CustomUser
@@ -77,8 +77,36 @@ class EmployeeSerializer(serializers.ModelSerializer):
         user.dataset = dataset
         user.save()
         face_rec(validated_data)
-
         return user
+
+    def update(self, instance, validated_data):
+        instance.last_name = validated_data['last_name']
+        instance.first_name = validated_data['first_name']
+        instance.image1 = validated_data['image1']
+        instance.image2 = validated_data['image2']
+        instance.image3 = validated_data['image3']
+        instance.image4 = validated_data['image4']
+        instance.image5 = validated_data['image5']
+        instance.status = validated_data['status']
+        instance.dataset = validated_data['dataset']
+        instance.location = validated_data['location']
+        instance.save()
+
+        data = Recognition().dataset_maker(validated_data=validated_data)
+        if len(data) == 0:
+            instance.delete()
+            raise serializers.ValidationError
+        try:
+            os.remove(f'database/dataset/encoding_{instance.id}.pickle')
+        except Exception as exc:
+            print(exc)
+
+        with open(f'database/dataset/encoding_{instance.id}.pickle', 'wb') as file:
+            file.write(pickle.dumps(data))
+
+        face_rec(validated_data)
+
+        return instance
 
 
 class PeopleLocationsSerializers(serializers.ModelSerializer):
