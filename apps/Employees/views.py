@@ -1,4 +1,5 @@
 import os
+import requests
 
 from rest_framework.viewsets import ModelViewSet
 
@@ -39,6 +40,13 @@ class EmployeeViewSet(ModelViewSet):
         except Exception as exc:
             print(exc)
         finally:
+
+            try:
+                response = requests.post("http://face_recognition_queue:8008/api/update-dataasets/",
+                                         {"update_date": True})
+            except Exception as ex:
+                print(ex)
+
             return super(EmployeeViewSet, self).destroy(request, pk, *args, **kwargs)
 
     # permission_classes = [

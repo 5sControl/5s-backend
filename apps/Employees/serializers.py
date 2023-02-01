@@ -1,5 +1,7 @@
 import os
 import pickle
+import requests
+
 from rest_framework import serializers
 from .models import CustomUser
 from .recognitions import Recognition, face_rec
@@ -77,6 +79,12 @@ class EmployeeSerializer(serializers.ModelSerializer):
         user.dataset = dataset
         user.save()
         face_rec(validated_data)
+
+        try:
+            response = requests.post("http://face_recognition_queue:8008/api/update-dataasets/", {"update_date": True})
+        except Exception as ex:
+            print(ex)
+
         return user
 
     def update(self, instance, validated_data):
@@ -105,6 +113,11 @@ class EmployeeSerializer(serializers.ModelSerializer):
             file.write(pickle.dumps(data))
 
         face_rec(validated_data)
+
+        try:
+            response = requests.post("http://face_recognition_queue:8008/api/update-dataasets/", {"update_date": True})
+        except Exception as ex:
+            print(ex)
 
         return instance
 
