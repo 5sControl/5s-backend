@@ -19,11 +19,13 @@ class HistorySerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         if validated_data['name_file'] != 'unknown':
 
-            image = face_rec(validated_data=validated_data)
             action = validated_data['action']
             name_file = validated_data['name_file']
             camera = validated_data['camera']
             id_people = int(((f"{validated_data['name_file']}").split('_')[-1]).split('.')[0])
+            user_name = CustomUser.objects.get(id=id_people)
+            person_name = str(user_name)
+            image = face_rec(validated_data=validated_data, person_name=person_name)
             location = []
             release_date = []
 
