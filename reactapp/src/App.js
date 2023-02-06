@@ -15,14 +15,32 @@ function App() {
   },[])
   return (
     <div className="App">
-      {data.map((el) => {
-        return(
-        <div key={el.id}>
-          <span>{el.id}</span>
-          {el.image!=='link' && <img src={require(`./${el.image}`)} alt='image'/>}
-          <span>{el.action}</span>
-        </div>) 
-      })}
+
+      <section className='wrapper'>
+        <ul className='control_type'>
+          <li>Safety control</li>
+          <li>Idle control</li>
+          <li>Operation control</li>
+          <li>Staff control</li>
+          <li>Tool control</li>
+        </ul>
+        <ul className='control_date'>
+          <li>Today</li>
+          <li>Yesterday</li>
+          <li>04.02.2023</li>
+        </ul>
+        <div className='control_reports'>
+          {data.map((el) => {
+              return(
+              <div key={el.id}>
+                <span>{el.id}</span>
+                  {el.image!=='link' && <img src={require(`./${el.image}`)} alt='image'/>}
+                <span>{el.action}</span>
+              </div>) 
+            })}
+        </div>
+      </section>
+
     </div>
   );
 }
