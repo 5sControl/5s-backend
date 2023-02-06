@@ -4,6 +4,10 @@
   display: flex;
   .control_type, .control_date{
     width: 20%;
+    .non-active{
+      background-color: grey;
+      cursor: auto;
+    }
     li{
       padding: 1rem 5px;
       margin: 1rem 0;
@@ -12,6 +16,7 @@
       transition: all 0.5s;
       box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
       border-radius: 5px;
+      
       &:hover{
         box-shadow: rgba(100, 100, 111, 0.2) 10px 17px 19px 10px;
       }

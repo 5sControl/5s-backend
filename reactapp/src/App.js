@@ -17,11 +17,11 @@ function App() {
     <div className="App">
       <section className='wrapper'>
         <ul className='control_type'>
-          <li>Safety control</li>
-          <li>Idle control</li>
-          <li>Operation control</li>
-          <li>Staff control</li>
-          <li>Tool control</li>
+          <li className=''>Safety control</li>
+          <li className='non-active'>Idle control</li>
+          <li className='non-active'>Operation control</li>
+          <li className='non-active'>Staff control</li>
+          <li className='non-active'>Tool control</li>
         </ul>
         <ul className='control_date'>
           <li>Today</li>

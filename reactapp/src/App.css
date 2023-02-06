@@ -6,6 +6,10 @@
 .wrapper .control_type, .wrapper .control_date {
   width: 20%;
 }
+.wrapper .control_type .non-active, .wrapper .control_date .non-active {
+  background-color: grey;
+  cursor: auto;
+}
 .wrapper .control_type li, .wrapper .control_date li {
   padding: 1rem 5px;
   margin: 1rem 0;
