@@ -7,7 +7,11 @@ import { API_URL } from '.';
 function App() {
   const [data, setData] = useState([])
   useEffect(()=>{
-      axios.get(API_URL).then(data => setData(data.data.results))
+      axios.get(API_URL).then(data => {
+        setData(data.data.results)
+        console.log(data.data.results)
+      })
+      
   },[])
   return (
     <div className="App">
@@ -15,7 +19,7 @@ function App() {
         return(
         <div key={el.id}>
           <span>{el.id}</span>
-          <img src={el.image} alt='image'/>
+          {el.image!=='link' && <img src={require(`./${el.image}`)} alt='image'/>}
           <span>{el.action}</span>
         </div>) 
       })}
