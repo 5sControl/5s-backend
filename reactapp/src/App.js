@@ -31,11 +31,14 @@ function App() {
         <div className='control_reports'>
           {data.map((el) => {
               return(
-              <div key={el.id}>
-                <span>{el.id}</span>
-                  {el.image!=='link' && <img src={require(`./${el.image}`)} alt='image'/>}
-                <span>{el.action}</span>
-              </div>) 
+                <>
+                  {el.image!=='link' && <div key={el.id}>
+                    <span>{el.id}</span>
+                      <img src={require(`./${el.image}`)} alt='image'/>
+                    <span>{el.action}</span>
+                  </div>}
+              </>
+             ) 
             })}
         </div>
       </section>
