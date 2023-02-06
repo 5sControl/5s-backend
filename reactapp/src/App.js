@@ -15,7 +15,6 @@ function App() {
   },[])
   return (
     <div className="App">
-
       <section className='wrapper'>
         <ul className='control_type'>
           <li>Safety control</li>
