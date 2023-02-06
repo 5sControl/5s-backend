@@ -28,7 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework_simplejwt',
-
+    'django_filters',
     'rest_framework',
     'corsheaders',
     'drf_yasg',
@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'apps.Employees.apps.EmployeesConfig',
     'apps.Locations.apps.LocationsConfig',
     'apps.History.apps.HistoryConfig',
+    'apps.Safety.apps.SafetyConfig',
 ]
 
 MIDDLEWARE = [
@@ -131,10 +132,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # https://www.django-rest-framework.org/api-guide/authentication/
 
 REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 50,
     'DATETIME_FORMAT': "%d.%m.%Y %H:%M:%S",
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
 MEDIA_URL = "/images/"

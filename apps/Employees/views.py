@@ -1,3 +1,6 @@
+import os
+import requests
+
 from rest_framework.viewsets import ModelViewSet
 
 from rest_framework import viewsets, permissions, response
@@ -28,6 +31,23 @@ class EmployeeViewSet(ModelViewSet):
 
     serializer_class = EmployeeSerializer
     queryset = CustomUser.objects.all()
+    http_method_names = ['get', 'post', 'delete', 'put', ]
+
+    def destroy(self, request, pk=None, *args, **kwargs):
+        instance = self.get_object()
+        try:
+            os.remove(f'database/dataset/encoding_{instance.id}.pickle')
+        except Exception as exc:
+            print(exc)
+        finally:
+
+            try:
+                response = requests.post("http://face_recognition_queue:8008/api/update-dataasets/",
+                                         {"update_date": True})
+            except Exception as ex:
+                print(ex)
+
+            return super(EmployeeViewSet, self).destroy(request, pk, *args, **kwargs)
 
     # permission_classes = [
     #     permissions.IsAuthenticatedOrReadOnly,
@@ -44,7 +64,7 @@ class PeopleViewSet(viewsets.ReadOnlyModelViewSet):
     # ]
     serializer_class = PeopleLocationsSerializers
 
-    def list(self, request, *args, **kwargs):
+    def list(self, *args, **kwargs):
         locations = []
         users_by_locations = {}
 
