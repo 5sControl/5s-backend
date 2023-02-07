@@ -1,10 +1,10 @@
-import './App.scss';
+import './Report.scss';
 import { Fragment, useEffect, useState } from 'react';
 import axios from "axios";
 
-import { API_URL } from '../api/api.js';
+import { API_URL, API_IMAGES } from '../../api/api.js';
 
-function App() {
+function Report() {
   const [data, setData] = useState([])
   useEffect(()=>{
       axios.get(API_URL).then(data => {
@@ -34,7 +34,7 @@ function App() {
                 <Fragment key={el.id}>
                     {el.image!=='link' && <div key={el.id}>
                       <span>{el.id}</span>
-                        <img src={require(`../${el.image}`)} alt='image'/>
+                        <img src={`${API_IMAGES + el.image}`} alt='report img'/>
                       <span>{el.action}</span>
                     </div>}
                 </Fragment>
@@ -47,4 +47,4 @@ function App() {
   );
 }
 
-export default App;
+export default Report;
