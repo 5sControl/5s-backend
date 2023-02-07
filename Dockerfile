@@ -14,7 +14,7 @@ RUN pip3 install -r requirements.txt
 COPY . /usr/src/app/
 EXPOSE 8000
 
-# RUN ["chmod", "+x", "/usr/src/app/entrypoint.sh"]
+RUN ["chmod", "+x", "/usr/src/app/entrypoint.sh"]
 
 # run the command
 # ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
