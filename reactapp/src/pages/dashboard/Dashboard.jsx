@@ -50,6 +50,27 @@ function Dashboard() {
                   })}
                 </div>
               </div>
+              {currentReport &&
+                <div className='dashboard__report'>
+                   <img src={`${API_IMAGES + currentReport.image}`} alt='report img' className='dashboard__report_image'/>
+                   <div className='dashboard__report_item'>
+                    <span>Date & Time</span>
+                    <span>{currentReport.date_created}</span>
+                   </div>
+                   <div className='dashboard__report_item'>
+                    <span>Camera</span>
+                    <span>{currentReport.camera}</span>
+                   </div>
+                   <div className='dashboard__report_item'>
+                    <span>Algorithm</span>
+                    <span>Safety control:{currentReport.action}</span>
+                   </div>
+                   <div className='dashboard__report_item'>
+                    <span>Status</span>
+                    <span>Not Checked</span>
+                   </div>
+                </div>
+              }
              
             </div>
           </div>
