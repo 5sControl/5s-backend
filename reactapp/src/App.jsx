@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import './index.scss';
-import Report from './pages/report/Report';
+import Dashboard from './pages/dashboard/Dashboard';
 import { RoutesOutlet } from './routes/Routes';
 
 function App() {
@@ -12,7 +12,7 @@ function App() {
             <Route element={<RoutesOutlet/>}>
                 <Route
                     path="/"
-                    element={<Report/>}
+                    element={<Dashboard/>}
                 />
             </Route>
         </Routes>
