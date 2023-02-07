@@ -32,12 +32,12 @@ function App() {
           {data.map((el) => {
               return(
                 <Fragment key={el.id}>
-                  {el.image!=='link' && <div key={el.id}>
-                    <span>{el.id}</span>
-                      <img src={require(`../${el.image}`)} alt='image'/>
-                    <span>{el.action}</span>
-                  </div>}
-              </Fragment>
+                    {el.image!=='link' && <div key={el.id}>
+                      <span>{el.id}</span>
+                        <img src={require(`../${el.image}`)} alt='image'/>
+                      <span>{el.action}</span>
+                    </div>}
+                </Fragment>
              ) 
             })}
         </div>
