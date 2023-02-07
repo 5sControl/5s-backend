@@ -1,6 +1,6 @@
-FROM node:17-alpine
-WORKDIR /build
-COPY package.json /app/package.json
-RUN npm install --only=prod
-COPY . /app
-RUN npm run build
+FROM node:latest
+WORKDIR /app
+COPY package.json ./
+RUN npm install
+COPY . .
+CMD ["npm", "start"]
