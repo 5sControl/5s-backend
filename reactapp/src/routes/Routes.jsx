@@ -5,9 +5,9 @@ export const RoutesOutlet = () => {
     return (
         <div className="window">        
             <LeftMenu/>
-            <sectin className='outlet'>
+            <section className='outlet'>
                 <Outlet />
-            </sectin>
+            </section>
         </div>
       );
 }
