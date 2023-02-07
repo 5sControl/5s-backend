@@ -27,9 +27,7 @@ class OnvifCamera:
         self.ips = [
             ip for url in self.urls for ip in re.findall(r"\d+\.\d+\.\d+\.\d+", url)
         ]
-        self.lst = [
-            ip for ip in self.ips if any(ip.startswith(sp) for sp in self.scope)
-        ]
+        self.lst = [ip for ip in self.lst if ip.startswith("192.168.1.")]
 
         self.save(self.lst)
 
