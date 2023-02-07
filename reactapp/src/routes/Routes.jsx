@@ -3,9 +3,11 @@ import { Outlet} from 'react-router-dom';
 
 export const RoutesOutlet = () => {
     return (
-        <>        
+        <div className="window">        
             <LeftMenu/>
-            <Outlet />
-        </>
+            <sectin className='outlet'>
+                <Outlet />
+            </sectin>
+        </div>
       );
 }
