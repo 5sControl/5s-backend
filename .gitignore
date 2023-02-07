@@ -169,3 +169,6 @@ staff-control-django.code-workspace
 images/
 
 database/dataset/encoding_*
+
+#react modules
+/node_modules

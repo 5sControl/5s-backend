@@ -1,8 +1,8 @@
-import './App.css';
-import { useEffect, useState } from 'react';
+import './App.scss';
+import { Fragment, useEffect, useState } from 'react';
 import axios from "axios";
 
-import { API_URL } from '.';
+import { API_URL } from '../api/api.js';
 
 function App() {
   const [data, setData] = useState([])
@@ -31,13 +31,13 @@ function App() {
         <div className='control_reports'>
           {data.map((el) => {
               return(
-                <>
+                <Fragment key={el.id}>
                   {el.image!=='link' && <div key={el.id}>
                     <span>{el.id}</span>
-                      <img src={require(`./${el.image}`)} alt='image'/>
+                      <img src={require(`../${el.image}`)} alt='image'/>
                     <span>{el.action}</span>
                   </div>}
-              </>
+              </Fragment>
              ) 
             })}
         </div>
