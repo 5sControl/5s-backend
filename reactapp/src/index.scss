@@ -36,11 +36,13 @@ body {
       flex-direction: column;
       gap:48px;
     }
-    li{
+    li, a{
+      
       display: flex;
       flex-direction: column;
       align-items: center;
       list-style-type: none;
+      text-decoration: none;
       &:hover{
         span{
           color:#FE6100;

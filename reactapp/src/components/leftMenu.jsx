@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { Algorithm, Camera, Dashboard } from '../assets/svg/SVGcomponent'
 import logo from '../assets/svg/icon.svg'
 
@@ -7,12 +8,16 @@ export const LeftMenu = () =>{
         <img src={logo} alt='logo'/>
         <ul>
             <li className='active'>
-                <Dashboard />
-                <span>Dashboard</span>
+                <Link to='dashboard'>
+                    <Dashboard />
+                    <span>Dashboard</span>
+                </Link>
             </li>
             <li className='noActive'> 
-                <Camera/>
-                <span>Camera</span>
+                <Link to='camera'>
+                    <Camera/>
+                    <span>Camera</span>
+                </Link>
             </li>
             <li className='noActive'>
                 <Algorithm/>
