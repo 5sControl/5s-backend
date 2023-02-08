@@ -55,6 +55,7 @@ class EmployeeViewSet(ModelViewSet):
 class PeopleViewSet(ReadOnlyModelViewSet):
     """List of all history and people"""
 
+    queryset = CustomUser.objects.all()
     permission_classes = [IsAuthenticated]
     serializer_class = PeopleLocationsSerializers
 
