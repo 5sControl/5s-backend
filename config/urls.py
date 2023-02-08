@@ -18,24 +18,27 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 from apps.router import routes
-from rest_framework_simplejwt.views import (TokenObtainPairView, TokenRefreshView, TokenVerifyView)
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
 from .views import RegisterView, setcookie, getcookie
 
 
 urlpatterns = [
     path("register/", RegisterView.as_view()),
-    path('api/token/verify/', TokenVerifyView.as_view(), name='token_verify'),
-    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('admin/', admin.site.urls),
-    path('api/', include(routes)),
+    path("api-auth/", include("rest_framework.urls")),
+    path("auth/", include("djoser.urls")),
+    path("auth/", include("djoser.urls.jwt")),
+    path("admin/", admin.site.urls),
+    path("api/", include(routes)),
 ]
 urlpatterns += [
-    path('api-auth/', include('rest_framework.urls')),
-    path('scookie', setcookie),
-    path('gcookie', getcookie),
+    path("api-auth/", include("rest_framework.urls")),
+    path("scookie", setcookie),
+    path("gcookie", getcookie),
 ]
 
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL,
-                          document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
