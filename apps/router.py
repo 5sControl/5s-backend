@@ -9,22 +9,23 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 schema_view = get_schema_view(
-	openapi.Info(
-		title="StaffControl API",
-		default_version='v1.0.0',
-		description="StaffControl",
-	),
-	public=True,
-	permission_classes=[permissions.AllowAny],
+    openapi.Info(
+        title="StaffControl API",
+        default_version="v3.1.3",
+        description="StaffControl Api implementation",
+    ),
+    public=True,
+    permission_classes=[permissions.AllowAny],
 )
 
 routes = [
-    path('employees/', include('apps.Employees.urls')),
-    path('locations/', include('apps.Locations.urls')),
-	path('history/', include('apps.History.urls')),
-	path('safety/', include('apps.Safety.urls')),
-
-    path('swagger(?P<format>\.json|\.yaml)', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
-    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc')
+    path("employees/", include("apps.Employees.urls")),
+    path("locations/", include("apps.Locations.urls")),
+    path("history/", include("apps.History.urls")),
+    path("safety/", include("apps.Safety.urls")),
+    path(
+        "swagger/",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="schema-swagger-ui",
+    ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
