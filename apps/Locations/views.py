@@ -1,8 +1,15 @@
 from rest_framework.viewsets import ModelViewSet
-from rest_framework import permissions
+from rest_framework.views import APIView
 from apps.Locations.models import Camera, Gate, Location
-from apps.Locations.serializers import CameraSerializer, GateSerializer, LocationSerializer
-from apps.base.permissions import IsAdminOrReadOnly
+from apps.Locations.serializers import (
+    CameraSerializer,
+    GateSerializer,
+    LocationSerializer,
+)
+from rest_framework.response import Response
+
+
+from .service import onvif_camera
 
 
 class CameraViewSet(ModelViewSet):
@@ -36,3 +43,13 @@ class LocationViewSet(ModelViewSet):
     # permission_classes = [
     #     permissions.IsAuthenticatedOrReadOnly,
     #     IsAdminOrReadOnly,]
+
+
+class GetOnvifCameraView(APIView):
+    """Get list of all cameras and fill table with them"""
+
+    def get(self, request, *args, **kwargs):
+        all_cameras_ips = onvif_camera.start()
+        print(f"Onvif camera list: %s" % all_cameras_ips)
+
+        return Response(all_cameras_ips)

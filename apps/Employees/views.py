@@ -1,9 +1,9 @@
 import os
 import requests
 
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
-from rest_framework import viewsets, permissions, response
+from rest_framework.response import Response
 
 from django.contrib.auth.models import User
 
@@ -11,7 +11,6 @@ from apps.Employees.serializers import EmployeeSerializer, PeopleLocationsSerial
 from apps.Employees.serializers import UserSerializer
 
 from apps.Employees.models import CustomUser
-from apps.base.permissions import IsAdminOrReadOnly
 
 
 class UsersViewSet(ModelViewSet):
@@ -31,19 +30,25 @@ class EmployeeViewSet(ModelViewSet):
 
     serializer_class = EmployeeSerializer
     queryset = CustomUser.objects.all()
-    http_method_names = ['get', 'post', 'delete', 'put', ]
+    http_method_names = [
+        "get",
+        "post",
+        "delete",
+        "put",
+    ]
 
     def destroy(self, request, pk=None, *args, **kwargs):
         instance = self.get_object()
         try:
-            os.remove(f'database/dataset/encoding_{instance.id}.pickle')
+            os.remove(f"database/dataset/encoding_{instance.id}.pickle")
         except Exception as exc:
             print(exc)
         finally:
-
             try:
-                response = requests.post("http://face_recognition_queue:8008/api/update-dataasets/",
-                                         {"update_date": True})
+                response = requests.post(
+                    "http://face_recognition_queue:8008/api/update-dataasets/",
+                    {"update_date": True},
+                )
             except Exception as ex:
                 print(ex)
 
@@ -55,7 +60,7 @@ class EmployeeViewSet(ModelViewSet):
     # ]
 
 
-class PeopleViewSet(viewsets.ReadOnlyModelViewSet):
+class PeopleViewSet(ReadOnlyModelViewSet):
     """List of all history and people"""
 
     # permission_classes = [
@@ -74,13 +79,16 @@ class PeopleViewSet(viewsets.ReadOnlyModelViewSet):
                 locations.append(str(location.location))
             else:
                 locations.append(location.location)
-        print(f'[INFO] {locations}')
+        print(f"[INFO] {locations}")
 
         for location in locations:
-            users_by_locations[location] = list((CustomUser.objects
-                                                 .filter(location__name=location)
-                                                 .values_list(
-                                                     'first_name', 'last_name', 'date_joined')))
-        print(f'[INFO] {users_by_locations}')
+            users_by_locations[location] = list(
+                (
+                    CustomUser.objects.filter(location__name=location).values_list(
+                        "first_name", "last_name", "date_joined"
+                    )
+                )
+            )
+        print(f"[INFO] {users_by_locations}")
 
-        return response.Response(users_by_locations)
+        return Response(users_by_locations)
