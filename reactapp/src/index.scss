@@ -41,15 +41,20 @@ body {
       flex-direction: column;
       align-items: center;
       list-style-type: none;
-      cursor: pointer;
-      transition: all 0.4s;
-
       &:hover{
-        box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+        span{
+          color:#FE6100;
+        }
+        
+        svg{
+          fill:#FE6100;
+        }
       }
       svg{
         width: 18px;
         height: 18px;
+        fill:#666666;
+        transition: all 0.4s;
       }
       span{
         font-weight: 400;
@@ -57,7 +62,24 @@ body {
         line-height: 16px;
         text-align: center;
         letter-spacing: 0.4px;
+        transition: all 0.4s;
+      }
+    }
+    .noActive{
+      cursor: pointer;
+      svg{
+        fill:#666666;
+      }
+      span{
         color: #666666;
+      }
+    }
+    .active{
+      svg{
+        fill:#FE6100;
+      }
+      span{
+        color:#FE6100;
       }
     }
   
@@ -66,15 +88,5 @@ body {
     width: calc(100vw - 120px);
     height: 100vh;
     background-color: #F5F5F5;
-  }
-}
-.noActive{
-
-  svg{
-    fill:"red"!important;
-    path{
-      fill:"red"!important ;
-    }
-    
   }
 }

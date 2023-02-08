@@ -6,7 +6,7 @@ export const LeftMenu = () =>{
     <aside className="leftMenu">
         <img src={logo} alt='logo'/>
         <ul>
-            <li className='noActive'>
+            <li className='active'>
                 <Dashboard />
                 <span>Dashboard</span>
             </li>
@@ -20,5 +20,5 @@ export const LeftMenu = () =>{
             </li>
         </ul>
     </aside>
-)
+    )
 }
