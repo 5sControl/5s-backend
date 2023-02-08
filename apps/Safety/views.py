@@ -1,5 +1,5 @@
 from rest_framework.viewsets import ModelViewSet
-from rest_framework import permissions
+from rest_framework.permissions import IsAuthenticated
 from apps.Safety.models import Action
 from apps.Safety.serializers import ActionSerializer
 
@@ -9,7 +9,4 @@ class ActionViewSet(ModelViewSet):
 
     serializer_class = ActionSerializer
     queryset = Action.objects.all()
-
-    # permission_classes = [
-    #     permissions.IsAuthenticatedOrReadOnly,
-    #     IsAdminOrReadOnly,]
+    permission_classes = [IsAuthenticated]

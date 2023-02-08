@@ -1,6 +1,6 @@
 from rest_framework import views, viewsets, filters
 from rest_framework.response import Response
-
+from rest_framework.permissions import IsAuthenticated
 from .serializers import HistorySerializer
 from .models import History
 
@@ -11,7 +11,7 @@ class HistoryViewSet(viewsets.ModelViewSet):
     queryset = History.objects.all()
 
     serializer_class = HistorySerializer
-
+    permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter]
     search_fields = [
         "action",
@@ -25,6 +25,8 @@ class HistoryViewSet(viewsets.ModelViewSet):
 
 class FilteredHistoryModelViewSet(views.APIView):
     """Filtered History View"""
+
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, format=None):
         # check required keys
