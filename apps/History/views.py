@@ -11,7 +11,6 @@ class HistoryViewSet(viewsets.ModelViewSet):
     queryset = History.objects.all()
 
     serializer_class = HistorySerializer
-    permission_classes = [IsAuthenticated]
     filter_backends = [filters.SearchFilter]
     search_fields = [
         "action",
@@ -21,6 +20,11 @@ class HistoryViewSet(viewsets.ModelViewSet):
         "people__last_name",
         "entry_date",
     ]
+
+    def get_permissions(self):
+        if self.request.method != 'POST':
+            return [IsAuthenticated()]
+        return []
 
 
 class FilteredHistoryModelViewSet(views.APIView):

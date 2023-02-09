@@ -9,4 +9,9 @@ class ActionViewSet(ModelViewSet):
 
     serializer_class = ActionSerializer
     queryset = Action.objects.all()
-    permission_classes = [IsAuthenticated]
+
+    def get_permissions(self):
+        if self.request.method != 'POST':
+            return [IsAuthenticated()]
+        return []
+
