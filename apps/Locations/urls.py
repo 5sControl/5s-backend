@@ -3,7 +3,7 @@ from apps.Locations.views import (
     CameraViewSet,
     GateViewSet,
     LocationViewSet,
-    GetOnvifCameraView,
+    PostCameraView,
 )
 from django.urls import path, include
 
@@ -14,7 +14,7 @@ router.register(r"gate", GateViewSet, basename="gates")
 router.register(r"location", LocationViewSet, basename="locations")
 
 urlpatterns = [
-    path("get_all_cameras/", GetOnvifCameraView.as_view()),
+    path("post_camera/", PostCameraView.as_view()),
 ]
 
 urlpatterns += router.urls
