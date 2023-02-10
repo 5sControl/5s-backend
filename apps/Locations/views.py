@@ -10,8 +10,6 @@ from apps.Locations.serializers import (
     LocationSerializer,
 )
 
-from .service import onvif_camera
-
 
 class CameraViewSet(ModelViewSet):
     """List of all Camer"""
@@ -37,13 +35,20 @@ class LocationViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
 
-class GetOnvifCameraView(APIView):
-    """Get list of all cameras and fill table with them"""
+class PostCameraView(APIView):
+    """Write all camera information"""
 
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
-    def get(self, request, *args, **kwargs):
-        all_cameras_ips = onvif_camera.start()
-        print(f"Onvif camera list: %s" % all_cameras_ips)
-
-        return Response(all_cameras_ips)
+    def post(self, request, *args, **kwargs):
+        try:
+            list_of_ips = request.data["cameras_ip"]
+            for ip in list_of_ips:
+                camera = Camera(id=ip)
+                camera.save()
+                print(f"Camera {ip} was successfully saved")
+            return Response({"status": "success"})
+        except KeyError as e:
+            return Response({"status": "failure", "error": f"KeyError: {str(e)}"})
+        except Exception as e:
+            return Response({"status": "failure", "error": f"Exception: {str(e)}"})
