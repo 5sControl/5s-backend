@@ -1,5 +1,5 @@
 from rest_framework.routers import DefaultRouter
-from apps.StaffControl.Locations.views import (
+from src.StaffControl.Locations.views import (
     CameraViewSet,
     GateViewSet,
     LocationViewSet,

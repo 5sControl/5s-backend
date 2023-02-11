@@ -7,13 +7,13 @@ from rest_framework.permissions import IsAuthenticated
 
 from django.contrib.auth.models import User
 
-from apps.StaffControl.Employees.serializers import (
+from src.StaffControl.Employees.serializers import (
     EmployeeSerializer,
     PeopleLocationsSerializers,
 )
-from apps.StaffControl.Employees.serializers import UserSerializer
+from src.StaffControl.Employees.serializers import UserSerializer
 
-from apps.StaffControl.Employees.models import CustomUser
+from src.StaffControl.Employees.models import CustomUser
 
 
 class UsersViewSet(ModelViewSet):

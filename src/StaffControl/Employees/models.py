@@ -1,5 +1,5 @@
 from django.db import models
-from apps.StaffControl.Locations.models import Location
+from src.StaffControl.Locations.models import Location
 
 from django.utils.safestring import mark_safe
 

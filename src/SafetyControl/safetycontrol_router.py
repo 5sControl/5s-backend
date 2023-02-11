@@ -8,7 +8,7 @@ router = DefaultRouter()
 
 
 routes_staff = [
-    path("safety/", include("apps.SafetyControl.Safety.urls")),
+    path("safety/", include("src.SafetyControl.Safety.urls")),
 ]
 
 urlpatterns = routes_staff

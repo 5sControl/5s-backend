@@ -1,7 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
-from apps.SafetyControl.Safety.models import Action
-from apps.SafetyControl.Safety.serializers import ActionSerializer
+from src.SafetyControl.Safety.models import Action
+from src.SafetyControl.Safety.serializers import ActionSerializer
 
 
 class ActionViewSet(ModelViewSet):

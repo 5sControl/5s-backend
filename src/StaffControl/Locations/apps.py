@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class EmployeesConfig(AppConfig):
+class LocationsConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
-    name = "apps.StaffControl.Employees"
+    name = "src.StaffControl.Locations"

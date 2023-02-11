@@ -1,5 +1,5 @@
 from rest_framework.routers import DefaultRouter
-from apps.SafetyControl.Safety.views import ActionViewSet
+from src.SafetyControl.Safety.views import ActionViewSet
 
 
 router = DefaultRouter()

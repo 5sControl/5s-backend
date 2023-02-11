@@ -3,8 +3,8 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from apps.StaffControl.Locations.models import Camera, Gate, Location
-from apps.StaffControl.Locations.serializers import (
+from src.StaffControl.Locations.models import Camera, Gate, Location
+from src.StaffControl.Locations.serializers import (
     CameraSerializer,
     GateSerializer,
     LocationSerializer,
