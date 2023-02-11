@@ -32,10 +32,10 @@ INSTALLED_APPS = [
     "djoser",
     "corsheaders",
     "drf_yasg",
-    "apps.Employees.apps.EmployeesConfig",
-    "apps.Locations.apps.LocationsConfig",
-    "apps.History.apps.HistoryConfig",
-    "apps.Safety.apps.SafetyConfig",
+    "apps.StaffControl.Employees.apps.EmployeesConfig",
+    "apps.StaffControl.Locations.apps.LocationsConfig",
+    "apps.StaffControl.History.apps.HistoryConfig",
+    "apps.SafetyControl.Safety.apps.SafetyConfig",
 ]
 
 MIDDLEWARE = [
