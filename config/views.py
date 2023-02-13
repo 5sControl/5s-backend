@@ -35,8 +35,7 @@ class GetHost(APIView):
 
         output = subprocess.run(["hostname", "-I"], stdout=subprocess.PIPE)
         output = output.stdout.decode("utf-8")
-        ips = output.strip().split()
-        host_ip = next((ip for ip in ips if ip.startswith("192.168")), None)
+        host_ip = output.split()[0]
         return Response({"host_ip": host_ip})
 
 
