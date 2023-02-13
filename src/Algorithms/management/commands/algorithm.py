@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from src.Algorithms.models import Algorithms
+from src.Algorithms.models import Algorithm
 
 
 class Command(BaseCommand):
@@ -23,7 +23,7 @@ class Command(BaseCommand):
 
     def create_algorithms(self):
         for algorithm in self.AlLGORITHMS:
-            algorithms = Algorithms.objects.create(name=algorithm)
+            algorithms = Algorithm.objects.create(name=algorithm)
 
             algorithms.save()
             print(f"[INFO] algorithms {algorithm} was successfully created")
