@@ -1,9 +1,9 @@
 from django.http import HttpResponse
 from rest_framework import generics
 from rest_framework.views import APIView
-from apps.Employees.serializers import RegisterSerializer, UserSerializer
+from src.StaffControl.Employees.serializers import RegisterSerializer, UserSerializer
 from rest_framework.response import Response
-import os
+import subprocess
 
 
 class RegisterView(generics.GenericAPIView):
@@ -25,13 +25,19 @@ class RegisterView(generics.GenericAPIView):
         )
 
 
-class GetIp(APIView):
+class GetHost(APIView):
     """Get Ip address of local machine."""
 
     def get(self, request, *args, **kwargs):
-        host_ip = os.environ.get("HOST_IP")
-        camera_url = os.environ.get("CAMERA_URL")
-        return Response({"host_ip": host_ip, "camera_url": camera_url})
+        """
+        Get Ip address of net faces and return which start on 192.168.
+        """
+
+        output = subprocess.run(["hostname", "-I"], stdout=subprocess.PIPE)
+        output = output.stdout.decode("utf-8")
+        ips = output.strip().split()
+        host_ip = next((ip for ip in ips if ip.startswith("192.168")), None)
+        return Response({"host_ip": host_ip})
 
 
 def setcookie(request):
