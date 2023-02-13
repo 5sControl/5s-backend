@@ -34,14 +34,14 @@ def create_camera_link():
     """
     Create link for each camera
 
-    example -> rtsp://admin:admin@192.168.1.1/h264_stream
+    example -> http://admin-onvif:admin@192.168.1.160/onvif-http/snapshot?Profile_1
     """
     cameras_info = Camera.objects.all()
     result = []
     for camera_info in cameras_info:
         camera_data = {
             "ip": camera_info.id,
-            "link": f"rtsp://{camera_info.username}:{camera_info.password}@{camera_info.id}/h264_stream",
+            "link": f"http://{camera_info.username}:{camera_info.password}@{camera_info.id}/onvif-http/snapshot?Profile_1",
         }
         result.append(camera_data)
 
