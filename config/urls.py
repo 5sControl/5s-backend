@@ -3,7 +3,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 from src.router import routes
-from .views import RegisterView, GetHost, setcookie, getcookie
+from .views import RegisterView, setcookie, getcookie
 
 # auth/register
 urlpatterns = [
@@ -16,7 +16,6 @@ urlpatterns = [
 urlpatterns += [
     path("admin/", admin.site.urls),
     path("api/", include(routes)),
-    path("get_host/", GetHost.as_view()),
 ]
 # config routes
 urlpatterns += [
