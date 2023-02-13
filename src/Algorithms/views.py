@@ -22,3 +22,6 @@ class AlgorithmUpdateView(generics.UpdateAPIView):
 class CameraAlgorithmCreateView(generics.CreateAPIView):
     queryset = CameraAlgorithm.objects.all()
     serializer_class = CameraAlgorithmSerializer
+
+    def perform_create(self, serializer):
+        serializer.save()
