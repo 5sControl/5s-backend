@@ -10,13 +10,13 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.AlLGORITHMS = [
-            "Staff Control",
-            "Idle Control",
-            "Tool Control",
-            "Safety Control: Ear protection",
-            "Safety Control: Head protection",
-            "Safety Control: Hand protection",
-            "Safety Control: Reflective jacket",
+            "Staff_Control",
+            "Idle_Control",
+            "Tool_Control",
+            "Safety_Control_Ear_protection",
+            "Safety_Control_Head_protection",
+            "Safety_Control_Hand_protection",
+            "Safety_Control_Reflective_jacket",
         ]
         self.create_algorithms()
         print("[INFO] Success!")
