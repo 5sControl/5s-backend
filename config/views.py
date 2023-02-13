@@ -35,8 +35,12 @@ class GetHost(APIView):
 
         output = subprocess.run(["hostname", "-I"], stdout=subprocess.PIPE)
         output = output.stdout.decode("utf-8")
-        host_ip = output.split()[0]
-        return Response({"host_ip": host_ip})
+        print(output)
+        for host in output:
+            if host.startswith("192.168"):
+                return Response({"host_ip": host})
+            else:
+                pass
 
 
 def setcookie(request):
