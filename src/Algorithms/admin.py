@@ -10,13 +10,14 @@ class AlgorithmAdmin(admin.ModelAdmin):
         "name",
         "is_available",
     )
-    list_filter = ("is_available", "cameras")
+    list_filter = ("is_available",)
 
 
 @admin.register(CameraAlgorithm)
 class CameraAlgorithmAdmin(admin.ModelAdmin):
     list_display = (
         "id",
+        "algorithm",
         "camera_id",
     )
     list_filter = ("camera_id",)
