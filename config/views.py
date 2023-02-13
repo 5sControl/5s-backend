@@ -37,6 +37,7 @@ class GetHost(APIView):
         for ifaceName in interfaces():
             addresses = [i['addr'] for i in ifaddresses(ifaceName).setdefault(AF_INET, [{'addr':'No IP addr'}] )]
             host_ip = (' '.join(addresses))
+            print(host_ip)
             if host_ip.startswith("192.168"):
                 return Response({"host_ip": host_ip})
 
