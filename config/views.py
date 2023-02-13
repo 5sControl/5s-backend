@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from src.StaffControl.Employees.serializers import RegisterSerializer, UserSerializer
 from rest_framework.response import Response
 import subprocess
+from netifaces import interfaces, ifaddresses, AF_INET
 
 
 class RegisterView(generics.GenericAPIView):
@@ -33,14 +34,12 @@ class GetHost(APIView):
         Get Ip address of net faces and return which start on 192.168.
         """
 
-        output = subprocess.run(["hostname", "-I"], stdout=subprocess.PIPE)
-        output = output.stdout.decode("utf-8")
-        print(output)
-        for host in output:
-            if host.startswith("192.168"):
-                return Response({"host_ip": host})
-            else:
-                pass
+        for ifaceName in interfaces():
+            addresses = [i['addr'] for i in ifaddresses(ifaceName).setdefault(AF_INET, [{'addr':'No IP addr'}] )]
+            host_ip = (' '.join(addresses))
+            if host_ip.startswith("192.168"):
+                return Response({"host_ip": host_ip})
+
 
 
 def setcookie(request):
