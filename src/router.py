@@ -20,6 +20,7 @@ schema_view = get_schema_view(
 routes = [
     path("staff_control/", include("src.StaffControl.staffcontrol_router")),
     path("safety_control/", include("src.SafetyControl.safetycontrol_router")),
+    path("algorithms/", include("src.Algorithms.urls")),
     path("machine_control/", include("src.MachineControl.urls")),
     path(
         "swagger/",
