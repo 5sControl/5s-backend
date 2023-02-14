@@ -10,6 +10,7 @@ class ActionViewSet(viewsets.ModelViewSet):
     serializer_class = IdleControlSerializers
 
     def create(self, request, *args, **kwargs):
+        print(request.data)
         camera = request.data.get('camera')
         start_tracking = request.data.get('start_tracking')
         stop_tracking = request.data.get('stop_tracking')
