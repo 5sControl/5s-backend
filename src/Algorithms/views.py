@@ -79,14 +79,7 @@ class AlgorithmStatusView(generics.GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         algorithms = Algorithm.objects.all()
-        available_algorithms = list(
-            algorithms.filter(is_available=True).values_list("name", flat=True)
-        )
-        unavailable_algorithms = list(
-            algorithms.filter(is_available=False).values_list("name", flat=True)
-        )
-
-        return Response(
-            {"true": available_algorithms, "false": unavailable_algorithms},
-            status=status.HTTP_200_OK,
-        )
+        algorithm_data = {
+            algorithm.name: algorithm.is_available for algorithm in algorithms
+        }
+        return Response(algorithm_data, status=status.HTTP_200_OK)
