@@ -158,27 +158,4 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 }
-CSRF_TRUSTED_ORIGINS = [
-    "http://0.0.0.0:8000",
-    "http://0.0.0.0:8080",
-    "http://0.0.0.0:8008",
-    "http://134.17.26.206:8000",
-    "http://134.17.26.206:8008",
-    "http://134.17.26.206:8080",
-    "https://a91c-134-17-26-206.eu.ngrok.io",
-]
-
-CORS_ORIGIN_WHITELIST = [
-    "http://0.0.0.0:8000",
-    "http://0.0.0.0:8080",
-    "http://0.0.0.0:8008",
-    "http://localhost:8080",
-    "http://localhost:8081",
-    "http://127.0.0.1:8000",
-    "http://127.0.0.1:4200",
-    "http://localhost:1313",
-    "http://localhost:4200",
-    "http://134.17.26.206:8000",
-    "http://134.17.26.206:8008",
-    "http://134.17.26.206:8080",
-]
+CSRF_TRUSTED_ORIGINS = ["http://*", "https://*"]
