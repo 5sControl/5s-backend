@@ -23,7 +23,9 @@ class Command(BaseCommand):
 
     def create_algorithms(self):
         for algorithm in self.AlLGORITHMS:
-            algorithms = Algorithm.objects.create(name=algorithm)
-
-            algorithms.save()
+            if Algorithm.objects.filter(name=algorithm).first():
+                continue
+            else:
+                algorithms = Algorithm.objects.create(name=algorithm)
+                algorithms.save()
             print(f"[INFO] algorithms {algorithm} was successfully created")
