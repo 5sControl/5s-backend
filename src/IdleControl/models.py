@@ -8,5 +8,5 @@ class Actions(models.Model):
 
 
 class Photos(models.Model):
-    photo = models.ImageField(upload_to='Photo action')
-    idle_id = models.ForeignKey(Actions, on_delete=models.CASCADE, blank=True, null=True)
+    image = models.CharField(null=False, blank=False, max_length=250)
+    idle_id = models.ForeignKey(Actions, on_delete=models.CASCADE, blank=False, null=False)
