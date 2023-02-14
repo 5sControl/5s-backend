@@ -80,3 +80,14 @@ class CameraAlgorithmCreateView(generics.CreateAPIView):
             return Response(
                 {"message": "Camera Algorithm records created successfully"}
             )
+
+
+class AlgorithmStatusView(generics.GenericAPIView):
+    serializer_class = AlgorithmStatusSerializer
+
+    def get(self, request, *args, **kwargs):
+        algorithms = Algorithm.objects.all()
+        algorithm_data = {
+            algorithm.name: algorithm.is_available for algorithm in algorithms
+        }
+        return Response(algorithm_data, status=status.HTTP_200_OK)

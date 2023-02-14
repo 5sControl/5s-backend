@@ -2,7 +2,7 @@ from django.urls import path
 from .views import (
     AlgorithmUpdateView,
     CameraAlgorithmCreateView,
-    CameraAlgorithmCreateView,
+    AlgorithmStatusView,
 )
 
 urlpatterns = [
@@ -10,7 +10,7 @@ urlpatterns = [
     path("create/", CameraAlgorithmCreateView.as_view(), name="algorithm-create"),
     path(
         "available/",
-        CameraAlgorithmCreateView.as_view(),
+        AlgorithmStatusView.as_view(),
         name="algorithms-available",
     ),
 ]
