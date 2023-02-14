@@ -1,5 +1,6 @@
 from rest_framework import generics
 from rest_framework.response import Response
+from rest_framework import status
 
 from .models import Algorithm, CameraAlgorithm
 from .serializers import CameraAlgorithmSerializer, AlgorithmUpdateSerializer
@@ -7,6 +8,7 @@ from .serializers import CameraAlgorithmSerializer, AlgorithmUpdateSerializer
 from src.StaffControl.Locations.models import Camera
 
 from django.core.exceptions import ValidationError
+from rest_framework.exceptions import NotFound
 
 
 class AlgorithmUpdateView(generics.UpdateAPIView):
@@ -15,9 +17,15 @@ class AlgorithmUpdateView(generics.UpdateAPIView):
 
     def update(self, request, *args, **kwargs):
         received_data = request.data
-        for key, value in received_data.items():
-            algorithm = Algorithm.objects.get(id=key)
-            algorithm.is_available = value
+        for algorithm_name, is_available in received_data.items():
+            try:
+                algorithm = Algorithm.objects.get(name=algorithm_name)
+            except Algorithm.DoesNotExist:
+                raise NotFound(
+                    detail=f"Algorithm with name '{algorithm_name}' not found"
+                )
+
+            algorithm.is_available = is_available
             algorithm.save()
 
         return Response({"message": "Algorithm status updated"})
@@ -28,21 +36,25 @@ class CameraAlgorithmCreateView(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         data = request.data
+        errors = []
+
         for algorithm_name, camera_ips in data.items():
             algorithm = Algorithm.objects.filter(name=algorithm_name).first()
             if not algorithm:
-                raise ValidationError(
-                    {"error": f"Algorithm with name {algorithm_name} does not exists"}
-                )
+                errors.append(f"Algorithm with name {algorithm_name} does not exist")
+                continue
+
+            if not algorithm.is_available:
+                errors.append(f"Algorithm with name {algorithm_name} is not available")
+                continue
 
             cameras = Camera.objects.filter(id__in=camera_ips)
             if not cameras.exists():
                 missing_ips = set(camera_ips) - set(
                     cameras.values_list("id", flat=True)
                 )
-                raise ValidationError(
-                    {"error": f"Cameras with ip {', '.join(missing_ips)} do not exist"}
-                )
+                errors.append(f"Cameras with ip {', '.join(missing_ips)} do not exist")
+                continue
 
             CameraAlgorithm.objects.bulk_create(
                 [
@@ -51,4 +63,9 @@ class CameraAlgorithmCreateView(generics.CreateAPIView):
                 ]
             )
 
-        return Response({"message": "Camera Algorithm records created successfully"})
+        if errors:
+            return Response({"errors": errors}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(
+                {"message": "Camera Algorithm records created successfully"}
+            )
