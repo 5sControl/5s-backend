@@ -2,9 +2,9 @@ from django.db import models
 
 
 class Actions(models.Model):
-    camera = models.TextField(null=True, blank=True, max_length=50, related_name='ip cameras')
-    start_tracking = models.TextField(null=True, blank=True, max_length=50, related_name='date time start tracking')
-    stop_tracking = models.TextField(null=True, blank=True, max_length=50, related_name='date time stop tracking')
+    camera = models.CharField(null=True, blank=True, max_length=50)
+    start_tracking = models.CharField(null=True, blank=True, max_length=50)
+    stop_tracking = models.CharField(null=True, blank=True, max_length=50)
 
 
 class Photos(models.Model):
