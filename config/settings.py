@@ -165,7 +165,6 @@ CSRF_TRUSTED_ORIGINS = [
     "http://134.17.26.206:8000",
     "http://134.17.26.206:8008",
     "http://134.17.26.206:8080",
-    "https://a91c-134-17-26-206.eu.ngrok.io/",
 ]
 
 CORS_ORIGIN_WHITELIST = [
@@ -181,5 +180,4 @@ CORS_ORIGIN_WHITELIST = [
     "http://134.17.26.206:8000",
     "http://134.17.26.206:8008",
     "http://134.17.26.206:8080",
-    "https://a91c-134-17-26-206.eu.ngrok.io/",
 ]
