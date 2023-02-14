@@ -3,11 +3,14 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from .models import Algorithm, CameraAlgorithm
-from .serializers import CameraAlgorithmSerializer, AlgorithmUpdateSerializer
+from .serializers import (
+    CameraAlgorithmSerializer,
+    AlgorithmUpdateSerializer,
+    AlgorithmStatusSerializer,
+)
 
 from src.StaffControl.Locations.models import Camera
 
-from django.core.exceptions import ValidationError
 from rest_framework.exceptions import NotFound
 
 
@@ -69,3 +72,21 @@ class CameraAlgorithmCreateView(generics.CreateAPIView):
             return Response(
                 {"message": "Camera Algorithm records created successfully"}
             )
+
+
+class AlgorithmStatusView(generics.GenericAPIView):
+    serializer_class = AlgorithmStatusSerializer
+
+    def get(self, request, *args, **kwargs):
+        algorithms = Algorithm.objects.all()
+        available_algorithms = list(
+            algorithms.filter(is_available=True).values_list("name", flat=True)
+        )
+        unavailable_algorithms = list(
+            algorithms.filter(is_available=False).values_list("name", flat=True)
+        )
+
+        return Response(
+            {"true": available_algorithms, "false": unavailable_algorithms},
+            status=status.HTTP_200_OK,
+        )
