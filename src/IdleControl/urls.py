@@ -1,14 +1,14 @@
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
-from src.IdleControl.views import ActionViewSet, PhotoViewSet
+from src.IdleControl.views import ActionViewSet, PhotoViewSet, ActionsWithPhotos
 
 
-router_machine = DefaultRouter()
+router_idle = DefaultRouter()
 
-router_machine.register(r"action", ActionViewSet, basename="actions")
-router_machine.register(r'photos', PhotoViewSet)
+router_idle.register(r"action", ActionViewSet, basename="actions")
+router_idle.register(r'photos', PhotoViewSet)
 
 urlpatterns = [
-    path('action-with-photos/', ActionViewSet.as_view({'get': 'list'}), name='action-with-photos'),
-    path('', include(router_machine.urls)),
+    path('action-with-photos/', ActionsWithPhotos.as_view()),
+    path('', include(router_idle.urls)),
 ]
