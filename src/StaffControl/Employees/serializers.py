@@ -68,11 +68,11 @@ class EmployeeSerializer(serializers.ModelSerializer):
             "last_name",
             "dataset",
             "date_joined",
-            "image1",
-            "image2",
-            "image3",
-            "image4",
-            "image5",
+            "image_below",
+            "image_above",
+            "image_center",
+            "image_left",
+            "image_right",
             "location",
             "status",
         ]
@@ -106,11 +106,11 @@ class EmployeeSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.last_name = validated_data["last_name"]
         instance.first_name = validated_data["first_name"]
-        instance.image1 = validated_data["image1"]
-        instance.image2 = validated_data["image2"]
-        instance.image3 = validated_data["image3"]
-        instance.image4 = validated_data["image4"]
-        instance.image5 = validated_data["image5"]
+        instance.image_below = validated_data["image_below"]
+        instance.image_above = validated_data["image_above"]
+        instance.image_center = validated_data["image_center"]
+        instance.image_left = validated_data["image_left"]
+        instance.image_right = validated_data["image_right"]
         instance.status = validated_data["status"]
         instance.dataset = validated_data["dataset"]
         instance.location = validated_data["location"]
@@ -146,4 +146,4 @@ class PeopleLocationsSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        exclude = ("image1", "image2", "image3", "image4", "image5")
+        exclude = ("date_joined", "image_below", "image_above", "image_center", "image_left", "image_right",)
