@@ -3,8 +3,8 @@ from django.db import models
 
 class Actions(models.Model):
     camera = models.CharField(null=False, blank=False, max_length=50, default="now ip")
-    start_tracking = models.DateTimeField(null=False, blank=False, max_length=50, default=None)
-    stop_tracking = models.DateTimeField(null=False, blank=False, max_length=50, default=None)
+    start_tracking = models.CharField(null=False, blank=False, max_length=150, default=None)
+    stop_tracking = models.CharField(null=False, blank=False, max_length=150, default=None)
 
     def __str__(self):
         return f"{self.camera}"
