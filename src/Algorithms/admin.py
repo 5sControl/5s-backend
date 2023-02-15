@@ -19,5 +19,7 @@ class CameraAlgorithmAdmin(admin.ModelAdmin):
         "id",
         "algorithm",
         "camera_id",
+        "is_active",
+        "process_id",
     )
-    list_filter = ("camera_id",)
+    list_filter = ("camera_id", "process_id", "is_active")
