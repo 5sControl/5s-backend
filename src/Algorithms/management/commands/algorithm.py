@@ -13,6 +13,7 @@ class Command(BaseCommand):
             "Staff_Control",
             "Idle_Control",
             "Tool_Control",
+            "Machine_Control",
             "Safety_Control_Ear_protection",
             "Safety_Control_Head_protection",
             "Safety_Control_Hand_protection",
