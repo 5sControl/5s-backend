@@ -10,7 +10,7 @@ from src.StaffControl.Locations.serializers import (
     LocationSerializer,
 )
 
-from .service import save_camera, create_camera_link
+from .service import link_generator
 
 
 class CameraViewSet(ModelViewSet):
@@ -43,7 +43,7 @@ class SaveCameraDetailsView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        result = save_camera(request.data)
+        result = link_generator.create_camera(request.data)
         return Response(result)
 
 
@@ -55,5 +55,5 @@ class GetCamerasLink(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        result = create_camera_link()
+        result = link_generator.get_camera_http_link()
         return Response({"result": result})
