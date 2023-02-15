@@ -1,6 +1,6 @@
 from rest_framework import generics, viewsets
 from .models import Actions, Photos
-from datetime import datetime
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework import status
 from rest_framework.views import APIView
@@ -9,8 +9,9 @@ from .serializers import IdleControlSerializers, PhotoSerializers
 
 
 class ActionViewSet(viewsets.ModelViewSet):
-    queryset = Actions.objects.all()
+    queryset = Actions.objects.all().order_by("-id")
     serializer_class = IdleControlSerializers
+    # permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         raise MethodNotAllowed("POST")
@@ -20,9 +21,6 @@ class ActionViewSet(viewsets.ModelViewSet):
 
     def partial_update(self, request, *args, **kwargs):
         raise MethodNotAllowed("PATCH")
-
-    def destroy(self, request, *args, **kwargs):
-        raise MethodNotAllowed("DELETE")
 
 
 class ActionsWithPhotos(APIView):
