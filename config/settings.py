@@ -158,4 +158,9 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 }
-CSRF_TRUSTED_ORIGINS = ["http://*", "https://*"]
+CSRF_TRUSTED_ORIGINS = [
+    "http://*",
+    "https://*",
+    "https://11e8-134-17-26-206.eu.ngrok.io/",
+]
+CORS_ORIGIN_ALLOW_ALL = True
