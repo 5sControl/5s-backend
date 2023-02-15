@@ -7,19 +7,19 @@ class Recognition:
         """
         This function takes an image and returns a list of face datasets in the image.
         """
-
+        list_images = ["", "image_below", "image_above", "image_center", "image_left", "image_right"]
         dataset = []
         for i in range(1, 6):
             face_img = face_recognition.load_image_file(
-                f"images/{validated_data[f'image{i}']}"
+                f"images/{validated_data[f'{list_images[i]}']}"
             )
             if i == 5:
                 face_img1 = face_recognition.load_image_file(
-                    f"images/{validated_data[f'image{1}']}"
+                    f"images/{validated_data[f'{list_images[1]}']}"
                 )
             else:
                 face_img1 = face_recognition.load_image_file(
-                    f"images/{validated_data[f'image{i+1}']}"
+                    f"images/{validated_data[f'{list_images[i + 1]}']}"
                 )
 
             face_encoding = face_recognition.face_encodings(face_img)[0]
@@ -48,9 +48,11 @@ class Recognition:
 
 
 def face_rec(validated_data):
+    """The function draws a frame around the face"""
+    list_images = ["", "image_below", "image_above", "image_center", "image_left", "image_right"]
     for i in range(1, 6):
         face_img = face_recognition.load_image_file(
-            f"images/{validated_data[f'image{i}']}"
+            f"images/{validated_data[f'{list_images[i]}']}"
         )
         face_location = face_recognition.face_locations(face_img)
 
@@ -63,5 +65,5 @@ def face_rec(validated_data):
             )
 
         del draw1
-        pil_img.save(f"images/{validated_data[f'image{i}']}")
+        pil_img.save(f"images/{validated_data[f'{list_images[i]}']}")
         # return name_image

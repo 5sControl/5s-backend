@@ -25,27 +25,27 @@ class EmployeeAdmin(admin.ModelAdmin):
 
     def image_tag1(self, obj):
         return mark_safe(
-            f'<img src="/images/{obj.image1}" width="150px" height="120px" />'
+            f'<img src="/images/{obj.image_below}" width="150px" height="120px" />'
         )
 
     def image_tag2(self, obj):
         return mark_safe(
-            f'<img src="/images/{obj.image2}" width="150px" height="120px" />'
+            f'<img src="/images/{obj.image_above}" width="150px" height="120px" />'
         )
 
     def image_tag3(self, obj):
         return mark_safe(
-            f'<img src="/images/{obj.image3}" width="150px" height="120px" />'
+            f'<img src="/images/{obj.image_center}" width="150px" height="120px" />'
         )
 
     def image_tag4(self, obj):
         return mark_safe(
-            f'<img src="/images/{obj.image4}" width="150px" height="120px" />'
+            f'<img src="/images/{obj.image_left}" width="150px" height="120px" />'
         )
 
     def image_tag5(self, obj):
         return mark_safe(
-            f'<img src="/images/{obj.image5}" width="150px" height="120px" />'
+            f'<img src="/images/{obj.image_right}" width="150px" height="120px" />'
         )
 
     def image_preview(self, obj):

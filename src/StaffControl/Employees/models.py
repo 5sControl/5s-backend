@@ -14,19 +14,19 @@ class CustomUser(models.Model):
         default="Unknown", max_length=40, blank=True, null=True
     )
     dataset = models.TextField(verbose_name="Date Set user", blank=True, null=True)
-    image1 = models.ImageField(
+    image_below = models.ImageField(
         upload_to="", verbose_name="photo below", blank=True, null=True
     )
-    image2 = models.ImageField(
+    image_above = models.ImageField(
         upload_to="", verbose_name="photo from above", blank=True, null=True
     )
-    image3 = models.ImageField(
+    image_center = models.ImageField(
         upload_to="", verbose_name="photo in the center", blank=True, null=True
     )
-    image4 = models.ImageField(
+    image_left = models.ImageField(
         upload_to="", verbose_name="photo on the left", blank=True, null=True
     )
-    image5 = models.ImageField(
+    image_right = models.ImageField(
         upload_to="", verbose_name="photo on the right", blank=True, null=True
     )
     location = models.ForeignKey(
@@ -44,9 +44,9 @@ class CustomUser(models.Model):
 
     @property
     def image_preview(self):
-        if self.image3:
+        if self.image_center:
             return mark_safe(
-                '<img src="{}" width="450" height="300" />'.format(self.image3.url)
+                '<img src="{}" width="450" height="300" />'.format(self.image_center.url)
             )
         return ""
 
