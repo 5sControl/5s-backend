@@ -1,16 +1,20 @@
 from django.urls import path
 from .views import (
-    AlgorithmUpdateView,
-    CameraAlgorithmCreateView,
-    AlgorithmStatusView,
+    PutAlgorithmUpdateApiView,
+    StartProcessingYoloApiView,
+    GetAlgorithmStatusApiView,
 )
 
 urlpatterns = [
-    path("update/", AlgorithmUpdateView.as_view(), name="algorithm-update"),
-    path("create/", CameraAlgorithmCreateView.as_view(), name="algorithm-create"),
+    path("update/", PutAlgorithmUpdateApiView.as_view(), name="algorithm-update"),
+    path(
+        "create_process/",
+        StartProcessingYoloApiView.as_view(),
+        name="algorithm-create",
+    ),
     path(
         "available/",
-        AlgorithmStatusView.as_view(),
+        GetAlgorithmStatusApiView.as_view(),
         name="algorithms-available",
     ),
 ]
