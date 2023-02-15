@@ -8,5 +8,9 @@ class MachineControlViewSet(ModelViewSet):
     """List of all Actions on MachineControl"""
 
     serializer_class = MachineControlSerializers
-    queryset = MachineAction.objects.all()
-    # permission_classes = [IsAuthenticated]
+    queryset = MachineAction.objects.all().order_by("-id")
+
+    # def get_permissions(self):
+    #     if self.request.method != "POST":
+    #         return [IsAuthenticated()]
+    #     return []
