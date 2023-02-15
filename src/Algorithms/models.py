@@ -22,3 +22,5 @@ class CameraAlgorithm(models.Model):
 
     algorithm = models.ForeignKey(Algorithm, on_delete=models.CASCADE)
     camera_id = models.ForeignKey(Camera, on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=True)
+    process_id = models.PositiveIntegerField(blank=True, null=True)
