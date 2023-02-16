@@ -70,11 +70,12 @@ class CameraLinkGenerator:
         """
         Create a rtsp link for a given camera
         """
-        cameras_info = Camera.objects.filter(id=camera.id).first()
-
-        camera_rtsp_link = f"rtsp://{cameras_info.username}:{cameras_info.password}@{cameras_info.id}/h264_stream"
-
-        return camera_rtsp_link
+        cameras_info = Camera.objects.filter(id=camera["ip"]).first()
+        if cameras_info:
+            camera_rtsp_link = f"rtsp://{cameras_info.username}:{cameras_info.password}@{cameras_info.id}/h264_stream"
+            return {"status": True, "camera_link": camera_rtsp_link}
+        else:
+            return {"status": False, "camera_link": None}
 
 
 link_generator = CameraLinkGenerator()
