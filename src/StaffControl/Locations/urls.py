@@ -5,6 +5,7 @@ from src.StaffControl.Locations.views import (
     LocationViewSet,
     SaveCameraDetailsView,
     GetCamerasLink,
+    GetCameraImagesAPIView,
 )
 from django.urls import path, include
 
@@ -17,6 +18,7 @@ router.register(r"location", LocationViewSet, basename="locations")
 urlpatterns = [
     path("post_camera/", SaveCameraDetailsView.as_view()),
     path("get_camera_links/", GetCamerasLink.as_view()),
+    path("get_camera_images/", GetCameraImagesAPIView.as_view()),
 ]
 
 urlpatterns += router.urls
