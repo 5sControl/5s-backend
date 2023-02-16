@@ -7,5 +7,5 @@ class MachineControlSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = MachineAction
-        fields = ["id", "camera", "photo_start", "photo_stop", "start_tracking", "stop_tracking"]
+        fields = ["id", "camera", "photo_start", "photo_stop", "start_tracking", "stop_tracking", "date_created"]
 
