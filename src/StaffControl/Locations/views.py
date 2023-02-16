@@ -1,3 +1,6 @@
+import cv2
+import base64
+
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
@@ -57,3 +60,29 @@ class GetCamerasLink(APIView):
     def get(self, request, *args, **kwargs):
         result = link_generator.get_camera_http_link()
         return Response({"result": result})
+
+
+class GetCameraImagesAPIView(APIView):
+    """
+    Get all rtsp cameras link and return image from each camera
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        result = link_generator.get_camera_rtsp_link()
+        frames = {}
+        for camera_link in result:
+            # FIXME: Get correct password from client. Delete replace
+            cap = cv2.VideoCapture(
+                camera_link["link"].replace(":admin@", ":just4Taqtile@")
+            )
+
+            ret, frame = cap.read()
+            if ret:
+                retval, buffer = cv2.imencode(".jpg", frame)
+                encoded_image = base64.b64encode(buffer).decode("utf-8")
+
+                frames[camera_link["ip"]] = encoded_image
+
+        return Response(frames)
