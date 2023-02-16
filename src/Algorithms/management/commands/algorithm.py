@@ -9,24 +9,43 @@ class Command(BaseCommand):
     """
 
     def handle(self, *args, **options):
-        self.AlLGORITHMS = [
-            "Staff_Control",
-            "Idle_Control",
-            "Tool_Control",
-            "Machine_Control",
-            "Safety_Control_Ear_protection",
-            "Safety_Control_Head_protection",
-            "Safety_Control_Hand_protection",
-            "Safety_Control_Reflective_jacket",
+        self.ALGORITHMS = [
+            {"name": "Staff_Control", "is_available": False},
+            {"name": "Idle_Control", "is_available": True},
+            {"name": "Tool_Control", "is_available": False},
+            {"name": "Machine_Control", "is_available": True},
+            {"name": "Safety_Control_Ear_protection", "is_available": True},
+            {"name": "Safety_Control_Head_protection", "is_available": False},
+            {"name": "Safety_Control_Hand_protection", "is_available": False},
+            {"name": "Safety_Control_Reflective_jacket", "is_available": False},
         ]
+        self.algorithms_was_exist = 0
+        self.algorithms_was_created = 0
         self.create_algorithms()
-        print("[INFO] Success!")
+        self.stdout.write(
+            self.style.SUCCESS(f"{self.algorithms_was_exist} - was exist")
+        )
+        self.stdout.write(
+            self.style.SUCCESS(f"{self.algorithms_was_created} - was created")
+        )
 
     def create_algorithms(self):
-        for algorithm in self.AlLGORITHMS:
-            if Algorithm.objects.filter(name=algorithm).first():
+        for algorithms_data in self.ALGORITHMS:
+            if Algorithm.objects.filter(name=algorithms_data["name"]).first():
+                self.stdout.write(
+                    self.style.WARNING(f"algorithms {algorithms_data['name']} exist")
+                )
+                self.algorithms_was_exist += 1
                 continue
             else:
-                algorithms = Algorithm.objects.create(name=algorithm)
+                algorithms = Algorithm.objects.create(
+                    name=algorithms_data["name"],
+                    is_available=algorithms_data["is_available"],
+                )
                 algorithms.save()
-            print(f"[INFO] algorithms {algorithm} was successfully created")
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"algorithms {algorithms_data['name']} was successfully created"
+                )
+            )
+            self.algorithms_was_created += 1
