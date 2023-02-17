@@ -3,9 +3,8 @@ from src.StaffControl.Locations.views import (
     CameraViewSet,
     GateViewSet,
     LocationViewSet,
-    SaveCameraDetailsAPIView,
+    PostCameraAPIView,
     GetHttpCamerasLinkAPIView,
-    GetRtspCamerasLinkAPIView,
     GetRtspCamerasLinkByIpAPIView,
 )
 from django.urls import path, include
@@ -17,9 +16,8 @@ router.register(r"gate", GateViewSet, basename="gates")
 router.register(r"location", LocationViewSet, basename="locations")
 
 urlpatterns = [
-    path("post_camera/", SaveCameraDetailsAPIView.as_view()),
+    path("post_camera/", PostCameraAPIView.as_view()),
     path("get_camera_http_links/", GetHttpCamerasLinkAPIView.as_view()),
-    path("get_camera_rtsp_links/", GetRtspCamerasLinkAPIView.as_view()),
     path("get_camera_rtsp_by_ip_links/", GetRtspCamerasLinkByIpAPIView.as_view()),
 ]
 
