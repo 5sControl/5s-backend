@@ -10,7 +10,7 @@ router_machine.register(r"action", MachineControlViewSet, basename="actions")
 
 
 urlpatterns = [
-    path('machine_actions/', MachineActionListView.as_view(), name='machine_action_list'),
+    path('machine_actions/<str:date>/', MachineActionListView.as_view(), name='machine_action_list'),
 ]
 
 urlpatterns += router_machine.urls
