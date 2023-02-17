@@ -1,4 +1,5 @@
 from django.core.exceptions import ValidationError
+import requests
 
 from .models import Camera
 
@@ -6,19 +7,26 @@ from .models import Camera
 class CameraLinkGenerator:
     """"""
 
-    def create_camera(self, data):
+    def create_camera(self, camera_info):
         """Save the camera with extra information"""
-
-        for camera_info in data["cameras_info"]:
-            if camera_info["ip"]:
-                ...
-            camera = Camera(
-                id=camera_info["ip"],
-                name=camera_info["name"],
-                description=camera_info["description"],
+        if camera_info["ip"]:
+            rtsp_link = self.get_camera_rtsp_link(
+                ip=camera_info["ip"],
                 username=camera_info["username"],
                 password=camera_info["password"],
             )
+            camera_data = {"link": rtsp_link, "ip": camera_info["ip"]}
+            request = requests.post(
+                f"{camera_info['url']}find_camera_image",
+                params=camera_data,
+            )
+            print(request.text)
+            if request.json()["status"]:
+                camera = Camera(
+                    id=camera_info["ip"],
+                    username=camera_info["username"],
+                    password=camera_info["password"],
+                )
             try:
                 camera.full_clean()
                 camera.save()
@@ -29,8 +37,11 @@ class CameraLinkGenerator:
             except Exception as e:
                 return {"status": "failure", "error": f"Exception: {str(e)}"}
             else:
-                print(f'Camera with id {camera_info["ip"]} was successfully saved')
-        return {"status": "success"}
+                return {
+                    "message": f'Camera with id {camera_info["ip"]} was successfully saved'
+                }
+        else:
+            return {"message": "ip was not found"}
 
     def get_camera_http_link(self):
         """
@@ -66,11 +77,18 @@ class CameraLinkGenerator:
 
         return result
 
-    def get_camera_rtsp_link_by_camera(self, camera):
+    def get_camera_rtsp_link(self, ip, username, password):
+        """
+        Create link using the given camera data
+        """
+        camera_rtsp_link = f"rtsp://{username}:{password}@{ip}/h264_stream"
+        return camera_rtsp_link
+
+    def get_camera_rtsp_link_by_camera(self, camera_data):
         """
         Create a rtsp link for a given camera
         """
-        cameras_info = Camera.objects.filter(id=camera["ip"]).first()
+        cameras_info = Camera.objects.filter(id=camera_data["ip"]).first()
         if cameras_info:
             camera_rtsp_link = f"rtsp://{cameras_info.username}:{cameras_info.password}@{cameras_info.id}/h264_stream"
             return {"status": True, "camera_link": camera_rtsp_link}
