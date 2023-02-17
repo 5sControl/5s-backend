@@ -37,7 +37,7 @@ class LocationViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
 
-class SaveCameraDetailsAPIView(APIView):
+class PostCameraAPIView(APIView):
     """Write all camera information"""
 
     permission_classes = [IsAuthenticated]
@@ -56,18 +56,6 @@ class GetHttpCamerasLinkAPIView(APIView):
 
     def get(self, request, *args, **kwargs):
         result = link_generator.get_camera_http_link()
-        return Response({"result": result})
-
-
-class GetRtspCamerasLinkAPIView(APIView):
-    """
-    Collection of all informations about cameras and create a rtsp link to connect to the camera
-    """
-
-    # permission_classes = [IsAuthenticated] # FIXME:
-
-    def get(self, request, *args, **kwargs):
-        result = link_generator.get_camera_rtsp_link()
         return Response({"result": result})
 
 
