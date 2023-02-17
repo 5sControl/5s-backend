@@ -20,7 +20,6 @@ class CameraLinkGenerator:
                 f"{camera_info['url']}find_camera_image",
                 params=camera_data,
             )
-            print(request.text)
             if request.json()["status"]:
                 camera = Camera(
                     id=camera_info["ip"],
@@ -38,7 +37,9 @@ class CameraLinkGenerator:
                 return {"status": "failure", "error": f"Exception: {str(e)}"}
             else:
                 return {
-                    "message": f'Camera with id {camera_info["ip"]} was successfully saved'
+                    "status": True,
+                    "snapshot": request.json()["result"],
+                    "message": f'Camera with id {camera_info["ip"]} was successfully saved',
                 }
         else:
             return {"message": "ip was not found"}
