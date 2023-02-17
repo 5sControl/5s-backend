@@ -11,7 +11,7 @@ from .serializers import IdleControlSerializers, PhotoSerializers
 class ActionViewSet(viewsets.ModelViewSet):
     queryset = Actions.objects.all().order_by("-id")
     serializer_class = IdleControlSerializers
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         raise MethodNotAllowed("POST")
@@ -40,3 +40,5 @@ class ActionsWithPhotos(APIView):
 class PhotoViewSet(viewsets.ModelViewSet):
     queryset = Photos.objects.all()
     serializer_class = PhotoSerializers
+    permission_classes = [IsAuthenticated]
+
