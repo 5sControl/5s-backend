@@ -45,6 +45,7 @@ class CameraLinkGenerator:
                 return {
                     "status": True,
                     "snapshot": request.json()["result"],
+                    "ip": camera_info["ip"],
                     "message": f'Camera with id {camera_info["ip"]} was successfully saved',
                 }
         else:
