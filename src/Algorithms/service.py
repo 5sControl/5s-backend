@@ -97,7 +97,7 @@ class AlgorithmsService:
         response = {"camera_url": rtsp_camera_url, "algorithm": algorithm.name}
         try:
             response = requests.post(
-                url=f"{url}run",  # Send process data to YOLOv7 server
+                url=f"{url}/run",  # Send process data to YOLOv7 server
                 json=response,
             )
             response_json = response.json()
