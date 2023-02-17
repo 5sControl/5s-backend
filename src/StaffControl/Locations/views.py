@@ -64,7 +64,7 @@ class GetRtspCamerasLinkByIpAPIView(APIView):
     Return one rtsp link by camera ip
     """
 
-    # permission_classes = [IsAuthenticated] # FIXME:
+    # permission_classes = [IsAuthenticated] # FIXME
 
     def post(self, request, *args, **kwargs):
         result = link_generator.get_camera_rtsp_link_by_camera(request.data)

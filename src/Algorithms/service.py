@@ -32,7 +32,7 @@ class AlgorithmsService:
     def create_camera_algorithm(self, data):
         self.errors = []
         self.created_records = []
-
+        url = data.pop("server_url")
         for algorithm_name, camera_ips in data.items():
             if algorithm_name == None:
                 continue
@@ -56,7 +56,7 @@ class AlgorithmsService:
                 )
                 continue
 
-            new_records = self.create_new_records(algorithm, cameras)
+            new_records = self.create_new_records(algorithm, cameras, url)
             self.created_records.extend(new_records)
 
         self.log_created_records()
@@ -72,7 +72,7 @@ class AlgorithmsService:
     def get_cameras_by_ids(self, ids):
         return Camera.objects.filter(id__in=ids)
 
-    def create_new_records(self, algorithm, cameras):
+    def create_new_records(self, algorithm, cameras, url):
         existing_records = self.get_existing_records(algorithm, cameras)
         new_records = []
 
@@ -80,7 +80,7 @@ class AlgorithmsService:
             if existing_records.filter(camera_id=camera.id).exists():
                 continue
 
-            result = self.start_yolo_processing(camera, algorithm)
+            result = self.start_yolo_processing(camera, algorithm, url)
 
             if "errors" not in result:
                 print(result)
@@ -92,12 +92,12 @@ class AlgorithmsService:
 
         return new_records
 
-    def start_yolo_processing(self, camera, algorithm):
+    def start_yolo_processing(self, camera, algorithm, url):
         rtsp_camera_url = link_generator.get_camera_rtsp_link_by_camera(camera)
         response = {"camera_url": rtsp_camera_url, "algorithm": algorithm.name}
         try:
             response = requests.post(
-                url="http://detection_runner:3020/run",  # Send process data to YOLOv7 server
+                url=f"{url}run",  # Send process data to YOLOv7 server
                 json=response,
             )
             response_json = response.json()
