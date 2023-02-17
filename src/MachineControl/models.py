@@ -7,6 +7,7 @@ class MachineAction(models.Model):
     photo_stop = models.CharField(blank=False, null=False, max_length=250, default="now photo")
     start_tracking = models.TextField(null=False, blank=False, max_length=150, default=None)
     stop_tracking = models.TextField(null=False, blank=False, max_length=150, default=None)
+    date_created = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.camera}"

@@ -17,5 +17,5 @@ class IdleControlSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = Actions
-        fields = ['id', 'camera', 'start_tracking', 'stop_tracking', 'photos']
+        fields = ['id', 'camera', 'start_tracking', 'stop_tracking', 'date_created', 'photos']
 

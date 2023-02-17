@@ -1,3 +1,7 @@
+from datetime import datetime, time
+from django.db.models import Q
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from src.MachineControl.models import MachineAction
 from src.MachineControl.serializers import MachineControlSerializers
@@ -10,7 +14,23 @@ class MachineControlViewSet(ModelViewSet):
     serializer_class = MachineControlSerializers
     queryset = MachineAction.objects.all().order_by("-id")
 
-    # def get_permissions(self):
-    #     if self.request.method != "POST":
-    #         return [IsAuthenticated()]
-    #     return []
+    def get_permissions(self):
+        if self.request.method != "POST":
+            return [IsAuthenticated()]
+        return []
+
+
+class MachineActionListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, date):
+        date_obj = datetime.strptime(date, '%Y-%m-%d').date()
+        start_of_day = datetime.combine(date_obj, time.min)
+        end_of_day = datetime.combine(date_obj, time.max)
+
+        queryset = MachineAction.objects.filter(
+            Q(date_created__gte=start_of_day) & Q(date_created__lte=end_of_day)
+        ).order_by('date_created').order_by("-id")
+
+        serializer = MachineControlSerializers(queryset, many=True)
+        return Response(serializer.data)

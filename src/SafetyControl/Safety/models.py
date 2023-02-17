@@ -8,7 +8,7 @@ class Action(models.Model):
     action = models.TextField(verbose_name="Action")
     name_file = models.TextField(verbose_name="Name pickle file", blank=True, null=True)
     camera = models.TextField(verbose_name="Camera")
-    date_created = models.DateTimeField(auto_now_add=True)
+    date_created = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return self.action

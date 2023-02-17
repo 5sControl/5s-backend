@@ -1,9 +1,14 @@
 from rest_framework.routers import DefaultRouter
-from src.SafetyControl.Safety.views import ActionViewSet
+from django.urls import path
+from src.SafetyControl.Safety.views import ActionViewSet, SafetyActionListView
 
 
 router = DefaultRouter()
 
 router.register(r"action", ActionViewSet, basename="Action")
 
-urlpatterns = router.urls
+urlpatterns = [
+    path('safety_actions/<str:date>/', SafetyActionListView.as_view(), name='machine_action_list'),
+]
+
+urlpatterns += router.urls
