@@ -96,6 +96,7 @@ class AlgorithmsService:
         response = {
             "camera_url": rtsp_camera_url["camera_link"],
             "algorithm": algorithm.name,
+            "server_url": url,
         }
         try:
             response = requests.post(
