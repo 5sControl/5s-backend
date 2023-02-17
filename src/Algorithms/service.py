@@ -109,12 +109,18 @@ class AlgorithmsService:
         except ValueError as e:
             self.errors.append(f"Error decoding response: {e}")
             return {"errors": [f"Error decoding response: {e}"]}
-        if response_json.get("status").lower() != "success":
-            self.errors.append(f"Received non-success response: {response_json}")
-            return {"errors": [f"Received non-success response: {response_json}"]}
-        elif "pid" not in response_json:
-            self.errors.append(f"Missing PID in response: {response_json}")
-            return {"errors": [f"Missing PID in response: {response_json}"]}
+        try:
+            if response_json.get("status").lower() != "success":
+                self.errors.append(f"Received non-success response: {response_json}")
+                return {"errors": [f"Received non-success response: {response_json}"]}
+            elif "pid" not in response_json:
+                self.errors.append(f"Missing PID in response: {response_json}")
+                return {"errors": [f"Missing PID in response: {response_json}"]}
+        except AttributeError:
+            return {
+                "errors": "The process was not set in motion. No response from Yolo"
+            }
+
         else:
             return response_json
 

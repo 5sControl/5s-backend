@@ -10,14 +10,14 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.ALGORITHMS = [
-            {"name": "Staff_Control", "is_available": False},
-            {"name": "Idle_Control", "is_available": True},
-            {"name": "Tool_Control", "is_available": False},
-            {"name": "Machine_Control", "is_available": True},
-            {"name": "Safety_Control_Ear_protection", "is_available": True},
-            {"name": "Safety_Control_Head_protection", "is_available": False},
-            {"name": "Safety_Control_Hand_protection", "is_available": False},
-            {"name": "Safety_Control_Reflective_jacket", "is_available": False},
+            {"name": "staff_control", "is_available": False},
+            {"name": "idle_control", "is_available": True},
+            {"name": "tool_control", "is_available": False},
+            {"name": "machine_control", "is_available": True},
+            {"name": "safety_control_ear_protection", "is_available": True},
+            {"name": "safety_control_head_protection", "is_available": False},
+            {"name": "safety_control_hand_protection", "is_available": False},
+            {"name": "safety_control_reflective_jacket", "is_available": False},
         ]
         self.algorithms_was_exist = 0
         self.algorithms_was_created = 0
