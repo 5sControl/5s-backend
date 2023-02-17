@@ -40,6 +40,7 @@ class ActionsWithPhotos(APIView):
 
 
 class IdleActionListView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, date):
         date_obj = datetime.strptime(date, '%Y-%m-%d').date()
         start_of_day = datetime.combine(date_obj, time.min)
