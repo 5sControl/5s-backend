@@ -83,7 +83,6 @@ class AlgorithmsService:
             result = self.start_yolo_processing(camera, algorithm, url)
 
             if "errors" not in result:
-                print(result)
                 new_record = CameraAlgorithm(
                     algorithm=algorithm, camera_id=camera, process_id=result["pid"]
                 )
@@ -94,7 +93,10 @@ class AlgorithmsService:
 
     def start_yolo_processing(self, camera, algorithm, url):
         rtsp_camera_url = link_generator.get_camera_rtsp_link_by_camera(camera)
-        response = {"camera_url": rtsp_camera_url, "algorithm": algorithm.name}
+        response = {
+            "camera_url": rtsp_camera_url["camera_link"],
+            "algorithm": algorithm.name,
+        }
         try:
             response = requests.post(
                 url=f"{url}:3020/run",  # Send process data to YOLOv7 server
@@ -107,7 +109,6 @@ class AlgorithmsService:
         except ValueError as e:
             self.errors.append(f"Error decoding response: {e}")
             return {"errors": [f"Error decoding response: {e}"]}
-
         if response_json.get("status").lower() != "success":
             self.errors.append(f"Received non-success response: {response_json}")
             return {"errors": [f"Received non-success response: {response_json}"]}
