@@ -20,7 +20,7 @@ class ActionViewSet(ModelViewSet):
         return []
 
 
-class IdleActionListView(APIView):
+class SafetyActionListView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, date):
