@@ -35,8 +35,9 @@ class GetCameraAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        result = Camera.objects.all()
-        return Response({"result": result})
+        cameras = Camera.objects.all()
+        serializer = CameraSerializer(cameras, many=True)
+        return Response(serializer.data)
 
 
 class PostCameraAPIView(APIView):
