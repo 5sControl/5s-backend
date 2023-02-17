@@ -5,6 +5,7 @@ class Actions(models.Model):
     camera = models.CharField(null=False, blank=False, max_length=50, default="now ip")
     start_tracking = models.CharField(null=False, blank=False, max_length=150, default=None)
     stop_tracking = models.CharField(null=False, blank=False, max_length=150, default=None)
+    date_created = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.camera}"

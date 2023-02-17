@@ -1,11 +1,13 @@
 from rest_framework import generics, viewsets
+from datetime import datetime, time, timedelta
+from django.db.models import Q
 from .models import Actions, Photos
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import IdleControlSerializers, PhotoSerializers
+from .serializers import IdleControlSerializers
 
 
 class ActionViewSet(viewsets.ModelViewSet):
@@ -37,8 +39,15 @@ class ActionsWithPhotos(APIView):
         return Response({"message": "Data created successfully"}, status=status.HTTP_201_CREATED)
 
 
-class PhotoViewSet(viewsets.ModelViewSet):
-    queryset = Photos.objects.all()
-    serializer_class = PhotoSerializers
-    permission_classes = [IsAuthenticated]
+class IdleActionListView(APIView):
+    def get(self, request, date):
+        date_obj = datetime.strptime(date, '%Y-%m-%d').date()
+        start_of_day = datetime.combine(date_obj, time.min)
+        end_of_day = datetime.combine(date_obj, time.max)
 
+        queryset = Actions.objects.filter(
+            Q(date_created__gte=start_of_day) & Q(date_created__lte=end_of_day)
+        ).order_by('date_created').order_by("-id")
+
+        serializer = IdleControlSerializers(queryset, many=True)
+        return Response(serializer.data)
