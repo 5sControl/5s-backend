@@ -10,15 +10,7 @@ from src.StaffControl.Locations.serializers import (
     LocationSerializer,
 )
 
-from .service import link_generator
-
-
-class CameraViewSet(ModelViewSet):
-    """List of all Camer"""
-
-    serializer_class = CameraSerializer
-    queryset = Camera.objects.all()
-    permission_classes = [IsAuthenticated]
+from .service import link_generator, camera_service
 
 
 class GateViewSet(ModelViewSet):
@@ -37,13 +29,27 @@ class LocationViewSet(ModelViewSet):
     permission_classes = [IsAuthenticated]
 
 
+class GetCameraAPIView(APIView):
+    """Get all cameras"""
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        result = Camera.objects.all()
+        return Response({"result": result})
+
+
 class PostCameraAPIView(APIView):
-    """Write all camera information"""
+    """
+    This method will create a camera,
+    if it is possible to get a snapshot with the received data,
+    otherwise an error will be returned
+    """
 
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        result = link_generator.create_camera(request.data)
+        result = camera_service.create_camera(request.data)
         return Response(result)
 
 
