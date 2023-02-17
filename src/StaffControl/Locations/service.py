@@ -16,10 +16,16 @@ class CameraLinkGenerator:
                 password=camera_info["password"],
             )
             camera_data = {"link": rtsp_link, "ip": camera_info["ip"]}
-            request = requests.post(
-                f"{camera_info['url']}find_camera_image",
-                params=camera_data,
-            )
+            try:
+                request = requests.post(
+                    f"{camera_info['url']}find_camera_image",
+                    params=camera_data,
+                )
+            except:
+                return {
+                    "status": False,
+                    "message": f"link not found -> {camera_data['link']}",
+                }
             if request.json()["status"]:
                 camera = Camera(
                     id=camera_info["ip"],
