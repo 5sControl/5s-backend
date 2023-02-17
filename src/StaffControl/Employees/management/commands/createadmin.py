@@ -2,6 +2,8 @@ from django.core.management.base import BaseCommand
 
 from django.contrib.auth.models import User
 
+from .....core.logger import logger
+
 
 class Command(BaseCommand):
     help = "Create a superuser"
@@ -9,10 +11,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if not User.objects.filter(username="admin").exists():
             User.objects.create_superuser("admin", "admin@example.com", "admin")
-            self.stdout.write(
-                self.style.SUCCESS(
-                    f"Superuser created successfully. Username: admin Password: admin"
-                )
+            logger.info(
+                f"Superuser created successfully. Username: admin Password: admin"
             )
         else:
-            self.stdout.write(self.style.WARNING("Superuser already exists"))
+            logger.info("Superuser already exists")
