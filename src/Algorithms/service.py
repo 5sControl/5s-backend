@@ -1,10 +1,11 @@
-import requests
-
 from rest_framework.exceptions import NotFound
 
 from src.Algorithms.models import Algorithm, CameraAlgorithm
-from src.StaffControl.Locations.models import Camera
-from src.StaffControl.Locations.service import link_generator
+from src.StaffControl.Locations.service import camera_service
+
+from .utils import yolo_proccesing
+
+from ..core.logger import logger
 
 
 class AlgorithmsService:
@@ -32,7 +33,7 @@ class AlgorithmsService:
     def create_camera_algorithm(self, data):
         self.errors = []
         self.created_records = []
-        url = data.pop("server_url")
+        server_url = data.pop("server_url")
         for algorithm_name, camera_ips in data.items():
             if algorithm_name == None:
                 continue
@@ -49,28 +50,27 @@ class AlgorithmsService:
                 )
                 continue
 
-            cameras = self.get_cameras_by_ids(camera_ips)
+            cameras = camera_service.get_cameras_by_ids(camera_ips)
             if not cameras:
                 self.errors.append(
                     f"Cameras with ids {', '.join(camera_ips)} do not exist"
                 )
                 continue
 
-            new_records = self.create_new_records(algorithm, cameras, url)
+            new_records = self.create_new_records(algorithm, cameras, server_url)
             self.created_records.extend(new_records)
 
-        self.log_created_records()
-
         if self.errors:
+            for error in self.errors:
+                logger.critical(error)
             return {"errors": self.errors}
         else:
+            for record in self.created_records:
+                logger.info(record)
             return {"message": "Camera Algorithm records created successfully"}
 
     def get_algorithm_by_name(self, name):
         return Algorithm.objects.filter(name=name).first()
-
-    def get_cameras_by_ids(self, ids):
-        return Camera.objects.filter(id__in=ids)
 
     def create_new_records(self, algorithm, cameras, url):
         existing_records = self.get_existing_records(algorithm, cameras)
@@ -80,7 +80,7 @@ class AlgorithmsService:
             if existing_records.filter(camera_id=camera.id).exists():
                 continue
 
-            result = self.start_yolo_processing(camera, algorithm, url)
+            result = yolo_proccesing.start_yolo_processing(camera, algorithm, url)
 
             if "errors" not in result:
                 new_record = CameraAlgorithm(
@@ -91,50 +91,10 @@ class AlgorithmsService:
 
         return new_records
 
-    def start_yolo_processing(self, camera, algorithm, url):
-        rtsp_camera_url = link_generator.get_camera_rtsp_link_by_camera(camera)
-        response = {
-            "camera_url": rtsp_camera_url["camera_link"],
-            "algorithm": algorithm.name,
-            "server_url": url,
-        }
-        try:
-            response = requests.post(
-                url=f"{url}:3020/run",  # Send process data to YOLOv7 server
-                json=response,
-            )
-            response_json = response.json()
-        except requests.exceptions.RequestException as e:
-            self.errors.append(f"Error sending request: {e}")
-            return {"errors": [f"Error sending request: {e}"]}
-        except ValueError as e:
-            self.errors.append(f"Error decoding response: {e}")
-            return {"errors": [f"Error decoding response: {e}"]}
-        try:
-            if response_json.get("status").lower() != "success":
-                self.errors.append(f"Received non-success response: {response_json}")
-                return {"errors": [f"Received non-success response: {response_json}"]}
-            elif "pid" not in response_json:
-                self.errors.append(f"Missing PID in response: {response_json}")
-                return {"errors": [f"Missing PID in response: {response_json}"]}
-        except AttributeError:
-            return {
-                "errors": "The process was not set in motion. No response from Yolo"
-            }
-
-        else:
-            return response_json
-
     def get_existing_records(self, algorithm, cameras):
         return CameraAlgorithm.objects.filter(
             algorithm=algorithm, camera_id__in=cameras.values_list("id", flat=True)
         )
-
-    def log_created_records(self):
-        for record in self.created_records:
-            print(
-                f"Created record for algorithm '{record.algorithm.name}' and camera '{record.camera_id}'"
-            )
 
 
 algorithms_services = AlgorithmsService()
