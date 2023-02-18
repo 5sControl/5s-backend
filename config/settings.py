@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "src.IdleControl.apps.IdleControlConfig",
     "src.MachineControl.apps.MachineControlConfig",
     "src.CompanyLicense.apps.CompanyLicenseConfig",
+    "src.OperationsControl.apps.OperationsControlConfig",
 ]
 
 MIDDLEWARE = [
