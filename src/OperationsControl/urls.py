@@ -5,9 +5,10 @@ from src.OperationsControl.views import OperationsControlViewSet, OperationsList
 
 router_operations = DefaultRouter()
 
-router_operations.register(r"all_operations", OperationsControlViewSet, basename="all_operations")
+# router_operations.register(r"all_operations", OperationsControlViewSet, basename="all_operations")
 
 urlpatterns = [
+    path('all_operations/', OperationsControlViewSet.as_view()),
     path('<str:date>/', OperationsListView.as_view(), name='counter_operations_list'),
 ]
 
