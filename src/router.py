@@ -24,6 +24,7 @@ routes = [
     path("machine_control/", include("src.MachineControl.urls")),
     path("idle_control/", include("src.IdleControl.urls")),
     path("dashboard/", include("src.Dashboard.urls")),
+    path("operations_control/", include("src.OperationsControl.urls")),
     path(
         "swagger/",
         schema_view.with_ui("swagger", cache_timeout=0),
