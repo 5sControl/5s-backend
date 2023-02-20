@@ -18,7 +18,7 @@ class CameraLinkGenerator:
         for camera_info in cameras_info:
             camera_data = {
                 "ip": camera_info.id,
-                "link": f"http://{camera_info.username}:{camera_info.password}@{camera_info.id}/onvif-http/snapshot?Profile_1",
+                "camera_url": f"http://{camera_info.username}:{camera_info.password}@{camera_info.id}/onvif-http/snapshot?Profile_1",
             }
             result.append(camera_data)
 
@@ -40,9 +40,9 @@ class CameraLinkGenerator:
         cameras_data = Camera.objects.filter(id=camera_id.id).first()
         if cameras_data:
             camera_rtsp_link = f"rtsp://{cameras_data.username}:{cameras_data.password}@{cameras_data.id}/h264_stream"
-            return {"status": True, "camera_link": camera_rtsp_link}
+            return {"status": True, "camera_url": camera_rtsp_link}
         else:
-            return {"status": False, "camera_link": None}
+            return {"status": False, "camera_url": None}
 
     def get_camera_rtsp_link_by_camera(self, camera_id):
         """
@@ -51,9 +51,9 @@ class CameraLinkGenerator:
         cameras_data = Camera.objects.filter(id=camera_id.id).first()
         if cameras_data:
             camera_rtsp_link = f"http://{cameras_data.username}:{cameras_data.password}@{cameras_data.id}/onvif-http/snapshot?Profile_1"
-            return {"status": True, "camera_link": camera_rtsp_link}
+            return {"status": True, "camera_url": camera_rtsp_link}
         else:
-            return {"status": False, "camera_link": None}
+            return {"status": False, "camera_url": None}
 
 
 class CameraService:
@@ -71,14 +71,14 @@ class CameraService:
         ip = camera_info["ip"]
         username = camera_info["username"]
         password = camera_info["password"]
-        url = camera_info["url"]
+        camera_url = camera_info["camera_url"]
 
         if ip:  # check if ip was sended
             logger.info(f"IP {ip}")
-            snapshot_request = self.check_ip(ip, username, password, url)
+            snapshot_request = self.check_ip(ip, username, password, camera_url)
             snapshot = snapshot_request.json()
         else:
-            return {"status": False, "message": f"camera with ip {ip} not defined"}
+            return {"status": False, "message": f"Ip not defined"}
         if snapshot["status"]:  # check if snapshot was recived successfully
             camera = Camera(
                 id=ip,
@@ -118,19 +118,19 @@ class CameraService:
         if fail -> return {"status": False, "message": ip}
         """
         rtsp_link = f"rtsp://{username}:{password}@{ip}/h264_stream"
-        camera_request_data = {"link": rtsp_link, "ip": ip}
+        camera_request_data = {"camera_url": rtsp_link, "ip": ip}
         try:
-            snapshot = requests.post(
+            connect = requests.post(
                 f"{url}find_camera_image",  # fastapi link
                 params=camera_request_data,
             )
         except:
             return {
                 "status": False,
-                "message": f"link not found -> {camera_request_data['link']}",
+                "message": f"camera url not found -> {camera_request_data['camera_url']}",
             }
         else:
-            return snapshot
+            return connect
 
     def get_cameras_by_ids(self, ids):
         return Camera.objects.filter(id__in=ids)
