@@ -66,15 +66,16 @@ class CameraService:
         otherwise an error will be returned
         """
 
-        ip = (camera_info["ip"],)
+        ip = camera_info["ip"]
         username = camera_info["username"]
         password = camera_info["password"]
         url = camera_info["url"]
 
         if ip:  # check if ip was sended
-            snapshot = self.check_ip(ip, username, password, url)
+            snapshot_request = self.check_ip(ip, username, password, url)
         else:
             return {"status": False, "message": f"camera with ip {ip} not defined"}
+        snapshot = snapshot_request.json()
         if snapshot["status"]:  # check if snapshot was recived successfully
             camera = Camera(
                 id=ip,
@@ -100,7 +101,7 @@ class CameraService:
         else:
             return {
                 "status": True,
-                "snapshot": snapshot.json()["result"],
+                "snapshot": snapshot["result"],
                 "ip": ip,
                 "message": f"Camera with id {ip} was successfully saved",
             }
