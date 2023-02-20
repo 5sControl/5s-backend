@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from src.Image.models import Photos
+from src.ImageReport.models import Photos
 
 
 class PhotoSerializers(serializers.ModelSerializer):
@@ -8,6 +8,3 @@ class PhotoSerializers(serializers.ModelSerializer):
     class Meta:
         model = Photos
         fields = ["id", "image", "date", "report_id"]
-
-
-

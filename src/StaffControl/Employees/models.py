@@ -46,7 +46,9 @@ class CustomUser(models.Model):
     def image_preview(self):
         if self.image_center:
             return mark_safe(
-                '<img src="{}" width="450" height="300" />'.format(self.image_center.url)
+                '<img src="{}" width="450" height="300" />'.format(
+                    self.image_center.url
+                )
             )
         return ""
 

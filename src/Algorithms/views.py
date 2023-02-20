@@ -58,6 +58,7 @@ class GetAlgorithmProcessApiView(generics.GenericAPIView):
     """
 
     permission_classes = [IsAuthenticated]
+    serializer_class = CameraAlgorithmSerializer
 
     def get(self, request, *args, **kwargs):
         process = algorithms_services.get_camera_algorithms()

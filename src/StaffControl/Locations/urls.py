@@ -1,17 +1,8 @@
 from rest_framework.routers import DefaultRouter
 from src.StaffControl.Locations.views import (
-    GetCameraAPIView,
     GateViewSet,
     LocationViewSet,
-    PostCameraAPIView,
-    GetHttpCamerasLinkAPIView,
-    GetRtspCamerasLinkByIpAPIView,
-    UpdateCameraAPIView,
 )
-from django.urls import path
-
-router = DefaultRouter()
-
 
 from src.StaffControl.Locations.views import GateViewSet, LocationViewSet
 

@@ -6,12 +6,12 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 
-router.register(r"all_record", HistoryViewSet, basename="all History")
+router.register(r"all-record", HistoryViewSet, basename="all History")
 urlpatterns = router.urls
 
 urlpatterns += [
     path(
-        "filtered_records/",
+        "filtered-records/",
         FilteredHistoryModelViewSet.as_view(),
         name="History records",
     )

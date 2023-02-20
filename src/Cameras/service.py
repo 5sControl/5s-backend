@@ -127,7 +127,7 @@ class CameraService:
         except:
             return {
                 "status": False,
-                "message": f"camera url not found -> {camera_request_data['camera_url']}",
+                "message": f"Camera url not found -> {camera_request_data['camera_url']}",
             }
         else:
             return connect

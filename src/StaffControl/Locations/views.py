@@ -1,9 +1,8 @@
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated
 
-from src.StaffControl.Locations.models import Camera, Gate, Location
+from src.StaffControl.Locations.models import Gate, Location
 from src.StaffControl.Locations.serializers import (
-    CameraSerializer,
     GateSerializer,
     LocationSerializer,
 )

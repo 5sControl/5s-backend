@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from src.Reports.models import Report
-from src.Image.serializers import PhotoSerializers
+from src.ImageReport.serializers import PhotoSerializers
 
 
 class ReportSerializers(serializers.ModelSerializer):
@@ -10,8 +10,16 @@ class ReportSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = Report
-        fields = ["id", "algorithm", "camera", "start_tracking",
-                  "stop_tracking", "violation_found", "extra", "date_created", "photos", "date_updated", "status"]
-
-
-
+        fields = [
+            "id",
+            "algorithm",
+            "camera",
+            "start_tracking",
+            "stop_tracking",
+            "violation_found",
+            "extra",
+            "date_created",
+            "photos",
+            "date_updated",
+            "status",
+        ]
