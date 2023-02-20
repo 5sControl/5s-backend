@@ -1,6 +1,6 @@
 import requests
 
-from src.StaffControl.Locations.service import link_generator
+from src.Cameras.service import link_generator
 
 
 class StartYoloProccesing:
