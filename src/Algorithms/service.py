@@ -16,6 +16,10 @@ class AlgorithmsService:
         }
         return algorithm_data
 
+    def get_camera_algorithms(self):
+        process = CameraAlgorithm.objects.all()
+        return process
+
     def update_status_of_algorithm(self, data):
         for algorithm_name, is_available in data.items():
             try:
