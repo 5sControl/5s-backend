@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from datetime import datetime, time
 from django.db.models import Q
-from src.ImageReport.models import Photos
+from src.ImageReport.models import Image
 from src.Cameras.models import Camera
 from src.Algorithms.models import Algorithm
 from src.Reports.models import Report
@@ -53,7 +53,7 @@ class ActionsWithPhotos(APIView):
         for photo in photos:
             image = photo.get("image")
             date = photo.get("date")
-            photo = Photos.objects.create(image=image, date=date, report_id=action)
+            photo = Image.objects.create(image=image, date=date, report_id=action)
         return Response(
             {"message": "Data created successfully"}, status=status.HTTP_201_CREATED
         )
