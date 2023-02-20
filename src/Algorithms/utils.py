@@ -7,7 +7,7 @@ class StartYoloProccesing:
     def start_yolo_processing(self, camera, algorithm, url):
         rtsp_camera_url = link_generator.get_camera_rtsp_link_by_camera(camera)
         response = {
-            "camera_url": rtsp_camera_url["camera_link"],
+            "camera_url": rtsp_camera_url["camera_url"],
             "algorithm": algorithm.name,
             "server_url": url,
         }
