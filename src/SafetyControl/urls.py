@@ -1,6 +1,6 @@
 from rest_framework.routers import DefaultRouter
 from django.urls import path
-from src.SafetyControl.Safety.views import ActionViewSet, SafetyActionListView
+from src.SafetyControl.views import ActionViewSet, SafetyActionListView
 
 
 router = DefaultRouter()

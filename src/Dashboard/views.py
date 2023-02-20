@@ -6,8 +6,8 @@ from src.IdleControl.models import Actions
 from src.IdleControl.serializers import IdleControlSerializers
 from src.MachineControl.models import MachineAction
 from src.MachineControl.serializers import MachineControlSerializers
-from src.SafetyControl.Safety.models import Action
-from src.SafetyControl.Safety.serializers import ActionSerializer
+from src.SafetyControl.models import Action
+from src.SafetyControl.serializers import ActionSerializer
 
 
 class DashboardView(APIView):

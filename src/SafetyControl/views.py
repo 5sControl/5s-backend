@@ -4,8 +4,8 @@ from django.db.models import Q
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from src.SafetyControl.Safety.models import Action
-from src.SafetyControl.Safety.serializers import ActionSerializer
+from src.SafetyControl.models import Action
+from src.SafetyControl.serializers import ActionSerializer
 
 
 class ActionViewSet(ModelViewSet):

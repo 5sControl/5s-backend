@@ -4,7 +4,7 @@ from rest_framework.exceptions import NotFound
 
 from src.Algorithms.models import Algorithm, CameraAlgorithm
 from src.StaffControl.Locations.models import Camera
-from src.StaffControl.Locations.service import link_generator
+from src.Cameras.service import link_generator
 
 
 class AlgorithmsService:
