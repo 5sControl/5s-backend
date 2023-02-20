@@ -63,7 +63,7 @@ class AlgorithmsService:
         if self.errors:
             for error in self.errors:
                 logger.critical(error)
-            return {"errors": self.errors}
+            return {"message": self.errors}
         else:
             for record in self.created_records:
                 logger.info(record)
