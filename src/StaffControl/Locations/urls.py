@@ -15,13 +15,18 @@ router = DefaultRouter()
 router.register(r"gate", GateViewSet, basename="gates")
 router.register(r"location", LocationViewSet, basename="locations")
 
+# post
 urlpatterns = [
     path("post_camera/", PostCameraAPIView.as_view()),
 ]
+# get
 urlpatterns += [
     path("camera/", GetCameraAPIView.as_view()),
     path("get_camera_http_links/", GetHttpCamerasLinkAPIView.as_view()),
     path("get_camera_rtsp_by_ip_links/", GetRtspCamerasLinkByIpAPIView.as_view()),
+]
+# put/patch
+urlpatterns += [
     path("update_camera/", UpdateCameraAPIView.as_view()),
 ]
 
