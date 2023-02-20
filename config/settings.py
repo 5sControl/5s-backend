@@ -22,20 +22,23 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # "rest_framework_simplejwt",
+    # Third party application
     "django_filters",
     "rest_framework",
     "djoser",
     "corsheaders",
     "drf_yasg",
+    # Main application
     "src.StaffControl.Employees.apps.EmployeesConfig",
     "src.StaffControl.Locations.apps.LocationsConfig",
     "src.StaffControl.History.apps.HistoryConfig",
+    # Common application
     "src.Algorithms",
-    "src.Reports.apps.ReportsConfig",
-    "src.Image.apps.ImageConfig",
     "src.Cameras.apps.CamerasConfig",
     "src.CompanyLicense.apps.CompanyLicenseConfig",
+    # Collections reports
+    "src.Reports.apps.ReportsConfig",
+    "src.ImageReport.apps.ImageConfig",
 ]
 
 MIDDLEWARE = [
@@ -111,8 +114,13 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Image)
-STATIC_URL = "static/"
+# Static files (CSS, JavaScript)
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "static/"
+
+# Media files (Images)
+MEDIA_URL = "/images/"
+MEDIA_ROOT = BASE_DIR / "images/"
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -127,9 +135,6 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
 }
-
-MEDIA_URL = "/images/"
-MEDIA_ROOT = BASE_DIR / "images/"
 
 DJOSER = {
     "PASSWORD_RESET_CONFIRM_URL": "#/password/reset/confirm/{uid}/{token}",
