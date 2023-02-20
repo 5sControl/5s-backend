@@ -9,7 +9,7 @@ router_operations = DefaultRouter()
 
 urlpatterns = [
     path('all_operations/', OperationsControlViewSet.as_view()),
-    path('action/<str:date>/', OperationsListView.as_view(), name='counter_operations_list'),
+    path('operations_action/<str:date>/', OperationsListView.as_view(), name='counter_operations_list'),
 ]
 
 urlpatterns += router_operations.urls
