@@ -3,6 +3,8 @@ import requests
 
 from .models import Camera
 
+from src.core.logger import logger
+
 
 class CameraLinkGenerator:
     def get_camera_http_link(self):
@@ -72,17 +74,20 @@ class CameraService:
         url = camera_info["url"]
 
         if ip:  # check if ip was sended
+            logger.info(f"IP {ip}")
             snapshot_request = self.check_ip(ip, username, password, url)
+            snapshot = snapshot_request.json()
         else:
             return {"status": False, "message": f"camera with ip {ip} not defined"}
-        snapshot = snapshot_request.json()
         if snapshot["status"]:  # check if snapshot was recived successfully
+            logger.info(f"snapshot json {snapshot}")
             camera = Camera(
                 id=ip,
                 username=username,
                 password=password,
             )
         else:
+            logger.warning(f"snapshot json {snapshot}")
             return {
                 "status": False,
                 "snapshot": None,
