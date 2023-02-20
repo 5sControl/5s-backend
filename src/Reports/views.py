@@ -16,13 +16,18 @@ from src.Reports.serializers import ReportSerializers
 class ActionViewSet(viewsets.ModelViewSet):
     queryset = Report.objects.all().order_by("-id")
     serializer_class = ReportSerializers
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.status = request.data.get('status', instance.status)
+        instance.date_updated = datetime.now()
+        instance.save()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
         raise MethodNotAllowed("POST")
-
-    def update(self, request, *args, **kwargs):
-        raise MethodNotAllowed("PUT")
 
     def partial_update(self, request, *args, **kwargs):
         raise MethodNotAllowed("PATCH")
@@ -38,7 +43,9 @@ class ActionsWithPhotos(APIView):
         photos = request.data.get('photos')
         violation_found = request.data.get('violation_found')
         extra = (request.data.get('extra')['equipment'])
-        action = Report.objects.create(camera=camera, extra=extra, algorithm=algorithm, violation_found=violation_found, start_tracking=start_tracking, stop_tracking=stop_tracking)
+        action = Report.objects.create(camera=camera, extra=extra, algorithm=algorithm,
+                                       violation_found=violation_found, start_tracking=start_tracking,
+                                       stop_tracking=stop_tracking)
         for photo in photos:
             image = photo.get('image')
             date = photo.get('date')
@@ -46,8 +53,8 @@ class ActionsWithPhotos(APIView):
         return Response({"message": "Data created successfully"}, status=status.HTTP_201_CREATED)
 
 
-class IdleActionListView(APIView):
-    # permission_classes = [IsAuthenticated]
+class ReportListView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request, date):
         date_obj = datetime.strptime(date, '%Y-%m-%d').date()
         start_of_day = datetime.combine(date_obj, time.min)

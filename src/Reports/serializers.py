@@ -11,7 +11,7 @@ class ReportSerializers(serializers.ModelSerializer):
     class Meta:
         model = Report
         fields = ["id", "algorithm", "camera", "start_tracking",
-                  "stop_tracking", "violation_found", "extra", "date_created", "photos"]
+                  "stop_tracking", "violation_found", "extra", "date_created", "photos", "date_updated", "status"]
 
 
 

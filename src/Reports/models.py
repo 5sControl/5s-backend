@@ -18,7 +18,7 @@ class Report(models.Model):
     violation_found = models.BooleanField(blank=True, null=True, default=None)
     extra = models.CharField(max_length=50, blank=True, null=True)
     date_created = models.DateField(auto_now_add=True)
-    date_updated = models.DateField(auto_now=True)
+    date_updated = models.DateTimeField(auto_now=True)
     status = models.CharField(choices=StatusReportChoice.choices, default="not_checked", max_length=30)
 
     def __str__(self):
