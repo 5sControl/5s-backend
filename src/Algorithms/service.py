@@ -1,11 +1,12 @@
 from rest_framework.exceptions import NotFound
 
 from src.Algorithms.models import Algorithm, CameraAlgorithm
-from src.StaffControl.Locations.service import camera_service
+from src.Cameras.service import camera_service
 
 from .utils import yolo_proccesing
 
 from ..core.logger import logger
+from src.StaffControl.Locations.models import Camera
 
 
 class AlgorithmsService:

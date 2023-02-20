@@ -31,12 +31,11 @@ INSTALLED_APPS = [
     "src.StaffControl.Employees.apps.EmployeesConfig",
     "src.StaffControl.Locations.apps.LocationsConfig",
     "src.StaffControl.History.apps.HistoryConfig",
-    "src.SafetyControl.Safety.apps.SafetyConfig",
     "src.Algorithms",
-    "src.IdleControl.apps.IdleControlConfig",
-    "src.MachineControl.apps.MachineControlConfig",
+    "src.Reports.apps.ReportsConfig",
+    "src.Image.apps.ImageConfig",
+    "src.Cameras.apps.CamerasConfig",
     "src.CompanyLicense.apps.CompanyLicenseConfig",
-    "src.OperationsControl.apps.OperationsControlConfig",
 ]
 
 MIDDLEWARE = [
@@ -112,7 +111,7 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
+# Static files (CSS, JavaScript, Image)
 STATIC_URL = "static/"
 
 # Default primary key field type
