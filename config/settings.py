@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "src.SafetyControl.apps.SafetyConfig",
     "src.Algorithms",
     "src.IdleControl.apps.IdleControlConfig",
+    "src.Reports.apps.ReportsConfig",
     "src.Cameras.apps.CamerasConfig",
     "src.MachineControl.apps.MachineControlConfig",
     "src.CompanyLicense.apps.CompanyLicenseConfig",
@@ -113,7 +114,7 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
+# Static files (CSS, JavaScript, Image)
 STATIC_URL = "static/"
 
 # Default primary key field type

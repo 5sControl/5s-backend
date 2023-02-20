@@ -1,6 +1,6 @@
 from django.db import models
 
-from src.StaffControl.Locations.models import Camera
+from src.Cameras.models import Camera
 
 
 class Algorithm(models.Model):
