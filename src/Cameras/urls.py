@@ -1,19 +1,24 @@
-from rest_framework.routers import DefaultRouter
 from src.Cameras.views import (
-    CameraViewSet,
-    SaveCameraDetailsView,
-    GetCamerasLink,
+    GetCameraAPIView,
+    PostCameraAPIView,
+    GetHttpCamerasLinkAPIView,
+    GetRtspCamerasLinkByIpAPIView,
+    UpdateCameraAPIView,
 )
 from django.urls import path
 
-router = DefaultRouter()
 
-router.register(r"camera", CameraViewSet, basename="Camera")
-
-
+# post
 urlpatterns = [
-    path("post_camera/", SaveCameraDetailsView.as_view()),
-    path("get_camera_links/", GetCamerasLink.as_view()),
+    path("create-camera/", PostCameraAPIView.as_view()),
 ]
-
-urlpatterns += router.urls
+# get
+urlpatterns += [
+    path("", GetCameraAPIView.as_view()),
+    path("get-camera-http-links/", GetHttpCamerasLinkAPIView.as_view()),
+    path("get-camera-rtsp-by-ip-links/", GetRtspCamerasLinkByIpAPIView.as_view()),
+]
+# put/patch
+urlpatterns += [
+    path("update-camera/", UpdateCameraAPIView.as_view()),
+]

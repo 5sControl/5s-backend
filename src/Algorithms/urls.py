@@ -9,16 +9,16 @@ from .views import (
 urlpatterns = [
     path("update/", PutAlgorithmUpdateApiView.as_view(), name="algorithm-update"),
     path(
-        "create_process/",
+        "create-process/",
         StartProcessingYoloApiView.as_view(),
         name="algorithm-create",
     ),
     path(
-        "available/",
+        "available-process/",
         GetAlgorithmStatusApiView.as_view(),
         name="algorithms-available",
     ),
     path(
-        "get_process/", GetAlgorithmProcessApiView.as_view(), name="camera-get_process"
+        "get-process/", GetAlgorithmProcessApiView.as_view(), name="camera-get_process"
     ),
 ]
