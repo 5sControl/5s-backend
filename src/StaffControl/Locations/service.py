@@ -80,14 +80,12 @@ class CameraService:
         else:
             return {"status": False, "message": f"camera with ip {ip} not defined"}
         if snapshot["status"]:  # check if snapshot was recived successfully
-            logger.info(f"snapshot json {snapshot}")
             camera = Camera(
                 id=ip,
                 username=username,
                 password=password,
             )
         else:
-            logger.warning(f"snapshot json {snapshot}")
             return {
                 "status": False,
                 "snapshot": None,
@@ -136,6 +134,23 @@ class CameraService:
 
     def get_cameras_by_ids(self, ids):
         return Camera.objects.filter(id__in=ids)
+
+    def update_camera_info(self, camera_data):
+        camera_id = camera_data["ip"]
+        camera_name = camera_data["name"]
+        camera = Camera.objects.filter(id=camera_id).first()
+        if camera:
+            camera.name = camera_name
+            camera.save()
+            return {
+                "status": True,
+                "message": f"сamera with the id {camera_id} is named {camera_name}",
+            }
+        else:
+            return {
+                "status": False,
+                "message": f"camera with ip {camera_id} does not exist",
+            }
 
 
 link_generator = CameraLinkGenerator()
