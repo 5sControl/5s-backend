@@ -54,6 +54,19 @@ class PostCameraAPIView(APIView):
         return Response(result)
 
 
+class UpdateCameraAPIView(APIView):
+    """
+    After successfully creating a camera, set name and description
+    """
+
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, *args, **kwargs):
+        camera_data = request.data
+        result = camera_service.update_camera_info(camera_data)
+        return Response(result)
+
+
 class GetHttpCamerasLinkAPIView(APIView):
     """
     Collection of all informations about cameras and create a http link to connect to the camera
