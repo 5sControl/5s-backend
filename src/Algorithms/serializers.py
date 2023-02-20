@@ -22,7 +22,7 @@ class AlgorithmUpdateSerializer(serializers.ModelSerializer):
 class CameraAlgorithmSerializer(serializers.ModelSerializer):
     class Meta:
         model = CameraAlgorithm
-        fields = ("algorithm", "camera_id")
+        fields = "__all__"
 
 
 class AlgorithmStatusSerializer(serializers.Serializer):
