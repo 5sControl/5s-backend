@@ -6,8 +6,9 @@ from src.StaffControl.Locations.views import (
     PostCameraAPIView,
     GetHttpCamerasLinkAPIView,
     GetRtspCamerasLinkByIpAPIView,
+    UpdateCameraAPIView,
 )
-from django.urls import path, include
+from django.urls import path
 
 router = DefaultRouter()
 
@@ -21,6 +22,7 @@ urlpatterns += [
     path("camera/", GetCameraAPIView.as_view()),
     path("get_camera_http_links/", GetHttpCamerasLinkAPIView.as_view()),
     path("get_camera_rtsp_by_ip_links/", GetRtspCamerasLinkByIpAPIView.as_view()),
+    path("update_camera/", UpdateCameraAPIView.as_view()),
 ]
 
 urlpatterns += router.urls
