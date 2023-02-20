@@ -4,6 +4,11 @@ from src.Algorithms.models import Algorithm
 from src.Cameras.models import Camera
 
 
+class StatusReportChoice(models.TextChoices):
+    not_checked = 'Not checked'
+    checked = 'Checked'
+
+
 class Report(models.Model):
     """Model report"""
     algorithm = models.ForeignKey(Algorithm, on_delete=models.CASCADE)
@@ -12,7 +17,9 @@ class Report(models.Model):
     stop_tracking = models.CharField(max_length=100, blank=True, null=True)
     violation_found = models.BooleanField(blank=True, null=True, default=None)
     extra = models.CharField(max_length=50, blank=True, null=True)
-    date_created = models.DateTimeField(auto_now_add=True)
+    date_created = models.DateField(auto_now_add=True)
+    date_updated = models.DateField(auto_now=True)
+    status = models.CharField(choices=StatusReportChoice.choices, default="not_checked", max_length=30)
 
     def __str__(self):
         return f"{self.algorithm}"

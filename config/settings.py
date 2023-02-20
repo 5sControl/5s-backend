@@ -31,14 +31,11 @@ INSTALLED_APPS = [
     "src.StaffControl.Employees.apps.EmployeesConfig",
     "src.StaffControl.Locations.apps.LocationsConfig",
     "src.StaffControl.History.apps.HistoryConfig",
-    "src.SafetyControl.apps.SafetyConfig",
     "src.Algorithms",
-    "src.IdleControl.apps.IdleControlConfig",
     "src.Reports.apps.ReportsConfig",
+    "src.Image.apps.ImageConfig",
     "src.Cameras.apps.CamerasConfig",
-    "src.MachineControl.apps.MachineControlConfig",
     "src.CompanyLicense.apps.CompanyLicenseConfig",
-    "src.OperationsControl.apps.OperationsControlConfig",
 ]
 
 MIDDLEWARE = [
