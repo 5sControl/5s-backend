@@ -5,8 +5,8 @@ from src.Cameras.models import Camera
 
 
 class StatusReportChoice(models.TextChoices):
-    not_checked = "Not checked"
-    checked = "Checked"
+    false = "false"
+    true = "true"
 
 
 class Report(models.Model):
@@ -21,7 +21,7 @@ class Report(models.Model):
     date_created = models.DateField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
     status = models.CharField(
-        choices=StatusReportChoice.choices, default="not_checked", max_length=30
+        choices=StatusReportChoice.choices, default="false", max_length=30
     )
 
     def __str__(self):
