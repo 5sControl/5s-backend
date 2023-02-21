@@ -80,32 +80,20 @@ class ActionsWithPhotos(APIView):
 class ReportListView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, date):
+    def get(self, request, date, start_time, end_time):
         date_obj = datetime.strptime(date, "%Y-%m-%d").date()
-        start_of_day = datetime.combine(date_obj, time.min)
-        end_of_day = datetime.combine(date_obj, time.max)
+        start_time_obj = datetime.strptime(start_time, "%H:%M:%S").time()
+        end_time_obj = datetime.strptime(end_time, "%H:%M:%S").time()
+
+        start_of_day = datetime.combine(date_obj, start_time_obj)
+        end_of_day = datetime.combine(date_obj, end_time_obj)
 
         queryset = (
             Report.objects.filter(
                 Q(date_created__gte=start_of_day) & Q(date_created__lte=end_of_day)
             )
-            .order_by("date_created")
-            .order_by("-id")
+            .order_by("-date_created", "-id")
         )
 
-        serializer = ReportSerializers(queryset, many=True)
-        return Response(serializer.data)
-
-
-class ReportListAPIView(APIView):
-    """Sort from start of date to end of date"""
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, start_date, end_date):
-        start_date = datetime.strptime(start_date, '%Y-%m-%d')
-        end_date = datetime.strptime(end_date, '%Y-%m-%d')
-
-        queryset = Report.objects.filter(date_created__gte=start_date,
-                                         date_created__lte=end_date).order_by('date_created')
         serializer = ReportSerializers(queryset, many=True)
         return Response(serializer.data)

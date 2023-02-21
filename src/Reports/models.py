@@ -1,5 +1,7 @@
 from django.db import models
 
+from datetime import datetime
+
 from src.Algorithms.models import Algorithm
 from src.Cameras.models import Camera
 
@@ -18,7 +20,7 @@ class Report(models.Model):
     stop_tracking = models.CharField(max_length=100, blank=True, null=True)
     violation_found = models.BooleanField(blank=True, null=True, default=None)
     extra = models.CharField(max_length=50, blank=True, null=True)
-    date_created = models.DateField(auto_now_add=True)
+    date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
     status = models.CharField(
         choices=StatusReportChoice.choices, default="false", max_length=30
@@ -30,3 +32,5 @@ class Report(models.Model):
     class Meta:
         verbose_name = "Report"
         verbose_name_plural = "Reports"
+
+
