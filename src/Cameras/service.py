@@ -132,10 +132,10 @@ class CameraService:
         else:
             return connect
 
-    def get_cameras_by_ids(self, ids):
+    def get_cameras_by_ids(self, ids: str):
         return Camera.objects.filter(id__in=ids)
 
-    def update_camera_info(self, camera_data):
+    def update_camera_info(self, camera_data: dict):
         camera_id = camera_data["ip"]
         camera_name = camera_data["name"]
         camera = Camera.objects.filter(id=camera_id).first()
