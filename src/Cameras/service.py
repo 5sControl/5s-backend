@@ -71,7 +71,7 @@ class CameraService:
         ip = camera_info["ip"]
         username = camera_info["username"]
         password = camera_info["password"]
-        camera_url = camera_info["camera_url"]
+        camera_url = camera_info["url"]
 
         if ip:  # check if ip was sended
             logger.info(f"IP {ip}")
