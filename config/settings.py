@@ -165,14 +165,9 @@ SIMPLE_JWT = {
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
-CORS_ORIGIN_WHITELIST = (
-    "http://localhost:4200",
-    "http://localhost:3000",
-    "http://localhost:3020",
-    "http://localhost:8008",
-    "http://192.168.1.101:3000",
-    "http://192.168.1.101:8000",
-)
+CORS_ORIGIN_WHITELIST = [
+    "*",
+]
 CSRF_TRUSTED_ORIGINS = [
     "http://*",
     "https://*",
