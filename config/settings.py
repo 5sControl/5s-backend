@@ -164,8 +164,18 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
 }
 
-# CORS_ORIGIN_ALLOW_ALL = True
-CORS_ORIGIN_WHITELIST = ["*"]
+CORS_ORIGIN_WHITELIST = [
+    "http://localhost:3000",
+    "https://localhost:8000",
+    "https://*.eu.ngrok.io",
+    "http://*.eu.ngrok.io",
+    "http://127.0.0.1:8000",
+    "http://192.168.1.101:8000",
+    "http://0.0.0.0:8000",
+    "http://*",
+    "https://*",
+    "*",
+]
 CSRF_TRUSTED_ORIGINS = [
     "http://*",
     "https://*",
