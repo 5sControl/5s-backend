@@ -95,3 +95,17 @@ class ReportListView(APIView):
 
         serializer = ReportSerializers(queryset, many=True)
         return Response(serializer.data)
+
+
+class ReportListAPIView(APIView):
+    """Sort from start of date to end of date"""
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, start_date, end_date):
+        start_date = datetime.strptime(start_date, '%Y-%m-%d')
+        end_date = datetime.strptime(end_date, '%Y-%m-%d')
+
+        queryset = Report.objects.filter(date_created__gte=start_date,
+                                         date_created__lte=end_date).order_by('date_created')
+        serializer = ReportSerializers(queryset, many=True)
+        return Response(serializer.data)
