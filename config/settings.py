@@ -174,7 +174,6 @@ CORS_ORIGIN_WHITELIST = [
     "http://0.0.0.0:8000",
     "http://*",
     "https://*",
-    "*",
 ]
 CSRF_TRUSTED_ORIGINS = [
     "http://*",
