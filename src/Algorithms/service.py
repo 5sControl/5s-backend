@@ -35,7 +35,7 @@ class AlgorithmsService:
 
         return {"message": "Algorithm status updated"}
 
-    def create_camera_algorithm(self, data):
+    def create_camera_algorithm(self, data: dict):
         self.errors = []
         self.created_records = []
         server_url = data.pop("server_url")
@@ -63,21 +63,27 @@ class AlgorithmsService:
                 continue
 
             new_records = self.create_new_records(algorithm, cameras, server_url)
-            self.created_records.extend(new_records)
+            if new_records:
+                self.created_records.extend(new_records)
+            else:
+                for camera_ip in cameras:
+                    self.errors.append(
+                        f"YOLO cant start process with next data: {algorithm}, {camera_ip.id}, {server_url}"
+                    )
 
         if self.errors:
             for error in self.errors:
-                logger.critical(error)
+                logger.critical(f"create camera algorithm errors -> {error}")
             return {"message": self.errors}
         else:
             for record in self.created_records:
-                logger.info(record)
+                logger.info(f"record -> {record} was created")
             return {"message": "Camera Algorithm records created successfully"}
 
     def get_algorithm_by_name(self, name: str):
         return Algorithm.objects.filter(name=name).first()
 
-    def create_new_records(self, algorithm, cameras, url):
+    def create_new_records(self, algorithm: Algorithm.id, cameras: Camera.id, url: str):
         existing_records = self.get_existing_records(algorithm, cameras)
         new_records = []
 
@@ -86,18 +92,17 @@ class AlgorithmsService:
                 continue
 
             result = yolo_proccesing.start_yolo_processing(camera, algorithm, url)
-
             if result["status"]:
                 new_record = CameraAlgorithm(
                     algorithm=algorithm,
-                    camera_id=camera,
+                    camera=camera,
                     process_id=result["pid"],
                     yolo_url=result["server_url"],
                 )
                 new_record.save()
                 new_records.append(new_record)
             else:
-                return {"status": False, "message": "Yolo cant start process"}
+                return False
 
         return new_records
 
