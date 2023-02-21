@@ -46,22 +46,6 @@ class ActionsWithPhotos(APIView):
         except KeyError:
             return {"status": False, "message": "The model response is not complete"}
         else:
-            if photos:
-                for photo in photos:
-                    image = photo.get("image")
-                    date = photo.get("date")
-                    photo = Image.objects.create(
-                        image=image, date=date, report_id=action
-                    )
-            else:
-                return Response(
-                    {
-                        "status": False,
-                        "message": "The report was not saved due to an omission in the response from the YOLO",
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-
             action = Report.objects.create(
                 camera=camera,
                 extra=extra,
@@ -70,6 +54,22 @@ class ActionsWithPhotos(APIView):
                 start_tracking=start_tracking,
                 stop_tracking=stop_tracking,
             )
+            if photos:
+                for photo in photos:
+                    image = photo.get("image")
+                    date = photo.get("date")
+                    photo = Image.objects.create(
+                        image=image, date=date, report_id=action
+                    )
+            else:
+                action.delete()
+                return Response(
+                    {
+                        "status": False,
+                        "message": "The report was not saved due to an omission in the response from the YOLO",
+                    },
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
         return Response(
             {"status": True, "message": "Data created successfully"},
