@@ -4,8 +4,9 @@ from src.Cameras.service import link_generator
 
 
 class StartYoloProccesing:
-    def start_yolo_processing(self, camera, algorithm, url):
+    def start_yolo_processing(self, camera, algorithm, url: str):
         rtsp_camera_url = link_generator.get_camera_rtsp_link_by_camera(camera)
+        request_server_url = f"{url}:3020/run"
         response = {
             "camera_url": rtsp_camera_url["camera_url"],
             "algorithm": algorithm.name,
@@ -13,10 +14,11 @@ class StartYoloProccesing:
         }
         try:
             response = requests.post(
-                url=f"{url}:3020/run",  # Send process data to YOLOv7 server
+                url=request_server_url,  # Send process data to YOLOv7 server
                 json=response,
             )
             response_json = response.json()
+            response_json["server_url"] = request_server_url
         except requests.exceptions.RequestException as e:
             return {"status": False, "message": [f"Error sending request: {e}"]}
         except ValueError as e:
