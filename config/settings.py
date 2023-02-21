@@ -172,7 +172,6 @@ CORS_ORIGIN_WHITELIST = (
     "http://localhost:8008",
     "http://192.168.1.101:3000",
     "http://192.168.1.101:8000",
-    "https://fe9e-134-17-26-206.eu.ngrok.io/",
 )
 CSRF_TRUSTED_ORIGINS = [
     "http://*",
