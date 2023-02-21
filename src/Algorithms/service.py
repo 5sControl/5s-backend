@@ -74,7 +74,7 @@ class AlgorithmsService:
                 logger.info(record)
             return {"message": "Camera Algorithm records created successfully"}
 
-    def get_algorithm_by_name(self, name):
+    def get_algorithm_by_name(self, name: str):
         return Algorithm.objects.filter(name=name).first()
 
     def create_new_records(self, algorithm, cameras, url):
@@ -89,7 +89,10 @@ class AlgorithmsService:
 
             if result["status"]:
                 new_record = CameraAlgorithm(
-                    algorithm=algorithm, camera_id=camera, process_id=result["pid"]
+                    algorithm=algorithm,
+                    camera_id=camera,
+                    process_id=result["pid"],
+                    yolo_url=result["server_url"],
                 )
                 new_record.save()
                 new_records.append(new_record)
