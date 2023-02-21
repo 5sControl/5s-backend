@@ -87,12 +87,14 @@ class AlgorithmsService:
 
             result = yolo_proccesing.start_yolo_processing(camera, algorithm, url)
 
-            if "errors" not in result:
+            if result["status"]:
                 new_record = CameraAlgorithm(
                     algorithm=algorithm, camera_id=camera, process_id=result["pid"]
                 )
                 new_record.save()
                 new_records.append(new_record)
+            else:
+                return {"status": False, "message": "Yolo cant start process"}
 
         return new_records
 

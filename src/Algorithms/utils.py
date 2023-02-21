@@ -18,17 +18,24 @@ class StartYoloProccesing:
             )
             response_json = response.json()
         except requests.exceptions.RequestException as e:
-            return {"message": [f"Error sending request: {e}"]}
+            return {"status": False, "message": [f"Error sending request: {e}"]}
         except ValueError as e:
-            return {"message": [f"Error decoding response: {e}"]}
+            return {"status": False, "message": [f"Error decoding response: {e}"]}
         try:
             if response_json.get("status").lower() != "success":
-                return {"message": [f"Received non-success response: {response_json}"]}
+                return {
+                    "status": False,
+                    "message": [f"Received non-success response: {response_json}"],
+                }
             elif "pid" not in response_json:
-                return {"message": [f"Missing PID in response: {response_json}"]}
+                return {
+                    "status": False,
+                    "message": [f"Missing PID in response: {response_json}"],
+                }
         except AttributeError:
             return {
-                "message": "The process was not set in motion. No response from Yolo"
+                "status": False,
+                "message": "The process was not set in motion. No response from Yolo",
             }
 
         else:
