@@ -6,6 +6,8 @@ run:
 fill:
 	python manage.py algorithm
 	python manage.py createadmin
+startprocess:
+	python manage.py startprocess
 all:
 	make migrate
 	make fill
