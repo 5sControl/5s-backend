@@ -9,7 +9,7 @@ from src.core.logger import logger
 class CameraLinkGenerator:
     def get_camera_http_link(self):
         """
-        Create link for each camera
+        Create http for each camera
 
         example -> http://admin-onvif:admin@192.168.1.160/onvif-http/snapshot?Profile_1
         """
@@ -26,7 +26,7 @@ class CameraLinkGenerator:
 
     def get_camera_rtsp_link(self, ip, username, password):
         """
-        Create link using the given camera data
+        Create rtsp using the given camera data
 
         example -> rtsp://admin:admin@192.168.1.160/h264_stream
         """
@@ -39,7 +39,7 @@ class CameraLinkGenerator:
         """
         cameras_data = Camera.objects.filter(id=camera_id.id).first()
         if cameras_data:
-            camera_rtsp_link = f"rtsp://{cameras_data.username}:{cameras_data.password}@{cameras_data.id}/h264_stream"
+            camera_rtsp_link = f"http://{cameras_data.username}:{cameras_data.password}@{cameras_data.id}/onvif-http/snapshot?Profile_1"
             return {"status": True, "camera_url": camera_rtsp_link}
         else:
             return {"status": False, "camera_url": None}
@@ -50,7 +50,7 @@ class CameraLinkGenerator:
         """
         cameras_data = Camera.objects.filter(id=camera_id.id).first()
         if cameras_data:
-            camera_rtsp_link = f"http://{cameras_data.username}:{cameras_data.password}@{cameras_data.id}/onvif-http/snapshot?Profile_1"
+            camera_rtsp_link = f"rtsp://{cameras_data.username}:{cameras_data.password}@{cameras_data.id}/h264_stream"
             return {"status": True, "camera_url": camera_rtsp_link}
         else:
             return {"status": False, "camera_url": None}
