@@ -12,14 +12,38 @@ class Command(BaseCommand):
     puts them back to work at the start of the project
     """
 
-    def handle(self, *args, **options):
+    def handle(self, *args, **kwargs):
         self.start_process()
-        logger.info("Processes started successfully")
+        logger.info("The command was executed")
 
-    def start_process(self):
+    def start_process(self) -> None:
         all_camera_algorithms = CameraAlgorithm.objects.filter(is_active=True).exclude(
             process_id=None
         )
-        print(all_camera_algorithms)
-        # result = yolo_proccesing.start_yolo_processing(...)
-        print(all_camera_algorithms)
+        for camera_algorithm in all_camera_algorithms:
+            try:
+                result = yolo_proccesing.start_yolo_processing(
+                    camera=camera_algorithm.camera,
+                    algorithm=camera_algorithm.algorithm,
+                    url=camera_algorithm.yolo_url,
+                )
+            except:
+                logger.critical(
+                    f"Camera {camera_algorithm.camera} with alogithm {camera_algorithm.algorithm}"
+                )
+                logger.critical(
+                    f"has not been renewed. Server url -> {camera_algorithm.yolo_url}"
+                )
+            else:
+                if result["status"]:
+                    new_process_id = result["pid"]
+
+                    camera_algorithm.process_id = new_process_id
+                    camera_algorithm.save()
+
+                    logger.info(f"Camera {camera_algorithm.camera} with alogithm")
+                    logger.info(
+                        f"{camera_algorithm.algorithm} were successfully restored and given a new PID -> {new_process_id}."
+                    )
+                else:
+                    logger.critical("Cannot find status in response")
