@@ -36,20 +36,24 @@ class ActionViewSet(viewsets.ModelViewSet):
 class ActionsWithPhotos(APIView):
     def post(self, request):
         algorithm = Algorithm.objects.get(name=request.data.get("algorithm"))
-        camera = Camera.objects.get(id=request.data.get("camera"))
-        start_tracking = request.data.get("start_tracking")
-        stop_tracking = request.data.get("stop_tracking")
-        photos = request.data.get("photos")
-        violation_found = request.data.get("violation_found")
-        extra = request.data.get("extra")["equipment"]
-        action = Report.objects.create(
-            camera=camera,
-            extra=extra,
-            algorithm=algorithm,
-            violation_found=violation_found,
-            start_tracking=start_tracking,
-            stop_tracking=stop_tracking,
-        )
+        try:
+            camera = Camera.objects.get(id=request.data.get("camera"))
+            start_tracking = request.data.get("start_tracking")
+            stop_tracking = request.data.get("stop_tracking")
+            photos = request.data.get("photos")
+            violation_found = request.data.get("violation_found")
+            extra = request.data.get("extra")
+        except KeyError:
+            return {"status": False, "message": "The model response is not complete"}
+        else:
+            action = Report.objects.create(
+                camera=camera,
+                extra=extra,
+                algorithm=algorithm,
+                violation_found=violation_found,
+                start_tracking=start_tracking,
+                stop_tracking=stop_tracking,
+            )
         for photo in photos:
             image = photo.get("image")
             date = photo.get("date")
