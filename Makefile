@@ -11,4 +11,5 @@ startprocess:
 all:
 	make migrate
 	make fill
+	make startprocess
 	make run
