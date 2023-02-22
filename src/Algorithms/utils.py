@@ -21,7 +21,7 @@ class StartYoloProccesing:
             )
             response_json = response.json()
             response_json["server_url"] = url
-            if response_json.get("success"):
+            if not response_json["success"]:
                 return {
                     "status": False,
                     "message": f"Received non-success response: {response_json}",
