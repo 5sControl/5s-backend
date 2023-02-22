@@ -1,6 +1,7 @@
 from rest_framework import viewsets
 from datetime import datetime, time
 from django.db.models import Q
+from rest_framework.generics import GenericAPIView
 from src.ImageReport.models import Image
 from src.Cameras.models import Camera
 from src.Algorithms.models import Algorithm
@@ -78,9 +79,10 @@ class ActionsWithPhotos(APIView):
 
 
 class ReportListView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
-    def get(self, request, date, start_time, end_time):
+    def get(self, request, algorithm_name, camera_ip, date, start_time, end_time):
+
         date_obj = datetime.strptime(date, "%Y-%m-%d").date()
         start_time_obj = datetime.strptime(start_time, "%H:%M:%S").time()
         end_time_obj = datetime.strptime(end_time, "%H:%M:%S").time()
@@ -94,6 +96,13 @@ class ReportListView(APIView):
             )
             .order_by("-date_created", "-id")
         )
+
+        if camera_ip:
+            queryset = queryset.filter(camera__id=camera_ip)
+        if algorithm_name:
+            queryset = queryset.filter(algorithm__name=algorithm_name)
+
+        queryset = queryset.order_by('algorithm__name', 'camera__id')
 
         serializer = ReportSerializers(queryset, many=True)
         return Response(serializer.data)
