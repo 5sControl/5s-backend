@@ -79,7 +79,7 @@ class ActionsWithPhotos(APIView):
 
 
 class ReportListView(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, algorithm_name, camera_ip, date, start_time, end_time):
 
