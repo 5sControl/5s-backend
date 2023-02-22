@@ -124,7 +124,7 @@ class CameraService:
                 f"{url}find_camera_image",  # fastapi link
                 params=camera_request_data,
             )
-            print(f"fastapi connection {connect}")
+            print(f"fastapi connection {connect.text}")
         except:
             return {
                 "status": False,
