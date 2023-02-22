@@ -88,10 +88,11 @@ class AlgorithmsService:
         new_records = []
 
         for camera in cameras:
-            if existing_records.filter(camera_id=camera.id).exists():
+            if existing_records.filter(camera=camera.id).exists():
                 continue
 
             result = yolo_proccesing.start_yolo_processing(camera, algorithm, url)
+            print(result)
             if result["status"]:
                 new_record = CameraAlgorithm(
                     algorithm=algorithm,
@@ -108,7 +109,7 @@ class AlgorithmsService:
 
     def get_existing_records(self, algorithm, cameras):
         return CameraAlgorithm.objects.filter(
-            algorithm=algorithm, camera_id__in=cameras.values_list("id", flat=True)
+            algorithm=algorithm, camera__in=cameras.values_list("id", flat=True)
         )
 
 
