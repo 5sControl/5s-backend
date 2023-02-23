@@ -9,6 +9,7 @@ from .serializers import (
     AlgorithmUpdateSerializer,
     AlgorithmStatusSerializer,
     CameraAlgorithmFullSerializer,
+    CameraAlgorithmSerializer,
 )
 
 
