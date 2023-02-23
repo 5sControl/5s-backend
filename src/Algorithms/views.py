@@ -6,9 +6,9 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Algorithm
 from .service import algorithms_services
 from .serializers import (
-    CameraAlgorithmSerializer,
     AlgorithmUpdateSerializer,
     AlgorithmStatusSerializer,
+    CameraAlgorithmFullSerializer,
 )
 
 
@@ -58,7 +58,7 @@ class GetAlgorithmProcessApiView(generics.GenericAPIView):
     """
 
     permission_classes = [IsAuthenticated]
-    serializer_class = CameraAlgorithmSerializer
+    serializer_class = CameraAlgorithmFullSerializer
 
     def get(self, request, *args, **kwargs):
         process = algorithms_services.get_camera_algorithms()
