@@ -121,8 +121,9 @@ class CameraService:
         camera_request_data = {"camera_url": rtsp_link, "ip": ip}
         try:
             connect = requests.post(
-                f"{url}find_camera_image",  # fastapi link
-                params=camera_request_data,
+                connect=requests.post(
+                    f"{url}find_camera_image", json=camera_request_data  # fastapi link
+                ),
             )
             print(f"fastapi connection {connect.text}")
         except:
