@@ -79,7 +79,7 @@ class ActionsWithPhotos(APIView):
 
 
 class ReportListView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request, algorithm_name, camera_ip, date, start_time, end_time):
 
@@ -105,4 +105,37 @@ class ReportListView(APIView):
         queryset = queryset.order_by('algorithm__name', 'camera__id')
 
         serializer = ReportSerializers(queryset, many=True)
+        return Response(serializer.data)
+
+
+class SearchReportListView(GenericAPIView):
+    # permission_classes = [IsAuthenticated]
+    serializer_class = ReportSerializers
+
+    def get_queryset(self):
+        date = self.request.query_params.get('date')
+        start_time = self.request.query_params.get('start_time')
+        end_time = self.request.query_params.get('end_time')
+        camera_id = self.request.query_params.get('camera__id')
+        algorithm_name = self.request.query_params.get('algorithm')
+
+        queryset = Report.objects.all()
+
+
+        if start_time:
+            queryset = queryset.filter(date_created__gte=f'{date} {start_time}')
+        if end_time:
+            queryset = queryset.filter(date_created__lte=f'{date} {end_time}')
+        if camera_id:
+            queryset = queryset.filter(camera__id=camera_id)
+        if algorithm_name:
+            queryset = queryset.filter(algorithm__name=algorithm_name)
+
+        queryset = queryset.order_by('date_created', 'algorithm__name', 'camera__id', '-id')
+
+        return queryset
+
+    def get(self, request):
+        queryset = self.get_queryset()
+        serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
