@@ -16,18 +16,13 @@ class StartYoloProccesing:
         }
         try:
             response = requests.post(
-                url=f"{url}:3020/run",  # Send process data to YOLO server
+                url=f"{url}:3020/run",
                 json=response,
             )
-        except requests.exceptions.RequestException as e:
-            return {"status": False, "message": [f"Error sending request: {e}"]}
-        except ValueError as e:
-            return {"status": False, "message": [f"Error decoding response: {e}"]}
-        else:
             response_json = response.json()
             response_json["server_url"] = url
-        try:
-            if response_json.get("status").lower() != "success":
+            print(response_json)
+            if not response_json["success"]:
                 return {
                     "status": False,
                     "message": f"Received non-success response: {response_json}",
@@ -37,15 +32,18 @@ class StartYoloProccesing:
                     "status": False,
                     "message": f"Missing PID in response: {response_json}",
                 }
-        except AttributeError:
+            response_json["status"] = True
+            return response_json
+        except requests.exceptions.RequestException as e:
+            return {
+                "status": False,
+                "message": [f"Error sending/decoding request: {e}"],
+            }
+        except (AttributeError, ValueError):
             return {
                 "status": False,
                 "message": "The process was not set in motion. No response from Yolo",
             }
-
-        else:
-            response_json["status"] = True
-            return response_json
 
 
 yolo_proccesing = StartYoloProccesing()
