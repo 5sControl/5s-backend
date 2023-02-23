@@ -11,3 +11,9 @@ class CameraSerializer(serializers.ModelSerializer):
             "description",
             "is_active",
         ]
+
+
+class CameraProcessSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Camera
+        fields = ("id", "name")
