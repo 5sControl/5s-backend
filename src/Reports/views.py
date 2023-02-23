@@ -119,7 +119,7 @@ class SearchReportListView(GenericAPIView):
         camera_id = self.request.query_params.get('camera__id')
         algorithm_name = self.request.query_params.get('algorithm')
 
-        queryset = Report.objects.all()
+        queryset = Report.objects.all().order_by('-id')
 
         if start_time:
             queryset = queryset.filter(date_created__gte=f'{date} {start_time}')
@@ -130,7 +130,7 @@ class SearchReportListView(GenericAPIView):
         if algorithm_name:
             queryset = queryset.filter(algorithm__name=algorithm_name)
 
-        queryset = queryset.order_by('date_created', 'algorithm__name', 'camera__id', '-id')
+        queryset = queryset.order_by('-id')
 
         return queryset
 
