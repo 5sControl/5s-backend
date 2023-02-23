@@ -79,7 +79,7 @@ class ActionsWithPhotos(APIView):
 
 
 class ReportListView(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, algorithm_name, camera_ip, date, start_time, end_time):
 
@@ -109,7 +109,7 @@ class ReportListView(APIView):
 
 
 class SearchReportListView(GenericAPIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     serializer_class = ReportSerializers
 
     def get_queryset(self):
@@ -120,7 +120,6 @@ class SearchReportListView(GenericAPIView):
         algorithm_name = self.request.query_params.get('algorithm')
 
         queryset = Report.objects.all()
-
 
         if start_time:
             queryset = queryset.filter(date_created__gte=f'{date} {start_time}')
