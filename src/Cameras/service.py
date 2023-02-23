@@ -76,6 +76,7 @@ class CameraService:
         if ip:  # check if ip was sended
             logger.info(f"IP {ip}")
             snapshot_request = self.check_ip(ip, username, password, camera_url)
+            print(snapshot_request)
             snapshot = snapshot_request.json()
         else:
             return {"status": False, "message": f"Ip not defined"}
@@ -121,11 +122,8 @@ class CameraService:
         camera_request_data = {"camera_url": rtsp_link, "ip": ip}
         try:
             connect = requests.post(
-                connect=requests.post(
-                    f"{url}find_camera_image", json=camera_request_data  # fastapi link
-                ),
+                f"{url}find_camera_image", json=camera_request_data  # fastapi link
             )
-            print(f"fastapi connection {connect.text}")
         except:
             return {
                 "status": False,
