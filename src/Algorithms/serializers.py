@@ -26,6 +26,12 @@ class AlgorithmStatusSerializer(serializers.Serializer):
     false = AlgorithmSerializer(many=True)
 
 
+class CameraAlgorithmSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CameraAlgorithm
+        fields = ["algorithm", "camera", "is_active", "process_id"]
+
+
 class CameraAlgorithmFullSerializer(serializers.ModelSerializer):
     algorithm = AlgorithmSerializer()
     camera = CameraProcessSerializer()
@@ -33,9 +39,3 @@ class CameraAlgorithmFullSerializer(serializers.ModelSerializer):
     class Meta:
         model = CameraAlgorithm
         fields = ["camera", "algorithm", "process_id", "is_active"]
-
-
-class CameraAlgorithmSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = CameraAlgorithm
-        fields = ["algorithm", "camera", "is_active", "process_id"]
