@@ -1,12 +1,14 @@
 from rest_framework.exceptions import NotFound
 
 from src.Algorithms.models import Algorithm, CameraAlgorithm
-from src.Cameras.models import Camera
 from src.Cameras.service import camera_service
 
 from .utils import yolo_proccesing
 
+from typing import Tuple, Union, List
+
 from ..core.logger import logger
+from src.StaffControl.Locations.models import Camera
 
 
 class AlgorithmsService:
@@ -23,27 +25,27 @@ class AlgorithmsService:
 
 	def update_status_of_algorithm(self, data):
 		for algorithm_name, is_available in data.items():
-			algorithm = Algorithm.objects.filter(name=algorithm_name).first()
-			if algorithm:
-				algorithm.is_available = is_available
-				algorithm.save()
+			try:
+				algorithm = Algorithm.objects.get(name=algorithm_name)
+			except Algorithm.DoesNotExist:
+				raise NotFound(
+					detail=f"Algorithm with name '{algorithm_name}' not found"
+				)
 
-				return {"message": "Algorithm status updated"}
-			else:
-				logger.critical("Cannot find algorithm")
+			algorithm.is_available = is_available
+			algorithm.save()
 
-	def create_camera_algorithm(self, data: dict):
+		return {"message": "Algorithm status updated"}
+
+	def create_camera_algorithm(self, data: dict) -> Tuple[List[CameraAlgorithm], List[str]]:
 		self.errors = []
 		self.created_records = []
-
 		server_url = data.pop("server_url")
-
+		
 		for algorithm_name, camera_ips in data.items():
 			if algorithm_name == None:
 				continue
-
 			algorithm = self.get_algorithm_by_name(algorithm_name)
-
 			if not algorithm:
 				self.errors.append(
 					f"Algorithm with name {algorithm_name} does not exist"
@@ -63,8 +65,7 @@ class AlgorithmsService:
 				)
 				continue
 
-			new_records = self.create_new_records(
-				algorithm, cameras, server_url)
+			new_records = self.create_new_records(algorithm, cameras, server_url)
 			if new_records:
 				self.created_records.extend(new_records)
 			else:
@@ -74,9 +75,8 @@ class AlgorithmsService:
 					)
 
 		if self.errors:
-			for error in self.errors:
-				logger.critical(f"create camera algorithm errors -> {error}")
-			return {"message": self.errors}
+			for error in self.errors: 
+				return {"message": self.errors}
 		else:
 			for record in self.created_records:
 				logger.info(f"record -> {record} was created")
@@ -85,7 +85,7 @@ class AlgorithmsService:
 	def get_algorithm_by_name(self, name: str):
 		return Algorithm.objects.filter(name=name).first()
 
-	def create_new_records(self, algorithm: Algorithm.id, cameras: Camera.id, url: str):
+	def create_new_records(self, algorithm: Algorithm, cameras: List[Camera]) -> Union[List[CameraAlgorithm], bool]:
 		existing_records = self.get_existing_records(algorithm, cameras)
 		new_records = []
 
@@ -93,28 +93,24 @@ class AlgorithmsService:
 			if existing_records.filter(camera=camera.id).exists():
 				continue
 
-			result = yolo_proccesing.start_yolo_processing(camera, algorithm, url)
-			
-			if not result["status"]:
-				return {
-					"status": False,
-					"message": result['message'],
-			}
-			record = CameraAlgorithm(
+			result = yolo_proccesing.start_yolo_processing(camera, algorithm)
+			if not result["success"] or "pid" not in result:
+				return False
+
+			new_record = CameraAlgorithm(
 				algorithm=algorithm,
 				camera=camera,
 				process_id=result["pid"],
 				yolo_url=result["server_url"],
 			)
-			record.save()
-			new_records.append(record)
+			new_record.save()
+			new_records.append(new_record)
 
 		return new_records
 
 	def get_existing_records(self, algorithm, cameras):
 		return CameraAlgorithm.objects.filter(
-			algorithm=algorithm, camera__in=cameras.values_list(
-				"id", flat=True)
+			algorithm=algorithm, cameåra__in=cameras.values_list("id", flat=True)
 		)
 
 
