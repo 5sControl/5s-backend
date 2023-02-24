@@ -20,6 +20,7 @@ class StartYoloProccesing:
 		)
 		response_json = response.json()
 		response_json["server_url"] = url
+		response_json["status"] = True
 		
 		return response_json
 
