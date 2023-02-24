@@ -107,7 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "Europe/Vilnius"
+TIME_ZONE = 'Etc/GMT'
 
 USE_I18N = True
 
