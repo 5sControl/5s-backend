@@ -102,6 +102,7 @@ class AlgorithmsService:
 				continue
 
 			result = yolo_proccesing.start_yolo_processing(camera, algorithm, server_url)
+			print(result, 'result')
 			if not result["success"] or "pid" not in result:
 				return False
 
