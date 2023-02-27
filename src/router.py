@@ -22,6 +22,7 @@ routes = [
     path("cameras/", include("src.Cameras.urls")),
     path("algorithms/", include("src.Algorithms.urls")),
     path("reports/", include("src.Reports.urls")),
+    path("company/", include("src.CompanyLicense.urls")),
     path(
         "swagger/",
         schema_view.with_ui("swagger", cache_timeout=0),
