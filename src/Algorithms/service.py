@@ -36,6 +36,15 @@ class AlgorithmsService:
 			algorithm.save()
 
 		return {"message": "Algorithm status updated"}
+	
+	def update_status_of_algorithm_by_pid(self, pid: int):
+		camera_algorithm = CameraAlgorithm.objects.filter(process_id=pid).first()
+		if camera_algorithm:
+			camera_algorithm.is_active = False
+			camera_algorithm.save()
+		else:
+			return {"status": False, "message": "Cannot find camera algorithm"}
+		return {"status": True, "message": "Camera algorithm was stoped successfully"}
 
 	def create_camera_algorithm(self, data: dict) -> Tuple[List[CameraAlgorithm], List[str]]:
 		self.errors = []
@@ -75,8 +84,7 @@ class AlgorithmsService:
 					)
 
 		if self.errors:
-			for error in self.errors: 
-				return {"message": self.errors}
+			return {"message": self.errors}
 		else:
 			for record in self.created_records:
 				logger.info(f"record -> {record} was created")
