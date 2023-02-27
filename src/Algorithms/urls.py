@@ -4,6 +4,7 @@ from .views import (
     StartProcessingYoloApiView,
     GetAlgorithmStatusApiView,
     GetAlgorithmProcessApiView,
+    StopProcessApiView,
 )
 
 urlpatterns = [
@@ -19,6 +20,7 @@ urlpatterns = [
         name="algorithms-available",
     ),
     path(
-        "get-process/", GetAlgorithmProcessApiView.as_view(), name="camera-get_process"
+        "get-process/", GetAlgorithmProcessApiView.as_view(), name="camera-get-process"
     ),
+    path("stop-process/", StopProcessApiView.as_view(), name="stop-process"),
 ]
