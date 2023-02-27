@@ -118,7 +118,7 @@ class AlgorithmsService:
 
 	def get_existing_records(self, algorithm, cameras):
 		return CameraAlgorithm.objects.filter(
-			algorithm=algorithm, cameåra__in=cameras.values_list("id", flat=True)
+			algorithm=algorithm, camera__in=cameras.values_list("id", flat=True)
 		)
 
 
