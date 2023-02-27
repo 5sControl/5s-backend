@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from .models import Algorithm
 from .service import algorithms_services
+from .utils import yolo_proccesing
 from .serializers import (
     AlgorithmUpdateSerializer,
     AlgorithmStatusSerializer,
@@ -65,3 +66,19 @@ class GetAlgorithmProcessApiView(generics.GenericAPIView):
         process = algorithms_services.get_camera_algorithms()
         serialized_data = self.serializer_class(process, many=True)
         return Response(serialized_data.data, status=status.HTTP_200_OK)
+
+
+class StopProcessApiView(generics.GenericAPIView):
+    """Get pid and stop process"""
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = ...
+
+    def get(self, request, *args, **kwargs):
+        pid = request.data["pid"]
+        request = yolo_proccesing.stop_process(pid)
+        result = algorithms_services.update_status_of_algorithm_by_pid(pid=pid)
+        if result["status"] and request["success"]:
+            return Response({"status": True, "message": f"PID {pid} was successfully stopped"})
+        else:
+            return Response({"status": False, "message": f"PID {pid} was not found"})
