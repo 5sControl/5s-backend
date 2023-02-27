@@ -42,6 +42,7 @@ class AlgorithmsService:
 		if camera_algorithm:
 			camera_algorithm.is_active = False
 			camera_algorithm.save()
+			camera_algorithm.delete() # FIXME: Remove
 		else:
 			return {"status": False, "message": "Cannot find camera algorithm"}
 		return {"status": True, "message": "Camera algorithm was stoped successfully"}
