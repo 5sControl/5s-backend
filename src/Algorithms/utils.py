@@ -40,6 +40,7 @@ class YoloProccesing:
 			json={"pid": pid},
 		)
 		response_json = request.json()
+		print(response_json)
 
 		return response_json
 	
