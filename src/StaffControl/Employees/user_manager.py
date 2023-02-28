@@ -45,3 +45,5 @@ class UserManager:
         else:
             logger.info("User already exists")
 
+
+user_manager = UserManager()

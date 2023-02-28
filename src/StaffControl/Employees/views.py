@@ -5,7 +5,7 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import generics
-from src.StaffControl.Employees.user_manager import UserManager
+from src.StaffControl.Employees.user_manager import user_manager
 
 from src.core.permissions import IsStaffPermission, IsSuperuserPermission
 
@@ -104,8 +104,6 @@ class CreateUserView(generics.GenericAPIView):
 
         if not user_type or not username or not password:
             return Response({'error': 'user_type, username, and password are required'})
-
-        user_manager = UserManager()
 
         if user_type == 'staff':
             user_manager.create_staff(username, password)
