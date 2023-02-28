@@ -85,7 +85,7 @@ class AlgorithmsService:
 	def get_algorithm_by_name(self, name: str):
 		return Algorithm.objects.filter(name=name).first()
 
-	def create_new_records(self, algorithm: Algorithm, cameras: List[Camera]) -> Union[List[CameraAlgorithm], bool]:
+	def create_new_records(self, algorithm: Algorithm, cameras: List[Camera], server_url: str) -> Union[List[CameraAlgorithm], bool]:
 		existing_records = self.get_existing_records(algorithm, cameras)
 		new_records = []
 
@@ -93,7 +93,7 @@ class AlgorithmsService:
 			if existing_records.filter(camera=camera.id).exists():
 				continue
 
-			result = yolo_proccesing.start_yolo_processing(camera, algorithm)
+			result = yolo_proccesing.start_yolo_processing(camera, algorithm, server_url)
 			if not result["success"] or "pid" not in result:
 				return False
 
