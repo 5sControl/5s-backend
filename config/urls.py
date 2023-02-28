@@ -4,6 +4,8 @@ from django.contrib import admin
 from django.urls import path, include
 from src.router import routes
 from .views import RegisterView, setcookie, getcookie
+# from src.StaffControl.Employees.views import CreateUserView
+
 
 # auth/register
 urlpatterns = [
@@ -11,6 +13,7 @@ urlpatterns = [
     path("api-auth/", include("rest_framework.urls")),
     path("auth/", include("djoser.urls")),
     path("auth/", include("djoser.urls.jwt")),
+    # path('users/create/', CreateUserView.as_view(), name='create_user'),
 ]
 # main routes
 urlpatterns += [
