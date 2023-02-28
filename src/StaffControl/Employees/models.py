@@ -4,7 +4,7 @@ from src.StaffControl.Locations.models import Location
 from django.utils.safestring import mark_safe
 
 
-class CustomUser(models.Model):
+class StaffControlUser(models.Model):
     """Employee"""
 
     first_name = models.CharField(

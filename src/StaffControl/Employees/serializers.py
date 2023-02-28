@@ -3,7 +3,7 @@ import pickle
 import requests
 
 from rest_framework import serializers
-from .models import CustomUser
+from .models import StaffControlUser
 from .recognitions import Recognition, face_rec
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password
@@ -61,7 +61,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
     """Create a Employee with his dataset."""
 
     class Meta:
-        model = CustomUser
+        model = StaffControlUser
         fields = [
             "id",
             "first_name",
@@ -78,7 +78,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        user = CustomUser.objects.create(**validated_data)
+        user = StaffControlUser.objects.create(**validated_data)
 
         data = Recognition().dataset_maker(validated_data=validated_data)
         if len(data) == 0:
@@ -145,5 +145,5 @@ class PeopleLocationsSerializers(serializers.ModelSerializer):
     """Displays information of all employees in a given location"""
 
     class Meta:
-        model = CustomUser
+        model = StaffControlUser
         exclude = ("date_joined", "image_below", "image_above", "image_center", "image_left", "image_right",)

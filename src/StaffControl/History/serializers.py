@@ -5,7 +5,7 @@ from .models import History
 from rest_framework import serializers
 
 from ..Locations.models import Location
-from ..Employees.models import CustomUser
+from ..Employees.models import StaffControlUser
 
 from .recognition import face_rec
 
@@ -50,12 +50,12 @@ class HistorySerializer(serializers.ModelSerializer):
                 name_file=name_file,
                 release_date=release_date[0],
                 location=location[0],
-                people=CustomUser.objects.get(id=id_people),
+                people=StaffControlUser.objects.get(id=id_people),
                 image=image,
             )
             history_data.save()
 
-            user = CustomUser.objects.filter(id=id_people)
+            user = StaffControlUser.objects.filter(id=id_people)
             if validated_data["action"] == "entrance":
                 user.update(status=True, location=location[0])
             else:

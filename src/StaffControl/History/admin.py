@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from .models import History
 
-from ..Employees.models import CustomUser
+from ..Employees.models import StaffControlUser
 
 from django.utils.safestring import mark_safe
 
@@ -28,13 +28,13 @@ class HistoryAdmin(admin.ModelAdmin):
     )
 
     def location(self, obj):
-        result = CustomUser.objects.filter(id=obj.people.id).values("location_id")[0][
+        result = StaffControlUser.objects.filter(id=obj.people.id).values("location_id")[0][
             "location_id"
         ]
         return result
 
     def dataset(self, obj):
-        result = CustomUser.objects.filter(id=obj.people.id).values("dataset")[0][
+        result = StaffControlUser.objects.filter(id=obj.people.id).values("dataset")[0][
             "dataset"
         ]
         return result
