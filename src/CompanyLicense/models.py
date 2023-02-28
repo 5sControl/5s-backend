@@ -10,7 +10,7 @@ class Company(models.Model):
     name_company = models.TextField(verbose_name="Name of company")
     date_joined = models.DateTimeField(verbose_name="Date joined", auto_now_add=True)
     date_edited = models.DateTimeField(verbose_name="Date edited", auto_now=True)
-    valid_until = models.TextField(verbose_name="Date which license is active")
+    valid_until = models.DateField(verbose_name="Date which license is active")
     is_active = models.BooleanField(verbose_name="Is active license", default=False)
     count_cameras = models.IntegerField(verbose_name="Count of cameras in active")
     neurons_active = models.TextField(verbose_name="List of active neurons")
