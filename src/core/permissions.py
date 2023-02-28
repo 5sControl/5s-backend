@@ -13,3 +13,13 @@ class IsAdminOrReadOnly(permissions.BasePermission):
             return True
 
         return User.objects.filter(username=request.user)
+
+
+class IsSuperuserPermission(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.is_superuser
+
+
+class IsStaffPermission(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.is_staff

@@ -1,17 +1,21 @@
 from rest_framework import viewsets
-from datetime import datetime, time
-from django.db.models import Q
+from rest_framework.views import APIView
 from rest_framework.generics import GenericAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import MethodNotAllowed
+from rest_framework import status
+from rest_framework.response import Response
+
+from django.db.models import Q
+
 from src.ImageReport.models import Image
 from src.Cameras.models import Camera
 from src.Algorithms.models import Algorithm
 from src.Reports.models import Report
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import MethodNotAllowed
-from rest_framework import status
-from rest_framework.views import APIView
-from rest_framework.response import Response
+
 from src.Reports.serializers import ReportSerializers
+
+from datetime import datetime
 
 
 class ActionViewSet(viewsets.ModelViewSet):

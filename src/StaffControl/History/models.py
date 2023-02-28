@@ -1,6 +1,6 @@
 from django.db import models
 
-from ..Employees.models import CustomUser
+from ..Employees.models import StaffControlUser
 from ..Locations.models import Location
 from ..Locations.models import Camera
 
@@ -9,7 +9,7 @@ from django.utils.safestring import mark_safe
 
 class History(models.Model):
     people = models.ForeignKey(
-        CustomUser,
+        StaffControlUser,
         on_delete=models.CASCADE,
         blank=True,
         null=True,

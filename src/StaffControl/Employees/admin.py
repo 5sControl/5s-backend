@@ -1,9 +1,9 @@
 from django.contrib import admin
-from .models import CustomUser
+from .models import StaffControlUser
 from django.utils.html import mark_safe
 
 
-@admin.register(CustomUser)
+@admin.register(StaffControlUser)
 class EmployeeAdmin(admin.ModelAdmin):
     list_display = (
         "first_name",
