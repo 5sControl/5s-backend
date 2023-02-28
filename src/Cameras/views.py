@@ -6,6 +6,7 @@ from src.Cameras.models import Camera
 from src.Cameras.serializers import (
     CameraSerializer,
 )
+from src.core.permissions import IsStaffPermission, IsSuperuserPermission
 
 from .service import link_generator, camera_service
 
@@ -39,8 +40,8 @@ class UpdateCameraAPIView(APIView):
     """
     After successfully creating a camera, set name and description
     """
-
-    permission_classes = [IsAuthenticated]
+    
+    permission_classes = [IsAuthenticated, IsSuperuserPermission | IsStaffPermission]
 
     def patch(self, request, *args, **kwargs):
         camera_data = request.data

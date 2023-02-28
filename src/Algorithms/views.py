@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
+from src.core.permissions import IsStaffPermission, IsSuperuserPermission
+
 from .models import Algorithm
 from .service import algorithms_services
 from .utils import yolo_proccesing
@@ -17,6 +19,7 @@ from .serializers import (
 class PutAlgorithmUpdateApiView(generics.UpdateAPIView):
     """Update status of an algorithm"""
 
+    permission_classes = [IsAuthenticated, IsSuperuserPermission | IsStaffPermission]
     queryset = Algorithm.objects.all()
     serializer_class = AlgorithmUpdateSerializer
 
@@ -30,6 +33,7 @@ class StartProcessingYoloApiView(generics.CreateAPIView):
     A view that handles creation of camera algorithm records and starting YOLO processing.
     """
 
+    permission_classes = [IsAuthenticated, IsSuperuserPermission | IsStaffPermission]
     serializer_class = CameraAlgorithmSerializer
 
     def create(self, request, *args, **kwargs):
@@ -39,7 +43,7 @@ class StartProcessingYoloApiView(generics.CreateAPIView):
 
 class GetAlgorithmStatusApiView(generics.GenericAPIView):
     """
-    Get the status of a camera algorithm
+    Get the status of  a camera algorithm
 
     Example response:
     {
@@ -71,7 +75,7 @@ class GetAlgorithmProcessApiView(generics.GenericAPIView):
 class StopProcessApiView(generics.GenericAPIView):
     """Get pid and stop process"""
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsSuperuserPermission | IsStaffPermission]
     serializer_class = ...
 
     def get(self, request, *args, **kwargs):
