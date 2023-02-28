@@ -19,6 +19,7 @@ def validate_license(view_func):
         company = Company.objects.last()
         if not company.is_active or date.today() > company.valid_until:
             return redirect('license_expired')
+        Company.objects.update(is_active=False)
         return view_func(request, *args, **kwargs)
 
     return wrapper
