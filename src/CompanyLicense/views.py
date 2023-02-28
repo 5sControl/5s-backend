@@ -29,8 +29,7 @@ class CompanyInfoView(APIView):
         except Company.DoesNotExist:
             return Response({'error': 'Company not found'}, status=404)
 
-        valid_until = company.valid_until
-        is_license_active = f"{datetime.datetime.strptime(valid_until, '%Y-%m-%d').date() - timezone.now().date()}"
+        is_license_active = f"{company.valid_until - timezone.now().date()}"
 
         response_data = {
             'name_company': company.name_company,
@@ -38,6 +37,6 @@ class CompanyInfoView(APIView):
             'licence_is_active': company.is_active,
             'count_cameras': company.count_cameras,
             'neurons_active': company.neurons_active,
-            'days_left': is_license_active.split(',')[0],
+            'days_left': is_license_active,
         }
         return Response(response_data, status=200)
