@@ -1,8 +1,13 @@
 from rest_framework.views import APIView
 from django.views import View
 from django.http import HttpResponse
+from django.utils import timezone
+
 from .models import Company
-from datetime import datetime
+import datetime
+from django.utils import timezone
+
+from datetime import date
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from rest_framework import status, viewsets
@@ -14,3 +19,25 @@ class CompanyViewSet(viewsets.ModelViewSet):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
     # permission_classes = [IsAuthenticated]
+
+
+class CompanyInfoView(APIView):
+
+    def get(self, request):
+        try:
+            company = Company.objects.last()
+        except Company.DoesNotExist:
+            return Response({'error': 'Company not found'}, status=404)
+
+        valid_until = company.valid_until
+        is_license_active = f"{datetime.datetime.strptime(valid_until, '%Y-%m-%d').date() - timezone.now().date()}"
+
+        response_data = {
+            'name_company': company.name_company,
+            'date_joined': company.date_joined,
+            'licence_is_active': company.is_active,
+            'count_cameras': company.count_cameras,
+            'neurons_active': company.neurons_active,
+            'days_left': is_license_active.split(',')[0],
+        }
+        return Response(response_data, status=200)
