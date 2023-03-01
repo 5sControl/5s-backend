@@ -36,7 +36,7 @@ class MakeZip:
         with zipfile.ZipFile(zip_filename, "w") as zip_file:
             for path in self.image_report_path:
                 zip_path = os.path.join(algorithm, path)
-                zip_file.write(f"images/{path}", zip_path)
+                zip_file.write(path, f"images/{zip_path}")
     
         return {
             "status": True,
