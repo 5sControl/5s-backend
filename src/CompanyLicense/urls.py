@@ -1,13 +1,10 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
+from django.urls import path
 
 from src.CompanyLicense.views import CompanyViewSet, CompanyInfoView
 
-company_report = DefaultRouter()
-
-company_report.register(r"create_license", CompanyViewSet, basename="company")
 
 urlpatterns = [
+    path('create_license/', CompanyViewSet.as_view(), name="create_license"),
     path('info/', CompanyInfoView.as_view(), name='company_info'),
-    path("", include(company_report.urls)),
+
 ]
