@@ -1,4 +1,6 @@
 from django.core.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist
+
 import requests
 
 from .models import Camera
@@ -148,6 +150,14 @@ class CameraService:
                 "status": False,
                 "message": f"camera with ip {camera_id} does not exist",
             }
+
+    def is_camera_exist(self, camera_id):
+        try:
+            Camera.objects.get(id=camera_id)
+        except ObjectDoesNotExist:
+            return False
+        else:
+            return True
 
 
 link_generator = CameraLinkGenerator()
