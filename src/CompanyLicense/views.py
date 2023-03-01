@@ -39,9 +39,10 @@ class CompanyInfoView(APIView):
         response_data = {
             'name_company': company.name_company,
             'date_joined': company.date_joined,
+            'valid_until': company.valid_until,
             'licence_is_active': company.is_active,
             'count_cameras': company.count_cameras,
-            'neurons_active': company.neurons_active,
-            'days_left': is_license_active,
+            'neurons_active': company.neurons_active.split(' '),
+            'days_left': is_license_active.split(',')[0],
         }
         return Response(response_data, status=200)
