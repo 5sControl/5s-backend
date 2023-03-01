@@ -1,5 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
+
 from src.CompanyLicense.views import CompanyViewSet, CompanyInfoView
 
 company_report = DefaultRouter()

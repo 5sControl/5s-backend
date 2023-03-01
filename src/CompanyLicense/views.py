@@ -1,16 +1,11 @@
 from rest_framework.views import APIView
-from django.views import View
-from django.http import HttpResponse
 from django.utils import timezone
 
 from .models import Company
-import datetime
 from django.utils import timezone
 
-from datetime import date
-from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
-from rest_framework import status, viewsets
+from rest_framework import viewsets
 from .models import Company
 from .serializers import CompanySerializer
 
