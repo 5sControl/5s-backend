@@ -8,6 +8,8 @@ class CameraSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "name",
+            "username",
+            "password",
             "description",
             "is_active",
         ]
