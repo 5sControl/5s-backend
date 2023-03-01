@@ -24,7 +24,6 @@ class CompanyViewSet(APIView):
 
 class CompanyInfoView(APIView):
     http_method_names = ["get"]
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
