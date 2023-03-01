@@ -20,9 +20,9 @@ class Camera(models.Model):
     )
     name = models.CharField(max_length=100, blank=True, null=True)
 
-    username = models.CharField(max_length=100, default="admin", blank=True, null=True)
+    username = models.CharField(max_length=100, blank=True, null=True)
     password = models.CharField(
-        max_length=250, default="just4Taqtile", blank=True, null=True
+        max_length=250, blank=True, null=True
     )
     description = models.CharField(max_length=250, blank=True, null=True)
 

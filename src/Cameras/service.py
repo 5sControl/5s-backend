@@ -113,10 +113,7 @@ class CameraService:
     def check_ip(self, ip, username, password, url):
         """
         get camera information, generate link and send it to
-        fastapi application to get snapshot and convert to base64
-
-        if succes -> return {"status": True, "result": snapshot}
-        if fail -> return {"status": False, "message": ip}
+        fastapi save snapshot
         """
         rtsp_link = f"rtsp://{username}:{password}@{ip}/h264_stream"
         camera_request_data = {"camera_url": rtsp_link, "ip": ip}
