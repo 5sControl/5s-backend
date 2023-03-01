@@ -92,7 +92,11 @@ class AlgorithmsService:
 			return {"message": "Camera Algorithm records created successfully"}
 
 	def get_algorithm_by_name(self, name: str):
-		return Algorithm.objects.filter(name=name).first()
+		algorithm = Algorithm.objects.filter(name=name).first()
+		if algorithm:
+			return algorithm
+		else:
+			return False
 
 	def create_new_records(self, algorithm: Algorithm, cameras: List[Camera], server_url: str) -> Union[List[CameraAlgorithm], bool]:
 		existing_records = self.get_existing_records(algorithm, cameras)
