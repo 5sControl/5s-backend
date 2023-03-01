@@ -3,17 +3,10 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-class License(models.Model):
+class Company(models.Model):
     """License of company"""
 
     license_key = models.TextField(verbose_name="Company license key")
-    user_id = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name="Super_user",
-        null=False,
-        blank=False,
-    )
     name_company = models.TextField(verbose_name="Name of company")
     date_joined = models.DateTimeField(verbose_name="Date joined", auto_now_add=True)
     date_edited = models.DateTimeField(verbose_name="Date edited", auto_now=True)
@@ -26,7 +19,7 @@ class License(models.Model):
         return self.valid_until >= timezone.now().date()
 
     def __str__(self):
-        return f"Number of days until license expires: {self.valid_until-timezone.now().date()}"
+        return f"Number of days until license expires: {self.valid_until - timezone.now().date()}"
 
     class Meta:
         verbose_name = "License"
