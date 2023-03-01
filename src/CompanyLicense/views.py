@@ -1,7 +1,7 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework import viewsets
+from rest_framework.response import Response
 
 from django.utils import timezone
 
@@ -9,16 +9,24 @@ from .models import Company
 from .serializers import CompanySerializer
 
 
-class CompanyViewSet(viewsets.ModelViewSet):
-    queryset = Company.objects.all()
-    serializer_class = CompanySerializer
-    http_method_names = ["post"]
-    permission_classes = [IsAuthenticated]
+class CompanyViewSet(APIView):
+    def post(self, request):
+        serializer = CompanySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'success': True, 'message': 'Object created successfully', 'object': serializer.data},
+                            status=201)
+        else:
+            return Response({'success': False, 'message': 'Object was not successfully'}, status=404)
+
+    # http_method_names = ["post"]
+    # permission_classes = [IsAuthenticated]
 
 
 class CompanyInfoView(APIView):
     http_method_names = ["get"]
-    permission_classes = [IsAuthenticated]
+
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request):
         try:

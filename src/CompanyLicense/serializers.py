@@ -1,6 +1,4 @@
-from rest_framework.response import Response
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
 
 from src.CompanyLicense.models import Company
 from src.CompanyLicense.service import decrypt_string
@@ -27,12 +25,14 @@ class CompanySerializer(serializers.Serializer):
 
             company = Company.objects.create(**data)
 
-            return Response({'message': 'Object created successfully', 'object': company}, status=201)
-        return Response({'message': 'You have an outdated license'})
+            return company
+
+        raise serializers.ValidationError({'message': 'You have an outdated license'})
 
     def validate(self, data):
         try:
             valid_data = decrypt_string(data["license_key"])
         except Exception as e:
-            raise ValidationError({'error': str(e)})
+            raise serializers.ValidationError({'error': str(e)})
         return data
+
