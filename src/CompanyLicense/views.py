@@ -10,6 +10,8 @@ from .serializers import CompanySerializer
 
 
 class CompanyViewSet(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         serializer = CompanySerializer(data=request.data)
         if serializer.is_valid():
@@ -19,14 +21,11 @@ class CompanyViewSet(APIView):
         else:
             return Response({'success': False, 'message': 'Object was not successfully'}, status=404)
 
-    # http_method_names = ["post"]
-    # permission_classes = [IsAuthenticated]
-
 
 class CompanyInfoView(APIView):
     http_method_names = ["get"]
 
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         try:
