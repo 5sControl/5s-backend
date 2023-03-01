@@ -2,6 +2,8 @@ from rest_framework import viewsets
 from datetime import datetime, time
 from django.db.models import Q
 from rest_framework.generics import GenericAPIView
+
+from src.CompanyLicense.decorators import validate_license
 from src.ImageReport.models import Image
 from src.Cameras.models import Camera
 from src.Algorithms.models import Algorithm
@@ -81,6 +83,7 @@ class ActionsWithPhotos(APIView):
 class ReportListView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @validate_license
     def get(self, request, algorithm_name, camera_ip, date, start_time, end_time):
 
         date_obj = datetime.strptime(date, "%Y-%m-%d").date()
@@ -112,6 +115,7 @@ class SearchReportListView(GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ReportSerializers
 
+    @validate_license
     def get_queryset(self):
         date = self.request.query_params.get('date')
         start_time = self.request.query_params.get('start_time')
