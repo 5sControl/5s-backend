@@ -22,11 +22,12 @@ class MakeZip:
         reports = Report.objects.filter(algorithm=algorithm_obj)
         for report in reports:
             try:
-                image_report_obj = Image.objects.get(report_id=report)
+                image_report_objs = Image.objects.filter(report_id=report)
             except Image.DoesNotExist:
                 continue
             else:
-                self.image_report_path.append(image_report_obj.image)
+                for image_report_obj in image_report_objs:
+                    self.image_report_path.append(image_report_obj.image)
 
     def create_zip(self, algorithm: str):
         self.get_image_path(algorithm)
