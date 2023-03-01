@@ -1,11 +1,10 @@
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from django.utils import timezone
-
-from .models import Company
-from django.utils import timezone
-
 from rest_framework.response import Response
 from rest_framework import viewsets
+
+from django.utils import timezone
+
 from .models import Company
 from .serializers import CompanySerializer
 
@@ -13,10 +12,13 @@ from .serializers import CompanySerializer
 class CompanyViewSet(viewsets.ModelViewSet):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
-    # permission_classes = [IsAuthenticated]
+    http_method_names = ["post"]
+    permission_classes = [IsAuthenticated]
 
 
 class CompanyInfoView(APIView):
+    http_method_names = ["get"]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         try:
