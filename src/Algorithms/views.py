@@ -78,7 +78,7 @@ class StopProcessApiView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated, IsSuperuserPermission | IsStaffPermission]
     serializer_class = ...
 
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         pid = request.data["pid"]
         request = yolo_proccesing.stop_process(pid)
         result = algorithms_services.update_status_of_algorithm_by_pid(pid=pid)
