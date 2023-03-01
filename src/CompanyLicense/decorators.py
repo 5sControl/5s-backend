@@ -54,7 +54,7 @@ def active_algorithms_required(view_func):
 
     def wrapper(request, *args, **kwargs):
         company = Company.objects.last()
-        active_neurons = company.neurons_active.split(',')
+        active_neurons = company.neurons_active.split(' ')
         allowed_algorithms = [algorithm.name for algorithm in Algorithm.objects.all()]
         allowed_algorithms = [algorithm.lower() for algorithm in allowed_algorithms]
         allowed_algorithms_set = set(allowed_algorithms)
