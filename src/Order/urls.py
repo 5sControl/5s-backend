@@ -6,5 +6,5 @@ from .views import (
 
 urlpatterns = [
     path("", GetOrderApiView.as_view(), name="get-order"),
-    path("connect", DatabaseConnectionApiView.as_view(), name="db-connection"),
+    path("connect/", DatabaseConnectionApiView.as_view(), name="db-connection"),
 ]
