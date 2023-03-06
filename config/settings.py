@@ -86,12 +86,12 @@ DATABASES = {
         "NAME": BASE_DIR / "database" / "db.sqlite3",
     },
     "ms_sql": {
-        "ENGINE": config("SQL_ENGINE", ""),
-        "NAME": config("SQL_DB", ""),
-        "USER": config("SQL_USER", ""),
-        "PASSWORD": config("SQL_PASSWORD", ""),
-        "HOST": config("SQL_HOST", ""),
-        "PORT": config("SQL_PORT", ""),
+        "ENGINE": "mysql",
+        "NAME": "test",
+        "USER": "root",
+        "PASSWORD": "just4Taqtile",
+        "HOST": "localhost",
+        "PORT": "3306",
         "OPTIONS": {
                     'driver': 'ODBC Driver 17 for SQL Server',
         }
