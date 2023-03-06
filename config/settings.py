@@ -94,6 +94,7 @@ DATABASES = {
         "PORT": "3306",
         "OPTIONS": {
                     'driver': 'ODBC Driver 17 for SQL Server',
+                    'timeout': 120
         }
     }
 }
