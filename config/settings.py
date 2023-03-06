@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "src.StaffControl.History.apps.HistoryConfig",
     # Common application
     "src.Algorithms",
+    "src.Order",
     "src.Cameras.apps.CamerasConfig",
     "src.CompanyLicense.apps.CompanyLicenseConfig",
     # Collections reports
@@ -83,6 +84,17 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "database" / "db.sqlite3",
+    },
+    "ms_sql": {
+        "ENGINE": config("SQL_ENGINE", ""),
+        "NAME": config("SQL_DB", ""),
+        "USER": config("SQL_USER", ""),
+        "PASSWORD": config("SQL_PASSWORD", ""),
+        "HOST": config("SQL_HOST", ""),
+        "PORT": config("SQL_PORT", ""),
+        "OPTIONS": {
+                    'driver': 'ODBC Driver 17 for SQL Server',
+        }
     }
 }
 
@@ -162,9 +174,15 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
     "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
+
+    # verify
+    'ROTATE_REFRESH_TOKENS': False,
+    'BLACKLIST_AFTER_ROTATION': False,
+    'UPDATE_LAST_LOGIN': False,
 }
 
 CORS_ORIGIN_WHITELIST = [
+    "http://localhost:8000",
     "http://localhost:3000",
     "https://localhost:8000",
     "https://*.eu.ngrok.io",
@@ -175,6 +193,7 @@ CORS_ORIGIN_WHITELIST = [
     "http://*",
     "https://*",
 ]
+
 CSRF_TRUSTED_ORIGINS = [
     "http://*",
     "https://*",
