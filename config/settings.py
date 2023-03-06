@@ -86,7 +86,7 @@ DATABASES = {
         "NAME": BASE_DIR / "database" / "db.sqlite3",
     },
     "ms_sql": {
-        "ENGINE": "mysql",
+        "ENGINE": "sql_server.pyodbc",
         "NAME": "test",
         "USER": "root",
         "PASSWORD": "just4Taqtile",
