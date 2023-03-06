@@ -14,7 +14,7 @@ from django.contrib.auth.models import User
 from src.StaffControl.Employees.serializers import (
     EmployeeSerializer,
     PeopleLocationsSerializers,
-    UserSerializer
+    UserSerializer,
 )
 
 from src.StaffControl.Employees.models import StaffControlUser
@@ -81,9 +81,9 @@ class PeopleViewSet(ReadOnlyModelViewSet):
         for location in locations:
             users_by_locations[location] = list(
                 (
-                    StaffControlUser.objects.filter(location__name=location).values_list(
-                        "first_name", "last_name", "date_joined"
-                    )
+                    StaffControlUser.objects.filter(
+                        location__name=location
+                    ).values_list("first_name", "last_name", "date_joined")
                 )
             )
         print(f"[INFO] {users_by_locations}")
@@ -98,18 +98,20 @@ class CreateUserView(generics.GenericAPIView):
     serializer_class = UserSerializer
 
     def post(self, request, *args, **kwargs):
-        user_type = request.data.get('user_type')
-        username = request.data.get('username')
-        password = request.data.get('password')
+        user_type = request.data.get("user_type")
+        username = request.data.get("username")
+        password = request.data.get("password")
 
         if not user_type or not username or not password:
-            return Response({'error': 'user_type, username, and password are required'})
+            return Response({"error": "user_type, username, and password are required"})
 
-        if user_type == 'staff':
+        if user_type == "staff":
             user_manager.create_staff(username, password)
-        elif user_type == 'worker':
+        elif user_type == "worker":
             user_manager.create_worker(username, password)
         else:
-            return Response({'error': 'user_type must be "staff" or "worker"'}, status=400)
+            return Response(
+                {"error": 'user_type must be "staff" or "worker"'}, status=400
+            )
 
-        return Response({'success': f'{user_type} user created successfully'})
+        return Response({"success": f"{user_type} user created successfully"})

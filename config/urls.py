@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.urls import path, include
 from src.router import routes
 from .views import RegisterView, setcookie, getcookie
+
 # from src.StaffControl.Employees.views import CreateUserView
 
 

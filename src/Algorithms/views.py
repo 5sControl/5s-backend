@@ -83,6 +83,8 @@ class StopProcessApiView(generics.GenericAPIView):
         request = yolo_proccesing.stop_process(pid)
         result = algorithms_services.update_status_of_algorithm_by_pid(pid=pid)
         if result["status"] and request["success"]:
-            return Response({"status": True, "message": f"PID {pid} was successfully stopped"})
+            return Response(
+                {"status": True, "message": f"PID {pid} was successfully stopped"}
+            )
         else:
             return Response({"status": False, "message": f"PID {pid} was not found"})

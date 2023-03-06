@@ -22,6 +22,7 @@ class RegisterView(generics.GenericAPIView):
             }
         )
 
+
 def setcookie(request):
     response = HttpResponse("Cookie Set")
     response.set_cookie("java-tutorial", "javatpoint.com")

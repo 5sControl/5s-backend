@@ -11,16 +11,13 @@ class MakeZip:
     def __init__(self):
         self.image_report_path = []
         self.images_folder = "images/"
-        
+
     def get_image_path(self, algorithm: str):
         algorithm_obj = algorithms_services.get_algorithm_by_name(algorithm)
 
         if not algorithm_obj:
-            return {
-                "status": False,
-                "message": f"Cannot find algorithm {algorithm}" 
-            }
-        
+            return {"status": False, "message": f"Cannot find algorithm {algorithm}"}
+
         reports = Report.objects.filter(algorithm=algorithm_obj)
         for report in reports:
             image_report_objs = Image.objects.filter(report_id=report)
@@ -36,11 +33,8 @@ class MakeZip:
             for image_path in self.image_report_path:
                 zip_path = os.path.join("images", image_path)
                 zip_file.write(image_path, zip_path)
-        
-        return {
-            "status": True,
-            "message": f"Zip file created at {zip_path}"
-        }
+
+        return {"status": True, "message": f"Zip file created at {zip_path}"}
 
 
 zip_maker = MakeZip()

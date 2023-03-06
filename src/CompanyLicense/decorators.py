@@ -18,7 +18,7 @@ def validate_license(view_func):
     def wrapper(request, *args, **kwargs):
         company = Company.objects.last()
         if not company.is_active or date.today() > company.valid_until:
-            return redirect('license expired')
+            return redirect("license expired")
         return view_func(request, *args, **kwargs)
 
     return wrapper
@@ -38,7 +38,9 @@ def check_active_cameras(view_func):
 
         active_cameras_count = Camera.objects.filter(is_active=True).count()
         if active_cameras_count >= company.count_cameras:
-            return HttpResponseBadRequest("You have exceeded the limit of active cameras.")
+            return HttpResponseBadRequest(
+                "You have exceeded the limit of active cameras."
+            )
 
         return view_func(request, *args, **kwargs)
 
@@ -54,7 +56,7 @@ def active_algorithms_required(view_func):
 
     def wrapper(request, *args, **kwargs):
         company = Company.objects.last()
-        active_neurons = company.neurons_active.split(' ')
+        active_neurons = company.neurons_active.split(" ")
         allowed_algorithms = [algorithm.name for algorithm in Algorithm.objects.all()]
         allowed_algorithms = [algorithm.lower() for algorithm in allowed_algorithms]
         allowed_algorithms_set = set(allowed_algorithms)
@@ -63,6 +65,8 @@ def active_algorithms_required(view_func):
             if neuron.lower() in allowed_algorithms_set:
                 return view_func(request, *args, **kwargs)
 
-        return HttpResponseForbidden("Access denied: no active algorithms found in company license.")
+        return HttpResponseForbidden(
+            "Access denied: no active algorithms found in company license."
+        )
 
     return wrapper

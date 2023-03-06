@@ -4,5 +4,12 @@ from .models import Camera
 
 @admin.register(Camera)
 class CamerasAdmin(admin.ModelAdmin):
-    list_display = ("id", "name", "username", "password", "description", "is_active",)
+    list_display = (
+        "id",
+        "name",
+        "username",
+        "password",
+        "description",
+        "is_active",
+    )
     list_filter = ("id",)

@@ -74,14 +74,14 @@ class CameraService:
         username = camera_info["username"]
         password = camera_info["password"]
         server_url = camera_info["url"]
-        print(server_url, 'server_url')
+        print(server_url, "server_url")
 
         if ip:  # check if ip was sended
             logger.info(f"IP {ip}")
             snapshot_request = self.check_ip(ip, username, password, server_url)
             print(snapshot_request)
             snapshot = snapshot_request.json()
-            print(snapshot, 'snapshot json')
+            print(snapshot, "snapshot json")
         else:
             return {"status": False, "message": f"Ip not defined"}
         if snapshot["status"]:  # check if snapshot was recived successfully
@@ -121,9 +121,7 @@ class CameraService:
         """
         camera_request_data = {"username": username, "password": password, "ip": ip}
         try:
-            connect = requests.post(
-                f"{url}:3456/add_camera", json=camera_request_data  # fastapi link
-            )
+            connect = requests.post(f"{url}:3456/add_camera", json=camera_request_data)
         except:
             return {
                 "status": False,

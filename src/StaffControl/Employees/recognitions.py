@@ -7,7 +7,14 @@ class Recognition:
         """
         This function takes an image and returns a list of face datasets in the image.
         """
-        list_images = ["", "image_below", "image_above", "image_center", "image_left", "image_right"]
+        list_images = [
+            "",
+            "image_below",
+            "image_above",
+            "image_center",
+            "image_left",
+            "image_right",
+        ]
         dataset = []
         for i in range(1, 6):
             face_img = face_recognition.load_image_file(
@@ -49,7 +56,14 @@ class Recognition:
 
 def face_rec(validated_data):
     """The function draws a frame around the face"""
-    list_images = ["", "image_below", "image_above", "image_center", "image_left", "image_right"]
+    list_images = [
+        "",
+        "image_below",
+        "image_above",
+        "image_center",
+        "image_left",
+        "image_right",
+    ]
     for i in range(1, 6):
         face_img = face_recognition.load_image_file(
             f"images/{validated_data[f'{list_images[i]}']}"

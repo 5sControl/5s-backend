@@ -4,7 +4,6 @@ from src.CompanyLicense.views import CompanyViewSet, CompanyInfoView
 
 
 urlpatterns = [
-    path('create_license/', CompanyViewSet.as_view(), name="create_license"),
-    path('info/', CompanyInfoView.as_view(), name='company_info'),
-
+    path("create_license/", CompanyViewSet.as_view(), name="create_license"),
+    path("info/", CompanyInfoView.as_view(), name="company_info"),
 ]

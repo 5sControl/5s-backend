@@ -20,7 +20,7 @@ urlpatterns += [
     path("", GetCameraAPIView.as_view()),
     path("get-camera-http-links/", GetHttpCamerasLinkAPIView.as_view()),
     path("get-camera-rtsp-by-ip-links/", GetRtspCamerasLinkByIpAPIView.as_view()),
-    path("get-data/", GetDataAPIView.as_view()), 
+    path("get-data/", GetDataAPIView.as_view()),
 ]
 # put/patch
 urlpatterns += [

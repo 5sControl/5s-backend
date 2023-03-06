@@ -41,7 +41,7 @@ class UpdateCameraAPIView(APIView):
     """
     After successfully creating a camera, set name and description
     """
-    
+
     permission_classes = [IsAuthenticated, IsSuperuserPermission | IsStaffPermission]
 
     def patch(self, request, *args, **kwargs):
@@ -72,12 +72,12 @@ class GetRtspCamerasLinkByIpAPIView(APIView):
     def post(self, request, *args, **kwargs):
         result = link_generator.get_camera_rtsp_link_by_camera(request.data)
         return Response({"result": result})
-    
+
 
 class GetDataAPIView(APIView):
     """Make zip"""
 
     def post(self, request, *args, **kwargs):
-        algorithm = request.data['algorithm']
+        algorithm = request.data["algorithm"]
         result = zip_maker.create_zip(algorithm)
         return Response(result)

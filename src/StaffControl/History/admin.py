@@ -28,9 +28,9 @@ class HistoryAdmin(admin.ModelAdmin):
     )
 
     def location(self, obj):
-        result = StaffControlUser.objects.filter(id=obj.people.id).values("location_id")[0][
+        result = StaffControlUser.objects.filter(id=obj.people.id).values(
             "location_id"
-        ]
+        )[0]["location_id"]
         return result
 
     def dataset(self, obj):

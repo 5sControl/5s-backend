@@ -146,4 +146,11 @@ class PeopleLocationsSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = StaffControlUser
-        exclude = ("date_joined", "image_below", "image_above", "image_center", "image_left", "image_right",)
+        exclude = (
+            "date_joined",
+            "image_below",
+            "image_above",
+            "image_center",
+            "image_left",
+            "image_right",
+        )

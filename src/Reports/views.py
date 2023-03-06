@@ -85,7 +85,6 @@ class ReportListView(APIView):
 
     @validate_license
     def get(self, request, algorithm_name, camera_ip, date, start_time, end_time):
-
         date_obj = datetime.strptime(date, "%Y-%m-%d").date()
         start_time_obj = datetime.strptime(start_time, "%H:%M:%S").time()
         end_time_obj = datetime.strptime(end_time, "%H:%M:%S").time()
@@ -93,19 +92,16 @@ class ReportListView(APIView):
         start_of_day = datetime.combine(date_obj, start_time_obj)
         end_of_day = datetime.combine(date_obj, end_time_obj)
 
-        queryset = (
-            Report.objects.filter(
-                Q(date_created__gte=start_of_day) & Q(date_created__lte=end_of_day)
-            )
-            .order_by("-date_created", "-id")
-        )
+        queryset = Report.objects.filter(
+            Q(date_created__gte=start_of_day) & Q(date_created__lte=end_of_day)
+        ).order_by("-date_created", "-id")
 
         if camera_ip:
             queryset = queryset.filter(camera__id=camera_ip)
         if algorithm_name:
             queryset = queryset.filter(algorithm__name=algorithm_name)
 
-        queryset = queryset.order_by('algorithm__name', 'camera__id')
+        queryset = queryset.order_by("algorithm__name", "camera__id")
 
         serializer = ReportSerializers(queryset, many=True)
         return Response(serializer.data)
@@ -117,24 +113,24 @@ class SearchReportListView(GenericAPIView):
 
     @validate_license
     def get_queryset(self):
-        date = self.request.query_params.get('date')
-        start_time = self.request.query_params.get('start_time')
-        end_time = self.request.query_params.get('end_time')
-        camera_id = self.request.query_params.get('camera__id')
-        algorithm_name = self.request.query_params.get('algorithm')
+        date = self.request.query_params.get("date")
+        start_time = self.request.query_params.get("start_time")
+        end_time = self.request.query_params.get("end_time")
+        camera_id = self.request.query_params.get("camera__id")
+        algorithm_name = self.request.query_params.get("algorithm")
 
-        queryset = Report.objects.all().order_by('-id')
+        queryset = Report.objects.all().order_by("-id")
 
         if start_time:
-            queryset = queryset.filter(date_created__gte=f'{date} {start_time}')
+            queryset = queryset.filter(date_created__gte=f"{date} {start_time}")
         if end_time:
-            queryset = queryset.filter(date_created__lte=f'{date} {end_time}')
+            queryset = queryset.filter(date_created__lte=f"{date} {end_time}")
         if camera_id:
             queryset = queryset.filter(camera__id=camera_id)
         if algorithm_name:
             queryset = queryset.filter(algorithm__name=algorithm_name)
 
-        queryset = queryset.order_by('-id')
+        queryset = queryset.order_by("-id")
 
         return queryset
 
