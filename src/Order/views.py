@@ -7,6 +7,7 @@ from src.Order.serializer import DatabaseConnectionSerializer
 from src.Order.services import OrderService
 from src.Order.database_conn import db_conn
 
+
 class GetOrderApiView(generics.GenericAPIView):
     """
     Get order records from ms sql
@@ -15,7 +16,7 @@ class GetOrderApiView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        orders = OrderService.get_order_data()
+        orders = OrderService.get_skany_data()
         return Response(orders, status=status.HTTP_200_OK)
 
 
@@ -27,9 +28,8 @@ class DatabaseConnectionApiView(generics.GenericAPIView):
     serializer_class = DatabaseConnectionSerializer
 
     def post(self, request, *args, **kwargs):
-        result = db_conn.get_connection(request.data)
-        if result:
+        result = db_conn.save_conn_data(request.data)
+        if result["status"]:
             return Response(result, status=status.HTTP_201_CREATED)
         else:
             return Response(result, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
