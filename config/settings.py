@@ -90,7 +90,7 @@ DATABASES = {
         "NAME": "test",
         "USER": "root",
         "PASSWORD": "just4Taqtile",
-        "HOST": "localhost",
+        "HOST": "192.168.1.101",
         "PORT": "3306",
         "OPTIONS": {
                     'driver': 'ODBC Driver 17 for SQL Server',
