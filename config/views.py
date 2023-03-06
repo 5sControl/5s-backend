@@ -1,10 +1,7 @@
 from django.http import HttpResponse
 from rest_framework import generics
-from rest_framework.views import APIView
 from src.StaffControl.Employees.serializers import RegisterSerializer, UserSerializer
 from rest_framework.response import Response
-import subprocess
-from netifaces import interfaces, ifaddresses, AF_INET
 
 
 class RegisterView(generics.GenericAPIView):
