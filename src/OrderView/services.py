@@ -1,9 +1,12 @@
-import datetime
+from datetime import datetime
+import json
 
 from src.OrderView.models import Zlecenia, SkanyVsZlecenia, Skany
 
 
 class OrderService:
+   
+
     def get_data(self):
         zlecenia = Zlecenia.objects.using("mssql").all()
         results = []
@@ -39,10 +42,17 @@ class OrderService:
             del skany_dict['_state']
             del zlecenie_dict['_state']
             zlecenie_dict['skany'] = skany_dict
+            
+            # Convert datetime objects to strings
+            for key, value in zlecenie_dict.items():
+                if isinstance(value, datetime):
+                    zlecenie_dict[key] = str(value)
+            
             final_data = zlecenie_dict
             results.append(final_data)
-    
-        return results
+
+        # Serialize the results to JSON
+        return json.dumps(results)
 
 
     def datetime_to_str(self, obj):
