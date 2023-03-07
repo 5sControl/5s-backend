@@ -14,5 +14,4 @@ all:
 	make migrate
 	make fill
 	make startprocess
-	mssql-get
 	make run
