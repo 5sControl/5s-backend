@@ -94,6 +94,8 @@ DATABASES = {
         "PORT": "1433",
         "OPTIONS": {
             "driver": "ODBC Driver 17 for SQL Server",
+            "unicode_results": True,
+            "extra_params": "charset=utf8",
         },
     },
 }
