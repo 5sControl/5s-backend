@@ -8,7 +8,7 @@ from src.OrderView.serializers import ZleceniaSerializer
 
 import json
 
-from src.OrderView.services import OrderService
+from src.OrderView.services import order_service
 
 
 class GetAllDataAPIView(generics.GenericAPIView):
@@ -16,5 +16,5 @@ class GetAllDataAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        results = OrderService.get_data()
+        results = order_service.get_data()
         return Response(json.dumps(results))
