@@ -17,5 +17,5 @@ class GetAllDataAPIView(generics.GenericAPIView):
 
     def get(self, request, *args, **kwargs):
         results = order_service.get_data()
-        serialized_results = json.dumps(results)
+        serialized_results = json.dumps(results, default=order_service.datetime_to_str)
         return Response(serialized_results, content_type='application/json')

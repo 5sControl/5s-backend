@@ -1,3 +1,5 @@
+import datetime
+
 from src.OrderView.models import Zlecenia, SkanyVsZlecenia, Skany
 
 
@@ -41,6 +43,13 @@ class OrderService:
             results.append(final_data)
     
         return results
+
+
+    def datetime_to_str(self, obj):
+        if isinstance(obj, datetime.datetime):
+            return obj.strftime('%Y-%m-%d %H:%M:%S.%f')
+        else:
+            return str(obj)
 
 
 order_service = OrderService()
