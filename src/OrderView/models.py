@@ -2,18 +2,10 @@ from django.db import models
 
 
 class Skany(models.Model):
-    indeks = models.IntegerField(
-        db_column="Indeks", primary_key=True
-    )
-    archiwum = models.IntegerField(
-        db_column="Archiwum", blank=True, null=True
-    )
-    data = models.DateTimeField(
-        db_column="Data", blank=True, null=True
-    )
-    del_field = models.IntegerField(
-        db_column="Del", blank=True, null=True
-    )
+    indeks = models.IntegerField(db_column="Indeks", primary_key=True)
+    archiwum = models.IntegerField(db_column="Archiwum", blank=True, null=True)
+    data = models.DateTimeField(db_column="Data", blank=True, null=True)
+    del_field = models.IntegerField(db_column="Del", blank=True, null=True)
     kodkreskowy = models.CharField(
         db_column="KodKreskowy",
         max_length=250,
@@ -21,34 +13,16 @@ class Skany(models.Model):
         blank=True,
         null=True,
     )
-    oscieznica = models.IntegerField(
-        db_column="Oscieznica", blank=True, null=True
-    )
-    pozycja = models.IntegerField(
-        db_column="Pozycja", blank=True, null=True
-    )
-    skrzydlo = models.IntegerField(
-        db_column="Skrzydlo", blank=True, null=True
-    )
+    oscieznica = models.IntegerField(db_column="Oscieznica", blank=True, null=True)
+    pozycja = models.IntegerField(db_column="Pozycja", blank=True, null=True)
+    skrzydlo = models.IntegerField(db_column="Skrzydlo", blank=True, null=True)
     srcdoc = models.IntegerField(blank=True, null=True)
-    stanowisko = models.IntegerField(
-        db_column="Stanowisko", blank=True, null=True
-    )
-    sztuka = models.IntegerField(
-        db_column="Sztuka", blank=True, null=True
-    )
-    uzytkownik = models.IntegerField(
-        db_column="Uzytkownik", blank=True, null=True
-    )
-    zakonczony = models.IntegerField(
-        db_column="Zakonczony", blank=True, null=True
-    )
-    czynnosc = models.IntegerField(
-        db_column="Czynnosc", blank=True, null=True
-    )
-    dbwhokna = models.IntegerField(
-        db_column="DbWHOkna", blank=True, null=True
-    )
+    stanowisko = models.IntegerField(db_column="Stanowisko", blank=True, null=True)
+    sztuka = models.IntegerField(db_column="Sztuka", blank=True, null=True)
+    uzytkownik = models.IntegerField(db_column="Uzytkownik", blank=True, null=True)
+    zakonczony = models.IntegerField(db_column="Zakonczony", blank=True, null=True)
+    czynnosc = models.IntegerField(db_column="Czynnosc", blank=True, null=True)
+    dbwhokna = models.IntegerField(db_column="DbWHOkna", blank=True, null=True)
     guid = models.CharField(
         db_column="Guid",
         max_length=250,
@@ -63,18 +37,10 @@ class Skany(models.Model):
         blank=True,
         null=True,
     )
-    status = models.IntegerField(
-        db_column="Status", blank=True, null=True
-    )
-    typ = models.IntegerField(
-        db_column="Typ", blank=True, null=True
-    )
-    typslupka = models.IntegerField(
-        db_column="TypSlupka", blank=True, null=True
-    )
-    erridx = models.IntegerField(
-        db_column="ErrIdx", blank=True, null=True
-    )
+    status = models.IntegerField(db_column="Status", blank=True, null=True)
+    typ = models.IntegerField(db_column="Typ", blank=True, null=True)
+    typslupka = models.IntegerField(db_column="TypSlupka", blank=True, null=True)
+    erridx = models.IntegerField(db_column="ErrIdx", blank=True, null=True)
 
     class Meta:
         managed = False
@@ -82,12 +48,8 @@ class Skany(models.Model):
 
 
 class SkanyVsZlecenia(models.Model):
-    indeks = models.IntegerField(
-        db_column="Indeks", primary_key=True
-    )
-    indeksskanu = models.IntegerField(
-        db_column="IndeksSkanu", blank=True, null=True
-    )
+    indeks = models.IntegerField(db_column="Indeks", primary_key=True)
+    indeksskanu = models.IntegerField(db_column="IndeksSkanu", blank=True, null=True)
     indekszlecenia = models.IntegerField(
         db_column="IndeksZlecenia", blank=True, null=True
     )
@@ -98,9 +60,7 @@ class SkanyVsZlecenia(models.Model):
         blank=True,
         null=True,
     )
-    duplicated = models.IntegerField(
-        db_column="Duplicated", blank=True, null=True
-    )
+    duplicated = models.IntegerField(db_column="Duplicated", blank=True, null=True)
 
     class Meta:
         managed = False
@@ -108,18 +68,10 @@ class SkanyVsZlecenia(models.Model):
 
 
 class Stanowiska(models.Model):
-    indeks = models.IntegerField(
-        db_column="Indeks", primary_key=True
-    )
-    aktywny = models.IntegerField(
-        db_column="Aktywny", blank=True, null=True
-    )
-    data = models.DateTimeField(
-        db_column="Data", blank=True, null=True
-    )
-    del_field = models.IntegerField(
-        db_column="Del", blank=True, null=True
-    )
+    indeks = models.IntegerField(db_column="Indeks", primary_key=True)
+    aktywny = models.IntegerField(db_column="Aktywny", blank=True, null=True)
+    data = models.DateTimeField(db_column="Data", blank=True, null=True)
+    del_field = models.IntegerField(db_column="Del", blank=True, null=True)
     drukujraport = models.CharField(
         db_column="DrukujRaport",
         max_length=250,
@@ -181,27 +133,17 @@ class Stanowiska(models.Model):
     rozwintabelke = models.IntegerField(
         db_column="RozwinTabelke", blank=True, null=True
     )
-    skanowanie = models.IntegerField(
-        db_column="Skanowanie", blank=True, null=True
-    )
+    skanowanie = models.IntegerField(db_column="Skanowanie", blank=True, null=True)
     stanowiskokoncowe = models.IntegerField(
         db_column="StanowiskoKoncowe", blank=True, null=True
     )
     wielkoscczcionki = models.IntegerField(
         db_column="WielkoscCzcionki", blank=True, null=True
     )
-    zdejmowanie = models.IntegerField(
-        db_column="Zdejmowanie", blank=True, null=True
-    )
-    zliczanie = models.IntegerField(
-        db_column="Zliczanie", blank=True, null=True
-    )
-    zoom1 = models.IntegerField(
-        db_column="Zoom1", blank=True, null=True
-    )
-    zoom2 = models.IntegerField(
-        db_column="Zoom2", blank=True, null=True
-    )
+    zdejmowanie = models.IntegerField(db_column="Zdejmowanie", blank=True, null=True)
+    zliczanie = models.IntegerField(db_column="Zliczanie", blank=True, null=True)
+    zoom1 = models.IntegerField(db_column="Zoom1", blank=True, null=True)
+    zoom2 = models.IntegerField(db_column="Zoom2", blank=True, null=True)
     proceduraskladowa = models.IntegerField(
         db_column="ProceduraSkladowa", blank=True, null=True
     )
@@ -212,27 +154,15 @@ class Stanowiska(models.Model):
         blank=True,
         null=True,
     )
-    czynnoscosc = models.IntegerField(
-        db_column="CzynnoscOsc", blank=True, null=True
-    )
-    czynnoscskr = models.IntegerField(
-        db_column="CzynnoscSkr", blank=True, null=True
-    )
-    czynnoscslr = models.IntegerField(
-        db_column="CzynnoscSlr", blank=True, null=True
-    )
-    czynnoscsls = models.IntegerField(
-        db_column="CzynnoscSls", blank=True, null=True
-    )
-    czynnoscszkl = models.IntegerField(
-        db_column="CzynnoscSzkl", blank=True, null=True
-    )
+    czynnoscosc = models.IntegerField(db_column="CzynnoscOsc", blank=True, null=True)
+    czynnoscskr = models.IntegerField(db_column="CzynnoscSkr", blank=True, null=True)
+    czynnoscslr = models.IntegerField(db_column="CzynnoscSlr", blank=True, null=True)
+    czynnoscsls = models.IntegerField(db_column="CzynnoscSls", blank=True, null=True)
+    czynnoscszkl = models.IntegerField(db_column="CzynnoscSzkl", blank=True, null=True)
     obslugatransportu = models.IntegerField(
         db_column="ObslugaTransportu", blank=True, null=True
     )
-    barcodeidx = models.IntegerField(
-        db_column="BarcodeIdx", blank=True, null=True
-    )
+    barcodeidx = models.IntegerField(db_column="BarcodeIdx", blank=True, null=True)
     barcodeprevidx = models.IntegerField(
         db_column="BarcodePrevIdx", blank=True, null=True
     )
@@ -242,12 +172,8 @@ class Stanowiska(models.Model):
     cursortimeout = models.IntegerField(
         db_column="CursorTimeout", blank=True, null=True
     )
-    defaultevent = models.IntegerField(
-        db_column="DefaultEvent", blank=True, null=True
-    )
-    tablefilter = models.IntegerField(
-        db_column="TableFilter", blank=True, null=True
-    )
+    defaultevent = models.IntegerField(db_column="DefaultEvent", blank=True, null=True)
+    tablefilter = models.IntegerField(db_column="TableFilter", blank=True, null=True)
     panelinfowidth = models.IntegerField(
         db_column="PanelInfoWidth", blank=True, null=True
     )
@@ -265,15 +191,9 @@ class Stanowiska(models.Model):
         blank=True,
         null=True,
     )
-    zoomstands = models.IntegerField(
-        db_column="ZoomStands", blank=True, null=True
-    )
-    middle = models.IntegerField(
-        db_column="Middle", blank=True, null=True
-    )
-    middle_type = models.IntegerField(
-        db_column="Middle_type", blank=True, null=True
-    )
+    zoomstands = models.IntegerField(db_column="ZoomStands", blank=True, null=True)
+    middle = models.IntegerField(db_column="Middle", blank=True, null=True)
+    middle_type = models.IntegerField(db_column="Middle_type", blank=True, null=True)
     obslugasektorow = models.IntegerField(
         db_column="ObslugaSektorow", blank=True, null=True
     )
@@ -340,9 +260,7 @@ class Stanowiska(models.Model):
     altcuttingworkplace = models.IntegerField(
         db_column="AltCuttingWorkplace", blank=True, null=True
     )
-    mobile = models.IntegerField(
-        db_column="Mobile", blank=True, null=True
-    )
+    mobile = models.IntegerField(db_column="Mobile", blank=True, null=True)
     markwhentransportispacked = models.IntegerField(blank=True, null=True)
 
     class Meta:
@@ -351,15 +269,9 @@ class Stanowiska(models.Model):
 
 
 class Uzytkownicy(models.Model):
-    indeks = models.IntegerField(
-        db_column="Indeks", primary_key=True
-    )
-    aktywny = models.IntegerField(
-        db_column="Aktywny", blank=True, null=True
-    )
-    data = models.DateTimeField(
-        db_column="Data", blank=True, null=True
-    )
+    indeks = models.IntegerField(db_column="Indeks", primary_key=True)
+    aktywny = models.IntegerField(db_column="Aktywny", blank=True, null=True)
+    data = models.DateTimeField(db_column="Data", blank=True, null=True)
     dealer = models.CharField(
         db_column="Dealer",
         max_length=250,
@@ -367,9 +279,7 @@ class Uzytkownicy(models.Model):
         blank=True,
         null=True,
     )
-    del_field = models.IntegerField(
-        db_column="Del", blank=True, null=True
-    )
+    del_field = models.IntegerField(db_column="Del", blank=True, null=True)
     haslo = models.CharField(
         db_column="Haslo",
         max_length=250,
@@ -412,12 +322,8 @@ class Uzytkownicy(models.Model):
         blank=True,
         null=True,
     )
-    uprawnienia = models.IntegerField(
-        db_column="Uprawnienia", blank=True, null=True
-    )
-    usr = models.IntegerField(
-        db_column="Usr", blank=True, null=True
-    )
+    uprawnienia = models.IntegerField(db_column="Uprawnienia", blank=True, null=True)
+    usr = models.IntegerField(db_column="Usr", blank=True, null=True)
     uwagi = models.CharField(
         db_column="Uwagi",
         max_length=250,
@@ -428,9 +334,7 @@ class Uzytkownicy(models.Model):
     stawkadzienna = models.IntegerField(
         db_column="StawkaDzienna", blank=True, null=True
     )
-    barcodeidx = models.IntegerField(
-        db_column="BarcodeIdx", blank=True, null=True
-    )
+    barcodeidx = models.IntegerField(db_column="BarcodeIdx", blank=True, null=True)
     language = models.CharField(
         db_column="Language",
         max_length=250,
@@ -438,9 +342,7 @@ class Uzytkownicy(models.Model):
         blank=True,
         null=True,
     )
-    grupaplacowa = models.IntegerField(
-        db_column="GrupaPlacowa", blank=True, null=True
-    )
+    grupaplacowa = models.IntegerField(db_column="GrupaPlacowa", blank=True, null=True)
     tworzenieartykulow = models.IntegerField(
         db_column="TworzenieArtykulow", blank=True, null=True
     )
@@ -510,24 +412,14 @@ class Uzytkownicy(models.Model):
 
 
 class Zlecenia(models.Model):
-    indeks = models.IntegerField(
-        db_column="Indeks", primary_key=True
-    )
-    archiwum = models.IntegerField(
-        db_column="Archiwum", blank=True, null=True
-    )
-    data = models.DateTimeField(
-        db_column="Data", blank=True, null=True
-    )
-    datawejscia = models.DateTimeField(
-        db_column="DataWejscia", blank=True, null=True
-    )
+    indeks = models.IntegerField(db_column="Indeks", primary_key=True)
+    archiwum = models.IntegerField(db_column="Archiwum", blank=True, null=True)
+    data = models.DateTimeField(db_column="Data", blank=True, null=True)
+    datawejscia = models.DateTimeField(db_column="DataWejscia", blank=True, null=True)
     datazakonczenia = models.DateTimeField(
         db_column="DataZakonczenia", blank=True, null=True
     )
-    del_field = models.IntegerField(
-        db_column="Del", blank=True, null=True
-    )
+    del_field = models.IntegerField(db_column="Del", blank=True, null=True)
     diler = models.CharField(
         db_column="Diler",
         max_length=250,
@@ -538,12 +430,8 @@ class Zlecenia(models.Model):
     firststanowisko = models.IntegerField(
         db_column="FirstStanowisko", blank=True, null=True
     )
-    hiden = models.IntegerField(
-        db_column="Hiden", blank=True, null=True
-    )
-    erridx = models.IntegerField(
-        db_column="ErrIdx", blank=True, null=True
-    )
+    hiden = models.IntegerField(db_column="Hiden", blank=True, null=True)
+    erridx = models.IntegerField(db_column="ErrIdx", blank=True, null=True)
     klient = models.CharField(
         db_column="Klient",
         max_length=250,
@@ -551,9 +439,7 @@ class Zlecenia(models.Model):
         blank=True,
         null=True,
     )
-    liczbaszklen = models.IntegerField(
-        db_column="LiczbaSzklen", blank=True, null=True
-    )
+    liczbaszklen = models.IntegerField(db_column="LiczbaSzklen", blank=True, null=True)
     nipdilera = models.CharField(
         db_column="NipDilera",
         max_length=250,
@@ -561,28 +447,16 @@ class Zlecenia(models.Model):
         blank=True,
         null=True,
     )
-    oscieznica = models.IntegerField(
-        db_column="Oscieznica", blank=True, null=True
-    )
-    pozycja = models.IntegerField(
-        db_column="Pozycja", blank=True, null=True
-    )
-    skanowanie = models.IntegerField(
-        db_column="Skanowanie", blank=True, null=True
-    )
-    skrzydlo = models.IntegerField(
-        db_column="Skrzydlo", blank=True, null=True
-    )
+    oscieznica = models.IntegerField(db_column="Oscieznica", blank=True, null=True)
+    pozycja = models.IntegerField(db_column="Pozycja", blank=True, null=True)
+    skanowanie = models.IntegerField(db_column="Skanowanie", blank=True, null=True)
+    skrzydlo = models.IntegerField(db_column="Skrzydlo", blank=True, null=True)
     srcdoc = models.IntegerField(blank=True, null=True)
-    stanowisko = models.IntegerField(
-        db_column="Stanowisko", blank=True, null=True
-    )
+    stanowisko = models.IntegerField(db_column="Stanowisko", blank=True, null=True)
     stanowiskopoprzednie = models.IntegerField(
         db_column="StanowiskoPoprzednie", blank=True, null=True
     )
-    sztuka = models.IntegerField(
-        db_column="Sztuka", blank=True, null=True
-    )
+    sztuka = models.IntegerField(db_column="Sztuka", blank=True, null=True)
     terminrealizacji = models.CharField(
         db_column="TerminRealizacji",
         max_length=250,
@@ -590,9 +464,7 @@ class Zlecenia(models.Model):
         blank=True,
         null=True,
     )
-    zakonczone = models.IntegerField(
-        db_column="Zakonczone", blank=True, null=True
-    )
+    zakonczone = models.IntegerField(db_column="Zakonczone", blank=True, null=True)
     zlecenie = models.CharField(
         db_column="Zlecenie",
         max_length=250,
@@ -629,9 +501,7 @@ class Zlecenia(models.Model):
         blank=True,
         null=True,
     )
-    dbwhokna = models.IntegerField(
-        db_column="DbWHOkna", blank=True, null=True
-    )
+    dbwhokna = models.IntegerField(db_column="DbWHOkna", blank=True, null=True)
     kodbiura = models.CharField(
         db_column="KodBiura",
         max_length=250,
@@ -639,12 +509,8 @@ class Zlecenia(models.Model):
         blank=True,
         null=True,
     )
-    optsrcdoc = models.IntegerField(
-        db_column="OptSrcdoc", blank=True, null=True
-    )
-    vip = models.IntegerField(
-        db_column="Vip", blank=True, null=True
-    )
+    optsrcdoc = models.IntegerField(db_column="OptSrcdoc", blank=True, null=True)
+    vip = models.IntegerField(db_column="Vip", blank=True, null=True)
     obrazekosc = models.CharField(
         db_column="ObrazekOsc",
         max_length=250,
@@ -666,15 +532,9 @@ class Zlecenia(models.Model):
         blank=True,
         null=True,
     )
-    priorytet = models.IntegerField(
-        db_column="Priorytet", blank=True, null=True
-    )
-    iloscjedn = models.FloatField(
-        db_column="IloscJedn", blank=True, null=True
-    )
-    idx_typu = models.IntegerField(
-        db_column="Idx_typu", blank=True, null=True
-    )
+    priorytet = models.IntegerField(db_column="Priorytet", blank=True, null=True)
+    iloscjedn = models.FloatField(db_column="IloscJedn", blank=True, null=True)
+    idx_typu = models.IntegerField(db_column="Idx_typu", blank=True, null=True)
     typ = models.CharField(
         db_column="Typ",
         max_length=250,
@@ -682,12 +542,8 @@ class Zlecenia(models.Model):
         blank=True,
         null=True,
     )
-    iloscjednpoz = models.FloatField(
-        db_column="IloscJednPoz", blank=True, null=True
-    )
-    pozycjalp = models.IntegerField(
-        db_column="PozycjaLp", blank=True, null=True
-    )
+    iloscjednpoz = models.FloatField(db_column="IloscJednPoz", blank=True, null=True)
+    pozycjalp = models.IntegerField(db_column="PozycjaLp", blank=True, null=True)
     country = models.CharField(
         db_column="Country",
         max_length=250,
@@ -695,18 +551,10 @@ class Zlecenia(models.Model):
         blank=True,
         null=True,
     )
-    framewidth = models.IntegerField(
-        db_column="FrameWidth", blank=True, null=True
-    )
-    frameheight = models.IntegerField(
-        db_column="FrameHeight", blank=True, null=True
-    )
-    sashwidth = models.IntegerField(
-        db_column="SashWidth", blank=True, null=True
-    )
-    sashheight = models.IntegerField(
-        db_column="SashHeight", blank=True, null=True
-    )
+    framewidth = models.IntegerField(db_column="FrameWidth", blank=True, null=True)
+    frameheight = models.IntegerField(db_column="FrameHeight", blank=True, null=True)
+    sashwidth = models.IntegerField(db_column="SashWidth", blank=True, null=True)
+    sashheight = models.IntegerField(db_column="SashHeight", blank=True, null=True)
     glazing = models.CharField(
         db_column="Glazing",
         max_length=250,
