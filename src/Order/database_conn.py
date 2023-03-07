@@ -18,7 +18,7 @@ class DBConn:
                 db_name=db_name,
                 db_user=db_user,
                 db_password=db_password,
-                db_host=db_host
+                db_host=db_host,
             )
             newDatabaseConnection.save()
         except Exception:
@@ -30,7 +30,7 @@ class DBConn:
             "status": True,
             "message": "Database connection created successfully",
         }
-    
+
     def check_connection(self, db_name, db_user, db_password, db_host):
         try:
             conn = pymssql.connect(
@@ -42,12 +42,17 @@ class DBConn:
             return False
         return True
 
-    def get_cursor(self,):
+    def get_cursor(
+        self,
+    ):
         cred = DatabaseConnection.objects.first()
         conn = pymssql.connect(
-                server=cred.db_host, database=cred.db_name, user=cred.db_user, password=cred.db_password
-            )
+            server=cred.db_host,
+            database=cred.db_name,
+            user=cred.db_user,
+            password=cred.db_password,
+        )
         return conn
-        
+
 
 db_conn = DBConn()
