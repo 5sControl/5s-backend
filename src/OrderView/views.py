@@ -6,13 +6,12 @@ from rest_framework.permissions import IsAuthenticated
 from src.OrderView.serializers import ZleceniaSerializer
 
 
-import json
-
 from src.OrderView.services import order_service
 
 
 class GetAllDataAPIView(generics.ListAPIView):
     serializer_class = ZleceniaSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return order_service.get_data()
