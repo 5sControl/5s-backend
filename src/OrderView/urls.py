@@ -1,8 +1,8 @@
 from django.urls import path
 from .views import (
-    GetAllDataListApiView,
+    GetAllDataAPIView,
 )
 
 urlpatterns = [
-    path("/", GetAllDataListApiView.as_view(), name="list"),
+    path("/", GetAllDataAPIView.as_view(), name="list"),
 ]
