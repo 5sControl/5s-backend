@@ -8,6 +8,6 @@ from src.OrderView.models import Zlecenia
 
 
 class ZleceniaList(generics.ListAPIView):
-    queryset = Zlecenia.objects.using('mssql').all()
+    queryset = Zlecenia.objects.using('mssql').prefetch_related('skany').all()
     serializer_class = ZleceniaSerializer
 
