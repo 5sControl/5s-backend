@@ -30,5 +30,6 @@ class OrderService:
                 else:
                     zlecenie.skany = skany
             results.append(zlecenie)
+        return results
 
 order_service = OrderService()
