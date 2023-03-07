@@ -95,7 +95,7 @@ DATABASES = {
         "OPTIONS": {
             "driver": "ODBC Driver 17 for SQL Server",
             "charset": "utf8mb4",
-            "collation": "utf8mb4_general_ci",
+            "collation": 'collation=SQL_Latin1_General_CP1_CI_AS',
         },
     },
 }
