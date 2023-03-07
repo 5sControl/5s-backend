@@ -23,7 +23,7 @@ routes = [
     path("algorithms/", include("src.Algorithms.urls")),
     path("reports/", include("src.Reports.urls")),
     path("company/", include("src.CompanyLicense.urls")),
-    path("order/", include("src.Order.urls")),
+    path("order/", include("src.OrderView.urls")),
     path(
         "swagger/",
         schema_view.with_ui("swagger", cache_timeout=0),
