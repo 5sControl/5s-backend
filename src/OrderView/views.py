@@ -4,10 +4,17 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
 from src.OrderView.serializers import ZleceniaSerializer
-from src.OrderView.models import Zlecenia
 
 
-class ZleceniaList(generics.ListAPIView):
-    queryset = Zlecenia.objects.using('mssql').prefetch_related('skany').all()
-    serializer_class = ZleceniaSerializer
+import json
 
+from src.OrderView.services import OrderService
+
+
+class GetAllDataAPIView(generics.GenericAPIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        results = OrderService.get_data()
+        return Response(json.dumps(results))
