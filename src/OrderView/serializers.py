@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from .models import Zlecenia, Skany
+from django.http import JsonResponse
+
+from src.OrderView.models import Zlecenia, SkanyVsZlecenia, Skany
 
 
 class SkanySerializer(serializers.ModelSerializer):
@@ -9,7 +11,7 @@ class SkanySerializer(serializers.ModelSerializer):
 
 
 class ZleceniaSerializer(serializers.ModelSerializer):
-    skany = SkanySerializer(many=True, read_only=True)
+    skany = SkanySerializer(many=False, read_only=True)
 
     class Meta:
         model = Zlecenia
