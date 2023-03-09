@@ -1,36 +1,70 @@
-from datetime import datetime
-import json
+from src.OrderView.models import Stanowiska, Zlecenia, SkanyVsZlecenia, Skany
 
-from django.http import JsonResponse
-
-from src.OrderView.models import Zlecenia, SkanyVsZlecenia, Skany
-from src.OrderView.serializers import ZleceniaSerializer
+from django.forms.models import model_to_dict
 
 
 class OrderService:
-    def get_data(request):
-        zlecenia = Zlecenia.objects.using("mssql").all()
-        results = []
-        for zlecenie in zlecenia:
-            skany_zlecenia = (
-                SkanyVsZlecenia.objects.using("mssql")
-                .filter(indekszlecenia=zlecenie.indeks)
-                .first()
+
+    def get_zleceniaQuery(self,):
+        return Zlecenia.objects.using("mssql").all()
+    
+    def get_zleceniaQueryById(self, id):
+        return Zlecenia.objects.using("mssql").filter(zlecenie=id)
+
+    def getAllData(self):
+        zleceniaQuery = orderView_service.get_zleceniaQuery()
+
+        response_list = []
+
+        for zlecenie in zleceniaQuery:
+            skanyVsZleceniaQuery = SkanyVsZlecenia.objects.using("mssql").filter(
+                indekszlecenia=zlecenie.indeks
             )
-            if not skany_zlecenia:
-                zlecenie.skany = None
-            else:
-                skany = (
-                    Skany.objects.using("mssql")
-                    .filter(indeks=skany_zlecenia.indeksskanu)
-                    .first()
+            skany_list = []
+            for skanyVsZlecenia in skanyVsZleceniaQuery:
+                skanyQuery = Skany.objects.using("mssql").filter(
+                    indeks=skanyVsZlecenia.indeksskanu
                 )
-                if not skany:
-                    zlecenie.skany = None
-                else:
-                    zlecenie.skany = skany
-            results.append(zlecenie)
-        return results
+                for skany in skanyQuery:
+                    stanowisko = Stanowiska.objects.using("mssql").get(indeks=skany.stanowisko)
+                    skany_data = model_to_dict(skany)
+                    skany_data["raport"] = stanowisko.raport
+                    skany_list.append(skany_data)
+
+            zlecenie_data = model_to_dict(zlecenie)
+            zlecenie_data["skans"] = skany_list
+            response_list.append(zlecenie_data)
+
+        return response_list
+    
+    def getAllOrders(self):
+        return Zlecenia.objects.values_list('zlecenie', flat=True)
+    
+    def getOrderDataById(self, order_id):
+        zleceniaQuery = orderView_service.get_zleceniaQueryById(order_id)
+
+        response_list = []
+
+        for zlecenie in zleceniaQuery:
+            skanyVsZleceniaQuery = SkanyVsZlecenia.objects.using("mssql").filter(
+                indekszlecenia=zlecenie.indeks
+            )
+            skany_list = []
+            for skanyVsZlecenia in skanyVsZleceniaQuery:
+                skanyQuery = Skany.objects.using("mssql").filter(
+                    indeks=skanyVsZlecenia.indeksskanu
+                )
+                for skany in skanyQuery:
+                    stanowisko = Stanowiska.objects.using("mssql").get(indeks=skany.stanowisko)
+                    skany_data = model_to_dict(skany)
+                    skany_data["raport"] = stanowisko.raport
+                    skany_list.append(skany_data)
+
+            zlecenie_data = model_to_dict(zlecenie)
+            zlecenie_data["skans"] = skany_list
+            response_list.append(zlecenie_data)
+            
+        return response_list
 
 
-order_service = OrderService()
+orderView_service = OrderService()
