@@ -36,7 +36,7 @@ class ZleceniaSkansAPIView(APIView):
                     indeks=skanyVsZlecenia.indeksskanu
                 )
                 for skany in skanyQuery:
-                    stanowisko = Stanowiska.objects.using("mssql").get(id=skany.stanowisko_id)
+                    stanowisko = Stanowiska.objects.using("mssql").get(indeks=skany.stanowisko)
                     skany_data = model_to_dict(skany)
                     skany_data["raport"] = stanowisko.raport
                     skany_list.append(skany_data)
