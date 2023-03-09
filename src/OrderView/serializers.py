@@ -11,7 +11,7 @@ class SkanySerializer(serializers.ModelSerializer):
 
 
 class ZleceniaSerializer(serializers.ModelSerializer):
-    skany = SkanySerializer(many=False, read_only=True)
+    skany = SkanySerializer(many=True, read_only=True)
 
     class Meta:
         model = Zlecenia
