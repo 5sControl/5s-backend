@@ -16,3 +16,11 @@ class ZleceniaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Zlecenia
         fields = "__all__"
+
+
+class ZleceniaTestSerializer(serializers.ModelSerializer):
+    skany = SkanySerializer(many=False, read_only=True)
+
+    class Meta:
+        model = Zlecenia
+        fields = "__all__"
