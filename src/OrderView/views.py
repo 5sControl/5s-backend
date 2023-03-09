@@ -23,15 +23,15 @@ class GetAllDataAPIView(generics.ListAPIView):
 
 class ZleceniaSkansAPIView(APIView):
     def get(self, request):
-        zleceniaQuery = Zlecenia.objects.all()
+        zleceniaQuery = Zlecenia.objects.using('mssql').all()
 
         zlecenia_list = []
 
         for zlecenie in zleceniaQuery:
-            skanyVsZleceniaQuery = SkanyVsZlecenia.objects.filter(indekszlecenia=zlecenie.indeks)
+            skanyVsZleceniaQuery = SkanyVsZlecenia.objects.using('mssql').filter(indekszlecenia=zlecenie.indeks)
             skany_list = []
             for skanyVsZlecenia in skanyVsZleceniaQuery:
-                skanyQuery = Skany.objects.filter(indeksskanu=skanyVsZlecenia.indeksskanu)
+                skanyQuery = Skany.objects.using('mssql').filter(indeksskanu=skanyVsZlecenia.indeksskanu)
                 for skany in skanyQuery:
                     skany_dict = model_to_dict(skany)
                     skany_list.append(skany_dict)
