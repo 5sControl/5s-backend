@@ -1,49 +1,34 @@
-from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
-from src.OrderView.serializers import ZleceniaSerializer
-
-from src.OrderView.models import Stanowiska, Zlecenia, SkanyVsZlecenia, Skany
-from src.OrderView.services import order_service
-
-from django.forms.models import model_to_dict
+from src.OrderView.services import orderView_service
 
 
-class GetAllDataAPIView(generics.ListAPIView):
-    serializer_class = ZleceniaSerializer
+class GetAllDataAPIView(APIView):
+    # If you have a lot of time u can run it
+
     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        return order_service.get_data()
-
-
-class ZleceniaSkansAPIView(APIView):
     def get(self, request):
-        zleceniaQuery = Zlecenia.objects.using("mssql").all()
+        response = orderView_service.getAllData()
+        return Response(response, status=status.HTTP_200_OK)
 
-        response_list = []
 
-        for zlecenie in zleceniaQuery:
-            skanyVsZleceniaQuery = SkanyVsZlecenia.objects.using("mssql").filter(
-                indekszlecenia=zlecenie.indeks
-            )
-            skany_list = []
-            for skanyVsZlecenia in skanyVsZleceniaQuery:
-                skanyQuery = Skany.objects.using("mssql").filter(
-                    indeks=skanyVsZlecenia.indeksskanu
-                )
-                for skany in skanyQuery:
-                    stanowisko = Stanowiska.objects.using("mssql").get(indeks=skany.stanowisko)
-                    skany_data = model_to_dict(skany)
-                    skany_data["raport"] = stanowisko.raport
-                    skany_list.append(skany_data)
+class GetAllOrdersAPIView(APIView):
 
-            zlecenie_data = model_to_dict(zlecenie)
-            zlecenie_data["skans"] = skany_list
-            response_list.append(zlecenie_data)
+    permission_classes = [IsAuthenticated]
 
-        return Response(response_list, status=status.HTTP_200_OK)
+    def get(self, request):
+        response = orderView_service.getAllOrders()
+        return Response(response, status=status.HTTP_200_OK)
 
+
+class GetOrderDataByIdAPIView(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, zlecenie_id):
+        response = orderView_service.getOrderDataById(zlecenie_id)
+        return Response(response, status=status.HTTP_200_OK)
