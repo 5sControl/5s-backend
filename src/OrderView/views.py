@@ -1,4 +1,5 @@
 from rest_framework import generics
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -20,43 +21,49 @@ class GetAllDataAPIView(generics.ListAPIView):
         return order_service.get_data()
 
 
-class ZleceniaListView(generics.ListAPIView):
-    serializer_class = ZleceniaTestSerializer
+class ZleceniaSkansAPIView(APIView):
+    def get(self, request):
+        # Query for Zlecenia objects
+        zleceniaQuery = Zlecenia.objects.all()
 
-    def get_queryset(self):
-        with connection.cursor() as cursor:
-            cursor.execute("""
-                SELECT DISTINCT Z.*, S.Raport
-                FROM Zlecenia Z
-                JOIN SkanyVsZlecenia SZ ON Z.indeks = SZ.indekszlecenia
-                JOIN Skany S ON SZ.indeksskanu = S.indeks
-                WHERE NOT EXISTS (
-                    SELECT *
-                    FROM SkanyVsZlecenia SZ2
-                    WHERE SZ2.indekszlecenia = Z.indeks
-                    AND SZ2.indeksskanu NOT IN (
-                        SELECT S2.indeks
-                        FROM Skany S2
-                        WHERE S2.Stanowisko IN (
-                            SELECT Stanowisko
-                            FROM Skany
-                            WHERE indeks = S.indeks
-                        ) AND S2.indeks = SZ2.indeksskanu
-                    )
-                )
-                AND S.Stanowisko IN (
-                    SELECT Stanowisko
-                    FROM Skany
-                    WHERE indeks = S.indeks
-                ) AND S.Raport IS NOT NULL
-            """)
+        # Create an empty list to store skans dictionaries
+        skans_list = []
 
-            rows = cursor.fetchall()
-            queryset = []
-            for row in rows:
-                zlecenie = Zlecenia(*row[:-1])
-                zlecenie.raport = row[-1]
-                queryset.append(zlecenie)
+        # Loop through each Zlecenia object
+        for zlecenie in zleceniaQuery:
+            # Query for SkanyVsZlecenia objects related to the current Zlecenia object
+            skanyVsZleceniaQuery = SkanyVsZlecenia.objects.filter(indekszlecenia=zlecenie.indeks)
+            # Create an empty list to store skany dictionaries for the current Zlecenia object
+            skany_list = []
+            # Loop through each SkanyVsZlecenia object related to the current Zlecenia object
+            for skanyVsZlecenia in skanyVsZleceniaQuery:
+                # Query for Skany objects related to the current SkanyVsZlecenia object
+                skanyQuery = Skany.objects.filter(indeksskanu=skanyVsZlecenia.indeksskanu)
+                # Loop through each Skany object related to the current SkanyVsZlecenia object
+                for skany in skanyQuery:
+                    # Create a dictionary for the current Skany object
+                    skany_dict = {
+                        'nazwa': skany.nazwa,
+                        'numer': skany.numer,
+                        # Add any other Skany fields you want to include in the dictionary
+                    }
+                    # Append the dictionary to the skany_list
+                    skany_list.append(skany_dict)
+            # Create a dictionary for the current Zlecenia object with the skany_list as the value for the 'skans' key
+            zlecenie_dict = {
+                'indeks': zlecenie.indeks,
+                # Add any other Zlecenia fields you want to include in the dictionary
+                'skans': skany_list,
+            }
+            # Append the dictionary to the skans_list
+            skans_list.append(zlecenie_dict)
 
-        return queryset
-    
+        # Return the skans_list in the Response object
+        return Response(skans_list)
+
+
+
+
+
+
+
