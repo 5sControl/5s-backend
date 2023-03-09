@@ -34,7 +34,7 @@ class ZleceniaSkansAPIView(APIView):
             skany_list = []
             for skanyVsZlecenia in skanyVsZleceniaQuery:
                 skanyQuery = Skany.objects.using("mssql").filter(
-                    indeksskanu=skanyVsZlecenia.indeksskanu
+                    indeks=skanyVsZlecenia.indeksskanu
                 )
                 for skany in skanyQuery:
                     skany_dict = model_to_dict(skany)
