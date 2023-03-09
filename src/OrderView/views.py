@@ -4,12 +4,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
-from src.OrderView.serializers import ZleceniaSerializer, ZleceniaTestSerializer
+from src.OrderView.serializers import ZleceniaSerializer
 
-from src.OrderView.models import Zlecenia, SkanyVsZlecenia, Skany
+from src.OrderView.models import Stanowiska, Zlecenia, SkanyVsZlecenia, Skany
 from src.OrderView.services import order_service
 
-from django.db.models import F
 from django.forms.models import model_to_dict
 
 
@@ -25,7 +24,7 @@ class ZleceniaSkansAPIView(APIView):
     def get(self, request):
         zleceniaQuery = Zlecenia.objects.using("mssql").all()
 
-        zlecenia_list = []
+        response_list = []
 
         for zlecenie in zleceniaQuery:
             skanyVsZleceniaQuery = SkanyVsZlecenia.objects.using("mssql").filter(
@@ -37,11 +36,14 @@ class ZleceniaSkansAPIView(APIView):
                     indeks=skanyVsZlecenia.indeksskanu
                 )
                 for skany in skanyQuery:
-                    skany_dict = model_to_dict(skany)
-                    skany_list.append(skany_dict)
+                    stanowisko = Stanowiska.objects.using("mssql").get(id=skany.stanowisko_id)
+                    skany_data = model_to_dict(skany)
+                    skany_data["raport"] = stanowisko.raport
+                    skany_list.append(skany_data)
 
-            zlecenie_dict = model_to_dict(zlecenie)
-            zlecenie_dict["skans"] = skany_list
-            zlecenia_list.append(zlecenie_dict)
+            zlecenie_data = model_to_dict(zlecenie)
+            zlecenie_data["skans"] = skany_list
+            response_list.append(zlecenie_data)
 
-        return Response(zlecenia_list)
+        return Response(response_list, status=status.HTTP_200_OK)
+
