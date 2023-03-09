@@ -32,4 +32,5 @@ class OrderService:
             results.append(zlecenie)
         return results
 
+
 order_service = OrderService()
