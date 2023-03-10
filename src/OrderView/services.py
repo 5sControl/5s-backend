@@ -16,7 +16,7 @@ class OrderService:
         zleceniaQuery = orderView_service.get_zleceniaQuery()
 
         response_list = []
-        couter = 0  # FIXME
+        counter = 0  # FIXME
 
         for zlecenie in zleceniaQuery:
             counter += 1  # FIXME
