@@ -17,7 +17,6 @@ class GetAllDataAPIView(APIView):
 
 
 class GetAllOrdersAPIView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -26,7 +25,6 @@ class GetAllOrdersAPIView(APIView):
 
 
 class GetOrderDataByIdAPIView(APIView):
-
     permission_classes = [IsAuthenticated]
 
     def get(self, request, zlecenie_id):

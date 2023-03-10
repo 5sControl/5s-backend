@@ -5,19 +5,22 @@ from rest_framework.permissions import IsAuthenticated
 
 from src.core.permissions import IsStaffPermission, IsSuperuserPermission
 
-from .models import Algorithm
-from .service import algorithms_services
-from .utils import yolo_proccesing
-from .serializers import (
+from src.Algorithms.models import Algorithm
+from src.Algorithms.service import algorithms_services, camera_algorithm_logs_service
+from src.Algorithms.utils import yolo_proccesing
+from src.Algorithms.serializers import (
     AlgorithmUpdateSerializer,
     AlgorithmStatusSerializer,
     CameraAlgorithmFullSerializer,
+    CameraAlgorithmLogSerializer,
     CameraAlgorithmSerializer,
 )
 
 
 class PutAlgorithmUpdateApiView(generics.UpdateAPIView):
-    """Update status of an algorithm"""
+    """
+    Update status of an algorithm
+    """
 
     permission_classes = [IsAuthenticated, IsSuperuserPermission | IsStaffPermission]
     queryset = Algorithm.objects.all()
@@ -73,10 +76,11 @@ class GetAlgorithmProcessApiView(generics.GenericAPIView):
 
 
 class StopProcessApiView(generics.GenericAPIView):
-    """Get pid and stop process"""
+    """
+    Get pid and stop process
+    """
 
     permission_classes = [IsAuthenticated, IsSuperuserPermission | IsStaffPermission]
-    serializer_class = ...
 
     def post(self, request, *args, **kwargs):
         pid = request.data["pid"]
@@ -88,3 +92,11 @@ class StopProcessApiView(generics.GenericAPIView):
             )
         else:
             return Response({"status": False, "message": f"PID {pid} was not found"})
+
+
+class CameraAlgorithmLogListAPIView(generics.ListAPIView):
+
+    permission_classes = [IsAuthenticated,]
+
+    queryset = camera_algorithm_logs_service.get_logs()
+    serializer_class = CameraAlgorithmLogSerializer
