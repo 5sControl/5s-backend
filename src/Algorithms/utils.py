@@ -17,7 +17,7 @@ class YoloProccesing:
             "server_url": url,
         }
         request = requests.post(
-            url=f"{url}:3020/run",
+            url=f"{url}:3333/run",
             json=response,
         )
         request_json = request.json()
@@ -34,7 +34,7 @@ class YoloProccesing:
         yolo_server_url = self.get_yolo_url(pid)
 
         request = requests.post(
-            url=f"{yolo_server_url}:3020/stop",
+            url=f"{yolo_server_url}:3333/stop",
             json={"pid": pid},
         )
         response_json = request.json()
