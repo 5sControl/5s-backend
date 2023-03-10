@@ -69,7 +69,7 @@ class OrderService:
 
         for zlecenie in zleceniaQuery:
             skanyVsZleceniaQuery = SkanyVsZlecenia.objects.using("mssql").filter(
-                indekszlecenia=zlecenie.indeks
+                indekszlecenia=zlecenie['indeks']
             )
             skany_list = []
             for skanyVsZlecenia in skanyVsZleceniaQuery:
@@ -84,11 +84,12 @@ class OrderService:
                     skany_data["raport"] = stanowisko.raport
                     skany_list.append(skany_data)
 
-            zlecenie_data = model_to_dict(zlecenie)
+            zlecenie_data = zlecenie
             zlecenie_data["skans"] = skany_list
             response_list.append(zlecenie_data)
 
         return response_list
+
 
 
 orderView_service = OrderService()
