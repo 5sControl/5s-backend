@@ -64,9 +64,7 @@ class OrderService:
         return response_list
 
     def getAllOrders(self):
-        return Zlecenia.objects.using("mssql").values_list(
-            "zlecenie", flat=True
-        )  # FIXME: return it when will get order name
+        return Zlecenia.objects.using("mssql").values_list("zlecenie", flat=True).distinct()
 
     def getOrderDataById(self, order_id):
         zleceniaQuery = orderView_service.get_zleceniaQueryById(order_id)
