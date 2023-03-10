@@ -64,19 +64,25 @@ class OrderService:
 
         return response_list
 
-
     def getAllOrders(self):
-        orders = Zlecenia.objects.using("mssql").annotate(
-            status=Case(
-                When(zakonczone='0', datawejscia__isnull=False, then=Value('Started')),
-                When(zakonczone='1', then=Value('Completed')),
-                default=Value('Unknown'),
-                output_field=CharField()
+        orders = (
+            Zlecenia.objects.using("mssql")
+            .annotate(
+                status=Case(
+                    When(
+                        zakonczone="0", datawejscia__isnull=False, then=Value("Started")
+                    ),
+                    When(zakonczone="1", then=Value("Completed")),
+                    default=Value("Unknown"),
+                    output_field=CharField(),
+                )
             )
-        ).values('zlecenie', 'status').distinct()
+            .values_list("zlecenie", "status")
+        )
+
+        orders = orders.order_by("zlecenie", "status").distinct()
 
         return list(orders)
-
 
     def getOrderDataById(self, order_id):
         zleceniaQuery = orderView_service.get_zleceniaQueryById(order_id)
@@ -97,7 +103,7 @@ class OrderService:
                     print(skany, type(skany))
                     print(skanyQuery, type(skanyQuery))
                     stanowisko = Stanowiska.objects.using("mssql").get(
-                        indeks=skany['stanowisko']
+                        indeks=skany["stanowisko"]
                     )
                     # skany_data = model_to_dict(skany)
                     skany["raport"] = stanowisko.raport
