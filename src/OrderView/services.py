@@ -1,7 +1,8 @@
 from src.OrderView.models import Stanowiska, Zlecenia, SkanyVsZlecenia, Skany
 
 from django.forms.models import model_to_dict
-from django.db.models import Value, CharField
+from django.db.models import Value, CharField, Case, When
+from django.db.models.functions import Cast
 
 
 class OrderService:
@@ -63,8 +64,18 @@ class OrderService:
 
         return response_list
 
+
     def getAllOrders(self):
-        return Zlecenia.objects.using("mssql").values_list("zlecenie", flat=True).distinct()
+        orders = Zlecenia.objects.using("mssql").annotate(
+            status=Case(
+                When(Cast('zakonczone', IntegerField())==0, datawejscia__isnull=False, then=Value('Active')),
+                default=Value('Inactive'),
+                output_field=CharField()
+            )
+        ).values('zlecenie', 'status').distinct()
+
+        return list(orders)
+
 
     def getOrderDataById(self, order_id):
         zleceniaQuery = orderView_service.get_zleceniaQueryById(order_id)
