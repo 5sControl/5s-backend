@@ -84,7 +84,7 @@ class OrderService:
                 )
                 for skany in skanyQuery:
                     stanowisko = Stanowiska.objects.using("mssql").get(
-                        indeks=skany.stanowisko
+                        indeks=skany['stanowisko']
                     )
                     skany_data = model_to_dict(skany)
                     skany_data["raport"] = stanowisko.raport
