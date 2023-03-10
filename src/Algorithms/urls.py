@@ -5,6 +5,7 @@ from .views import (
     GetAlgorithmStatusApiView,
     GetAlgorithmProcessApiView,
     StopProcessApiView,
+    CameraAlgorithmLogListAPIView,
 )
 
 urlpatterns = [
@@ -23,4 +24,5 @@ urlpatterns = [
         "get-process/", GetAlgorithmProcessApiView.as_view(), name="camera-get-process"
     ),
     path("stop-process/", StopProcessApiView.as_view(), name="stop-process"),
+    path("logs/", CameraAlgorithmLogListAPIView.as_view(), name="log"),
 ]
