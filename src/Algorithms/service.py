@@ -146,10 +146,10 @@ class CameraAlgorithmLogsService:
     def get_logs(self):
         return CameraAlgorithmLog.objects.all()
 
-    def create_log(algorithm_name, camera_ip):
+    def create_log(self, algorithm_name, camera_ip):
         CameraAlgorithmLog.objects.create(algorithm_name, camera_ip)
 
-    def delete_log(algorithm_name, camera_ip):
+    def delete_log(self, algorithm_name, camera_ip):
         try:
             log = CameraAlgorithmLog.objects.get(
                 algorithm_name=algorithm_name, camera_ip=camera_ip
