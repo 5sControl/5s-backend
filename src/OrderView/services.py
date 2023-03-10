@@ -11,7 +11,13 @@ class OrderService:
         return Zlecenia.objects.using("mssql").all()
 
     def get_zleceniaQueryById(self, id):
-        return Zlecenia.objects.using("mssql").filter(zlecenie=id)
+        return (
+            Zlecenia.objects.using("mssql")
+            .annotate(orderName=Value("Order Name", output_field=CharField()))
+            .filter(zlecenie=id)
+            .values("indeks", "data", "zlecenie", "klient", "datawejscia", "zakonczone", "typ", "orderName")
+        )
+
 
     def getAllData(self):
         zleceniaQuery = orderView_service.get_zleceniaQuery()
@@ -46,7 +52,7 @@ class OrderService:
         return (
             Zlecenia.objects.using("mssql")
             .annotate(orderName=Value("Order Name", output_field=CharField()))
-            .values_list("indeks", "data", "zlecenie", "klient", "datawejscia", "zakonczone", "typ", "orderName")
+            .values_list("zlecenie", "orderName")
         )
         return Zlecenia.objects.using("mssql").values_list(
             "zlecenie", flat=True
@@ -76,7 +82,6 @@ class OrderService:
 
             zlecenie_data = model_to_dict(zlecenie)
             zlecenie_data["skans"] = skany_list
-            zlecenie_data["orderName"] = "Order Name"
             response_list.append(zlecenie_data)
 
         return response_list
