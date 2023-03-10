@@ -2,7 +2,7 @@ from src.OrderView.models import Stanowiska, Zlecenia, SkanyVsZlecenia, Skany
 
 from django.forms.models import model_to_dict
 from django.db.models import Case, When, Value, CharField, F
-from django.db.models.functions import Cast
+from django.db.models import Func
 
 
 class OrderService:
@@ -66,14 +66,14 @@ class OrderService:
 
     def getAllOrders(self):
         orders = Zlecenia.objects.using("mssql").annotate(
-            status=Case(
-                When(zakonczone='0', datawejscia__isnull=False, then=Value('Started')),
-                When(zakonczone='1', then=Value('Completed')),
-                default=Value('Unknown'),
-                output_field=CharField()
-            )
-        ).exclude(zlecenie__isnull=True).exclude(status__isnull=True).values('zlecenie', 'status').distinct()
-
+                    status=Case(
+                        When(zakonczone='0', datawejscia__isnull=False, then=Value('Started')),
+                        When(zakonczone='1', then=Value('Completed')),
+                        default=Value('Unknown'),
+                        output_field=CharField()
+                    ),
+                    zlecenie_trim=Func(F('zlecenie'), function='Trim')
+                ).exclude(zlecenie__isnull=True).exclude(status__isnull=True).values('zlecenie_trim', 'status').distinct()
 
         return list(orders)
 
