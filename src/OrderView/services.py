@@ -31,7 +31,7 @@ class OrderService:
         return (
             Skany.objects.using("mssql")
             .filter(indeks=id)
-            .values("indeks", "data")
+            .values("indeks", "data", "stanowisko")
         )
 
     def getAllData(self):
