@@ -27,5 +27,5 @@ class CameraAlgorithmAdmin(admin.ModelAdmin):
 
 @admin.register(CameraAlgorithmLog)
 class CameraAlgorithmLogAdmin(admin.ModelAdmin):
-    list_display = ("algorithm_name", "camera_ip", "created_at", "stoped_at",  "status")
+    list_display = ("algorithm_name", "camera_ip", "created_at", "stoped_at", "status")
     list_filter = ("algorithm_name", "camera_ip", "stoped_at", "created_at", "status")

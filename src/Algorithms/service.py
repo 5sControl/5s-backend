@@ -149,7 +149,6 @@ class CameraAlgorithmLogsService:
     def create_log(algorithm_name, camera_ip):
         CameraAlgorithmLog.objects.create(algorithm_name, camera_ip)
 
-
     def delete_log(algorithm_name, camera_ip):
         try:
             log = CameraAlgorithmLog.objects.get(
@@ -160,6 +159,7 @@ class CameraAlgorithmLogsService:
         else:
             log.stoped_at = timezone.now()
             log.save()
+
 
 camera_algorithm_logs_service = CameraAlgorithmLogsService()
 algorithms_services = AlgorithmsService()

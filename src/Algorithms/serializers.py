@@ -45,4 +45,3 @@ class CameraAlgorithmLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = CameraAlgorithmLog
         fields = "__all__"
-

@@ -95,8 +95,9 @@ class StopProcessApiView(generics.GenericAPIView):
 
 
 class CameraAlgorithmLogListAPIView(generics.ListAPIView):
-
-    permission_classes = [IsAuthenticated,]
+    permission_classes = [
+        IsAuthenticated,
+    ]
 
     queryset = camera_algorithm_logs_service.get_logs()
     serializer_class = CameraAlgorithmLogSerializer
