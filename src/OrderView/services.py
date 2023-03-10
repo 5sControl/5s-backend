@@ -1,7 +1,7 @@
 from src.OrderView.models import Stanowiska, Zlecenia, SkanyVsZlecenia, Skany
 
 from django.forms.models import model_to_dict
-from django.db.models import Value, CharField, Case, When
+from django.db.models import Value, CharField, Case, When, IntegerField
 from django.db.models.functions import Cast
 
 
