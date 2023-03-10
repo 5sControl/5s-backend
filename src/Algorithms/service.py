@@ -87,6 +87,7 @@ class AlgorithmsService:
             new_records = self.create_new_records(algorithm, cameras, server_url)
             if new_records:
                 for camera in cameras:
+                    print(algorithm.name, camera.id)
                     camera_algorithm_logs_service.create_log(algorithm.name, camera.id)
                 self.created_records.extend(new_records)
             else:
@@ -147,7 +148,8 @@ class CameraAlgorithmLogsService:
         return CameraAlgorithmLog.objects.all()
 
     def create_log(self, algorithm_name, camera_ip):
-        CameraAlgorithmLog.objects.create(algorithm_name, camera_ip)
+        CameraAlgorithmLog.objects.create(algorithm_name=algorithm_name, camera_ip=camera_ip)
+
 
     def delete_log(self, algorithm_name, camera_ip):
         try:
