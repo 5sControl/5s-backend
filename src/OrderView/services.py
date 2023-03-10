@@ -31,7 +31,7 @@ class OrderService:
         return (
             Skany.objects.using("mssql")
             .filter(indeks=id)
-            .values("indeks", "raport", "data")
+            .values("indeks", "data")
         )
 
     def getAllData(self):
@@ -87,7 +87,7 @@ class OrderService:
                         indeks=skany.stanowisko
                     )
                     skany_data = model_to_dict(skany)
-                    skany_data["raport"] = stanowisko['raport']
+                    skany_data["raport"] = stanowisko.raport
                     skany_list.append(skany_data)
 
             zlecenie_data = zlecenie
