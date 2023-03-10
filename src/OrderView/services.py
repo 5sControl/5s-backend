@@ -15,9 +15,17 @@ class OrderService:
             Zlecenia.objects.using("mssql")
             .annotate(orderName=Value("Order Name", output_field=CharField()))
             .filter(zlecenie=id)
-            .values("indeks", "data", "zlecenie", "klient", "datawejscia", "zakonczone", "typ", "orderName")
+            .values(
+                "indeks",
+                "data",
+                "zlecenie",
+                "klient",
+                "datawejscia",
+                "zakonczone",
+                "typ",
+                "orderName",
+            )
         )
-
 
     def getAllData(self):
         zleceniaQuery = orderView_service.get_zleceniaQuery()
@@ -49,11 +57,7 @@ class OrderService:
         return response_list
 
     def getAllOrders(self):
-        return (
-            Zlecenia.objects.using("mssql")
-            .annotate(orderName=Value("Order Name", output_field=CharField()))
-            .values_list("zlecenie", "orderName")
-        )
+        return Zlecenia.objects.using("mssql").values_list("zlecenie")
         return Zlecenia.objects.using("mssql").values_list(
             "zlecenie", flat=True
         )  # FIXME: return it when will get order name

@@ -148,8 +148,9 @@ class CameraAlgorithmLogsService:
         return CameraAlgorithmLog.objects.all()
 
     def create_log(self, algorithm_name, camera_ip):
-        CameraAlgorithmLog.objects.create(algorithm_name=algorithm_name, camera_ip=camera_ip)
-
+        CameraAlgorithmLog.objects.create(
+            algorithm_name=algorithm_name, camera_ip=camera_ip
+        )
 
     def delete_log(self, algorithm_name, camera_ip):
         try:
