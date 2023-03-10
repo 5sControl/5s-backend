@@ -82,13 +82,16 @@ class OrderService:
                 skanyQuery = orderView_service.get_skanyQueryById(
                     skanyVsZlecenia.indeksskanu
                 )
+
                 for skany in skanyQuery:
+                    print(skany, type(skany))
+                    print(skanyQuery, type(skanyQuery))
                     stanowisko = Stanowiska.objects.using("mssql").get(
                         indeks=skany['stanowisko']
                     )
-                    skany_data = model_to_dict(skany)
-                    skany_data["raport"] = stanowisko.raport
-                    skany_list.append(skany_data)
+                    # skany_data = model_to_dict(skany)
+                    skany["raport"] = stanowisko.raport
+                    skany_list.append(skany)
 
             zlecenie_data = zlecenie
             zlecenie_data["skans"] = skany_list
