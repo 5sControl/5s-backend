@@ -57,7 +57,7 @@ class OrderService:
         return response_list
 
     def getAllOrders(self):
-        return Zlecenia.objects.using("mssql").values_list("zlecenie")
+        # return Zlecenia.objects.using("mssql").values_list("zlecenie")
         return Zlecenia.objects.using("mssql").values_list(
             "zlecenie", flat=True
         )  # FIXME: return it when will get order name
