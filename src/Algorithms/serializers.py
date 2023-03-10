@@ -3,7 +3,7 @@ from rest_framework import serializers
 from src.Algorithms.models import CameraAlgorithm
 from src.Cameras.serializers import CameraProcessSerializer
 
-from .models import Algorithm
+from .models import Algorithm, CameraAlgorithmLog
 
 
 class AlgorithmSerializer(serializers.ModelSerializer):
@@ -39,3 +39,10 @@ class CameraAlgorithmFullSerializer(serializers.ModelSerializer):
     class Meta:
         model = CameraAlgorithm
         fields = ["camera", "algorithm", "process_id", "is_active"]
+
+
+class CameraAlgorithmLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CameraAlgorithmLog
+        fields = "__all__"
+
