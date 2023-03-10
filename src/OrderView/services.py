@@ -53,7 +53,7 @@ class OrderService:
                         indeks=skany.stanowisko
                     )
                     skany_data = model_to_dict(skany)
-                    skany_data["raport"] = stanowisko.raport
+                    skany_data["raport"] = stanowisko['raport']
                     skany_list.append(skany_data)
 
             zlecenie_data = model_to_dict(zlecenie)
