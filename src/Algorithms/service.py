@@ -153,14 +153,15 @@ class CameraAlgorithmLogsService:
 
     def delete_log(self, algorithm_name, camera_ip):
         try:
-            log = CameraAlgorithmLog.objects.get(
+            logs = CameraAlgorithmLog.objects.filter(
                 algorithm_name=algorithm_name, camera_ip=camera_ip
             )
         except CameraAlgorithmLog.DoesNotExist:
             pass
         else:
-            log.stoped_at = timezone.now()
-            log.save()
+            for log in logs:
+                log.stoped_at = timezone.now()
+                log.save()
 
 
 camera_algorithm_logs_service = CameraAlgorithmLogsService()
