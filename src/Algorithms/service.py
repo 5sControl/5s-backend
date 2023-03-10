@@ -1,6 +1,8 @@
 from rest_framework.exceptions import NotFound
 
-from src.Algorithms.models import Algorithm, CameraAlgorithm
+from django.utils import timezone
+
+from src.Algorithms.models import Algorithm, CameraAlgorithm, CameraAlgorithmLog
 from src.Cameras.service import camera_service
 
 from .utils import yolo_proccesing
@@ -40,8 +42,13 @@ class AlgorithmsService:
     def update_status_of_algorithm_by_pid(self, pid: int):
         camera_algorithm = CameraAlgorithm.objects.filter(process_id=pid).first()
         if camera_algorithm:
-            camera_algorithm.is_active = False
-            camera_algorithm.save()
+            camera_algorithm_logs_service.delete_log(
+                algorithm_name=camera_algorithm.algorithm.name,
+                camera_ip=camera_algorithm.camera.id,
+            )
+
+            # camera_algorithm.is_active = False
+            # camera_algorithm.save()
             camera_algorithm.delete()  # FIXME: Remove
         else:
             return {"status": False, "message": "Cannot find camera algorithm"}
@@ -79,11 +86,13 @@ class AlgorithmsService:
 
             new_records = self.create_new_records(algorithm, cameras, server_url)
             if new_records:
+                for camera in cameras:
+                    camera_algorithm_logs_service.create_log(algorithm.name, camera.id)
                 self.created_records.extend(new_records)
             else:
-                for camera_ip in cameras:
+                for camera in cameras:
                     self.errors.append(
-                        f"YOLO cant start process with next data: {algorithm}, {camera_ip.id}, {server_url}"
+                        f"YOLO cant start process with next data: {algorithm}, {camera.id}, {server_url}"
                     )
 
         if self.errors:
@@ -113,7 +122,6 @@ class AlgorithmsService:
             result = yolo_proccesing.start_yolo_processing(
                 camera, algorithm, server_url
             )
-            print(result, "result")
             if not result["success"] or "pid" not in result:
                 return False
 
@@ -134,4 +142,24 @@ class AlgorithmsService:
         )
 
 
+class CameraAlgorithmLogsService:
+    def get_logs(self):
+        return CameraAlgorithmLog.objects.all()
+
+    def create_log(algorithm_name, camera_ip):
+        CameraAlgorithmLog.objects.create(algorithm_name, camera_ip)
+
+
+    def delete_log(algorithm_name, camera_ip):
+        try:
+            log = CameraAlgorithmLog.objects.get(
+                algorithm_name=algorithm_name, camera_ip=camera_ip
+            )
+        except CameraAlgorithmLog.DoesNotExist:
+            pass
+        else:
+            log.stoped_at = timezone.now()
+            log.save()
+
+camera_algorithm_logs_service = CameraAlgorithmLogsService()
 algorithms_services = AlgorithmsService()
