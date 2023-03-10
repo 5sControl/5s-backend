@@ -27,6 +27,13 @@ class OrderService:
             )
         )
 
+    def get_skanyQueryById(self, id):
+        return (
+            Skany.objects.using("mssql")
+            .filter(indeks=id)
+            .values("indeks", "raport", "data")
+        )
+
     def getAllData(self):
         zleceniaQuery = orderView_service.get_zleceniaQuery()
 
@@ -57,7 +64,6 @@ class OrderService:
         return response_list
 
     def getAllOrders(self):
-        # return Zlecenia.objects.using("mssql").values_list("zlecenie")
         return Zlecenia.objects.using("mssql").values_list(
             "zlecenie", flat=True
         )  # FIXME: return it when will get order name
@@ -69,12 +75,12 @@ class OrderService:
 
         for zlecenie in zleceniaQuery:
             skanyVsZleceniaQuery = SkanyVsZlecenia.objects.using("mssql").filter(
-                indekszlecenia=zlecenie['indeks']
+                indekszlecenia=zlecenie["indeks"]
             )
             skany_list = []
             for skanyVsZlecenia in skanyVsZleceniaQuery:
-                skanyQuery = Skany.objects.using("mssql").filter(
-                    indeks=skanyVsZlecenia.indeksskanu
+                skanyQuery = orderView_service.get_skanyQueryById(
+                    skanyVsZlecenia.indeksskanu
                 )
                 for skany in skanyQuery:
                     stanowisko = Stanowiska.objects.using("mssql").get(
@@ -89,7 +95,6 @@ class OrderService:
             response_list.append(zlecenie_data)
 
         return response_list
-
 
 
 orderView_service = OrderService()
