@@ -68,8 +68,9 @@ class OrderService:
     def getAllOrders(self):
         orders = Zlecenia.objects.using("mssql").annotate(
             status=Case(
-                When(zakonczone='0', datawejscia__isnull=False, then=Value('Active')),
-                default=Value('Inactive'),
+                When(zakonczone='0', datawejscia__isnull=False, then=Value('Started')),
+                When(zakonczone='1', then=Value('Completed')),
+                default=Value('Unknown'),
                 output_field=CharField()
             )
         ).values('zlecenie', 'status').distinct()
