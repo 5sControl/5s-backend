@@ -66,14 +66,13 @@ class OrderService:
 
     def getAllOrders(self):
         orders = Zlecenia.objects.using("mssql").annotate(
-                    status=Case(
-                        When(zakonczone='0', datawejscia__isnull=False, then=Value('Started')),
-                        When(zakonczone='1', then=Value('Completed')),
-                        default=Value('Unknown'),
-                        output_field=CharField()
-                    ),
-                    zlecenie_trim=Func(F('zlecenie'), function='Trim')
-                ).exclude(zlecenie__isnull=True).exclude(status__isnull=True).values('zlecenie_trim', 'status').distinct()
+            status=Case(
+                When(zakonczone='0', datawejscia__isnull=False, then=Value('Started')),
+                When(zakonczone='1', then=Value('Completed')),
+                default=Value('Unknown'),
+                output_field=CharField()
+            )
+        ).values('zlecenie', 'status').distinct()
 
         return list(orders)
 
