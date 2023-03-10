@@ -46,7 +46,7 @@ class OrderService:
         return (
             Zlecenia.objects.using("mssql")
             .annotate(orderName=Value("Order Name", output_field=CharField()))
-            .values_list("zlecenie", "orderName")
+            .values_list("indeks", "data", "zlecenie", "klient", "datawejscia", "zakonczone", "typ", "orderName")
         )
         return Zlecenia.objects.using("mssql").values_list(
             "zlecenie", flat=True
