@@ -22,7 +22,7 @@ class OrderService:
         return (
             Zlecenia.objects.using("mssql")
             .annotate(orderName=Value("Order Name", output_field=CharField()))
-            .filter(zlecenie=id)
+            .filter(indeks=id)
             .values(
                 "indeks",
                 "data",
