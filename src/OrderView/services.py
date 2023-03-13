@@ -145,20 +145,16 @@ class OrderService:
     def get_order(self, zlecenie):
         response = []
 
-        all_product_zlecenia = orderView_service.get_Zlecenia()
-
-        for zlecenia in all_product_zlecenia:
-            zlecenie_dict = {}
-            zlecenie = zlecenia["zlecenie"]
-            zlecenie_data = orderView_service.get_zleceniaQueryByZlecenie(zlecenie)
-            zlecenie_dict[zlecenie] = list(zlecenie_data)
-            status = "Completed"
-            for zlecenie_item in zlecenie_data:
-                if zlecenie_item["status"] == "Started":
-                    status = "Started"
-                    break
-            zlecenie_dict["status"] = status
-            response.append(zlecenie_dict)
+        zlecenie_dict = {}
+        zlecenie_data = orderView_service.get_zleceniaQueryByZlecenie(zlecenie)
+        zlecenie_dict[zlecenie] = list(zlecenie_data)
+        status = "Completed"
+        for zlecenie_item in zlecenie_data:
+            if zlecenie_item["status"] == "Started":
+                status = "Started"
+                break
+        zlecenie_dict["status"] = status
+        response.append(zlecenie_dict)
 
         return response
 
