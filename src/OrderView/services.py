@@ -173,10 +173,11 @@ class OrderService:
         response["products"] = list(zlecenia_dict)
 
         response["status"] = status
-        response["data"] = response["products"]["data"]
-        response["klient"] = response["products"]["klient"]
-        response["datawejscia"] = response["products"]["datawejscia"]
-        response["terminrealizacji"] = response["products"]["terminrealizacji"]
+        
+        response["data"] = response["products"][0]["data"]
+        response["klient"] = response["products"][0]["klient"]
+        response["datawejscia"] = response["products"][0]["datawejscia"]
+        response["terminrealizacji"] = response["products"][0]["terminrealizacji"]
 
         return [response]
 
