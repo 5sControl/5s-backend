@@ -12,7 +12,7 @@ class GetAllDataAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        response = orderView_service.getAllData()
+        response = orderView_service.get_all()
         return Response(response, status=status.HTTP_200_OK)
 
 
@@ -20,7 +20,7 @@ class GetAllOrdersAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        response = orderView_service.getAllOrders()
+        response = orderView_service.get_allProduct()
         return Response(response, status=status.HTTP_200_OK)
 
 
@@ -28,5 +28,13 @@ class GetOrderDataByIdAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, zlecenie_id):
-        response = orderView_service.getOrderDataById(zlecenie_id)
+        response = orderView_service.get_productDataById(zlecenie_id)
+        return Response(response, status=status.HTTP_200_OK)
+
+
+class GetOrderApiView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        response = orderView_service.get_order()
         return Response(response, status=status.HTTP_200_OK)
