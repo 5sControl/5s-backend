@@ -2,9 +2,9 @@ from django.urls import path
 from .views import (
     GetAllDataAPIView,
     GetAllProductAPIView,
-    GetOrderApiView,
     GetOrderDataByindexAPIView,
     GetOrderDataByZlecenieAPIView,
+    GetOrderDataByZlecenieAPIView
 )
 
 urlpatterns = [
@@ -19,6 +19,5 @@ urlpatterns = [
         GetOrderDataByZlecenieAPIView.as_view(),
         name="get_orders_by_id",
     ),
-    path("all/", GetOrderApiView.as_view(), name="get_orders"),
     path("all-orders/", GetAllProductAPIView.as_view(), name="get_all_orders"),
 ]
