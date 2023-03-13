@@ -170,8 +170,13 @@ class OrderService:
 
             zlecenie_obj["skans"] = skany_list
 
-        response[zlecenie] = list(zlecenia_dict)
+        response["products"] = list(zlecenia_dict)
+
         response["status"] = status
+        response["data"] = response["products"]["data"]
+        response["klient"] = response["products"]["klient"]
+        response["datawejscia"] = response["products"]["datawejscia"]
+        response["terminrealizacji"] = response["products"]["terminrealizacji"]
 
         return [response]
 
