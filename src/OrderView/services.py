@@ -1,32 +1,15 @@
 from src.OrderView.models import Stanowiska, Zlecenia, SkanyVsZlecenia, Skany
 
 from django.forms.models import model_to_dict
-from django.db.models import Case, When, Value, CharField, F
-from django.db.models import Func
+from django.db.models import Case, When, Value, CharField
 
 
 class OrderService:
+
     def get_zleceniaQuery(
         self,
     ):
         return Zlecenia.objects.using("mssql").all()
-
-    def get_zleceniaQueryById(self, id):
-        return (
-            Zlecenia.objects.using("mssql")
-            .annotate(orderName=Value("Order Name", output_field=CharField()))
-            .filter(zlecenie=id)
-            .values(
-                "indeks",
-                "data",
-                "zlecenie",
-                "klient",
-                "datawejscia",
-                "zakonczone",
-                "typ",
-                "orderName",
-            )
-        )
 
     def get_skanyQueryById(self, id):
         return (
@@ -72,7 +55,7 @@ class OrderService:
                 default=Value('Unknown'),
                 output_field=CharField()
             )
-        ).values('zlecenie', 'status').distinct()
+        ).values('indeks', 'zlecenie', 'status').distinct()
 
         return list(orders)
 
@@ -97,7 +80,6 @@ class OrderService:
                     stanowisko = Stanowiska.objects.using("mssql").get(
                         indeks=skany["stanowisko"]
                     )
-                    # skany_data = model_to_dict(skany)
                     skany["raport"] = stanowisko.raport
                     skany_list.append(skany)
 
