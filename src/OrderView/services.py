@@ -59,6 +59,7 @@ class OrderService:
                 "typ",
                 "orderName",
                 "terminrealizacji",
+                "status",
             )
         )
         return zlecenia_dict
@@ -140,9 +141,13 @@ class OrderService:
 
     def get_order(self, zlecenie):
         response = {}
+        status = "Completed"
 
         zlecenia_dict = orderView_service.get_zleceniaQueryByZlecenie(zlecenie)
         for zlecenie_obj in zlecenia_dict:
+            if zlecenie_obj.status == "Started":
+                status = "Started"
+                break
             skanyVsZleceniaQuery = SkanyVsZlecenia.objects.using("mssql").filter(
                 indekszlecenia=zlecenie_obj["indeks"]
             )
@@ -162,6 +167,8 @@ class OrderService:
             zlecenie_obj["skans"] = skany_list
 
         response[zlecenie] = list(zlecenia_dict)
+        response["status"] = status
+        
         return [response]
 
 
