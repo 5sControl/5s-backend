@@ -1,4 +1,4 @@
-from src.OrderView.models import Stanowiska, Zlecenia, SkanyVsZlecenia, Skany
+from src.OrderView.models import Stanowiska, Uzytkownicy, Zlecenia, SkanyVsZlecenia, Skany
 
 from django.forms.models import model_to_dict
 from django.db.models import Case, When, Value, CharField
@@ -14,7 +14,7 @@ class OrderService:
         return (
             Skany.objects.using("mssql")
             .filter(indeks=id)
-            .values("indeks", "data", "stanowisko")
+            .values("indeks", "data", "stanowisko", "uzytkownik")
         )
 
     def get_zleceniaDictByIndeks(self, id):
@@ -45,16 +45,13 @@ class OrderService:
                     ),
                     default=Value("Completed"),
                     output_field=CharField(),
-                ),
-                worker=Value("Zubenko Mihail Petrovich", output_field=CharField()),
-            )
+                )            )
             .filter(zlecenie=zlecenie)
             .values(
                 "indeks",
                 "data",
                 "zlecenie",
                 "klient",
-                "worker",
                 "datawejscia",
                 "zakonczone",
                 "typ",
@@ -141,10 +138,12 @@ class OrderService:
         return response_list
 
     def get_order(self, zlecenie):
+
         response = {}
         status = "Completed"
 
         zlecenia_dict = orderView_service.get_zleceniaQueryByZlecenie(zlecenie)
+
         for zlecenie_obj in zlecenia_dict:
             if zlecenie_obj["status"] == "Started":
                 status = "Started"
@@ -159,9 +158,13 @@ class OrderService:
                 )
 
                 for skany in skanyQuery:
-                    stanowisko = Stanowiska.objects.using("mssql").get(
+                    stanowisko = Stanowiska.objects.using("mssql").filter(
                         indeks=skany["stanowisko"]
+                    ).first()
+                    uzytkownik = Uzytkownicy.objects.using("mssql").filter(
+                        indeks=skany["uzytkownik"]
                     )
+                    skany["worker"] = uzytkownik.imie
                     skany["raport"] = stanowisko.raport
                     skany_list.append(skany)
 
