@@ -61,25 +61,25 @@ class OrderService:
         # Query the SkanyVsZlecenia table to get the corresponding indeksskanu values
         skany_indeks_list = SkanyVsZlecenia.objects.using("mssql").filter(indekszlecenia__in=indeks_list).values_list("indeksskanu", flat=True)
         
-        # Query the orderView table to get the required data for each indeksskanu value
-        skany_query = orderView_service.get_skanyQueryById(list(skany_indeks_list))
-        
-        # Query the Stanowiska table for each row in the skany_query result set
-        skany_list = []
-        for skany in skany_query:
-            stanowisko = Stanowiska.objects.using("mssql").get(indeks=skany["stanowisko"])
-            skany["raport"] = stanowisko.raport
-            skany_list.append(skany)
-        
-        # Join the Zlecenia query with the Skany data
-        zlecenia_query = zlecenia_query.annotate(skany_count=Value(len(skany_list)))
-        
-        # Combine the Zlecenia and Skany data and return the result set
-        result_list = []
-        for zlecenie in zlecenia_query:
-            zlecenie_dict = model_to_dict(zlecenie)
-            zlecenie_dict["skany"] = [skany for skany in skany_list if skany["indeksskanu"] == zlecenie_dict["indeks"]]
-            result_list.append(zlecenie_dict)
+        for skany_query in skany_indeks_list:
+            orderView_service.get_skanyQueryById(list(skany_query))
+            
+            # Query the Stanowiska table for each row in the skany_query result set
+            skany_list = []
+            for skany in skany_query:
+                stanowisko = Stanowiska.objects.using("mssql").get(indeks=skany["stanowisko"])
+                skany["raport"] = stanowisko.raport
+                skany_list.append(skany)
+            
+            # Join the Zlecenia query with the Skany data
+            zlecenia_query = zlecenia_query.annotate(skany_count=Value(len(skany_list)))
+            
+            # Combine the Zlecenia and Skany data and return the result set
+            result_list = []
+            for zlecenie in zlecenia_query:
+                zlecenie_dict = model_to_dict(zlecenie)
+                zlecenie_dict["skany"] = [skany for skany in skany_list if skany["indeksskanu"] == zlecenie_dict["indeks"]]
+                result_list.append(zlecenie_dict)
         
         return result_list
 
