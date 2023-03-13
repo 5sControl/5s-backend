@@ -173,6 +173,8 @@ class OrderService:
 
         status = "Completed"
         for zlecenie_item in zlecenie_data:
+            if not zlecenie_item.get("skans"):
+                continue
             skans_statuses = [skan["status"] for skan in zlecenie_item["skans"]]
             if "Started" in skans_statuses:
                 status = "Started"
@@ -182,6 +184,7 @@ class OrderService:
         response.append(zlecenie_dict)
 
         return response
+
 
 
 
