@@ -164,7 +164,7 @@ class OrderService:
         response = []
         zlecenie_dict = {}
 
-        zlecenie_data = orderView_service.get_zleceniaQueryByZlecenie(zlecenie)
+        zlecenie_data = orderView_service.get_zlecenia_query_by_zlecenie(zlecenie)
         zlecenie_dict[zlecenie] = list(zlecenie_data)
 
         status = "Completed"
