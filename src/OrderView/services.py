@@ -34,11 +34,11 @@ class OrderService:
             )
         )
 
-    def get_zleceniaQueryByZlecenie(self, id):
+    def get_zleceniaQueryByZlecenie(self, zlecenie):
         return (
             Zlecenia.objects.using("mssql")
             .annotate(orderName=Value("Order Name", output_field=CharField()))
-            .filter(zlecenie=id)
+            .filter(zlecenie=zlecenie)
             .values(
                 "indeks",
                 "data",
@@ -99,6 +99,9 @@ class OrderService:
 
         return list(products)
 
+    def get_Zlecenia(self):
+        return Zlecenia.objects.using("mssql").values("zlecenie").distinct()
+
     def get_productDataById(self, order_id):
         zleceniaQuery = orderView_service.get_zleceniaQueryByIndeks(order_id)
 
@@ -126,18 +129,17 @@ class OrderService:
 
         return response_list
 
-    def get_order(
-        self,
-    ):
-        response = []
+    def get_order(self):
+        response = {}
 
-        all_products = orderView_service.get_allProduct()
+        all_product_zlecenia = orderView_service.get_Zlecenia()
 
-        for product in all_products:
-            zlecenie = product["zlecenie"]
-            response.append(orderView_service.get_zleceniaQueryByZlecenie(zlecenie))
+        for zlecenia in all_product_zlecenia:
+            zlecenie_data = orderView_service.get_zleceniaQueryByZlecenie(zlecenia["zlecenie"])
+            response[zlecenia["zlecenie"].strip()] = list(zlecenie_data)
 
-        return response
+        return [response]
+
 
 
 orderView_service = OrderService()
