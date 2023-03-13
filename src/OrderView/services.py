@@ -171,19 +171,22 @@ class OrderService:
         zlecenie_data = orderView_service.get_zleceniaQueryByZlecenie(zlecenie)
         zlecenie_dict[zlecenie] = list(zlecenie_data)
 
-        status = "Completed"
+        statuses = []
         for zlecenie_item in zlecenie_data:
-            if not zlecenie_item.get("skans"):
-                continue
-            skans_statuses = [skan["status"] for skan in zlecenie_item["skans"]]
-            if "Started" in skans_statuses:
-                status = "Started"
-                break
+            skans_statuses = [skan["status"] if isinstance(skan, dict) else skan.get("status") for skan in zlecenie_item["skans"]]
+            statuses.extend(s for s in skans_statuses if s)
+        if "Started" in statuses:
+            status = "Started"
+        elif "Completed" in statuses:
+            status = "Completed"
+        else:
+            status = "Unknown"
 
         zlecenie_dict["status"] = status
         response.append(zlecenie_dict)
 
         return response
+
 
 
 
