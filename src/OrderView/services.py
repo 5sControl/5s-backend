@@ -1,8 +1,7 @@
 from src.OrderView.models import Stanowiska, Zlecenia, SkanyVsZlecenia, Skany
 
-from django.db import models
 from django.forms.models import model_to_dict
-from django.db.models import Case, When, Value, CharField, Subquery, OuterRef
+from django.db.models import Case, When, Value, CharField
 
 
 class OrderService:
@@ -11,23 +10,17 @@ class OrderService:
     ):
         return Zlecenia.objects.using("mssql").all()
 
-    def get_skanyDictById(self, id):
+    def get_skanyQueryById(self, id):
         return (
             Skany.objects.using("mssql")
             .filter(indeks=id)
             .values("indeks", "data", "stanowisko")
         )
-    
-    def get_skanyQueryById(self, id):
-        return (
-            Skany.objects.using("mssql")
-            .filter(indeks=id)
-        )
 
     def get_zleceniaQueryByIndeks(self, id):
         return (
             Zlecenia.objects.using("mssql")
-            .annotate(orderName=Value("Order Name", output_field=models.CharField()))  # FIXME
+            .annotate(orderName=Value("Order Name", output_field=CharField()))
             .filter(indeks=id)
             .values(
                 "indeks",
@@ -35,69 +28,28 @@ class OrderService:
                 "zlecenie",
                 "klient",
                 "datawejscia",
-                "terminrealizacji",
                 "zakonczone",
                 "typ",
                 "orderName",
             )
         )
-    
-    def get_zleceniaDictByZlecenie(self, zlecenie):
+
+    def get_zleceniaQueryByZlecenie(self, zlecenie):
         return (
             Zlecenia.objects.using("mssql")
-            .annotate(orderName=Value("Order Name", output_field=models.CharField()))  # FIXME
-            .filter(indeks=zlecenie).annotate(
-            orderName=Value("Order Name", output_field=CharField()),
-            status=Case(
-                When(
-                    zakonczone=0, datawejscia__isnull=False, then=Value("Started")
-                ),
-                default=Value("Completed"),
-                output_field=CharField()
-            ),
-            worker=Value("Zubenko Mihail Petrovich", output_field=CharField()),
-        )
+            .annotate(orderName=Value("Order Name", output_field=CharField()))
+            .filter(zlecenie=zlecenie)
             .values(
                 "indeks",
                 "data",
                 "zlecenie",
                 "klient",
                 "datawejscia",
-                "terminrealizacji",
                 "zakonczone",
                 "typ",
                 "orderName",
             )
         )
-
-    def get_zlecenia_query_by_zlecenie(self, zlecenie): 
-        response = []
-           
-        zlecenia_dict = orderView_service.get_zleceniaDictByZlecenie(zlecenie)
-            
-        for zlecenie_el in zlecenia_dict:
-            skanyVsZleceniaQuery = SkanyVsZlecenia.objects.using("mssql").filter(
-                indekszlecenia=zlecenie_el.indeks
-            )
-            skany_list = []
-            for skanyVsZlecenia in skanyVsZleceniaQuery:
-                skanyQuery = orderView_service.get_skanyDictById(
-                    skanyVsZlecenia.indeksskanu
-                )
-
-                for skany in skanyQuery:
-                    stanowisko = Stanowiska.objects.using("mssql").get(
-                        indeks=skany["stanowisko"]
-                    )
-                    skany["raport"] = stanowisko.raport
-                    skany_list.append(skany)
-
-            zlecenie["skans"] = skany_list
-            response.append(zlecenie)
-        
-        # return result_list
-
-
 
     def get_all(self):
         response = []
@@ -141,16 +93,16 @@ class OrderService:
                     output_field=CharField(),
                 )
             )
-            .values("indeks", "zlecenie", "status", "terminrealizacji")
+            .values("indeks", "zlecenie", "status")
             .distinct()
         )
 
         return list(products)
 
     def get_productDataById(self, order_id):
-        response = []
-        
         zleceniaQuery = orderView_service.get_zleceniaQueryByIndeks(order_id)
+
+        response_list = []
 
         for zlecenie in zleceniaQuery:
             skanyVsZleceniaQuery = SkanyVsZlecenia.objects.using("mssql").filter(
@@ -158,7 +110,7 @@ class OrderService:
             )
             skany_list = []
             for skanyVsZlecenia in skanyVsZleceniaQuery:
-                skanyQuery = orderView_service.get_skanyDictById(
+                skanyQuery = orderView_service.get_skanyQueryById(
                     skanyVsZlecenia.indeksskanu
                 )
 
@@ -170,28 +122,18 @@ class OrderService:
                     skany_list.append(skany)
 
             zlecenie["skans"] = skany_list
-            response.append(zlecenie)
+            response_list.append(zlecenie)
 
-        return response
+        return response_list
 
     def get_order(self, zlecenie):
-        response = []
-        zlecenie_dict = {}
+        response = {}
 
-        zlecenie_data = orderView_service.get_zlecenia_query_by_zlecenie(zlecenie)
-        zlecenie_dict[zlecenie] = list(zlecenie_data)
+        zlecenie_data = orderView_service.get_zleceniaQueryByZlecenie(zlecenie)
+        response[zlecenie] = list(zlecenie_data)
 
-        status = "Completed"
+        return [response]
 
-        for zlecenie_item in zlecenie_data:
-            if zlecenie_item["status"] == "Started":
-                status = "Started"
-                break
-
-        zlecenie_dict["status"] = status
-        response.append(zlecenie_dict)
-
-        return response
 
 
 orderView_service = OrderService()
