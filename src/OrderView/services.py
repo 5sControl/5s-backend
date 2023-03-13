@@ -99,9 +99,6 @@ class OrderService:
 
         return list(products)
 
-    def get_Zlecenia(self):
-        return Zlecenia.objects.using("mssql").values("zlecenie").distinct()
-
     def get_productDataById(self, order_id):
         zleceniaQuery = orderView_service.get_zleceniaQueryByIndeks(order_id)
 
@@ -129,14 +126,11 @@ class OrderService:
 
         return response_list
 
-    def get_order(self):
+    def get_order(self, zlecenie):
         response = {}
 
-        all_product_zlecenia = orderView_service.get_Zlecenia()
-
-        for zlecenia in all_product_zlecenia:
-            zlecenie_data = orderView_service.get_zleceniaQueryByZlecenie(zlecenia["zlecenie"])
-            response[zlecenia["zlecenie"].strip()] = list(zlecenie_data)
+        zlecenie_data = orderView_service.get_zleceniaQueryByZlecenie(zlecenie)
+        response[zlecenie] = list(zlecenie_data)
 
         return [response]
 
