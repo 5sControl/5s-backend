@@ -1,5 +1,6 @@
 from src.OrderView.models import Stanowiska, Zlecenia, SkanyVsZlecenia, Skany
 
+from django.db import models
 from django.forms.models import model_to_dict
 from django.db.models import Case, When, Value, CharField, Subquery, OuterRef
 
@@ -20,7 +21,7 @@ class OrderService:
     def get_zleceniaQueryByIndeks(self, id):
         return (
             Zlecenia.objects.using("mssql")
-            .annotate(orderName=Value("Order Name", output_field=CharField()))  # FIXME
+            .annotate(orderName=Value("Order Name", output_field=models.CharField()))  # FIXME
             .filter(indeks=id)
             .values(
                 "indeks",
@@ -38,7 +39,7 @@ class OrderService:
     def get_zleceniaQueryByZlecenie(self, zlecenie):
         return list(
             Zlecenia.objects.using("mssql")
-            .annotate(orderName=Value("Order Name", output_field=CharField()))  # FIXME
+            .annotate(orderName=Value("Order Name", output_field=models.CharField()))  # FIXME
             .annotate(
                 status=Case(
                     When(
@@ -49,7 +50,7 @@ class OrderService:
                 )
             )
             .annotate(
-                worker=Value("Zubenko Mihail Petrovich", output_field=CharField())
+                worker=Value("Zubenko Mihail Petrovich", output_field=models.CharField())
             )  # FIXME
             .filter(zlecenie=zlecenie)
             .values(
