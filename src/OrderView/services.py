@@ -54,6 +54,7 @@ class OrderService:
                 "data",
                 "zlecenie",
                 "klient",
+                "worker",
                 "datawejscia",
                 "zakonczone",
                 "typ",
