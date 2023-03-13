@@ -142,7 +142,7 @@ class OrderService:
 
         return response_list
 
-    def get_order(self):
+    def get_order(self, zlecenie):
         response = []
 
         all_product_zlecenia = orderView_service.get_Zlecenia()
