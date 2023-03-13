@@ -65,23 +65,23 @@ class OrderService:
                 "orderName",
                 "worker",
                 "status",
-                skans=Subquery(
-                    Skany.objects.using("mssql")
-                    .filter(
-                        indeks__in=Subquery(
-                            SkanyVsZlecenia.objects.using("mssql")
-                            .filter(indekszlecenia=OuterRef("indeks"))
-                            .values_list("indeksskanu", flat=True)
-                        )
-                    )
-                    .annotate(
-                        raport=Subquery(
-                            Stanowiska.objects.using("mssql")
-                            .filter(indeks=OuterRef("stanowisko"))
-                            .values("raport")[:1]
-                        )
-                    )
-                ),
+                # skans=Subquery(
+                #     Skany.objects.using("mssql")
+                #     .filter(
+                #         indeks__in=Subquery(
+                #             SkanyVsZlecenia.objects.using("mssql")
+                #             .filter(indekszlecenia=OuterRef("indeks"))
+                #             .values_list("indeksskanu", flat=True)
+                #         )
+                #     )
+                #     .annotate(
+                #         raport=Subquery(
+                #             Stanowiska.objects.using("mssql")
+                #             .filter(indeks=OuterRef("stanowisko"))
+                #             .values("raport")[:1]
+                #         )
+                #     )
+                # ),
             )
         )
 
