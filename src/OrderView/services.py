@@ -40,15 +40,15 @@ class OrderService:
         return list(
             Zlecenia.objects.using("mssql")
             # .annotate(orderName=Value("Order Name", output_field=models.CharField()))  # FIXME
-            # .annotate(
-            #     status=Case(
-            #         When(
-            #             zakonczone=0, datawejscia__isnull=False, then=Value("Started")
-            #         ),
-            #         default=Value("Completed"),
-            #         output_field=CharField(),
-            #     )
-            # )
+            .annotate(
+                status=Case(
+                    When(
+                        zakonczone=0, datawejscia__isnull=False, then=Value("Started")
+                    ),
+                    default=Value("Completed"),
+                    output_field=CharField(),
+                )
+            )
             # .annotate(
             #     worker=Value("Zubenko Mihail Petrovich", output_field=models.CharField())
             # )  # FIXME
@@ -62,8 +62,8 @@ class OrderService:
                 "terminrealizacji",
                 "zakonczone",
                 "typ",
-                "orderName",
-                "worker",
+                # "orderName",
+                # "worker",
                 "status",
                 skans=Subquery(
                     Skany.objects.using("mssql").filter(
