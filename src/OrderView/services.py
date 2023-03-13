@@ -93,7 +93,7 @@ class OrderService:
                     output_field=CharField(),
                 )
             )
-            .values("indeks", "zlecenie", "status")
+            .values("indeks", "zlecenie", "status", "terminrealizacji")
             .distinct()
         )
 
