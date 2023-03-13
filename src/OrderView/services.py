@@ -20,7 +20,7 @@ class OrderService:
     def get_zleceniaQueryByIndeks(self, id):
         return (
             Zlecenia.objects.using("mssql")
-            .annotate(orderName=Value("Order Name", output_field=CharField())) # FIXME
+            .annotate(orderName=Value("Order Name", output_field=CharField()))  # FIXME
             .filter(indeks=id)
             .values(
                 "indeks",
@@ -28,7 +28,7 @@ class OrderService:
                 "zlecenie",
                 "klient",
                 "datawejscia",
-                'terminrealizacji',
+                "terminrealizacji",
                 "zakonczone",
                 "typ",
                 "orderName",
@@ -38,8 +38,10 @@ class OrderService:
     def get_zleceniaQueryByZlecenie(self, zlecenie):
         return (
             Zlecenia.objects.using("mssql")
-            .annotate(orderName=Value("Order Name", output_field=CharField())) # FIXME
-            .annotate(worker=Value("Zubenko Mihail Petrovich", output_field=CharField())) # FIXME
+            .annotate(orderName=Value("Order Name", output_field=CharField()))  # FIXME
+            .annotate(
+                worker=Value("Zubenko Mihail Petrovich", output_field=CharField())
+            )  # FIXME
             .annotate(
                 status=Case(
                     When(
@@ -57,7 +59,7 @@ class OrderService:
                 "zlecenie",
                 "klient",
                 "datawejscia",
-                'terminrealizacji',
+                "terminrealizacji",
                 "zakonczone",
                 "typ",
                 "orderName",
@@ -146,7 +148,6 @@ class OrderService:
         response[zlecenie] = list(zlecenie_data)
 
         return [response]
-
 
 
 orderView_service = OrderService()

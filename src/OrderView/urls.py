@@ -4,7 +4,7 @@ from .views import (
     GetAllProductAPIView,
     GetOrderDataByindexAPIView,
     GetOrderDataByZlecenieAPIView,
-    GetOrderDataByZlecenieAPIView
+    GetOrderDataByZlecenieAPIView,
 )
 
 urlpatterns = [
