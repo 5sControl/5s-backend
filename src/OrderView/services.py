@@ -36,54 +36,54 @@ class OrderService:
             )
         )
 
-    def get_zleceniaQueryByZlecenie(self, zlecenie):    
-        return (
-            Zlecenia.objects.using("mssql")
-            .annotate(orderName=Value("Order Name", output_field=CharField()))  # FIXME
-            .annotate(
-                status=Case(
-                    When(
-                        zakonczone=0, datawejscia__isnull=False, then=Value("Started")
-                    ),
-                    default=Value("Completed"),
-                    output_field=CharField(),
-                )
-            )
-            .annotate(
-                worker=Value("Zubenko Mihail Petrovich", output_field=CharField())
-            )  # FIXME
-            .filter(zlecenie=zlecenie)
-            .values(
-                "indeks",
-                "data",
-                "zlecenie",
-                "klient",
-                "datawejscia",
-                "terminrealizacji",
-                "zakonczone",
-                "typ",
-                "orderName",
-                "worker",
-                "status",
-                # skans=Subquery(
-                #     Skany.objects.using("mssql")
-                #     .filter(
-                #         indeks__in=Subquery(
-                #             SkanyVsZlecenia.objects.using("mssql")
-                #             .filter(indekszlecenia=OuterRef("indeks"))
-                #             .values_list("indeksskanu", flat=True)
-                #         )
-                #     )
-                #     .annotate(
-                #         raport=Subquery(
-                #             Stanowiska.objects.using("mssql")
-                #             .filter(indeks=OuterRef("stanowisko"))
-                #             .values("raport")[:1]
-                #         )
-                #     )
-                # ),
-            )
+    def get_zlecenia_query_by_zlecenie(self, zlecenie):    
+        zlecenia_query = Zlecenia.objects.using("mssql")
+        
+        # Add annotations to the query
+        zlecenia_query = zlecenia_query.annotate(
+            orderName=Value("Order Name", output_field=CharField()),
+            status=Case(
+                When(
+                    zakonczone=0, datawejscia__isnull=False, then=Value("Started")
+                ),
+                default=Value("Completed"),
+                output_field=CharField()
+            ),
+            worker=Value("Zubenko Mihail Petrovich", output_field=CharField()),
         )
+        
+        # Filter the query based on the given zlecenie parameter
+        zlecenia_query = zlecenia_query.filter(zlecenie=zlecenie)
+        
+        # Get the indeks values from the filtered query
+        indeks_list = list(zlecenia_query.values_list("indeks", flat=True))
+        
+        # Query the SkanyVsZlecenia table to get the corresponding indeksskanu values
+        skany_indeks_list = SkanyVsZlecenia.objects.using("mssql").filter(indekszlecenia__in=indeks_list).values_list("indeksskanu", flat=True)
+        
+        # Query the orderView table to get the required data for each indeksskanu value
+        skany_query = orderView_service.get_skany_query_by_id_list(list(skany_indeks_list))
+        
+        # Query the Stanowiska table for each row in the skany_query result set
+        skany_list = []
+        for skany in skany_query:
+            stanowisko = Stanowiska.objects.using("mssql").get(indeks=skany["stanowisko"])
+            skany["raport"] = stanowisko.raport
+            skany_list.append(skany)
+        
+        # Join the Zlecenia query with the Skany data
+        zlecenia_query = zlecenia_query.annotate(skany_count=Value(len(skany_list)))
+        
+        # Combine the Zlecenia and Skany data and return the result set
+        result_list = []
+        for zlecenie in zlecenia_query:
+            zlecenie_dict = model_to_dict(zlecenie)
+            zlecenie_dict["skany"] = [skany for skany in skany_list if skany["indeksskanu"] == zlecenie_dict["indeks"]]
+            result_list.append(zlecenie_dict)
+        
+        return result_list
+
+
 
     def get_all(self):
         response = []
