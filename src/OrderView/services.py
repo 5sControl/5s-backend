@@ -163,7 +163,7 @@ class OrderService:
                     ).first()
                     uzytkownik = Uzytkownicy.objects.using("mssql").filter(
                         indeks=skany["uzytkownik"]
-                    )
+                    ).first()
                     skany["worker"] = uzytkownik.imie
                     skany["raport"] = stanowisko.raport
                     skany_list.append(skany)
