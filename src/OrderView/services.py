@@ -36,7 +36,7 @@ class OrderService:
         )
 
     def get_zleceniaQueryByZlecenie(self, zlecenie):
-        return (
+        return list(
             Zlecenia.objects.using("mssql")
             .annotate(orderName=Value("Order Name", output_field=CharField()))  # FIXME
             .annotate(
@@ -65,29 +65,16 @@ class OrderService:
                 "worker",
                 "status",
                 skans=Subquery(
-                    Skany.objects.using("mssql")
-                    .filter(
+                    Skany.objects.using("mssql").filter(
                         indeks__in=Subquery(
                             SkanyVsZlecenia.objects.using("mssql")
                             .filter(indekszlecenia=OuterRef("indeks"))
                             .values_list("indeksskanu", flat=True)
                         )
                     )
-                    .values("indeks",)
-                    .distinct()
-                    .order_by("indeks")
-                    .annotate(
-                        raport=Subquery(
-                            Stanowiska.objects.using("mssql")
-                            .filter(indeks=OuterRef("stanowisko"))
-                            .values("raport")[:1]
-                        )
-                    )
-                    .values("raport",)
                 ),
             )
         )
-
 
     def get_all(self):
         response = []
@@ -169,26 +156,19 @@ class OrderService:
 
         zlecenie_dict = {}
         zlecenie_data = orderView_service.get_zleceniaQueryByZlecenie(zlecenie)
-        zlecenie_dict[zlecenie] = list(zlecenie_data)
+        zlecenie_dict[zlecenie] = zlecenie_data
 
-        statuses = []
+        status = "Completed"
+
         for zlecenie_item in zlecenie_data:
-            skans_statuses = [skan["status"] if isinstance(skan, dict) else skan.get("status") for skan in zlecenie_item["skans"]]
-            statuses.extend(s for s in skans_statuses if s)
-        if "Started" in statuses:
-            status = "Started"
-        elif "Completed" in statuses:
-            status = "Completed"
-        else:
-            status = "Unknown"
+            if zlecenie_item["status"] == "Started":
+                status = "Started"
+                break
 
         zlecenie_dict["status"] = status
         response.append(zlecenie_dict)
 
         return response
-
-
-
 
 
 orderView_service = OrderService()
