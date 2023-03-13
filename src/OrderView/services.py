@@ -36,47 +36,7 @@ class OrderService:
             )
         )
 
-    def get_zleceniaQueryByZlecenie(self, zlecenie):
-        return (
-            Zlecenia.objects.using("mssql")
-            # .annotate(orderName=Value("Order Name", output_field=models.CharField()))  # FIXME
-            .annotate(
-                status=Case(
-                    When(
-                        zakonczone=0, datawejscia__isnull=False, then=Value("Started")
-                    ),
-                    default=Value("Completed"),
-                    output_field=CharField(),
-                )
-            )
-            # .annotate(
-            #     worker=Value("Zubenko Mihail Petrovich", output_field=models.CharField())
-            # )  # FIXME
-            .filter(zlecenie=zlecenie)
-            .values(
-                "indeks",
-                "data",
-                "zlecenie",
-                "klient",
-                "datawejscia",
-                "terminrealizacji",
-                "zakonczone",
-                "typ",
-                # "orderName",
-                # "worker",
-                "status",
-                skans=Subquery(
-                    Skany.objects.using("mssql").filter(
-                        indeks__in=Subquery(
-                            SkanyVsZlecenia.objects.using("mssql")
-                            .filter(indekszlecenia=OuterRef("indeks"))
-                            .values_list("indeksskanu", flat=True)
-                        )
-                    )
-                ),
-            )
-        )
-    
+    def get_zleceniaQueryByZlecenie(self, zlecenie):    
         return (
             Zlecenia.objects.using("mssql")
             .annotate(orderName=Value("Order Name", output_field=CharField()))  # FIXME
@@ -114,9 +74,6 @@ class OrderService:
                             .values_list("indeksskanu", flat=True)
                         )
                     )
-                    .values("indeks", "nazwapliku")
-                    .distinct()
-                    .order_by("indeks")
                     .annotate(
                         raport=Subquery(
                             Stanowiska.objects.using("mssql")
@@ -124,7 +81,6 @@ class OrderService:
                             .values("raport")[:1]
                         )
                     )
-                    .values("nazwapliku", "raport")
                 ),
             )
         )
