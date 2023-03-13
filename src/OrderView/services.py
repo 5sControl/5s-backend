@@ -145,7 +145,7 @@ class OrderService:
 
         zlecenia_dict = orderView_service.get_zleceniaQueryByZlecenie(zlecenie)
         for zlecenie_obj in zlecenia_dict:
-            if zlecenie_obj.status == "Started":
+            if zlecenie_obj["status"] == "Started":
                 status = "Started"
                 break
             skanyVsZleceniaQuery = SkanyVsZlecenia.objects.using("mssql").filter(
@@ -168,7 +168,7 @@ class OrderService:
 
         response[zlecenie] = list(zlecenia_dict)
         response["status"] = status
-        
+
         return [response]
 
 
