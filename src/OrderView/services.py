@@ -40,19 +40,18 @@ class OrderService:
             Zlecenia.objects.using("mssql")
             .annotate(orderName=Value("Order Name", output_field=CharField()))  # FIXME
             .annotate(
-                worker=Value("Zubenko Mihail Petrovich", output_field=CharField())
-            )  # FIXME
-            .annotate(
                 status=Case(
                     When(
-                        zakonczone="0", datawejscia__isnull=False, then=Value("Started")
+                        zakonczone=0, datawejscia__isnull=False, then=Value("Started")
                     ),
-                    When(zakonczone="1", then=Value("Completed")),
-                    default=Value("Unknown"),
+                    default=Value("Completed"),
                     output_field=CharField(),
                 )
             )
-            .filter(zlecenie="*59424")
+            .annotate(
+                worker=Value("Zubenko Mihail Petrovich", output_field=CharField())
+            )  # FIXME
+            .filter(zlecenie=zlecenie)
             .values(
                 "indeks",
                 "data",
@@ -63,6 +62,8 @@ class OrderService:
                 "zakonczone",
                 "typ",
                 "orderName",
+                "worker",
+                "status",
             )
         )
 
@@ -141,13 +142,25 @@ class OrderService:
 
         return response_list
 
-    def get_order(self, zlecenie):
-        response = {}
+    def get_order(self):
+        response = []
 
-        zlecenie_data = orderView_service.get_zleceniaQueryByZlecenie(zlecenie)
-        response[zlecenie] = list(zlecenie_data)
+        all_product_zlecenia = orderView_service.get_Zlecenia()
 
-        return [response]
+        for zlecenia in all_product_zlecenia:
+            zlecenie_dict = {}
+            zlecenie = zlecenia["zlecenie"]
+            zlecenie_data = orderView_service.get_zleceniaQueryByZlecenie(zlecenie)
+            zlecenie_dict[zlecenie] = list(zlecenie_data)
+            status = "Completed"
+            for zlecenie_item in zlecenie_data:
+                if zlecenie_item["status"] == "Started":
+                    status = "Started"
+                    break
+            zlecenie_dict["status"] = status
+            response.append(zlecenie_dict)
+
+        return response
 
 
 orderView_service = OrderService()
