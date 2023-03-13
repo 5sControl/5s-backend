@@ -17,6 +17,23 @@ class OrderService:
             .filter(indeks=id)
             .values("indeks", "data", "stanowisko")
         )
+    
+    def get_zleceniaQueryById(self, id):
+        return (
+            Zlecenia.objects.using("mssql")
+            .annotate(orderName=Value("Order Name", output_field=CharField()))
+            .filter(zlecenie=id)
+            .values(
+                "indeks",
+                "data",
+                "zlecenie",
+                "klient",
+                "datawejscia",
+                "zakonczone",
+                "typ",
+                "orderName",
+            )
+        )
 
     def getAllData(self):
         zleceniaQuery = orderView_service.get_zleceniaQuery()
