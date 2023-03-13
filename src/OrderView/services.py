@@ -73,15 +73,17 @@ class OrderService:
                             .values_list("indeksskanu", flat=True)
                         )
                     )
+                    .values("indeks",)
                     .distinct()
                     .order_by("indeks")
                     .annotate(
                         raport=Subquery(
                             Stanowiska.objects.using("mssql")
                             .filter(indeks=OuterRef("stanowisko"))
-                            .values("raport")
+                            .values("raport")[:1]
                         )
                     )
+                    .values("raport",)
                 ),
             )
         )
