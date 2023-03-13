@@ -62,7 +62,7 @@ class OrderService:
         skany_indeks_list = SkanyVsZlecenia.objects.using("mssql").filter(indekszlecenia__in=indeks_list).values_list("indeksskanu", flat=True)
         
         # Query the orderView table to get the required data for each indeksskanu value
-        skany_query = orderView_service.get_skany_query_by_id_list(list(skany_indeks_list))
+        skany_query = orderView_service.get_skanyQueryById(list(skany_indeks_list))
         
         # Query the Stanowiska table for each row in the skany_query result set
         skany_list = []
