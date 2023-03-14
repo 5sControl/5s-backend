@@ -141,6 +141,8 @@ class OrderService:
 
         zlecenia_dict = self.get_zleceniaQueryByZlecenie(zlecenie)
 
+        skans_dict = {}  # dictionary to hold skans grouped by date
+
         for zlecenie_obj in zlecenia_dict:
             if zlecenie_obj["status"] == "Started":
                 status = "Started"
@@ -150,39 +152,41 @@ class OrderService:
                 indekszlecenia=zlecenie_obj["indeks"]
             )
 
-            skany_dict = {}
-            for skanyVsZlecenia in skanyVsZleceniaQuery:
-                skany = self.get_skanyQueryById(skanyVsZlecenia.indeksskanu)
+            skany_ids = [skanyVsZlecenia.indeksskanu for skanyVsZlecenia in skanyVsZleceniaQuery]
+            if skany_ids:
+                skanyQuery = self.get_skanyQueryByIds(skany_ids)
+                skany_dict = {skany["indeks"]: skany for skany in skanyQuery}
+                for skanyVsZlecenia in skanyVsZleceniaQuery:
+                    skany = skany_dict.get(skanyVsZlecenia.indeksskanu)
+                    if skany and skany["data"] <= datetime.now(timezone.utc):
+                        skany_date = skany["data"].strftime("%Y.%m.%d")  # convert date to desired format
+                        if skany_date not in skans_dict:
+                            skans_dict[skany_date] = []  # create list for new date
+                        stanowisko = get_object_or_404(Stanowiska.objects.using("mssql"), indeks=skany["stanowisko"])
+                        uzytkownik = get_object_or_404(Uzytkownicy.objects.using("mssql"), indeks=skany["uzytkownik"])
+                        skany["worker"] = uzytkownik.imie
+                        skany["raport"] = stanowisko.raport
+                        skans_dict[skany_date].append(skany)  # add skan to list for its date
 
-                if skany and skany["data"] <= datetime.now(timezone.utc):
-                    skany_date = datetime.strptime(
-                        skany["data"], "%Y-%m-%dT%H:%M:%S.%f%z"
-                    )
-                    skany_date_str = skany_date.strftime("%Y.%m.%d")
-                    if skany_date_str not in skany_dict:
-                        skany_dict[skany_date_str] = []
-                    stanowisko = get_object_or_404(
-                        Stanowiska.objects.using("mssql"), indeks=skany["stanowisko"]
-                    )
-                    uzytkownik = get_object_or_404(
-                        Uzytkownicy.objects.using("mssql"), indeks=skany["uzytkownik"]
-                    )
-                    skany["worker"] = uzytkownik.imie
-                    skany["raport"] = stanowisko.raport
-                    skany_dict[skany_date_str].append(skany)
-
-            zlecenie_obj["skans"] = skany_dict
+            zlecenie_obj["skans"] = None  # remove original skans field
 
         response["products"] = list(zlecenia_dict)
         response["status"] = status
 
-        response["indeks"] = response["products"][0]["indeks"]
+        response_skans = []  # new list to hold skans grouped by date
+        for skany_date, skany_list in skans_dict.items():
+            response_skans.append({"date": skany_date, "skans": sorted(skany_list, key=lambda k: k['data'])})
+
+        response["skans"] = response_skans
+
+        response["zlecenie"] = response["products"][0]["zlecenie"]
         response["data"] = response["products"][0]["data"]
         response["klient"] = response["products"][0]["klient"]
         response["datawejscia"] = response["products"][0]["datawejscia"]
         response["terminrealizacji"] = response["products"][0]["terminrealizacji"]
 
         return [response]
+
 
 
 orderView_service = OrderService()
