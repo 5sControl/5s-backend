@@ -8,6 +8,7 @@ from src.OrderView.models import (
 
 from django.forms.models import model_to_dict
 from django.db.models import Case, When, Value, CharField
+from django.shortcuts import get_object_or_404
 
 
 class OrderService:
@@ -128,42 +129,34 @@ class OrderService:
         response = {}
         status = "Completed"
 
-        zlecenia_dict = orderView_service.get_zleceniaQueryByZlecenie(zlecenie)
+        zlecenia_dict = self.get_zleceniaQueryByZlecenie(zlecenie)
 
         for zlecenie_obj in zlecenia_dict:
             if zlecenie_obj["status"] == "Started":
                 status = "Started"
                 break
+
             skanyVsZleceniaQuery = SkanyVsZlecenia.objects.using("mssql").filter(
                 indekszlecenia=zlecenie_obj["indeks"]
             )
-            skany_list = []
-            for skanyVsZlecenia in skanyVsZleceniaQuery:
-                skanyQuery = orderView_service.get_skanyQueryById(
-                    skanyVsZlecenia.indeksskanu
-                )
 
-                for skany in skanyQuery:
-                    # filter skany by date
-                    if skany["data"] >= start_date and skany["data"] <= end_date:
-                        stanowisko = (
-                            Stanowiska.objects.using("mssql")
-                            .filter(indeks=skany["stanowisko"])
-                            .first()
-                        )
-                        uzytkownik = (
-                            Uzytkownicy.objects.using("mssql")
-                            .filter(indeks=skany["uzytkownik"])
-                            .first()
-                        )
+            skany_list = []
+            skany_ids = [skanyVsZlecenia.indeksskanu for skanyVsZlecenia in skanyVsZleceniaQuery]
+            if skany_ids:
+                skanyQuery = self.get_skanyQueryByIds(skany_ids)
+                skany_dict = {skany["indeks"]: skany for skany in skanyQuery}
+                for skanyVsZlecenia in skanyVsZleceniaQuery:
+                    skany = skany_dict.get(skanyVsZlecenia.indeksskanu)
+                    if skany and skany["data"] <= timezone.now():
+                        stanowisko = get_object_or_404(Stanowiska.objects.using("mssql"), indeks=skany["stanowisko"])
+                        uzytkownik = get_object_or_404(Uzytkownicy.objects.using("mssql"), indeks=skany["uzytkownik"])
                         skany["worker"] = uzytkownik.imie
                         skany["raport"] = stanowisko.raport
                         skany_list.append(skany)
 
-            zlecenie_obj["skans"] = skany_list
+            zlecenie_obj["skans"] = sorted(skany_list, key=lambda k: k['data'])  # sorting skans by date
 
         response["products"] = list(zlecenia_dict)
-
         response["status"] = status
 
         response["indeks"] = response["products"][0]["indeks"]
