@@ -1,4 +1,6 @@
 from rest_framework.exceptions import NotFound
+from rest_framework.response import Response
+from rest_framework import status
 
 from django.utils import timezone
 
@@ -47,15 +49,15 @@ class AlgorithmsService:
                 algorithm_name=camera_algorithm.algorithm.name,
                 camera_ip=camera_algorithm.camera.id,
             )
-
             # camera_algorithm.is_active = False
             # camera_algorithm.save()
+            
             camera_algorithm.delete()  # FIXME: Remove
         else:
             return {"status": False, "message": "Cannot find camera algorithm"}
         return {"status": True, "message": "Camera algorithm was stoped successfully"}
 
-    @check_active_algorithms
+    # @check_active_algorithms
     def create_camera_algorithm(
         self, data: dict
     ) -> Tuple[List[CameraAlgorithm], List[str]]:
@@ -99,7 +101,7 @@ class AlgorithmsService:
                     )
 
         if self.errors:
-            return {"message": self.errors}
+            return Response({"message": self.errors}, status=status.HTTP_400_BAD_REQUEST)
         else:
             for record in self.created_records:
                 logger.info(f"record -> {record} was created")
@@ -118,13 +120,17 @@ class AlgorithmsService:
         existing_records = self.get_existing_records(algorithm, cameras)
         new_records = []
 
+        print("!!!! create_new_records, ", algorithm, cameras, server_url)
+
         for camera in cameras:
             if existing_records.filter(camera=camera.id).exists():
+                print("!!!! ", existing_records.filter(camera=camera.id).exists())
                 continue
 
             result = yolo_proccesing.start_yolo_processing(
                 camera, algorithm, server_url
             )
+            print("!!! result ", result)
             if not result["success"] or "pid" not in result:
                 return False
 
@@ -140,6 +146,9 @@ class AlgorithmsService:
         return new_records
 
     def get_existing_records(self, algorithm, cameras):
+        print("!!! get_existing_records ", CameraAlgorithm.objects.filter(
+            algorithm=algorithm, camera__in=cameras.values_list("id", flat=True)
+        ))
         return CameraAlgorithm.objects.filter(
             algorithm=algorithm, camera__in=cameras.values_list("id", flat=True)
         )
