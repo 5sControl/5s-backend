@@ -11,6 +11,7 @@ from django.db.models import Case, When, Value, CharField
 from django.shortcuts import get_object_or_404
 
 from datetime import datetime, timezone
+from collections import defaultdict
 
 
 class OrderService:
@@ -134,14 +135,16 @@ class OrderService:
 
         return response_list
 
-
     def get_order(self, zlecenie):
         response = {}
         status = "Completed"
 
         zlecenia_dict = self.get_zleceniaQueryByZlecenie(zlecenie)
 
-        skany_dict = {}
+        skany_dict = defaultdict(
+            list
+        )  # create a defaultdict to store skany dictionaries with the formatted time as the key
+
         for zlecenie_obj in zlecenia_dict:
             if zlecenie_obj["status"] == "Started":
                 status = "Started"
@@ -151,34 +154,49 @@ class OrderService:
                 indekszlecenia=zlecenie_obj["indeks"]
             )
 
-            skany_list = []
-            skany_ids = [skanyVsZlecenia.indeksskanu for skanyVsZlecenia in skanyVsZleceniaQuery]
+            skany_ids = [
+                skanyVsZlecenia.indeksskanu for skanyVsZlecenia in skanyVsZleceniaQuery
+            ]
             if skany_ids:
                 skanyQuery = self.get_skanyQueryByIds(skany_ids)
                 for skany in skanyQuery:
                     if skany["data"] <= datetime.now(timezone.utc):
-                        stanowisko = get_object_or_404(Stanowiska.objects.using("mssql"), indeks=skany["stanowisko"])
-                        uzytkownik = get_object_or_404(Uzytkownicy.objects.using("mssql"), indeks=skany["uzytkownik"])
+                        stanowisko = get_object_or_404(
+                            Stanowiska.objects.using("mssql"),
+                            indeks=skany["stanowisko"],
+                        )
+                        uzytkownik = get_object_or_404(
+                            Uzytkownicy.objects.using("mssql"),
+                            indeks=skany["uzytkownik"],
+                        )
                         skany["worker"] = uzytkownik.imie
                         skany["raport"] = stanowisko.raport
-                        skany_time = datetime.strptime(skany["data"], "%Y-%m-%dT%H:%M:%S.%fZ")
-                        skany_date = skany_time.strftime("%Y.%m.%d")
-                        if skany_date not in skany_dict:
-                            skany_dict[skany_date] = []
-                        skany_dict[skany_date].append(skany)
+                        formatted_time = skany["data"].strftime(
+                            "%Y.%m.%d"
+                        )  # format the time
+                        skany_dict[formatted_time].append(
+                            skany
+                        )  # add the skany dictionary to the corresponding list
 
-            zlecenie_obj["skans"] = skany_list
-
-        sorted_skany_dict = {}
-        for key in sorted(skany_dict.keys()):
-            sorted_skany_dict[key] = skany_dict[key]
+        for zlecenie_obj in zlecenia_dict:
+            zlecenie_obj["skans"] = []
+            for formatted_time, skany_list in skany_dict.items():
+                for skany in skany_list:
+                    if skanyVsZleceniaQuery.filter(
+                        indeksskanu=skany["indeks"]
+                    ).exists():
+                        zlecenie_obj["skans"].append(skany)
 
         response["products"] = list(zlecenia_dict)
         response["status"] = status
-        response["skans"] = sorted_skany_dict
+
+        response["indeks"] = response["products"][0]["indeks"]
+        response["data"] = response["products"][0]["data"]
+        response["klient"] = response["products"][0]["klient"]
+        response["datawejscia"] = response["products"][0]["datawejscia"]
+        response["terminrealizacji"] = response["products"][0]["terminrealizacji"]
 
         return [response]
-
 
 
 orderView_service = OrderService()
