@@ -61,39 +61,10 @@ class OrderService:
             )
         )
         return zlecenia_dict
-
-    def get_all(self):
-        response = []
-
-        zleceniaQuery = orderView_service.get_zleceniaQuery()
-
-        for zlecenie in zleceniaQuery:
-            skanyVsZleceniaQuery = SkanyVsZlecenia.objects.using("mssql").filter(
-                indekszlecenia=zlecenie.indeks
-            )
-            skany_list = []
-            for skanyVsZlecenia in skanyVsZleceniaQuery:
-                skanyQuery = Skany.objects.using("mssql").filter(
-                    indeks=skanyVsZlecenia.indeksskanu
-                )
-                for skany in skanyQuery:
-                    stanowisko = Stanowiska.objects.using("mssql").get(
-                        indeks=skany.stanowisko
-                    )
-                    skany_data = model_to_dict(skany)
-                    skany_data["raport"] = stanowisko.raport
-                    skany_list.append(skany_data)
-
-            zlecenie_data = model_to_dict(zlecenie)
-            zlecenie_data["skans"] = skany_list
-            zlecenie_data["orderName"] = "Order Name"  # FIXME
-            response.append(zlecenie_data)
-
-        return response
-
-    def get_allProduct(self):
-        products = (
-            Zlecenia.objects.using("mssql")
+    
+    def get_filtered_orders_list(self):
+        orders_dict = {}
+        products = Zlecenia.objects.using("mssql") \
             .annotate(
                 status=Case(
                     When(
@@ -103,12 +74,22 @@ class OrderService:
                     default=Value("Unknown"),
                     output_field=CharField(),
                 )
-            )
-            .values("indeks", "zlecenie", "status", "terminrealizacji")
-            .distinct()
-        )
+            ).values("indeks", "zlecenie", "status", "terminrealizacji")
 
-        return list(products)
+        for product in products:
+            zlecenie = product["zlecenie"].strip()
+            status = product["status"]
+
+            # Keep only the first dictionary encountered for a given zlecenie value
+            if zlecenie not in orders_dict:
+                orders_dict[zlecenie] = product
+            # If a dictionary for the same zlecenie already exists, check if its status is "Started" and replace it
+            elif orders_dict[zlecenie]["status"] == "Started":
+                orders_dict[zlecenie] = product
+
+        # Return the filtered list of values
+        return list(orders_dict.values())
+
 
     def get_productDataById(self, order_id):
         zlecenie_data = orderView_service.get_zleceniaDictByIndeks(order_id)
@@ -173,7 +154,8 @@ class OrderService:
         response["products"] = list(zlecenia_dict)
 
         response["status"] = status
-        
+
+        response["indeks"] = response["products"][0]["indeks"]
         response["data"] = response["products"][0]["data"]
         response["klient"] = response["products"][0]["klient"]
         response["datawejscia"] = response["products"][0]["datawejscia"]
