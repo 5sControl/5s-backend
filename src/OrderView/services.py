@@ -1,3 +1,4 @@
+from datetime import timezone
 from src.OrderView.models import (
     Stanowiska,
     Uzytkownicy,
@@ -17,7 +18,7 @@ class OrderService:
     ):
         return Zlecenia.objects.using("mssql").all()
 
-    def get_skanyQueryById(self, id):
+    def get_skanyQueryByIds(self, id):
         return (
             Skany.objects.using("mssql")
             .filter(indeks=id)
@@ -109,7 +110,7 @@ class OrderService:
             )
             skany_list = []
             for skanyVsZlecenia in skanyVsZleceniaQuery:
-                skanyQuery = orderView_service.get_skanyQueryById(
+                skanyQuery = orderView_service.get_skanyQueryByIds(
                     skanyVsZlecenia.indeksskanu
                 )
 
