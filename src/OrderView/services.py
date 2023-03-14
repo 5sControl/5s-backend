@@ -150,21 +150,20 @@ class OrderService:
                 indekszlecenia=zlecenie_obj["indeks"]
             )
 
-            skany_list = []
-            skany_ids = [skanyVsZlecenia.indeksskanu for skanyVsZlecenia in skanyVsZleceniaQuery]
-            if skany_ids:
-                skanyQuery = self.get_skanyQueryByIds(skany_ids)
-                skany_dict = {skany["indeks"]: skany for skany in skanyQuery}
-                for skanyVsZlecenia in skanyVsZleceniaQuery:
-                    skany = skany_dict.get(skanyVsZlecenia.indeksskanu)
-                    if skany and skany["data"] <= datetime.now(timezone.utc):
-                        stanowisko = get_object_or_404(Stanowiska.objects.using("mssql"), indeks=skany["stanowisko"])
-                        uzytkownik = get_object_or_404(Uzytkownicy.objects.using("mssql"), indeks=skany["uzytkownik"])
-                        skany["worker"] = uzytkownik.imie
-                        skany["raport"] = stanowisko.raport
-                        skany_list.append(skany)
+            skany_dict = {}
+            for skanyVsZlecenia in skanyVsZleceniaQuery:
+                skany = self.get_skanyQueryById(skanyVsZlecenia.indeksskanu)
+                if skany and skany["data"] <= datetime.now(timezone.utc):
+                    skany_date = datetime.strftime(skany["data"], '%Y.%m.%d')
+                    if skany_date not in skany_dict:
+                        skany_dict[skany_date] = []
+                    stanowisko = get_object_or_404(Stanowiska.objects.using("mssql"), indeks=skany["stanowisko"])
+                    uzytkownik = get_object_or_404(Uzytkownicy.objects.using("mssql"), indeks=skany["uzytkownik"])
+                    skany["worker"] = uzytkownik.imie
+                    skany["raport"] = stanowisko.raport
+                    skany_dict[skany_date].append(skany)
 
-            zlecenie_obj["skans"] = sorted(skany_list, key=lambda k: k['data'])  # sorting skans by date
+            zlecenie_obj["skans"] = skany_dict
 
         response["products"] = list(zlecenia_dict)
         response["status"] = status
