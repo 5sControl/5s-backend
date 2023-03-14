@@ -149,24 +149,33 @@ class OrderService:
                 indekszlecenia=zlecenie_obj["indeks"]
             )
 
-            skany_dict = {}
-            for skanyVsZlecenia in skanyVsZleceniaQuery:
-                skany = self.get_skanyQueryById(skanyVsZlecenia.indeksskanu)
-                if skany and skany["data"] <= datetime.now(timezone.utc):
-                    skany_date = datetime.strftime(skany["data"], "%Y.%m.%d")
-                    if skany_date not in skany_dict:
-                        skany_dict[skany_date] = []
-                    stanowisko = get_object_or_404(
-                        Stanowiska.objects.using("mssql"), indeks=skany["stanowisko"]
-                    )
-                    uzytkownik = get_object_or_404(
-                        Uzytkownicy.objects.using("mssql"), indeks=skany["uzytkownik"]
-                    )
-                    skany["worker"] = uzytkownik.imie
-                    skany["raport"] = stanowisko.raport
-                    skany_dict[skany_date].append(skany)
+        skany_dict = {}
+        for skanyVsZlecenia in skanyVsZleceniaQuery:
+            skany = self.get_skanyQueryById(skanyVsZlecenia.indeksskanu)
+            if (
+                skany
+                and skany.exists()
+                and skany.first().data <= datetime.now(timezone.utc)
+            ):
+                skany_date = datetime.strftime(skany.first().data, "%Y.%m.%d")
+                if skany_date not in skany_dict:
+                    skany_dict[skany_date] = []
+                stanowisko = get_object_or_404(
+                    Stanowiska.objects.using("mssql"), indeks=skany.first().stanowisko
+                )
+                uzytkownik = get_object_or_404(
+                    Uzytkownicy.objects.using("mssql"), indeks=skany.first().uzytkownik
+                )
+                skany_dict[skany_date].append(
+                    {
+                        "id": skany.first().id,
+                        "data": skany.first().data,
+                        "stanowisko": stanowisko.nazwa,
+                        "uzytkownik": uzytkownik.imie,
+                    }
+                )
 
-            zlecenie_obj["skans"] = skany_dict
+        zlecenie_obj["skans"] = skany_dict
 
         response["products"] = list(zlecenia_dict)
         response["status"] = status
