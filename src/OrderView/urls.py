@@ -1,6 +1,5 @@
 from django.urls import path
 from .views import (
-    GetAllDataAPIView,
     GetAllProductAPIView,
     GetOrderDataByindexAPIView,
     GetOrderDataByZlecenieAPIView,
@@ -8,7 +7,6 @@ from .views import (
 )
 
 urlpatterns = [
-    path("", GetAllDataAPIView.as_view(), name="get_all_orders_with_data"),
     path(
         "by/<str:index>/",
         GetOrderDataByindexAPIView.as_view(),

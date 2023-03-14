@@ -1,7 +1,17 @@
-from src.OrderView.models import Stanowiska, Zlecenia, SkanyVsZlecenia, Skany
+from src.OrderView.models import (
+    Stanowiska,
+    Uzytkownicy,
+    Zlecenia,
+    SkanyVsZlecenia,
+    Skany,
+)
 
 from django.forms.models import model_to_dict
 from django.db.models import Case, When, Value, CharField
+from django.shortcuts import get_object_or_404
+
+from datetime import datetime, timezone
+from collections import defaultdict
 
 
 class OrderService:
@@ -14,7 +24,14 @@ class OrderService:
         return (
             Skany.objects.using("mssql")
             .filter(indeks=id)
-            .values("indeks", "data", "stanowisko")
+            .values("indeks", "data", "stanowisko", "uzytkownik")
+        )
+
+    def get_skanyQueryByIds(self, ids):
+        return (
+            Skany.objects.using("mssql")
+            .filter(indeks__in=ids)
+            .values("indeks", "data", "stanowisko", "uzytkownik")
         )
 
     def get_zleceniaDictByIndeks(self, id):
@@ -46,7 +63,6 @@ class OrderService:
                     default=Value("Completed"),
                     output_field=CharField(),
                 ),
-                worker=Value("Zubenko Mihail Petrovich", output_field=CharField()),
             )
             .filter(zlecenie=zlecenie)
             .values(
@@ -54,7 +70,6 @@ class OrderService:
                 "data",
                 "zlecenie",
                 "klient",
-                "worker",
                 "datawejscia",
                 "zakonczone",
                 "typ",
@@ -65,36 +80,8 @@ class OrderService:
         )
         return zlecenia_dict
 
-    def get_all(self):
-        response = []
-
-        zleceniaQuery = orderView_service.get_zleceniaQuery()
-
-        for zlecenie in zleceniaQuery:
-            skanyVsZleceniaQuery = SkanyVsZlecenia.objects.using("mssql").filter(
-                indekszlecenia=zlecenie.indeks
-            )
-            skany_list = []
-            for skanyVsZlecenia in skanyVsZleceniaQuery:
-                skanyQuery = Skany.objects.using("mssql").filter(
-                    indeks=skanyVsZlecenia.indeksskanu
-                )
-                for skany in skanyQuery:
-                    stanowisko = Stanowiska.objects.using("mssql").get(
-                        indeks=skany.stanowisko
-                    )
-                    skany_data = model_to_dict(skany)
-                    skany_data["raport"] = stanowisko.raport
-                    skany_list.append(skany_data)
-
-            zlecenie_data = model_to_dict(zlecenie)
-            zlecenie_data["skans"] = skany_list
-            zlecenie_data["orderName"] = "Order Name"  # FIXME
-            response.append(zlecenie_data)
-
-        return response
-
-    def get_allProduct(self):
+    def get_filtered_orders_list(self):
+        orders_dict = {}
         products = (
             Zlecenia.objects.using("mssql")
             .annotate(
@@ -108,10 +95,18 @@ class OrderService:
                 )
             )
             .values("indeks", "zlecenie", "status", "terminrealizacji")
-            .distinct()
         )
 
-        return list(products)
+        for product in products:
+            zlecenie = product["zlecenie"].strip()
+            # status = product["status"]
+
+            if zlecenie not in orders_dict:
+                orders_dict[zlecenie] = product
+            elif orders_dict[zlecenie]["status"] == "Started":
+                orders_dict[zlecenie] = product
+
+        return list(orders_dict.values())
 
     def get_productDataById(self, order_id):
         zlecenie_data = orderView_service.get_zleceniaDictByIndeks(order_id)
@@ -144,31 +139,48 @@ class OrderService:
         response = {}
         status = "Completed"
 
-        zlecenia_dict = orderView_service.get_zleceniaQueryByZlecenie(zlecenie)
+        zlecenia_dict = self.get_zleceniaQueryByZlecenie(zlecenie)
+
         for zlecenie_obj in zlecenia_dict:
             if zlecenie_obj["status"] == "Started":
                 status = "Started"
                 break
+
             skanyVsZleceniaQuery = SkanyVsZlecenia.objects.using("mssql").filter(
                 indekszlecenia=zlecenie_obj["indeks"]
             )
-            skany_list = []
+
+            skany_dict = {}
             for skanyVsZlecenia in skanyVsZleceniaQuery:
-                skanyQuery = orderView_service.get_skanyQueryById(
-                    skanyVsZlecenia.indeksskanu
-                )
+                skany = self.get_skanyQueryById(skanyVsZlecenia.indeksskanu)
 
-                for skany in skanyQuery:
-                    stanowisko = Stanowiska.objects.using("mssql").get(
-                        indeks=skany["stanowisko"]
+                if skany and skany["data"] <= datetime.now(timezone.utc):
+                    skany_date = datetime.strptime(
+                        skany["data"], "%Y-%m-%dT%H:%M:%S.%f%z"
                     )
+                    skany_date_str = skany_date.strftime("%Y.%m.%d")
+                    if skany_date_str not in skany_dict:
+                        skany_dict[skany_date_str] = []
+                    stanowisko = get_object_or_404(
+                        Stanowiska.objects.using("mssql"), indeks=skany["stanowisko"]
+                    )
+                    uzytkownik = get_object_or_404(
+                        Uzytkownicy.objects.using("mssql"), indeks=skany["uzytkownik"]
+                    )
+                    skany["worker"] = uzytkownik.imie
                     skany["raport"] = stanowisko.raport
-                    skany_list.append(skany)
+                    skany_dict[skany_date_str].append(skany)
 
-            zlecenie_obj["skans"] = skany_list
+            zlecenie_obj["skans"] = skany_dict
 
-        response[zlecenie] = list(zlecenia_dict)
+        response["products"] = list(zlecenia_dict)
         response["status"] = status
+
+        response["indeks"] = response["products"][0]["indeks"]
+        response["data"] = response["products"][0]["data"]
+        response["klient"] = response["products"][0]["klient"]
+        response["datawejscia"] = response["products"][0]["datawejscia"]
+        response["terminrealizacji"] = response["products"][0]["terminrealizacji"]
 
         return [response]
 
