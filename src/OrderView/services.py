@@ -141,6 +141,10 @@ class OrderService:
 
         zlecenia_dict = self.get_zleceniaQueryByZlecenie(zlecenie)
 
+        skany_dict = defaultdict(
+            list
+        )  # create a defaultdict to store skany dictionaries with the formatted time as the key
+
         for zlecenie_obj in zlecenia_dict:
             if zlecenie_obj["status"] == "Started":
                 status = "Started"
@@ -150,32 +154,43 @@ class OrderService:
                 indekszlecenia=zlecenie_obj["indeks"]
             )
 
-            skany_dict = {}
-            for skanyVsZlecenia in skanyVsZleceniaQuery:
-                skany = self.get_skanyQueryById(skanyVsZlecenia.indeksskanu)
+            skany_ids = [
+                skanyVsZlecenia.indeksskanu for skanyVsZlecenia in skanyVsZleceniaQuery
+            ]
+            if skany_ids:
+                skanyQuery = self.get_skanyQueryByIds(skany_ids)
+                for skany in skanyQuery:
+                    if skany["data"] <= datetime.now(timezone.utc):
+                        stanowisko = get_object_or_404(
+                            Stanowiska.objects.using("mssql"),
+                            indeks=skany["stanowisko"],
+                        )
+                        uzytkownik = get_object_or_404(
+                            Uzytkownicy.objects.using("mssql"),
+                            indeks=skany["uzytkownik"],
+                        )
+                        skany["worker"] = uzytkownik.imie
+                        skany["raport"] = stanowisko.raport
+                        formatted_time = skany["data"].strftime(
+                            "%Y.%m.%d"
+                        )  # format the time
+                        skany_dict[formatted_time].append(
+                            skany
+                        )  # add the skany dictionary to the corresponding list
 
-                if skany and skany["data"] <= datetime.now(timezone.utc):
-                    skany_date = datetime.strptime(
-                        skany["data"], "%Y-%m-%dT%H:%M:%S.%f%z"
-                    )
-                    skany_date_str = skany_date.strftime("%Y.%m.%d")
-                    if skany_date_str not in skany_dict:
-                        skany_dict[skany_date_str] = []
-                    stanowisko = get_object_or_404(
-                        Stanowiska.objects.using("mssql"), indeks=skany["stanowisko"]
-                    )
-                    uzytkownik = get_object_or_404(
-                        Uzytkownicy.objects.using("mssql"), indeks=skany["uzytkownik"]
-                    )
-                    skany["worker"] = uzytkownik.imie
-                    skany["raport"] = stanowisko.raport
-                    skany_dict[skany_date_str].append(skany)
-
-            zlecenie_obj["skans"] = skany_dict
+        for zlecenie_obj in zlecenia_dict:
+            zlecenie_obj["skans"] = []
+            for formatted_time, skany_list in skany_dict.items():
+                for skany in skany_list:
+                    if skanyVsZleceniaQuery.filter(
+                        indeksskanu=skany["indeks"]
+                    ).exists():
+                        zlecenie_obj["skans"].append(skany)
 
         response["products"] = list(zlecenia_dict)
         response["status"] = status
 
+        response["indeks"] = response["products"][0]["indeks"]
         response["zlecenie"] = response["products"][0]["zlecenie"]
         response["data"] = response["products"][0]["data"]
         response["klient"] = response["products"][0]["klient"]
