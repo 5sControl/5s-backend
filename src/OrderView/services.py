@@ -1,4 +1,3 @@
-from datetime import timezone
 from src.OrderView.models import (
     Stanowiska,
     Uzytkownicy,
@@ -10,6 +9,8 @@ from src.OrderView.models import (
 from django.forms.models import model_to_dict
 from django.db.models import Case, When, Value, CharField
 from django.shortcuts import get_object_or_404
+
+from datetime import datetime, timezone
 
 
 class OrderService:
@@ -156,7 +157,7 @@ class OrderService:
                 skany_dict = {skany["indeks"]: skany for skany in skanyQuery}
                 for skanyVsZlecenia in skanyVsZleceniaQuery:
                     skany = skany_dict.get(skanyVsZlecenia.indeksskanu)
-                    if skany and skany["data"] <= timezone.now():
+                    if skany and skany["data"] <= datetime.now(timezone.utc):
                         stanowisko = get_object_or_404(Stanowiska.objects.using("mssql"), indeks=skany["stanowisko"])
                         uzytkownik = get_object_or_404(Uzytkownicy.objects.using("mssql"), indeks=skany["uzytkownik"])
                         skany["worker"] = uzytkownik.imie
