@@ -1,4 +1,10 @@
-from src.OrderView.models import Stanowiska, Uzytkownicy, Zlecenia, SkanyVsZlecenia, Skany
+from src.OrderView.models import (
+    Stanowiska,
+    Uzytkownicy,
+    Zlecenia,
+    SkanyVsZlecenia,
+    Skany,
+)
 
 from django.forms.models import model_to_dict
 from django.db.models import Case, When, Value, CharField
@@ -45,7 +51,8 @@ class OrderService:
                     ),
                     default=Value("Completed"),
                     output_field=CharField(),
-                )            )
+                ),
+            )
             .filter(zlecenie=zlecenie)
             .values(
                 "indeks",
@@ -61,10 +68,11 @@ class OrderService:
             )
         )
         return zlecenia_dict
-    
+
     def get_filtered_orders_list(self):
         orders_dict = {}
-        products = Zlecenia.objects.using("mssql") \
+        products = (
+            Zlecenia.objects.using("mssql")
             .annotate(
                 status=Case(
                     When(
@@ -74,22 +82,20 @@ class OrderService:
                     default=Value("Unknown"),
                     output_field=CharField(),
                 )
-            ).values("indeks", "zlecenie", "status", "terminrealizacji")
+            )
+            .values("indeks", "zlecenie", "status", "terminrealizacji")
+        )
 
         for product in products:
             zlecenie = product["zlecenie"].strip()
-            status = product["status"]
+            # status = product["status"]
 
-            # Keep only the first dictionary encountered for a given zlecenie value
             if zlecenie not in orders_dict:
                 orders_dict[zlecenie] = product
-            # If a dictionary for the same zlecenie already exists, check if its status is "Started" and replace it
             elif orders_dict[zlecenie]["status"] == "Started":
                 orders_dict[zlecenie] = product
 
-        # Return the filtered list of values
         return list(orders_dict.values())
-
 
     def get_productDataById(self, order_id):
         zlecenie_data = orderView_service.get_zleceniaDictByIndeks(order_id)
@@ -119,7 +125,6 @@ class OrderService:
         return response_list
 
     def get_order(self, zlecenie):
-
         response = {}
         status = "Completed"
 
@@ -139,15 +144,21 @@ class OrderService:
                 )
 
                 for skany in skanyQuery:
-                    stanowisko = Stanowiska.objects.using("mssql").filter(
-                        indeks=skany["stanowisko"]
-                    ).first()
-                    uzytkownik = Uzytkownicy.objects.using("mssql").filter(
-                        indeks=skany["uzytkownik"]
-                    ).first()
-                    skany["worker"] = uzytkownik.imie
-                    skany["raport"] = stanowisko.raport
-                    skany_list.append(skany)
+                    # filter skany by date
+                    if skany["data"] >= start_date and skany["data"] <= end_date:
+                        stanowisko = (
+                            Stanowiska.objects.using("mssql")
+                            .filter(indeks=skany["stanowisko"])
+                            .first()
+                        )
+                        uzytkownik = (
+                            Uzytkownicy.objects.using("mssql")
+                            .filter(indeks=skany["uzytkownik"])
+                            .first()
+                        )
+                        skany["worker"] = uzytkownik.imie
+                        skany["raport"] = stanowisko.raport
+                        skany_list.append(skany)
 
             zlecenie_obj["skans"] = skany_list
 
