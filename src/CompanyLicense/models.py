@@ -13,7 +13,7 @@ class Company(models.Model):
     valid_until = models.DateField(verbose_name="Date which license is active")
     is_active = models.BooleanField(verbose_name="Is active license", default=False)
     count_cameras = models.IntegerField(verbose_name="Count of cameras in active")
-    neurons_active = models.TextField(verbose_name="List of active neurons")
+    neurons_active = models.IntegerField(verbose_name="Count of active neurons")
 
     def is_valid(self):
         return self.valid_until >= timezone.now().date()

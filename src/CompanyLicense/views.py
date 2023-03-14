@@ -10,7 +10,7 @@ from .serializers import CompanySerializer
 
 
 class CompanyViewSet(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def post(self, request):
         serializer = CompanySerializer(data=request.data)

@@ -54,19 +54,19 @@ def active_algorithms_required(view_func):
     algorithms
     """
 
-    def wrapper(request, *args, **kwargs):
+    @wraps(view_func)
+    def wrapped_view(request, *args, **kwargs):
         company = Company.objects.last()
-        active_neurons = company.neurons_active.split(" ")
-        allowed_algorithms = [algorithm.name for algorithm in Algorithm.objects.all()]
-        allowed_algorithms = [algorithm.lower() for algorithm in allowed_algorithms]
-        allowed_algorithms_set = set(allowed_algorithms)
 
-        for neuron in active_neurons:
-            if neuron.lower() in allowed_algorithms_set:
-                return view_func(request, *args, **kwargs)
+        if not company.is_active:
+            return HttpResponseBadRequest("Your license is inactive.")
 
-        return HttpResponseForbidden(
-            "Access denied: no active algorithms found in company license."
-        )
+        active_algorithms_count = Algorithm.objects.filter(is_available=True).count()
+        if active_algorithms_count >= company.neurons_active:
+            return HttpResponseBadRequest(
+                "You have exceeded the limit of active algorithm."
+            )
 
-    return wrapper
+        return view_func(request, *args, **kwargs)
+
+    return wrapped_view
