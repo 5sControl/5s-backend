@@ -25,14 +25,13 @@ class OrderService:
             .filter(indeks=id)
             .values("indeks", "data", "stanowisko", "uzytkownik")
         )
-    
+
     def get_skanyQueryByIds(self, ids):
         return (
             Skany.objects.using("mssql")
             .filter(indeks__in=ids)
             .values("indeks", "data", "stanowisko", "uzytkownik")
         )
-
 
     def get_zleceniaDictByIndeks(self, id):
         return (
@@ -154,11 +153,15 @@ class OrderService:
             for skanyVsZlecenia in skanyVsZleceniaQuery:
                 skany = self.get_skanyQueryById(skanyVsZlecenia.indeksskanu)
                 if skany and skany["data"] <= datetime.now(timezone.utc):
-                    skany_date = datetime.strftime(skany["data"], '%Y.%m.%d')
+                    skany_date = datetime.strftime(skany["data"], "%Y.%m.%d")
                     if skany_date not in skany_dict:
                         skany_dict[skany_date] = []
-                    stanowisko = get_object_or_404(Stanowiska.objects.using("mssql"), indeks=skany["stanowisko"])
-                    uzytkownik = get_object_or_404(Uzytkownicy.objects.using("mssql"), indeks=skany["uzytkownik"])
+                    stanowisko = get_object_or_404(
+                        Stanowiska.objects.using("mssql"), indeks=skany["stanowisko"]
+                    )
+                    uzytkownik = get_object_or_404(
+                        Uzytkownicy.objects.using("mssql"), indeks=skany["uzytkownik"]
+                    )
                     skany["worker"] = uzytkownik.imie
                     skany["raport"] = stanowisko.raport
                     skany_dict[skany_date].append(skany)
