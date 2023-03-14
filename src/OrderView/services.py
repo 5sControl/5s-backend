@@ -18,12 +18,20 @@ class OrderService:
     ):
         return Zlecenia.objects.using("mssql").all()
 
-    def get_skanyQueryByIds(self, id):
+    def get_skanyQueryById(self, id):
         return (
             Skany.objects.using("mssql")
             .filter(indeks=id)
             .values("indeks", "data", "stanowisko", "uzytkownik")
         )
+    
+    def get_skanyQueryByIds(self, ids):
+        return (
+            Skany.objects.using("mssql")
+            .filter(indeks__in=ids)
+            .values("indeks", "data", "stanowisko", "uzytkownik")
+        )
+
 
     def get_zleceniaDictByIndeks(self, id):
         return (
@@ -110,7 +118,7 @@ class OrderService:
             )
             skany_list = []
             for skanyVsZlecenia in skanyVsZleceniaQuery:
-                skanyQuery = orderView_service.get_skanyQueryByIds(
+                skanyQuery = orderView_service.get_skanyQueryById(
                     skanyVsZlecenia.indeksskanu
                 )
 
