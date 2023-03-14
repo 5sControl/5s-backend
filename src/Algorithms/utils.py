@@ -24,6 +24,7 @@ class YoloProccesing:
         request_json["server_url"] = url
         request_json["status"] = True
 
+        print(request_json)
         return request_json
 
     def stop_process(self, pid: int):
