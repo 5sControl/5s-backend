@@ -63,6 +63,7 @@ class CameraService:
     """
     Save the camera with extra information and run yolo processing
     """
+
     @check_active_cameras
     def create_camera(self, camera_info):
         """

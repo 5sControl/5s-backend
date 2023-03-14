@@ -61,7 +61,9 @@ def check_active_algorithms(view_func):
         if not company.is_active:
             return HttpResponseBadRequest("Your license is inactive.")
 
-        active_algorithms_count = CameraAlgorithm.objects.values('algorithm').distinct().count()
+        active_algorithms_count = (
+            CameraAlgorithm.objects.values("algorithm").distinct().count()
+        )
         if active_algorithms_count >= company.neurons_active:
             return HttpResponseBadRequest(
                 "You have exceeded the limit of active algorithm."
