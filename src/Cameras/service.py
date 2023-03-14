@@ -6,6 +6,7 @@ import requests
 from .models import Camera
 
 from src.core.logger import logger
+from ..CompanyLicense.decorators import check_active_cameras
 
 
 class CameraLinkGenerator:
@@ -62,7 +63,7 @@ class CameraService:
     """
     Save the camera with extra information and run yolo processing
     """
-
+    @check_active_cameras
     def create_camera(self, camera_info):
         """
         This method will create a camera,
