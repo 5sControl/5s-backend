@@ -41,6 +41,8 @@ class StartProcessingYoloApiView(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         response = algorithms_services.create_camera_algorithm(data=request.data)
+        if not response["status"]:
+            return Response(response, status=status.HTTP_400_BAD_REQUEST)
         return Response(response, status=status.HTTP_200_OK)
 
 

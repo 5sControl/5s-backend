@@ -101,11 +101,11 @@ class AlgorithmsService:
                     )
 
         if self.errors:
-            return Response({"message": self.errors}, status=status.HTTP_400_BAD_REQUEST)
+            return {"status": False, "message": self.errors}
         else:
             for record in self.created_records:
                 logger.info(f"record -> {record} was created")
-            return {"message": "Camera Algorithm records created successfully"}
+            return {"status": True, "message": "Camera Algorithm records created successfully"}
 
     def get_algorithm_by_name(self, name: str):
         algorithm = Algorithm.objects.filter(name=name).first()
