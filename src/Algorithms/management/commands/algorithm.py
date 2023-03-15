@@ -12,12 +12,13 @@ class Command(BaseCommand):
         self.ALGORITHMS = [
             {"name": "staff_control", "is_available": False},
             {"name": "idle_control", "is_available": True},
+            {"name": "operation_control", "is_available": True},
             {"name": "tool_control", "is_available": False},
             {"name": "machine_control", "is_available": True},
             {"name": "safety_control_ear_protection", "is_available": True},
             {"name": "safety_control_head_protection", "is_available": False},
             {"name": "safety_control_hand_protection", "is_available": False},
-            {"name": "safety_control_reflective_jacket", "is_available": False},
+            {"name": "safety_control_reflective_jacket", "is_available": True},
         ]
         self.algorithms_was_exist = 0
         self.algorithms_was_created = 0
