@@ -48,7 +48,7 @@ class CompanyInfoView(APIView):
             "valid_until": company.valid_until,
             "licence_is_active": company.is_active,
             "count_cameras": company.count_cameras,
-            "neurons_active": company.neurons_active.split(" "),
+            "neurons_active": company.neurons_active,
             "days_left": is_license_active.split(",")[0],
         }
         return Response(response_data, status=200)
