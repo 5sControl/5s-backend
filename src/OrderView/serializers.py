@@ -19,7 +19,6 @@ class ZleceniaSerializer(serializers.ModelSerializer):
 
 
 class ZleceniaTestSerializer(serializers.ModelSerializer):
-    skany = SkanySerializer(many=False, read_only=True)
 
     class Meta:
         model = Zlecenia
