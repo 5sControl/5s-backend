@@ -34,10 +34,8 @@ class GetOrderDataByZlecenieAPIView(APIView):
 
 class TestApiView(APIView):
     permission_classes = [IsAuthenticated]
-    ser
 
     def get(self, request):
-        response = orderView_service.get_zleceniaQuery()
         zlecenia = orderView_service.get_zleceniaQuery()
         serializer = ZleceniaTestSerializer(zlecenia, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
