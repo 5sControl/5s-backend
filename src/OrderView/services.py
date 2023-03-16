@@ -199,9 +199,118 @@ class OrderService:
         response["terminrealizacji"] = response["products"][0]["terminrealizacji"]
 
         return [response]
-
+    
     def test(self, zlecenie_id):
+        response = {}
+        status = "Completed"
+
         zlecenia_dict = self.get_zleceniaQueryByZlecenie(zlecenie_id)
-        return zlecenia_dict
+
+        skany_dict = defaultdict(list)
+
+        for zlecenie_obj in zlecenia_dict:
+            if zlecenie_obj["status"] == "Started":
+                status = "Started"
+                break
+
+            skanyVsZleceniaQuery = SkanyVsZlecenia.objects.using("mssql").filter(
+                indekszlecenia=zlecenie_obj["indeks"]
+            )
+
+            skany_ids = [skanyVsZlecenia.indeksskanu for skanyVsZlecenia in skanyVsZleceniaQuery]
+            if skany_ids:
+                skanyQuery = self.get_skanyQueryByIds(skany_ids)
+                skany_ids_added = set() # keep track of Skany IDs that have already been added
+                for skany in skanyQuery:
+                    if skany["data"] <= datetime.now(timezone.utc):
+                        stanowisko = get_object_or_404(
+                            Stanowiska.objects.using("mssql"),
+                            indeks=skany["stanowisko"],
+                        )
+                        uzytkownik = get_object_or_404(
+                            Uzytkownicy.objects.using("mssql"),
+                            indeks=skany["uzytkownik"],
+                        )
+                        skany["worker"] = uzytkownik.imie
+                        skany["raport"] = stanowisko.raport
+                        formatted_time = skany["data"].strftime("%Y.%m.%d")
+                        if skany["indeks"] not in skany_ids_added:
+                            skany_ids_added.add(skany["indeks"])
+                            skany_dict[formatted_time].append(skany)
+
+            zlecenie_obj["skans"] = []
+            for formatted_time, skany_list in skany_dict.items():
+                for skany in skany_list:
+                    if skanyVsZleceniaQuery.filter(indeksskanu=skany["indeks"]).exists():
+                        zlecenie_obj["skans"].append(skany)
+
+        response["products"] = list(zlecenia_dict)
+        response["status"] = status
+
+        return [response]
+
 
 orderView_service = OrderService()
+
+
+
+# def get_zleceniaQueryByZlecenie(zlecenie):
+#         zlecenia_dict = (
+#             Zlecenia.objects.using("mssql")
+#             .annotate(
+#                 orderName=Value("Order Name", output_field=CharField()),
+#                 status=Case(
+#                     When(
+#                         zakonczone=0, datawejscia__isnull=False, then=Value("Started")
+#                     ),
+#                     default=Value("Completed"),
+#                     output_field=CharField(),
+#                 ),
+#             )
+#             .filter(zlecenie=zlecenie)
+#             .values(
+#                 "indeks",
+#                 "data",
+#                 "zlecenie",
+#                 "klient",
+#                 "datawejscia",
+#                 "zakonczone",
+#                 "typ",
+#                 "orderName",
+#                 "terminrealizacji",
+#                 "status",
+#             )
+#         )
+#         return zlecenia_dict
+
+# zlecenie_id = "KW199232"
+# zlecenia_dict = get_zleceniaQueryByZlecenie(zlecenie_id)
+# response = {
+#     "products": []
+#     }
+# print(zlecenia_dict)
+# for zlecinia in zlecenia_dict:
+
+#     response['indeks'] = zlecinia["indeks"],
+#     response['data'] = zlecinia["data"],
+#     response['zlecenie'] = zlecinia["zlecenie"],
+#     response['klient'] = zlecinia["klient"],
+#     response['datawejscia'] = zlecinia["datawejscia"],
+#     response['zakonczone'] = zlecinia["zakonczone"],
+#     response['typ'] = zlecinia["typ"],
+#     response['terminrealizacji'] = zlecinia["terminrealizacji"],
+#     response["products"].append({
+#         "indeks": zlecinia["indeks"],
+#         "data": zlecinia["data"],
+#         "zlecenie": zlecinia["zlecenie"],
+#         "klient": zlecinia["klient"],
+#         "datawejscia": zlecinia["datawejscia"],
+#         "zakonczone": zlecinia["indeks"],
+#         "typ": zlecinia["typ"],
+#         "terminrealizacji": zlecinia["terminrealizacji"],
+#     }) # status and orderName will be add after
+#     skanyVsZlecenia = SkanyVsZlecenia.objects.using("mssql").filter(indekszlecenia=zlecinia["indeks"]).values('indekszlecenia', "indeksskanu").annotate(zlecenie=Value("G58873", output_field=CharField()))
+#     for skanyVsZleceniaData in skanyVsZlecenia:
+#         skany = Skany.objects.using("mssql").values("indeks", "data", "stanowisko", "uzytkownik").filter(indeks=skanyVsZleceniaData["indeksskanu"])
+#         print(skany)
+# print(response)
