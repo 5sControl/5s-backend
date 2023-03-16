@@ -1,21 +1,11 @@
 from django.urls import path
-from .views import (
-    GetAllProductAPIView,
-    GetOrderDataByindexAPIView,
-    GetOrderDataByZlecenieAPIView,
-    GetOrderDataByZlecenieAPIView,
-)
+
+from .views import GetAllDataAPIView, GetAllOrdersAPIView, GetOrderDataByIdAPIView, TestApiView
 
 urlpatterns = [
-    path(
-        "by/<str:index>/",
-        GetOrderDataByindexAPIView.as_view(),
-        name="get_orders_by_id",
-    ),
-    path(
-        "by-order/<str:zlecenie>/",
-        GetOrderDataByZlecenieAPIView.as_view(),
-        name="get_orders_by_id",
-    ),
-    path("all-orders/", GetAllProductAPIView.as_view(), name="get_all_orders"),
+    path("", GetAllDataAPIView.as_view(), name="get_all_orders_with_data"),
+    path('by/<str:zlecenie_id>/', GetOrderDataByIdAPIView.as_view(), name='get_orders_by_id'),
+    path("all-orders/", GetAllOrdersAPIView.as_view(), name="get_all_orders"),
+    # test
+    path("test/", TestApiView.as_view(), name="testapi")
 ]
