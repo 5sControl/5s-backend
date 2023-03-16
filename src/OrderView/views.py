@@ -29,3 +29,8 @@ class GetOrderDataByZlecenieAPIView(APIView):
     def get(self, request, zlecenie_id):
         response = orderView_service.get_order(zlecenie_id)
         return Response(response, status=status.HTTP_200_OK)
+    
+
+class TestAPIView(APIView):
+    def get(self, request):
+        return Response({"response": '28y912y19e12'}, status=status.HTTP_200_OK)
