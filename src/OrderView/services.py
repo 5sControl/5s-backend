@@ -37,7 +37,7 @@ class OrderService:
     def get_zleceniaDictByIndeks(self, id):
         return (
             Zlecenia.objects.using("mssql")
-            .annotate(orderName=Value("Order Name", output_field=CharField()))
+            .annotate(orderName=F("color"))
             .filter(indeks=id)
             .values(
                 "indeks",
