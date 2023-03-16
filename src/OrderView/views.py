@@ -10,7 +10,6 @@ class GetAllProductAPIView(APIView):
     # permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        print('Got request')
         response = orderView_service.get_filtered_orders_list()
         return Response(response, status=status.HTTP_200_OK)
 
@@ -29,10 +28,9 @@ class GetOrderDataByZlecenieAPIView(APIView):
     def get(self, request, zlecenie_id):
         response = orderView_service.get_order(zlecenie_id)
         return Response(response, status=status.HTTP_200_OK)
-    
+
 
 class TestAPIView(APIView):
-
     def get(self, request, zlecenie_id):
         response = orderView_service.test(zlecenie_id)
         return Response(response, status=status.HTTP_200_OK)
