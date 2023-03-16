@@ -20,5 +20,5 @@ urlpatterns = [
     ),
     path("all-orders/", GetAllProductAPIView.as_view(), name="get_all_orders"),
     # test
-    path("test/", TestAPIView.as_view(), name="test"),
+    path("test/<str:zlecenie_id>/", TestAPIView.as_view(), name="test"),
 ]
