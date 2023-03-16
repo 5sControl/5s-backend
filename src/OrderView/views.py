@@ -26,6 +26,6 @@ class GetOrderDataByindexAPIView(APIView):
 class GetOrderDataByZlecenieAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, zlecenie):
-        response = orderView_service.get_order(zlecenie)
+    def get(self, request, zlecenie_id):
+        response = orderView_service.get_order(zlecenie_id)
         return Response(response, status=status.HTTP_200_OK)

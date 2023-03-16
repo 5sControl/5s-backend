@@ -13,7 +13,7 @@ urlpatterns = [
         name="get_orders_by_id",
     ),
     path(
-        "by-order/<str:zlecenie>/",
+        "by-order/<str:zlecenie_id>/",
         GetOrderDataByZlecenieAPIView.as_view(),
         name="get_orders_by_id",
     ),
