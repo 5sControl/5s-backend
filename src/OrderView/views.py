@@ -7,7 +7,7 @@ from src.OrderView.services import orderView_service
 
 
 class GetAllProductAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request):
         print('Got request')
