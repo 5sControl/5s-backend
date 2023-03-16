@@ -177,7 +177,6 @@ SIMPLE_JWT = {
 }
 
 CORS_ORIGIN_WHITELIST = [
-    "https://cac3-134-17-26-206.eu.ngrok.io/",
     "http://localhost:8000",
     "http://localhost:3000",
     "https://localhost:8000",
