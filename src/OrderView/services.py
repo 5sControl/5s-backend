@@ -137,7 +137,6 @@ class OrderService:
         return response_list
 
     def get_order(self, zlecenie_id):
-        print("START: ", zlecenie_id)
         response = {}
         status = "Completed"
 
@@ -201,5 +200,8 @@ class OrderService:
 
         return [response]
 
+    def test(self, zlecenie_id):
+        zlecenia_dict = self.get_zleceniaQueryByZlecenie(zlecenie_id)
+        return zlecenia_dict
 
 orderView_service = OrderService()
