@@ -137,6 +137,7 @@ class OrderService:
         return response_list
 
     def get_order(self, zlecenie):
+        print("START: ", zlecenie)
         response = {}
         status = "Completed"
 
