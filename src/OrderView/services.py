@@ -82,6 +82,7 @@ class OrderService:
 
     def get_filtered_orders_list(self):
         orders_dict = {}
+        
         products = (
             Zlecenia.objects.using("mssql")
             .annotate(

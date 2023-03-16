@@ -2,6 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from src.OrderView.serializers import ZleceniaSerializer, ZleceniaTestSerializer
 
 from src.OrderView.services import orderView_service
 
@@ -26,6 +27,15 @@ class GetOrderDataByindexAPIView(APIView):
 class GetOrderDataByZlecenieAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, zlecenie):
-        response = orderView_service.get_order(zlecenie)
+    def get(self, request, zlecenie_id):
+        response = orderView_service.get_order(zlecenie_id)
         return Response(response, status=status.HTTP_200_OK)
+    
+
+class TestApiView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        zlecenia = orderView_service.get_zleceniaQuery()
+        serializer = ZleceniaTestSerializer(zlecenia, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

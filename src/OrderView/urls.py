@@ -4,6 +4,7 @@ from .views import (
     GetOrderDataByindexAPIView,
     GetOrderDataByZlecenieAPIView,
     GetOrderDataByZlecenieAPIView,
+    TestApiView,
 )
 
 urlpatterns = [
@@ -18,4 +19,6 @@ urlpatterns = [
         name="get_orders_by_id",
     ),
     path("all-orders/", GetAllProductAPIView.as_view(), name="get_all_orders"),
+    # test
+    path("test/", TestApiView.as_view(), name="testapi")
 ]
