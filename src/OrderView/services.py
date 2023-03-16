@@ -136,12 +136,12 @@ class OrderService:
 
         return response_list
 
-    def get_order(self, zlecenie):
-        print("START: ", zlecenie)
+    def get_order(self, zlecenie_id):
+        print("START: ", zlecenie_id)
         response = {}
         status = "Completed"
 
-        zlecenia_dict = self.get_zleceniaQueryByZlecenie(zlecenie)
+        zlecenia_dict = self.get_zleceniaQueryByZlecenie(zlecenie_id)
 
         skany_dict = defaultdict(
             list
