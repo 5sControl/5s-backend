@@ -19,7 +19,6 @@ class ZleceniaSerializer(serializers.ModelSerializer):
 
 
 class ZleceniaTestSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Zlecenia
         fields = "__all__"

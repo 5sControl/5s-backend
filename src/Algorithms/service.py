@@ -51,7 +51,7 @@ class AlgorithmsService:
             )
             # camera_algorithm.is_active = False
             # camera_algorithm.save()
-            
+
             camera_algorithm.delete()  # FIXME: Remove
         else:
             return {"status": False, "message": "Cannot find camera algorithm"}
@@ -105,7 +105,10 @@ class AlgorithmsService:
         else:
             for record in self.created_records:
                 logger.info(f"record -> {record} was created")
-            return {"status": True, "message": "Camera Algorithm records created successfully"}
+            return {
+                "status": True,
+                "message": "Camera Algorithm records created successfully",
+            }
 
     def get_algorithm_by_name(self, name: str):
         algorithm = Algorithm.objects.filter(name=name).first()
@@ -146,9 +149,12 @@ class AlgorithmsService:
         return new_records
 
     def get_existing_records(self, algorithm, cameras):
-        print("!!! get_existing_records ", CameraAlgorithm.objects.filter(
-            algorithm=algorithm, camera__in=cameras.values_list("id", flat=True)
-        ))
+        print(
+            "!!! get_existing_records ",
+            CameraAlgorithm.objects.filter(
+                algorithm=algorithm, camera__in=cameras.values_list("id", flat=True)
+            ),
+        )
         return CameraAlgorithm.objects.filter(
             algorithm=algorithm, camera__in=cameras.values_list("id", flat=True)
         )
