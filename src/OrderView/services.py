@@ -18,7 +18,9 @@ class OrderService:
             SELECT indeks, data, stanowisko, uzytkownik
             FROM Skany
             WHERE indeks IN (%s)
-        """ % ','.join([str(id) for id in ids])
+        """ % ",".join(
+            [str(id) for id in ids]
+        )
 
         # execute the query and get the results
         with connections["mssql"].cursor() as cursor:
@@ -28,13 +30,15 @@ class OrderService:
         # convert the results to a list of dictionaries
         skanyQuery = []
         for row in results:
-            skanyQuery.append({
-                'indeks': row[0],
-                'data': row[1].replace(tzinfo=timezone.utc),
-                'stanowisko': row[2],
-                'uzytkownik': row[3],
-            })
-            
+            skanyQuery.append(
+                {
+                    "indeks": row[0],
+                    "data": row[1].replace(tzinfo=timezone.utc),
+                    "stanowisko": row[2],
+                    "uzytkownik": row[3],
+                }
+            )
+
         print(skanyQuery)
         return skanyQuery
 
@@ -167,7 +171,8 @@ class OrderService:
                 break
 
             with connections["mssql"].cursor() as cursor:
-                cursor.execute(f"""
+                cursor.execute(
+                    f"""
                     SELECT s.indeks, s.data, s.stanowisko, s.uzytkownik,
                         st.raport, u.imie, u.nazwisko
                     FROM Skany s
@@ -176,9 +181,10 @@ class OrderService:
                     JOIN Uzytkownicy u ON s.uzytkownik = u.indeks
                     WHERE sz.indekszlecenia = {zlecenie_obj["indeks"]}
                     AND s.data <= CONVERT(datetime, GETUTCDATE())
-                """)
+                """
+                )
                 results = cursor.fetchall()
-                
+
                 skany_ids_added = set()
                 for row in results:
                     skany = {
@@ -187,7 +193,7 @@ class OrderService:
                         "stanowisko": row[2],
                         "uzytkownik": row[3],
                         "raport": row[4],
-                        "worker": f"{row[5]} {row[6]}"
+                        "worker": f"{row[5]} {row[6]}",
                     }
                     formatted_time = skany["data"].strftime("%Y.%m.%d")
                     if skany["indeks"] not in skany_ids_added:
