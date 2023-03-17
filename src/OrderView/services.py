@@ -6,8 +6,6 @@ from src.OrderView.models import (
     Skany,
 )
 
-from django.db.models import F
-from django.db.models import Case, When, Value, CharField
 from django.shortcuts import get_object_or_404
 
 from datetime import datetime, timezone
@@ -18,11 +16,28 @@ from django.db import connections
 
 class OrderService:
     def get_skanyQueryByIds(self, ids):
-        return (
-            Skany.objects.using("mssql")
-            .filter(indeks__in=ids)
-            .values("indeks", "data", "stanowisko", "uzytkownik")
-        )
+        query = """
+            SELECT indeks, data, stanowisko, uzytkownik
+            FROM Skany
+            WHERE indeks IN (%s)
+        """ % ','.join([str(id) for id in ids])
+
+        # execute the query and get the results
+        with connections["mssql"].cursor() as cursor:
+            cursor.execute(query)
+            results = cursor.fetchall()
+
+        # convert the results to a list of dictionaries
+        skanyQuery = []
+        for row in results:
+            skanyQuery.append({
+                'indeks': row[0],
+                'data': row[1],
+                'stanowisko': row[2],
+                'uzytkownik': row[3],
+            })
+
+        return skanyQuery
 
     def get_zlecenia_query_by_zlecenie(self, zlecenie):
         with connections["mssql"].cursor() as cursor:
@@ -39,10 +54,12 @@ class OrderService:
             """
             )
             results = cursor.fetchall()
-        result = orderView_service.transform_result(results)
+        result = self.transform_result(results)
         return result
 
-    def get_filtered_orders_list(self,):
+    def get_filtered_orders_list(
+        self,
+    ):
         with connections["mssql"].cursor() as cursor:
             cursor.execute(
                 """
@@ -84,16 +101,13 @@ class OrderService:
         zlecenia_dict = self.get_zlecenia_query_by_zlecenie(zlecenie_id)
 
         skany_dict = defaultdict(list)
-
         for zlecenie_obj in zlecenia_dict:
             if zlecenie_obj["status"] == "Started":
                 status = "Started"
                 break
-
             skanyVsZleceniaQuery = SkanyVsZlecenia.objects.using("mssql").filter(
                 indekszlecenia=zlecenie_obj["indeks"]
             )
-
             skany_ids = [
                 skanyVsZlecenia.indeksskanu for skanyVsZlecenia in skanyVsZleceniaQuery
             ]
