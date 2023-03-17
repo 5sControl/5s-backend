@@ -198,7 +198,7 @@ class OrderService:
         response["orderName"] = response["products"][0]["orderName"]
         response["datazakonczenia"] = response["products"][0]["datazakonczenia"]
         response["terminrealizacji"] = response["products"][0]["terminrealizacji"]
-        
+
         return [response]
 
 
