@@ -1,17 +1,10 @@
 from django.urls import path
 from .views import (
     GetAllProductAPIView,
-    GetOrderDataByindexAPIView,
-    GetOrderDataByZlecenieAPIView,
     GetOrderDataByZlecenieAPIView,
 )
 
 urlpatterns = [
-    path(
-        "by/<str:index>/",
-        GetOrderDataByindexAPIView.as_view(),
-        name="get_orders_by_id",
-    ),
     path(
         "by-order/<str:zlecenie_id>/",
         GetOrderDataByZlecenieAPIView.as_view(),

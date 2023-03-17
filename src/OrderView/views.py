@@ -1,3 +1,4 @@
+from django.db import connections
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -11,14 +12,6 @@ class GetAllProductAPIView(APIView):
 
     def get(self, request):
         response = orderView_service.get_filtered_orders_list()
-        return Response(response, status=status.HTTP_200_OK)
-
-
-class GetOrderDataByindexAPIView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, index):
-        response = orderView_service.get_productDataById(index)
         return Response(response, status=status.HTTP_200_OK)
 
 

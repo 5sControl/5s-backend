@@ -13,20 +13,10 @@ from django.shortcuts import get_object_or_404
 from datetime import datetime, timezone
 from collections import defaultdict
 
+from django.db import connections
+
 
 class OrderService:
-    def get_zleceniaQuery(
-        self,
-    ):
-        return Zlecenia.objects.using("mssql").all()
-
-    def get_skanyQueryById(self, id):
-        return (
-            Skany.objects.using("mssql")
-            .filter(indeks=id)
-            .values("indeks", "data", "stanowisko", "uzytkownik")
-        )
-
     def get_skanyQueryByIds(self, ids):
         return (
             Skany.objects.using("mssql")
@@ -34,114 +24,64 @@ class OrderService:
             .values("indeks", "data", "stanowisko", "uzytkownik")
         )
 
-    def get_zleceniaDictByIndeks(self, id):
-        return (
-            Zlecenia.objects.using("mssql")
-            .annotate(orderName=F("color"))
-            .filter(indeks=id)
-            .values(
-                "indeks",
-                "data",
-                "zlecenie",
-                "klient",
-                "datawejscia",
-                "zakonczone",
-                "typ",
-                "orderName",
+    def get_zlecenia_query_by_zlecenie(zlecenie):
+        with connections["mssql"].cursor() as cursor:
+            cursor.execute(
+                f"""
+                SELECT z.indeks, z.data, z.zlecenie, z.klient, z.datawejscia, z.datazakonczenia,
+                    z.zakonczone, z.typ, z.color AS orderName, z.terminrealizacji,
+                    CASE
+                        WHEN z.zakonczone = 0 AND z.datawejscia IS NOT NULL THEN 'Started'
+                        ELSE 'Completed'
+                    END AS status
+                FROM zlecenia z
+                WHERE z.zlecenie = '{zlecenie}'
+            """
             )
-        )
+            results = cursor.fetchall()
+        result = orderView_service.transform_result(results)
+        return result
 
-    def get_zleceniaQueryByZlecenie(self, zlecenie):
-        zlecenia_dict = (
-            Zlecenia.objects.using("mssql")
-            .annotate(
-                orderName=F("color"),
-                status=Case(
-                    When(
-                        zakonczone=0, datawejscia__isnull=False, then=Value("Started")
-                    ),
-                    default=Value("Completed"),
-                    output_field=CharField(),
-                ),
+    def get_filtered_orders_list():
+        with connections["mssql"].cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT *
+                FROM (
+                    SELECT z.indeks,
+                        z.zlecenie,
+                        CASE
+                            WHEN z.zakonczone = '0' AND z.datawejscia IS NOT NULL THEN 'Started'
+                            WHEN z.zakonczone = '1' THEN 'Completed'
+                            ELSE 'Unknown'
+                        END AS status,
+                        z.terminrealizacji,
+                        ROW_NUMBER() OVER (PARTITION BY z.zlecenie
+                                            ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
+                    FROM zlecenia z
+                ) as subquery
+                WHERE rn = 1
+            """
             )
-            .filter(zlecenie=zlecenie)
-            .values(
-                "indeks",
-                "data",
-                "zlecenie",
-                "klient",
-                "datawejscia",
-                "datazakonczenia",
-                "zakonczone",
-                "typ",
-                "orderName",
-                "terminrealizacji",
-                "status",
-            )
-        )
-        return zlecenia_dict
+            results = cursor.fetchall()
 
-    def get_filtered_orders_list(self):
-        orders_dict = {}
+        orders_list = []
+        for result in results:
+            order_dict = {
+                "indeks": result[0],
+                "zlecenie": result[1],
+                "status": result[2],
+                "terminrealizacji": result[3],
+            }
+            orders_list.append(order_dict)
 
-        products = (
-            Zlecenia.objects.using("mssql")
-            .annotate(
-                status=Case(
-                    When(
-                        zakonczone="0", datawejscia__isnull=False, then=Value("Started")
-                    ),
-                    When(zakonczone="1", then=Value("Completed")),
-                    default=Value("Unknown"),
-                    output_field=CharField(),
-                )
-            )
-            .values("indeks", "zlecenie", "status", "terminrealizacji")
-        )
-
-        for product in products:
-            zlecenie = product["zlecenie"].strip()
-            # status = product["status"]
-
-            if zlecenie not in orders_dict:
-                orders_dict[zlecenie] = product
-            elif orders_dict[zlecenie]["status"] == "Started":
-                orders_dict[zlecenie] = product
-
-        return list(orders_dict.values())
-
-    def get_productDataById(self, order_id):
-        zlecenie_data = orderView_service.get_zleceniaDictByIndeks(order_id)
-
-        response_list = []
-
-        for zlecenie in zlecenie_data:
-            skanyVsZleceniaQuery = SkanyVsZlecenia.objects.using("mssql").filter(
-                indekszlecenia=zlecenie["indeks"]
-            )
-            skany_list = []
-            for skanyVsZlecenia in skanyVsZleceniaQuery:
-                skanyQuery = orderView_service.get_skanyQueryById(
-                    skanyVsZlecenia.indeksskanu
-                )
-
-                for skany in skanyQuery:
-                    stanowisko = Stanowiska.objects.using("mssql").get(
-                        indeks=skany["stanowisko"]
-                    )
-                    skany["raport"] = stanowisko.raport
-                    skany_list.append(skany)
-
-            zlecenie["skans"] = skany_list
-            response_list.append(zlecenie)
-
-        return response_list
+        return orders_list
 
     def get_order(self, zlecenie_id):
         response = {}
         status = "Completed"
 
-        zlecenia_dict = self.get_zleceniaQueryByZlecenie(zlecenie_id)
+        zlecenia_dict = self.get_zlecenia_query_by_zlecenie(zlecenie_id)
 
         skany_dict = defaultdict(list)
 
@@ -200,6 +140,36 @@ class OrderService:
         response["terminrealizacji"] = response["products"][0]["terminrealizacji"]
 
         return [response]
+
+    def transform_result(self, result):
+        transformed_result = []
+        for r in result:
+            transformed_result.append(
+                {
+                    "indeks": r[0],
+                    "data": datetime.strptime(
+                        r[1].strftime("%Y-%m-%d %H:%M:%S.%f"), "%Y-%m-%d %H:%M:%S.%f"
+                    ).replace(tzinfo=timezone.utc),
+                    "zlecenie": r[2].strip(),
+                    "klient": r[3].strip(),
+                    "datawejscia": datetime.strptime(
+                        r[4].strftime("%Y-%m-%d %H:%M:%S.%f"), "%Y-%m-%d %H:%M:%S.%f"
+                    ).replace(tzinfo=timezone.utc)
+                    if r[4]
+                    else None,
+                    "datazakonczenia": datetime.strptime(
+                        r[5].strftime("%Y-%m-%d %H:%M:%S.%f"), "%Y-%m-%d %H:%M:%S.%f"
+                    ).replace(tzinfo=timezone.utc)
+                    if r[5]
+                    else None,
+                    "zakonczone": r[6],
+                    "typ": r[7].strip(),
+                    "terminrealizacji": r[9].strip(),
+                    "orderName": None,
+                    "status": r[10].strip(),
+                }
+            )
+        return transformed_result
 
 
 orderView_service = OrderService()
