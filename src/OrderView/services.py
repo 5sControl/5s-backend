@@ -71,6 +71,7 @@ class OrderService:
                 "zlecenie",
                 "klient",
                 "datawejscia",
+                "datazakonczenia",
                 "zakonczone",
                 "typ",
                 "orderName",
@@ -194,8 +195,10 @@ class OrderService:
         response["data"] = response["products"][0]["data"]
         response["klient"] = response["products"][0]["klient"]
         response["datawejscia"] = response["products"][0]["datawejscia"]
+        response["orderName"] = response["products"][0]["orderName"]
+        response["datazakonczenia"] = response["products"][0]["datazakonczenia"]
         response["terminrealizacji"] = response["products"][0]["terminrealizacji"]
-
+        
         return [response]
 
 
