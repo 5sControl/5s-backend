@@ -154,6 +154,65 @@ class OrderService:
 
         return [response]
 
+    def get_order_test(self, zlecenie_id):
+        response = {}
+        status = "Completed"
+
+        zlecenia_dict = self.get_zlecenia_query_by_zlecenie(zlecenie_id)
+
+        skany_dict = defaultdict(list)
+        for zlecenie_obj in zlecenia_dict:
+            if zlecenie_obj["status"] == "Started":
+                status = "Started"
+                break
+
+            with connections["mssql"].cursor() as cursor:
+                cursor.execute(f"""
+                    SELECT s.indeks, s.data, s.stanowisko, s.uzytkownik,
+                        st.raport, u.imie, u.nazwisko
+                    FROM Skany s
+                    JOIN SkanyVsZlecenia sz ON s.indeks = sz.indeksskanu
+                    JOIN Stanowiska st ON s.stanowisko = st.indeks
+                    JOIN Uzytkownicy u ON s.uzytkownik = u.indeks
+                    WHERE sz.indekszlecenia = {zlecenie_obj["indeks"]}
+                    AND s.data <= CONVERT(datetime, GETUTCDATE())
+                """)
+                results = cursor.fetchall()
+                
+                skany_ids_added = set()
+                for row in results:
+                    skany = {
+                        "indeks": row[0],
+                        "data": row[1].replace(tzinfo=timezone.utc),
+                        "stanowisko": row[2],
+                        "uzytkownik": row[3],
+                        "raport": row[4],
+                        "worker": f"{row[5]} {row[6]}"
+                    }
+                    formatted_time = skany["data"].strftime("%Y.%m.%d")
+                    if skany["indeks"] not in skany_ids_added:
+                        skany_ids_added.add(skany["indeks"])
+                        skany_dict[formatted_time].append(skany)
+
+            zlecenie_obj["skans"] = []
+            for formatted_time, skany_list in skany_dict.items():
+                for skany in skany_list:
+                    zlecenie_obj["skans"].append(skany)
+
+        response["products"] = list(zlecenia_dict)
+        response["status"] = status
+
+        response["indeks"] = response["products"][0]["indeks"]
+        response["zlecenie"] = response["products"][0]["zlecenie"]
+        response["data"] = response["products"][0]["data"]
+        response["klient"] = response["products"][0]["klient"]
+        response["datawejscia"] = response["products"][0]["datawejscia"]
+        response["orderName"] = response["products"][0]["orderName"]
+        response["datazakonczenia"] = response["products"][0]["datazakonczenia"]
+        response["terminrealizacji"] = response["products"][0]["terminrealizacji"]
+
+        return [response]
+
     def transform_result(self, result):
         transformed_result = []
         for r in result:
