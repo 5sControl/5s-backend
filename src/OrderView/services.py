@@ -191,7 +191,6 @@ class OrderService:
         response["status"] = status
 
         response["indeks"] = response["products"][0]["indeks"]
-        response["typ"] = response["products"][0]["typ"]
         response["zlecenie"] = response["products"][0]["zlecenie"]
         response["data"] = response["products"][0]["data"]
         response["klient"] = response["products"][0]["klient"]
