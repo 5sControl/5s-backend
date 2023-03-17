@@ -24,7 +24,7 @@ class OrderService:
             .values("indeks", "data", "stanowisko", "uzytkownik")
         )
 
-    def get_zlecenia_query_by_zlecenie(zlecenie):
+    def get_zlecenia_query_by_zlecenie(self, zlecenie):
         with connections["mssql"].cursor() as cursor:
             cursor.execute(
                 f"""
@@ -42,7 +42,7 @@ class OrderService:
         result = orderView_service.transform_result(results)
         return result
 
-    def get_filtered_orders_list():
+    def get_filtered_orders_list(self,):
         with connections["mssql"].cursor() as cursor:
             cursor.execute(
                 """
