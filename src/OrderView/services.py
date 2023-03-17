@@ -1,9 +1,7 @@
 from src.OrderView.models import (
     Stanowiska,
     Uzytkownicy,
-    Zlecenia,
     SkanyVsZlecenia,
-    Skany,
 )
 
 from django.shortcuts import get_object_or_404
@@ -32,11 +30,12 @@ class OrderService:
         for row in results:
             skanyQuery.append({
                 'indeks': row[0],
-                'data': row[1],
+                'data': row[1].replace(tzinfo=timezone.utc),
                 'stanowisko': row[2],
                 'uzytkownik': row[3],
             })
-
+            
+        print(skanyQuery)
         return skanyQuery
 
     def get_zlecenia_query_by_zlecenie(self, zlecenie):
