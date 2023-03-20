@@ -164,8 +164,8 @@ class OrderService:
 
         zlecenia_dict = self.get_zlecenia_query_by_zlecenie(zlecenie_id)
 
-        skany_dict = defaultdict(list)
         for zlecenie_obj in zlecenia_dict:
+            skany_dict = defaultdict(list)
             if zlecenie_obj["status"] == "Started":
                 status = "Started"
                 break
@@ -181,7 +181,7 @@ class OrderService:
                     JOIN Uzytkownicy u ON s.uzytkownik = u.indeks
                     WHERE sz.indekszlecenia = {zlecenie_obj["indeks"]}
                     AND s.data <= CONVERT(datetime, GETUTCDATE())
-                """
+                    """
                 )
                 results = cursor.fetchall()
 
