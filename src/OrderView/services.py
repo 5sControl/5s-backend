@@ -100,7 +100,6 @@ class OrderService:
             skany_dict = defaultdict(list)
             if zlecenie_obj["status"] == "Started":
                 status = "Started"
-                break
 
             with connections["mssql"].cursor() as cursor:
                 cursor.execute(
