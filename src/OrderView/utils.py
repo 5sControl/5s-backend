@@ -26,4 +26,3 @@ def skany(database_type):
         cursor.execute("SELECT * FROM Skany")
         for row in cursor:
             print(row)
-
