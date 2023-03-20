@@ -57,7 +57,7 @@ class AlgorithmsService:
             return {"status": False, "message": "Cannot find camera algorithm"}
         return {"status": True, "message": "Camera algorithm was stoped successfully"}
 
-    # @check_active_algorithms
+    @check_active_algorithms
     def create_camera_algorithm(
         self, data: dict
     ) -> Tuple[List[CameraAlgorithm], List[str]]:
