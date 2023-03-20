@@ -2,6 +2,7 @@ from django.urls import path
 from .views import (
     GetAllProductAPIView,
     GetOrderDataByZlecenieAPIView,
+    CreateConectionAPIView,
 )
 
 urlpatterns = [
@@ -11,4 +12,7 @@ urlpatterns = [
         name="get_orders_by_id",
     ),
     path("all-orders/", GetAllProductAPIView.as_view(), name="get_all_orders"),
+    path(
+        "create-conection/", CreateConectionAPIView.as_view(), name="mssql-connection"
+    ),
 ]

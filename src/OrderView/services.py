@@ -1,6 +1,8 @@
 from datetime import datetime, timezone
 from collections import defaultdict
 
+from src.OrderView.models import MsSQLConnection
+
 from django.db import connections
 
 
@@ -178,7 +180,26 @@ class OrderService:
                     "status": r[10].strip(),
                 }
             )
-        return transformed_result
+        return transformed_result        
+
+
+class MsSqlService:
+    def create_connection(self, connection_data):
+        database_type = connection_data.get("database_type")
+        server = connection_data["server"]
+        databases = connection_data["databases"]
+        username = connection_data["username"]
+        password = connection_data["password"]
+
+        ms_sql_connection = MsSQLConnection(
+            database_type=database_type,
+            server=server,
+            databases=databases,
+            username=username,
+            password=password,
+        )
+        ms_sql_connection.save()
 
 
 orderView_service = OrderService()
+ms_sql_service = MsSqlService()
