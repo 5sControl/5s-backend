@@ -124,6 +124,14 @@ class AlgorithmsService:
             if existing_records.filter(camera=camera.id).exists():
                 continue
 
+            if CameraAlgorithm.objects.filter(
+                algorithm=algorithm, camera=camera, is_active=True
+            ).exists():
+                self.errors.append(
+                    f"Record with algorithm {algorithm.name}, camera {camera.id}, and server url {server_url} already exists"
+                )
+                continue
+
             result = yolo_proccesing.start_yolo_processing(
                 camera, algorithm, server_url
             )
