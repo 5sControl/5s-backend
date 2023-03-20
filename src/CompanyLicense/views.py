@@ -54,7 +54,7 @@ class CompanyInfoView(APIView):
             "licence_count_cameras": company.count_cameras,
             "licence_neurons_active": company.neurons_active,
             "company_active_count_cameras": active_cameras_count,
-            "Company_active_count_neurons": active_algorithms_count,
+            "company_active_count_neurons": active_algorithms_count,
             "days_left": is_license_active.split(",")[0],
         }
         return Response(response_data, status=200)
