@@ -1,6 +1,4 @@
 from rest_framework.exceptions import NotFound
-from rest_framework.response import Response
-from rest_framework import status
 
 from django.utils import timezone
 
@@ -11,7 +9,6 @@ from .utils import yolo_proccesing
 
 from typing import Tuple, Union, List
 
-from ..CompanyLicense.decorators import check_active_algorithms
 from ..core.logger import logger
 from src.StaffControl.Locations.models import Camera
 
