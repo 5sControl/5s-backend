@@ -1,11 +1,3 @@
-from src.OrderView.models import (
-    Stanowiska,
-    Uzytkownicy,
-    SkanyVsZlecenia,
-)
-
-from django.shortcuts import get_object_or_404
-
 from datetime import datetime, timezone
 from collections import defaultdict
 
@@ -98,67 +90,6 @@ class OrderService:
         return orders_list
 
     def get_order(self, zlecenie_id):
-        response = {}
-        status = "Completed"
-
-        zlecenia_dict = self.get_zlecenia_query_by_zlecenie(zlecenie_id)
-
-        skany_dict = defaultdict(list)
-        for zlecenie_obj in zlecenia_dict:
-            if zlecenie_obj["status"] == "Started":
-                status = "Started"
-                break
-            skanyVsZleceniaQuery = SkanyVsZlecenia.objects.using("mssql").filter(
-                indekszlecenia=zlecenie_obj["indeks"]
-            )
-            skany_ids = [
-                skanyVsZlecenia.indeksskanu for skanyVsZlecenia in skanyVsZleceniaQuery
-            ]
-            if skany_ids:
-                skanyQuery = self.get_skanyQueryByIds(skany_ids)
-                skany_ids_added = (
-                    set()
-                )  # keep track of Skany IDs that have already been added
-                for skany in skanyQuery:
-                    if skany["data"] <= datetime.now(timezone.utc):
-                        stanowisko = get_object_or_404(
-                            Stanowiska.objects.using("mssql"),
-                            indeks=skany["stanowisko"],
-                        )
-                        uzytkownik = get_object_or_404(
-                            Uzytkownicy.objects.using("mssql"),
-                            indeks=skany["uzytkownik"],
-                        )
-                        skany["worker"] = f"{uzytkownik.imie} {uzytkownik.nazwisko}"
-                        skany["raport"] = stanowisko.raport
-                        formatted_time = skany["data"].strftime("%Y.%m.%d")
-                        if skany["indeks"] not in skany_ids_added:
-                            skany_ids_added.add(skany["indeks"])
-                            skany_dict[formatted_time].append(skany)
-
-            zlecenie_obj["skans"] = []
-            for formatted_time, skany_list in skany_dict.items():
-                for skany in skany_list:
-                    if skanyVsZleceniaQuery.filter(
-                        indeksskanu=skany["indeks"]
-                    ).exists():
-                        zlecenie_obj["skans"].append(skany)
-
-        response["products"] = list(zlecenia_dict)
-        response["status"] = status
-
-        response["indeks"] = response["products"][0]["indeks"]
-        response["zlecenie"] = response["products"][0]["zlecenie"]
-        response["data"] = response["products"][0]["data"]
-        response["klient"] = response["products"][0]["klient"]
-        response["datawejscia"] = response["products"][0]["datawejscia"]
-        response["orderName"] = response["products"][0]["orderName"]
-        response["datazakonczenia"] = response["products"][0]["datazakonczenia"]
-        response["terminrealizacji"] = response["products"][0]["terminrealizacji"]
-
-        return [response]
-
-    def get_order_test(self, zlecenie_id):
         response = {}
         status = "Completed"
 
