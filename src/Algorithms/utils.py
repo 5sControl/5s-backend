@@ -1,3 +1,4 @@
+import os
 import requests
 
 from src.Cameras.service import link_generator
@@ -24,7 +25,6 @@ class YoloProccesing:
         request_json["server_url"] = url
         request_json["status"] = True
 
-        print(request_json)
         return request_json
 
     def stop_process(self, pid: int):
@@ -32,14 +32,13 @@ class YoloProccesing:
         if not is_pid_exists:
             return {"status": False, "message": "PID not found"}
 
-        yolo_server_url = self.get_yolo_url(pid)
+        yolo_server_url = self.get_algorithm_url()
 
         request = requests.post(
             url=f"{yolo_server_url}:3333/stop",
             json={"pid": pid},
         )
         response_json = request.json()
-        print(response_json)
 
         return response_json
 
@@ -50,11 +49,10 @@ class YoloProccesing:
         else:
             return True
 
-    def get_yolo_url(self, pid=None):
-        if pid:
-            url = CameraAlgorithm.objects.filter(process_id=pid).first()
+    def get_algorithm_url(self):
+        ALGORITHM_URL = os.environ.get('ALGORITHM_URL')
 
-        return url.yolo_url
+        return ALGORITHM_URL
 
 
 yolo_proccesing = YoloProccesing()

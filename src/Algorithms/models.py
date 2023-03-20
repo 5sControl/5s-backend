@@ -24,7 +24,6 @@ class CameraAlgorithm(models.Model):
     camera = models.ForeignKey(Camera, on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True)
     process_id = models.PositiveIntegerField(blank=True, null=True)
-    yolo_url = models.CharField(max_length=200, blank=False, null=False)
 
 
 class CameraAlgorithmLog(models.Model):

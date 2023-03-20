@@ -33,7 +33,6 @@ class OrderService:
                 }
             )
 
-        print(skanyQuery)
         return skanyQuery
 
     def get_zlecenia_query_by_zlecenie(self, zlecenie):
@@ -180,7 +179,7 @@ class OrderService:
                     "status": r[10].strip(),
                 }
             )
-        return transformed_result        
+        return transformed_result
 
 
 class MsSqlService:
