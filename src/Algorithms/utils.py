@@ -50,7 +50,7 @@ class YoloProccesing:
             return True
 
     def get_algorithm_url(self):
-        ALGORITHM_URL = os.environ.get('ALGORITHM_URL')
+        ALGORITHM_URL = os.environ.get("ALGORITHM_URL")
 
         return ALGORITHM_URL
 

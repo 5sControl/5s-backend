@@ -4,8 +4,9 @@ from src.OrderView.models import MsSQLConnection
 
 
 def get_database_connection(database_type):
-
-    connection_data = MsSQLConnection.objects.filter(database_type=database_type).values().first()
+    connection_data = (
+        MsSQLConnection.objects.filter(database_type=database_type).values().first()
+    )
 
     server = connection_data["server"]
     database = connection_data["database"]
