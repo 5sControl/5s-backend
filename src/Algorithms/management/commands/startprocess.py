@@ -1,3 +1,4 @@
+import os
 from django.core.management.base import BaseCommand
 
 from ....core.logger import logger
@@ -20,19 +21,20 @@ class Command(BaseCommand):
         all_camera_algorithms = CameraAlgorithm.objects.filter(is_active=True).exclude(
             process_id=None
         )
+        ALGORITHM_URL = os.environ.get('ALGORITHM_URL')
         for camera_algorithm in all_camera_algorithms:
             try:
                 result = yolo_proccesing.start_yolo_processing(
                     camera=camera_algorithm.camera,
                     algorithm=camera_algorithm.algorithm,
-                    url=camera_algorithm.yolo_url,
+                    url=ALGORITHM_URL
                 )
-            except:
+            except Exception:
                 logger.critical(
                     f"Camera {camera_algorithm.camera} with alogithm {camera_algorithm.algorithm}"
                 )
                 logger.critical(
-                    f"has not been renewed. Server url -> {camera_algorithm.yolo_url}"
+                    f"has not been renewed. Server url -> {ALGORITHM_URL}"
                 )
             else:
                 if not result["success"] or "pid" not in result:
