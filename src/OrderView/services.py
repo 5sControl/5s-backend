@@ -176,7 +176,7 @@ class OrderService:
                     SELECT s.indeks, s.data, s.stanowisko, s.uzytkownik,
                         st.raport, u.imie, u.nazwisko
                     FROM Skany s
-                    JOIN SkanyVsZlecenia sz ON s.indeks = sz.indeksskanu
+                    JOIN Skany_vs_Zlecenia sz ON s.indeks = sz.indeksskanu
                     JOIN Stanowiska st ON s.stanowisko = st.indeks
                     JOIN Uzytkownicy u ON s.uzytkownik = u.indeks
                     WHERE sz.indekszlecenia = {zlecenie_obj["indeks"]}
