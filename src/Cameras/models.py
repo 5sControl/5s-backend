@@ -32,9 +32,6 @@ class Camera(models.Model):
     def save(self, *args, **kwargs):
         if not self.name:
             self.name = self.id
-        # Hash the password before saving
-        # if self.password:
-        #     self.password = make_password(self.password)
         super().save(*args, **kwargs)
 
     class Meta:
