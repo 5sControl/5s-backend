@@ -16,7 +16,6 @@ class ItemsSerializer(serializers.ModelSerializer):
                   "low_stock_level",
                   "email",
                   "camera",
-                  "report",
                   "date_created"]
 
 
