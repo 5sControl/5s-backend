@@ -24,9 +24,8 @@ class MsSqlService:
         )
         ms_sql_connection.save()
 
-
     def _check_database_exists(self, server, database, username, password):
-        driver = "{ODBC Driver 18 for SQL Server}"
+        driver = "{ODBC Driver 17 for SQL Server}"
         master_conn_str = self._get_connection_string(
             server, "master", username, password, driver
         )
@@ -65,7 +64,7 @@ class MsSqlService:
         database = connection_data["database"]
         username = connection_data["username"]
         password = connection_data["password"]
-        driver = "{ODBC Driver 18 for SQL Server}"
+        driver = "{ODBC Driver 17 for SQL Server}"
 
         conn_str = self._get_connection_string(
             server, database, username, password, driver
