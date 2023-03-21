@@ -3,16 +3,23 @@ from .views import (
     GetAllProductAPIView,
     GetOrderDataByZlecenieAPIView,
     CreateConectionAPIView,
+    GetDatabasesAPIView,
 )
 
 urlpatterns = [
+    # get data
     path(
         "by-order/<str:zlecenie_id>/",
         GetOrderDataByZlecenieAPIView.as_view(),
-        name="get_orders_by_id",
+        name="get orders by id",
     ),
-    path("all-orders/", GetAllProductAPIView.as_view(), name="get_all_orders"),
+    path("all-orders/", GetAllProductAPIView.as_view(), name="get all orders"),
+
+    # database configuration
     path(
-        "create-connection/", CreateConectionAPIView.as_view(), name="mssql-connection"
+        "create-connection/", CreateConectionAPIView.as_view(), name="mssql connection"
     ),
+    path(
+        "get-connection/", GetDatabasesAPIView.as_view(), name="get list of all database connections"
+    )
 ]
