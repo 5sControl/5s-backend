@@ -1,7 +1,7 @@
-from idlelib.multicall import r
-
 from rest_framework.routers import DefaultRouter
+
 from django.urls import path, include
+
 from src.Inventory.views import ItemsViewSet, ItemsHistoryViewSet
 
 router_inventory = DefaultRouter()
