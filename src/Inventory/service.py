@@ -1,7 +1,7 @@
 from src.Inventory.models import Items
 
 
-def status_item(data):
+def process_item_status(data):
     """Updates the item status and adds the status to the extra"""
 
     item_data = data['item']

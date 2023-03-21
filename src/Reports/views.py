@@ -17,7 +17,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from src.Reports.serializers import ReportSerializers
 
-from src.Inventory.service import status_item
+from src.Inventory.service import process_item_status
 
 
 class ActionViewSet(viewsets.ModelViewSet):
@@ -50,7 +50,7 @@ class ActionsWithPhotos(APIView):
             photos = request.data.get("photos")
             violation_found = request.data.get("violation_found")
             if request.data.get("algorithm") == "min_max_control":
-                extra = status_item(request.data.get("extra"))
+                extra = process_item_status(request.data.get("extra"))
             else:
                 extra = request.data.get("extra")
         except KeyError:
