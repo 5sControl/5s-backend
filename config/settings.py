@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "src.OrderView",
     "src.Cameras.apps.CamerasConfig",
     "src.CompanyLicense.apps.CompanyLicenseConfig",
+    "src.Inventory.apps.InventoryConfig",
     # Collections reports
     "src.Reports.apps.ReportsConfig",
     "src.ImageReport.apps.ImageConfig",
