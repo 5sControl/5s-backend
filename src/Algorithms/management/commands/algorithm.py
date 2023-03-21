@@ -19,6 +19,7 @@ class Command(BaseCommand):
             {"name": "safety_control_head_protection", "is_available": False},
             {"name": "safety_control_hand_protection", "is_available": False},
             {"name": "safety_control_reflective_jacket", "is_available": True},
+            {"name": "min_max_control", "is_available": True},
         ]
         self.algorithms_was_exist = 0
         self.algorithms_was_created = 0
