@@ -2,7 +2,7 @@ import pyodbc
 
 from rest_framework.exceptions import ValidationError
 
-from src.OrderView.models import MsSQLConnection
+from src.OrderView.models import DatabaseConnection
 
 
 class MsSqlService:
@@ -15,7 +15,7 @@ class MsSqlService:
 
         self._check_database_exists(server, database, username, password)
 
-        ms_sql_connection = MsSQLConnection(
+        ms_sql_connection = DatabaseConnection(
             database_type=database_type,
             server=server,
             database=database,
@@ -63,7 +63,7 @@ class MsSqlService:
 
     def get_database_connection(self):
         connection_data = (
-            MsSQLConnection.objects.all()
+            DatabaseConnection.objects.all()
             .values()
             .first()  # FIXME: should be by database type
         )
@@ -84,6 +84,9 @@ class MsSqlService:
 
     def _get_connection_string(self, server, database, username, password, driver):
         return f"SERVER={server};DATABASE={database};UID={username};PWD={password};DRIVER={driver};TrustServerCertificate=yes"  # noqa
+
+    def get_conections(self):
+        connections = DatabaseConnection.objects.all()
 
 
 ms_sql_service = MsSqlService()
