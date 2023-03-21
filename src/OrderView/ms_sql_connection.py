@@ -86,7 +86,7 @@ class MsSqlService:
         return f"SERVER={server};DATABASE={database};UID={username};PWD={password};DRIVER={driver};TrustServerCertificate=yes"  # noqa
 
     def get_conections(self):
-        connections = DatabaseConnection.objects.all()
+        return DatabaseConnection.objects.all()
 
 
 ms_sql_service = MsSqlService()

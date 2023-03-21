@@ -20,6 +20,6 @@ urlpatterns = [
         "create-connection/", CreateConectionAPIView.as_view(), name="mssql connection"
     ),
     path(
-        "get-connection/", GetDatabasesAPIView.as_view(), name="get list of all database connections"
+        "get-connections/", GetDatabasesAPIView.as_view(), name="get list of all database connections"
     )
 ]
