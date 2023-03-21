@@ -1,6 +1,6 @@
 import pyodbc
 
-from django.http import Http404, HttpResponseBadRequest
+from rest_framework.exceptions import ValidationError
 
 from src.OrderView.models import MsSQLConnection
 
@@ -24,6 +24,7 @@ class MsSqlService:
         )
         ms_sql_connection.save()
 
+
     def _check_database_exists(self, server, database, username, password):
         driver = "{ODBC Driver 18 for SQL Server}"
         master_conn_str = self._get_connection_string(
@@ -37,9 +38,11 @@ class MsSqlService:
                 )
                 exists = cursor.fetchone()[0] == 1
                 if not exists:
-                    raise Http404(f"Database '{database}' does not exist")
+                    print("Connection does not exist")
+                    raise ValidationError({"detail": f"Database '{database}' does not exist"})
         except Exception as e:
-            raise Http404(f"Error checking if database exists: {str(e)}")
+            print("I dont now wht is this: ", e)
+            raise ValidationError({"detail": f"Error when checking the existence of the database: {str(e)}"})
 
         conn_str = self._get_connection_string(
             server, database, username, password, driver
@@ -48,7 +51,8 @@ class MsSqlService:
             with pyodbc.connect(conn_str) as connection:
                 pass
         except Exception as e:
-            raise HttpResponseBadRequest(f"Error connecting to database: {str(e)}")
+            print("Database done 0_0")
+            raise ValidationError({"detail": f"Database connection error: {str(e)}"})
 
     def get_database_connection(self):
         connection_data = (
