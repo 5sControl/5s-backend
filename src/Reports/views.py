@@ -1,19 +1,23 @@
 from rest_framework import viewsets
-from datetime import datetime, time
+from datetime import datetime
 from django.db.models import Q
 from rest_framework.generics import GenericAPIView
 
 from src.CompanyLicense.decorators import validate_license
+
 from src.ImageReport.models import Image
 from src.Cameras.models import Camera
 from src.Algorithms.models import Algorithm
 from src.Reports.models import Report
+
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from src.Reports.serializers import ReportSerializers
+
+from src.Inventory.service import status_item
 
 
 class ActionViewSet(viewsets.ModelViewSet):
@@ -45,7 +49,10 @@ class ActionsWithPhotos(APIView):
             stop_tracking = request.data.get("stop_tracking")
             photos = request.data.get("photos")
             violation_found = request.data.get("violation_found")
-            extra = request.data.get("extra")
+            if request.data.get("algorithm") == "min_max_control":
+                extra = status_item(request.data.get("extra"))
+            else:
+                extra = request.data.get("extra")
         except KeyError:
             return {"status": False, "message": "The model response is not complete"}
         else:
