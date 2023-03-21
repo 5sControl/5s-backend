@@ -24,6 +24,7 @@ routes = [
     path("reports/", include("src.Reports.urls")),
     path("company/", include("src.CompanyLicense.urls")),
     path("order/", include("src.OrderView.urls")),
+    path("inventory/", include("src.Inventory.urls")),
     path(
         "swagger/",
         schema_view.with_ui("swagger", cache_timeout=0),
