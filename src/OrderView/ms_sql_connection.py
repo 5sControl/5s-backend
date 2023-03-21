@@ -24,6 +24,8 @@ class MsSqlService:
         )
         ms_sql_connection.save()
 
+        return "Database was successfully"
+
     def _check_database_exists(self, server, database, username, password):
         driver = "{ODBC Driver 17 for SQL Server}"
         master_conn_str = self._get_connection_string(
@@ -38,10 +40,16 @@ class MsSqlService:
                 exists = cursor.fetchone()[0] == 1
                 if not exists:
                     print("Connection does not exist")
-                    raise ValidationError({"detail": f"Database '{database}' does not exist"})
+                    raise ValidationError(
+                        {"detail": f"Database '{database}' does not exist"}
+                    )
         except Exception as e:
             print("I dont now wht is this: ", e)
-            raise ValidationError({"detail": f"Error when checking the existence of the database: {str(e)}"})
+            raise ValidationError(
+                {
+                    "detail": f"Error when checking the existence of the database: {str(e)}"
+                }
+            )
 
         conn_str = self._get_connection_string(
             server, database, username, password, driver
