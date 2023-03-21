@@ -80,19 +80,19 @@ DATABASES = {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "database" / "db.sqlite3",
     },
-    "mssql": {
-        "ENGINE": "mssql",
-        "NAME": "test",
-        "USER": "sa",
-        "PASSWORD": "just4Taqtile",
-        "HOST": "192.168.1.110",
-        "PORT": "1433",
-        "OPTIONS": {
-            "driver": "ODBC Driver 17 for SQL Server",
-            "charset": "utf8mb4",
-            "collation": "collation=SQL_Latin1_General_CP1_CI_AS",
-        },
-    },
+    # "mssql": {
+    #     "ENGINE": "mssql",
+    #     "NAME": "test",
+    #     "USER": "sa",
+    #     "PASSWORD": "just4Taqtile",
+    #     "HOST": "192.168.1.110",
+    #     "PORT": "1433",
+    #     "OPTIONS": {
+    #         "driver": "ODBC Driver 17 for SQL Server",
+    #         "charset": "utf8mb4",
+    #         "collation": "collation=SQL_Latin1_General_CP1_CI_AS",
+    #     },
+    # },
 }
 
 if "mssql" in DATABASES:

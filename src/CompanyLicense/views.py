@@ -44,7 +44,9 @@ class CompanyInfoView(APIView):
 
         is_license_active = f"{company.valid_until - timezone.now().date()}"
         active_cameras_count = Camera.objects.filter(is_active=True).count()
-        active_algorithms_count = (CameraAlgorithm.objects.values("algorithm").distinct().count())
+        active_algorithms_count = (
+            CameraAlgorithm.objects.values("algorithm").distinct().count()
+        )
 
         response_data = {
             "name_company": company.name_company,
