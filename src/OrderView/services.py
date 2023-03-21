@@ -1,9 +1,7 @@
 from datetime import datetime, timezone
 from collections import defaultdict
 
-from src.OrderView.models import MsSQLConnection
-
-from django.db import connections
+from src.OrderView.ms_sql_connection import ms_sql_service
 
 
 class OrderService:
@@ -16,12 +14,11 @@ class OrderService:
             [str(id) for id in ids]
         )
 
-        # execute the query and get the results
-        with connections["mssql"].cursor() as cursor:
+        connection = ms_sql_service.get_database_connection()
+        with connection.cursor() as cursor:
             cursor.execute(query)
             results = cursor.fetchall()
 
-        # convert the results to a list of dictionaries
         skanyQuery = []
         for row in results:
             skanyQuery.append(
@@ -36,7 +33,8 @@ class OrderService:
         return skanyQuery
 
     def get_zlecenia_query_by_zlecenie(self, zlecenie):
-        with connections["mssql"].cursor() as cursor:
+        connection = ms_sql_service.get_database_connection()
+        with connection.cursor() as cursor:
             cursor.execute(
                 f"""
                 SELECT z.indeks, z.data, z.zlecenie, z.klient, z.datawejscia, z.datazakonczenia,
@@ -56,7 +54,8 @@ class OrderService:
     def get_filtered_orders_list(
         self,
     ):
-        with connections["mssql"].cursor() as cursor:
+        connection = ms_sql_service.get_database_connection()
+        with connection.cursor() as cursor:
             cursor.execute(
                 """
                 SELECT *
@@ -101,7 +100,8 @@ class OrderService:
             if zlecenie_obj["status"] == "Started":
                 status = "Started"
 
-            with connections["mssql"].cursor() as cursor:
+            connection = ms_sql_service.get_database_connection()
+            with connection.cursor() as cursor:
                 cursor.execute(
                     f"""
                     SELECT s.indeks, s.data, s.stanowisko, s.uzytkownik,
@@ -181,23 +181,4 @@ class OrderService:
         return transformed_result
 
 
-class MsSqlService:
-    def create_connection(self, connection_data):
-        database_type = connection_data.get("database_type")
-        server = connection_data["server"]
-        databases = connection_data["databases"]
-        username = connection_data["username"]
-        password = connection_data["password"]
-
-        ms_sql_connection = MsSQLConnection(
-            database_type=database_type,
-            server=server,
-            databases=databases,
-            username=username,
-            password=password,
-        )
-        ms_sql_connection.save()
-
-
 orderView_service = OrderService()
-ms_sql_service = MsSqlService()
