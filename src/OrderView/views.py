@@ -28,7 +28,7 @@ class CreateConectionAPIView(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         response = ms_sql_service.create_connection(request.data)
         return Response(
-            {"statsu": True, "message": response},
+            {"status": True, "message": response},
             status=status.HTTP_201_CREATED,
         )
 
