@@ -1,24 +1,9 @@
 from rest_framework import serializers
-from django.http import JsonResponse
 
-from src.OrderView.models import Zlecenia, SkanyVsZlecenia, Skany
+from src.OrderView.models import DatabaseConnection
 
 
-class SkanySerializer(serializers.ModelSerializer):
+class DatabaseConnectionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Skany
-        fields = "__all__"
-
-
-class ZleceniaSerializer(serializers.ModelSerializer):
-    skany = SkanySerializer(many=False, read_only=True)
-
-    class Meta:
-        model = Zlecenia
-        fields = "__all__"
-
-
-class ZleceniaTestSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Zlecenia
-        fields = "__all__"
+        model = DatabaseConnection
+        fields = ["database_type", "server", "database"]
