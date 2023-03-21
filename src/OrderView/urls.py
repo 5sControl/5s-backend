@@ -13,6 +13,6 @@ urlpatterns = [
     ),
     path("all-orders/", GetAllProductAPIView.as_view(), name="get_all_orders"),
     path(
-        "create-conection/", CreateConectionAPIView.as_view(), name="mssql-connection"
+        "create-connection/", CreateConectionAPIView.as_view(), name="mssql-connection"
     ),
 ]
