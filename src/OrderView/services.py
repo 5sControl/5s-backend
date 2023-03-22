@@ -117,6 +117,7 @@ class OrderService:
             if not connection:
                 return False
 
+            print("Zlecenie connection is ", connection)
             with connection.cursor() as cursor:
                 cursor.execute(
                     f"""
@@ -133,6 +134,7 @@ class OrderService:
                 results = cursor.fetchall()
 
                 skany_ids_added = set()
+                print("skany_ids_added: ", skany_ids_added)
                 for row in results:
                     skany = {
                         "indeks": row[0],
