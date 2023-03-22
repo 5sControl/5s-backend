@@ -31,7 +31,7 @@ class CreateMsSqlRecordsService:
             Skrzydlo, srcdoc, Stanowisko, Sztuka, Uzytkownik, Zakonczony,
             Czynnosc, DbWHOkna, Guid, GuidParent, Status, Typ, TypSlupka, ErrIdx
         ) VALUES (
-            ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
+            ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?
         )
         """
 
@@ -86,7 +86,7 @@ class CreateMsSqlRecordsService:
         INSERT INTO skany_vs_zlecenia (
             IndeksSkanu, IndeksZlecenia, IndeksDodatka, Duplicated
         ) VALUES (
-            ?, ?, ?, ?, ?
+            ?, ?, ?, ?
         )
         """
         params_for_skans_vs_zlecenia = (
