@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from collections import defaultdict
 
-from src.OrderView.ms_sql_connection import ms_sql_service
+from src.MsSqlConnector.connector import connector
 
 
 class OrderService:
@@ -14,7 +14,7 @@ class OrderService:
             [str(id) for id in ids]
         )
 
-        connection = ms_sql_service.get_database_connection()
+        connection = connector.get_database_connection()
         with connection.cursor() as cursor:
             cursor.execute(query)
             results = cursor.fetchall()
@@ -33,7 +33,7 @@ class OrderService:
         return skanyQuery
 
     def get_zlecenia_query_by_zlecenie(self, zlecenie):
-        connection = ms_sql_service.get_database_connection()
+        connection = connector.get_database_connection()
         with connection.cursor() as cursor:
             cursor.execute(
                 f"""
@@ -54,7 +54,7 @@ class OrderService:
     def get_filtered_orders_list(
         self,
     ):
-        connection = ms_sql_service.get_database_connection()
+        connection = connector.get_database_connection()
         with connection.cursor() as cursor:
             cursor.execute(
                 """
@@ -100,7 +100,7 @@ class OrderService:
             if zlecenie_obj["status"] == "Started":
                 status = "Started"
 
-            connection = ms_sql_service.get_database_connection()
+            connection = connector.get_database_connection()
             with connection.cursor() as cursor:
                 cursor.execute(
                     f"""

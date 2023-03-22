@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from src.OrderView.models import DatabaseConnection
+from src.MsSqlConnector.models import DatabaseConnection
 
 
 class DatabaseConnectionSerializer(serializers.ModelSerializer):
