@@ -1,6 +1,7 @@
 from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import ValidationError
 
 from src.OrderView.models import DatabaseConnection
 from src.OrderView.serializers import DatabaseConnectionSerializer
@@ -27,9 +28,15 @@ class CreateConectionAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        response = ms_sql_service.create_connection(request.data)
+        try:
+            id = ms_sql_service.create_connection(request.data)
+        except ValidationError as e:
+            return Response(
+                {"success": False, "message": e.detail},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         return Response(
-            {"status": True, "message": response},
+            {"success": True, "message": "Database was successfully", "id": id},
             status=status.HTTP_201_CREATED,
         )
 

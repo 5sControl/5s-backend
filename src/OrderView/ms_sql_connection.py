@@ -28,7 +28,7 @@ class MsSqlService:
         )
         ms_sql_connection.save()
 
-        return "Database was successfully"
+        return ms_sql_connection.id
 
     def _is_database_connection_is_stable(self, server, database, username, password):
         master_conn_str = self._get_connection_string(
