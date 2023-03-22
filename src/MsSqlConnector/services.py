@@ -106,8 +106,8 @@ class CreateMsSqlRecordsService:
                     query_for_skans_vs_zlecenia, params_for_skans_vs_zlecenia
                 )
                 print("created skany vs zlecenia record")
-        except Exception:
-            print("error while executing query")
+        except Exception as e:
+            print("error while executing query:", e)
             return False
         else:
             return True
