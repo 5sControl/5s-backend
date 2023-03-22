@@ -47,6 +47,17 @@ class DeleteConectionAPIView(generics.RetrieveDestroyAPIView):
     lookup_field = 'id'
 
 
+class DeleteConectionAPIView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, id):
+        ms_sql_service.delete_connection(id)
+        return Response(
+            {},
+            status=status.HTTP_204_NO_CONTENT,
+        )
+
+
 class GetDatabasesAPIView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = ms_sql_service.get_conections()

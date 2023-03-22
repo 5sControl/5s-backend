@@ -96,5 +96,8 @@ class MsSqlService:
     def get_conections(self):
         return DatabaseConnection.objects.all()
 
+    def delete_connection(self, id):
+        DatabaseConnection.objects.get(id=id).delete()
+
 
 ms_sql_service = MsSqlService()
