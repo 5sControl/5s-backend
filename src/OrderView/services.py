@@ -107,17 +107,18 @@ class OrderService:
         if not zlecenia_dict:
             return False
 
+        connection = self._get_connection()
+        if not connection:
+            return False
+        
+        skany_dict = defaultdict(list)  # move initialization outside the for loop
+        
         for zlecenie_obj in zlecenia_dict:
             print("Zlecenie obj is ", zlecenie_obj)
-            skany_dict = defaultdict(list)
+            
             if zlecenie_obj["status"] == "Started":
                 status = "Started"
-
-            connection = self._get_connection()
-            if not connection:
-                return False
-
-            print("Zlecenie connection is ", connection)
+            
             with connection.cursor() as cursor:
                 cursor.execute(
                     f"""
@@ -133,8 +134,6 @@ class OrderService:
                 )
                 results = cursor.fetchall()
 
-                skany_ids_added = set()
-                print("skany_ids_added: ", skany_ids_added)
                 for row in results:
                     skany = {
                         "indeks": row[0],
@@ -144,17 +143,13 @@ class OrderService:
                         "raport": row[4],
                         "worker": f"{row[5]} {row[6]}",
                     }
+                    
                     formatted_time = skany["data"].strftime("%Y.%m.%d")
-                    if skany["indeks"] not in skany_ids_added:
-                        skany_ids_added.add(skany["indeks"])
-                        skany_dict[formatted_time].append(skany)
+                    skany_dict[zlecenie_obj["indeks"]].append(skany)  # use indeks as key for skany_dict
 
-            zlecenie_obj["skans"] = []
-            for formatted_time, skany_list in skany_dict.items():
-                for skany in skany_list:
-                    zlecenie_obj["skans"].append(skany)
+            zlecenie_obj["skans"] = skany_dict[zlecenie_obj["indeks"]]  # assign list of skany for this zlecenie_obj
 
-        response["products"] = list(zlecenia_dict)
+        response["products"] = zlecenia_dict  # no need to create a new list, use original zlecenia_dict
         response["status"] = status
 
         response["indeks"] = response["products"][0]["indeks"]
