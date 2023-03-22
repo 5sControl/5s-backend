@@ -27,7 +27,7 @@ class CreateMsSqlRecordsService:
 
         query_for_skan = """
         INSERT INTO skany (
-            Indeks, Archiwum, Data, Del, KodKreskowy, Oscieznica, Pozycja,
+            Archiwum, Data, Del, KodKreskowy, Oscieznica, Pozycja,
             Skrzydlo, srcdoc, Stanowisko, Sztuka, Uzytkownik, Zakonczony,
             Czynnosc, DbWHOkna, Guid, GuidParent, Status, Typ, TypSlupka, ErrIdx
         ) VALUES (
@@ -37,7 +37,6 @@ class CreateMsSqlRecordsService:
 
         if beverage == "tea":
             params_for_skan = (
-                indeks_skany,
                 0,
                 current_time,
                 0,
@@ -61,7 +60,6 @@ class CreateMsSqlRecordsService:
             )
         else:
             params_for_skan = (
-                indeks_skany,
                 0,
                 current_time,
                 0,
@@ -86,13 +84,12 @@ class CreateMsSqlRecordsService:
 
         query_for_skans_vs_zlecenia = """
         INSERT INTO skany_vs_zlecenia (
-            Indeks, IndeksSkanu, IndeksZlecenia, IndeksDodatka, Duplicated
+            IndeksSkanu, IndeksZlecenia, IndeksDodatka, Duplicated
         ) VALUES (
             ?, ?, ?, ?, ?
         )
         """
         params_for_skans_vs_zlecenia = (
-            indeks_skany_vs_zlecenia,
             indeks_skany,
             self.indeks_zlecenia,
             None,
