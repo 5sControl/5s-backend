@@ -29,14 +29,14 @@ class CreateConectionAPIView(generics.GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            id = connector.create_connection(request.data)
+            connection = connector.create_connection(request.data)
         except ValidationError as e:
             return Response(
                 {"success": False, "message": e.detail},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         return Response(
-            {"success": True, "message": "Database was successfully", "id": id},
+            {"success": True, "message": "Database was successfully", "connection": connection},
             status=status.HTTP_201_CREATED,
         )
 

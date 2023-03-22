@@ -27,8 +27,15 @@ class MsSqlConnector:
             password=password,
         )
         ms_sql_connection.save()
-
-        return ms_sql_connection.id
+        
+        connection = {
+            "id": ms_sql_connection.id,
+            "database_type": ms_sql_connection.database_type,
+            "server": ms_sql_connection.server,
+            "database": ms_sql_connection.database,
+            "username": ms_sql_connection.username,
+        }
+        return connection
 
     def _is_database_connection_is_stable(self, server, database, username, password):
         master_conn_str = self._get_connection_string(
