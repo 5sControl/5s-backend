@@ -44,7 +44,7 @@ class CreateConectionAPIView(generics.GenericAPIView):
 class DeleteConectionAPIView(generics.RetrieveDestroyAPIView):
     queryset = DatabaseConnection.objects.all()
     serializer_class = DatabaseConnectionSerializer
-    lookup_field = 'id'
+    lookup_field = 'pk'
 
 
 class GetDatabasesAPIView(generics.ListAPIView):
