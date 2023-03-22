@@ -99,6 +99,8 @@ class OrderService:
         status = "Completed"
 
         zlecenia_dict = self.get_zlecenia_query_by_zlecenie(zlecenie_id)
+        if not zlecenia_dict:
+            return False
 
         for zlecenie_obj in zlecenia_dict:
             skany_dict = defaultdict(list)
