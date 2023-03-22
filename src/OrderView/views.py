@@ -14,7 +14,10 @@ class GetAllProductAPIView(generics.GenericAPIView):
         response = orderView_service.get_filtered_orders_list()
         if response:
             return Response(response, status=status.HTTP_200_OK)
-        return Response({"success": False, "message": "Database connection error"}, status=status.HTTP_403_FORBIDDEN)
+        return Response(
+            {"success": False, "message": "Database connection error"},
+            status=status.HTTP_403_FORBIDDEN,
+        )
 
 
 class GetOrderDataByZlecenieAPIView(generics.GenericAPIView):
@@ -24,7 +27,10 @@ class GetOrderDataByZlecenieAPIView(generics.GenericAPIView):
         response = orderView_service.get_order(zlecenie_id)
         if response:
             return Response(response, status=status.HTTP_200_OK)
-        return Response({"success": False, "message": "Database connection error"}, status=status.HTTP_403_FORBIDDEN)
+        return Response(
+            {"success": False, "message": "Database connection error"},
+            status=status.HTTP_403_FORBIDDEN,
+        )
 
 
 # TODO: Replace views below to Connector application
@@ -36,11 +42,18 @@ class CreateConectionAPIView(generics.GenericAPIView):
             connection = connector.create_connection(request.data)
         except ValidationError as e:
             return Response(
-                {"success": False, "message": e.detail["data"]},  # TODO: return message istead object
+                {
+                    "success": False,
+                    "message": e.detail["data"],
+                },  # TODO: return message istead object
                 status=status.HTTP_400_BAD_REQUEST,
             )
         return Response(
-            {"success": True, "message": "Database was successfully", "connection": connection},
+            {
+                "success": True,
+                "message": "Database was successfully",
+                "connection": connection,
+            },
             status=status.HTTP_201_CREATED,
         )
 
