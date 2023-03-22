@@ -25,7 +25,7 @@ urlpatterns = [
         name="get list of all database connections",
     ),
     path(
-        "delete-connection",
+        "delete-connection/<int:pk>/",
         DeleteConectionAPIView.as_view(),
         name="delete connection fr   m connection database",
     ),

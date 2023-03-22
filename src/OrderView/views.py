@@ -1,8 +1,9 @@
 from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
-from src.OrderView.serializers import DatabaseConnectionSerializer
 
+from src.OrderView.models import DatabaseConnection
+from src.OrderView.serializers import DatabaseConnectionSerializer
 from src.OrderView.services import orderView_service, ms_sql_service
 
 
@@ -33,15 +34,10 @@ class CreateConectionAPIView(generics.GenericAPIView):
         )
 
 
-class DeleteConectionAPIView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, *args, **kwargs):
-        response = ms_sql_service.delete_database_connection(request.data)
-        return Response(
-            {"status": True, "message": response},
-            status=status.HTTP_200_OK,
-        )
+class DeleteConectionAPIView(generics.RetrieveDestroyAPIView):
+    queryset = DatabaseConnection.objects.all()
+    serializer_class = DatabaseConnectionSerializer
+    lookup_field = 'id'
 
 
 class GetDatabasesAPIView(generics.ListAPIView):
