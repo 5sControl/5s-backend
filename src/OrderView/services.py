@@ -14,7 +14,8 @@ class OrderService:
             [str(id) for id in ids]
         )
 
-        if connection := not self._get_connection():
+        connection = self._get_connection()
+        if not connection:
             return False
 
         with connection.cursor() as cursor:
@@ -35,8 +36,10 @@ class OrderService:
         return skanyQuery
 
     def get_zlecenia_query_by_zlecenie(self, zlecenie):
-        if connection := not self._get_connection():
+        connection = self._get_connection()
+        if not connection:
             return False
+        
         with connection.cursor() as cursor:
             cursor.execute(
                 f"""
@@ -57,7 +60,8 @@ class OrderService:
     def get_filtered_orders_list(
         self,
     ):
-        if connection := not self._get_connection():
+        connection = self._get_connection()
+        if not connection:
             return False
 
         with connection.cursor() as cursor:
@@ -107,8 +111,10 @@ class OrderService:
             if zlecenie_obj["status"] == "Started":
                 status = "Started"
 
-            if connection := not self._get_connection():
+            connection = self._get_connection()
+            if not connection:
                 return False
+
             with connection.cursor() as cursor:
                 cursor.execute(
                     f"""
