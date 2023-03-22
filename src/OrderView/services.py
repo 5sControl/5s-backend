@@ -1,8 +1,6 @@
 from datetime import datetime, timezone
 from collections import defaultdict
 
-from django.core.exceptions import 
-
 from src.MsSqlConnector.connector import connector
 
 
