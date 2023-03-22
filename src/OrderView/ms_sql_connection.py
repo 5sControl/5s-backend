@@ -98,6 +98,7 @@ class MsSqlService:
 
     def delete_connection(self, id):
         DatabaseConnection.objects.get(id=id).delete()
+        return True
 
 
 ms_sql_service = MsSqlService()

@@ -41,20 +41,14 @@ class CreateConectionAPIView(generics.GenericAPIView):
         )
 
 
-class DeleteConectionAPIView(generics.RetrieveDestroyAPIView):
-    queryset = DatabaseConnection.objects.all()
-    serializer_class = DatabaseConnectionSerializer
-    lookup_field = 'id'
-
-
 class DeleteConectionAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, id):
         ms_sql_service.delete_connection(id)
         return Response(
-            {},
-            status=status.HTTP_204_NO_CONTENT,
+            {"success": True, "message": "Database was successfully deleted"},
+            status=status.HTTP_200_OK,
         )
 
 
