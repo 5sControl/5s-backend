@@ -27,7 +27,7 @@ class MsSqlConnector:
             password=password,
         )
         ms_sql_connection.save()
-        
+
         connection = {
             "id": ms_sql_connection.id,
             "database_type": ms_sql_connection.database_type,

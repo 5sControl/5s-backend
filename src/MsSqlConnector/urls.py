@@ -1,7 +1,5 @@
 from django.urls import path
-from .views import (
-    CreateSkanyAPIView
-)
+from .views import CreateSkanyAPIView
 
 urlpatterns = [
     # get data
