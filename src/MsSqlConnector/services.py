@@ -121,7 +121,7 @@ class CreateMsSqlRecordsService:
         with connection.cursor() as cursor:
             cursor.execute("SELECT MAX(indeks) FROM skany")
             result = cursor.fetchone()[0]
-        return result
+        return result + 1
 
     def _get_max_indeks_skany_vs_zlecenia_table(self):
         connection = connector.get_database_connection()
@@ -131,7 +131,7 @@ class CreateMsSqlRecordsService:
         with connection.cursor() as cursor:
             cursor.execute("SELECT MAX(indeks) FROM skany_vs_zlecenia")
             result = cursor.fetchone()[0]
-        return result
+        return result + 1
 
 
 create_records = CreateMsSqlRecordsService()
