@@ -70,9 +70,11 @@ class MsSqlService:
         ):
             raise ValidationError({"detail": "Database connection already in database"})
 
-    def _is_database_connection_doesnt_exist(self, server, database, username):
+    def _is_database_connection_doesnt_exist(
+        self, database_type, server, database, username
+    ):
         if not DatabaseConnection.objects.filter(
-            server=server, database=database, username=username
+            server=server, database=database, database_type=database_type
         ):
             raise ValidationError({"detail": "Database connection does not exist"})
 
@@ -103,16 +105,24 @@ class MsSqlService:
         return DatabaseConnection.objects.all()
 
     def delete_database_connection(self, connection_data):
+        database_type = connection_data["database_type"]
         server = connection_data["server"]
         database = connection_data["database"]
         username = connection_data["username"]
-        password = connection_data["password"]
 
         self._is_database_connection_doesnt_exist(
-            server=server, database=database, username=username, password=password
+            database_type=database_type,
+            server=server,
+            database=database,
+            username=username,
         )
 
-        db_connection = DatabaseConnection.objects.get(server=server, database=database, username=username, password=password)
+        db_connection = DatabaseConnection.objects.get(
+            database_type=database_type,
+            server=server,
+            database=database,
+            username=username,
+        )
         db_connection.delete()
 
         return "Database connection deleted successfully"
