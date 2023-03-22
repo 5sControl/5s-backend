@@ -33,6 +33,17 @@ class CreateConectionAPIView(generics.GenericAPIView):
         )
 
 
+class DeleteConectionAPIView(generics.GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        response = ms_sql_service.delete_database_connection(request.data)
+        return Response(
+            {"status": True, "message": response},
+            status=status.HTTP_200_OK,
+        )
+
+
 class GetDatabasesAPIView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = ms_sql_service.get_conections()
