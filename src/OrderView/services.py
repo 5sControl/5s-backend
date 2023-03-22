@@ -56,7 +56,7 @@ class OrderService:
             results = cursor.fetchall()
         result = self.transform_result(results)
         print("RESULT: ", result)
-        return result, connection
+        return result
 
     def get_filtered_orders_list(
         self,
@@ -108,6 +108,7 @@ class OrderService:
             return False
 
         for zlecenie_obj in zlecenia_dict:
+            print("Zlecenie obj is ", zlecenie_obj)
             skany_dict = defaultdict(list)
             if zlecenie_obj["status"] == "Started":
                 status = "Started"
@@ -131,6 +132,7 @@ class OrderService:
                 )
                 results = cursor.fetchall()
 
+                skany_ids_added = set()
                 for row in results:
                     skany = {
                         "indeks": row[0],
@@ -141,7 +143,9 @@ class OrderService:
                         "worker": f"{row[5]} {row[6]}",
                     }
                     formatted_time = skany["data"].strftime("%Y.%m.%d")
-                    skany_dict[formatted_time].append(skany)
+                    if skany["indeks"] not in skany_ids_added:
+                        skany_ids_added.add(skany["indeks"])
+                        skany_dict[formatted_time].append(skany)
 
             zlecenie_obj["skans"] = []
             for formatted_time, skany_list in skany_dict.items():
