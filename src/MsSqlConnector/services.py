@@ -15,6 +15,11 @@ class CreateMsSqlRecordsService:
         now = datetime.datetime.now()
         current_time = now.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 
+        print("connection: ", connection)
+        print("indeks_skany: ", indeks_skany)
+        print("indeks_skany_vs_zlecenia: ", indeks_skany_vs_zlecenia)
+        print("datetime: ", current_time)
+
         if not connection:
             return False
         if not indeks_skany:
@@ -96,10 +101,13 @@ class CreateMsSqlRecordsService:
         try:
             with connection.cursor() as cursor:
                 cursor.execute(query_for_skan, params_for_skan)
+                print("created skany record")
                 cursor.execute(
                     query_for_skans_vs_zlecenia, params_for_skans_vs_zlecenia
                 )
+                print("created skany vs zlecenia record")
         except Exception:
+            print("error while executing query")
             return False
         else:
             return True

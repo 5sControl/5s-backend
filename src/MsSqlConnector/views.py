@@ -11,6 +11,6 @@ class CreateSkanyAPIView(generics.GenericAPIView):
         if response:
             return Response(response, status=status.HTTP_201_CREATED)
         return Response(
-            {"success": False, "message": "Connot create skany record"},
+            {"success": False, "message": "Cannot create skany record"},
             status=status.HTTP_400_BAD_REQUEST,
         )
