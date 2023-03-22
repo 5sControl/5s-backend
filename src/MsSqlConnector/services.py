@@ -87,7 +87,7 @@ class CreateMsSqlRecordsService:
 
         query_for_skans_vs_zlecenia = """
         INSERT INTO skany_vs_zlecenia (
-            IndeksSkanu, IndeksZlecenia, IndeksDodatka, Duplicated
+            Indeks, IndeksSkanu, IndeksZlecenia, IndeksDodatka, Duplicated
         ) VALUES (
             ?, ?, ?, ?, ?
         )
