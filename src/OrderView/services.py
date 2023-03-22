@@ -1,6 +1,8 @@
 from datetime import datetime, timezone
 from collections import defaultdict
 
+from django.core.exceptions import 
+
 from src.MsSqlConnector.connector import connector
 
 
@@ -14,7 +16,9 @@ class OrderService:
             [str(id) for id in ids]
         )
 
-        connection = connector.get_database_connection()
+        if connection := not self._get_connection():
+            return False
+
         with connection.cursor() as cursor:
             cursor.execute(query)
             results = cursor.fetchall()
@@ -33,7 +37,8 @@ class OrderService:
         return skanyQuery
 
     def get_zlecenia_query_by_zlecenie(self, zlecenie):
-        connection = connector.get_database_connection()
+        if connection := not self._get_connection():
+            return False
         with connection.cursor() as cursor:
             cursor.execute(
                 f"""
@@ -54,7 +59,9 @@ class OrderService:
     def get_filtered_orders_list(
         self,
     ):
-        connection = connector.get_database_connection()
+        if connection := not self._get_connection():
+            return False
+
         with connection.cursor() as cursor:
             cursor.execute(
                 """
@@ -100,7 +107,8 @@ class OrderService:
             if zlecenie_obj["status"] == "Started":
                 status = "Started"
 
-            connection = connector.get_database_connection()
+            if connection := not self._get_connection():
+                return False
             with connection.cursor() as cursor:
                 cursor.execute(
                     f"""
@@ -179,6 +187,14 @@ class OrderService:
                 }
             )
         return transformed_result
+
+    def _get_connection(self):
+        try:
+            connection = connector.get_database_connection()
+        except Exception:
+            return False
+        else:
+            return connection
 
 
 orderView_service = OrderService()
