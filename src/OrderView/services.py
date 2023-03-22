@@ -55,6 +55,7 @@ class OrderService:
             )
             results = cursor.fetchall()
         result = self.transform_result(results)
+        print("RESULT: ", result)
         return result
 
     def get_filtered_orders_list(
@@ -107,6 +108,7 @@ class OrderService:
             return False
 
         for zlecenie_obj in zlecenia_dict:
+            print("Zlecenie obj is ", zlecenie_obj)
             skany_dict = defaultdict(list)
             if zlecenie_obj["status"] == "Started":
                 status = "Started"
