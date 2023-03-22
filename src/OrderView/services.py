@@ -39,7 +39,7 @@ class OrderService:
         connection = self._get_connection()
         if not connection:
             return False
-        
+
         with connection.cursor() as cursor:
             cursor.execute(
                 f"""
