@@ -105,7 +105,7 @@ class CreateMsSqlRecordsService:
             return True
 
     def _get_max_indeks_skany_table(self):
-        connection = connector._get_connection()
+        connection = connector.get_database_connection()
         if not connection:
             return False
 
@@ -115,7 +115,7 @@ class CreateMsSqlRecordsService:
         return cursor.fetchone()[0]
 
     def _get_max_indeks_skany_vs_zlecenia_table(self):
-        connection = connector._get_connection()
+        connection = connector.get_database_connection()
         if not connection:
             return False
 
