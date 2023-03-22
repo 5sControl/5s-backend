@@ -117,7 +117,7 @@ class MsSqlService:
             username=username,
         )
 
-        db_connection = DatabaseConnection.objects.get(
+        db_connection = DatabaseConnection.objects.filter(
             database_type=database_type,
             server=server,
             database=database,
