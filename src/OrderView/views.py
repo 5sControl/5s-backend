@@ -10,9 +10,11 @@ from src.OrderView.services import orderView_service, connector
 class GetAllProductAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
+    def get(self, request): 
         response = orderView_service.get_filtered_orders_list()
-        return Response(response, status=status.HTTP_200_OK)
+        if response:
+            return Response(response, status=status.HTTP_200_OK)
+        return Response({"success": False, "message": "Database connection error"}, status=status.HTTP_403_FORBIDDEN)
 
 
 class GetOrderDataByZlecenieAPIView(generics.GenericAPIView):
@@ -20,7 +22,9 @@ class GetOrderDataByZlecenieAPIView(generics.GenericAPIView):
 
     def get(self, request, zlecenie_id):
         response = orderView_service.get_order(zlecenie_id)
-        return Response(response, status=status.HTTP_200_OK)
+        if response:
+            return Response(response, status=status.HTTP_200_OK)
+        return Response({"success": False, "message": "Database connection error"}, status=status.HTTP_403_FORBIDDEN)
 
 
 # TODO: Replace views below to Connector application
