@@ -103,15 +103,19 @@ class OrderService:
         response = {}
         status = "Completed"
 
-        zlecenia_dict, connection = self.get_zlecenia_query_by_zlecenie(zlecenie_id)
+        zlecenia_dict = self.get_zlecenia_query_by_zlecenie(zlecenie_id)
+        if not zlecenia_dict:
+            return False
 
         for zlecenie_obj in zlecenia_dict:
-            print("Zlecenie obj is ", zlecenie_obj)
             skany_dict = defaultdict(list)
             if zlecenie_obj["status"] == "Started":
                 status = "Started"
 
-            print("Zlecenie connection is ", connection)
+            connection = self._get_connection()
+            if not connection:
+                return False
+
             with connection.cursor() as cursor:
                 cursor.execute(
                     f"""
@@ -127,8 +131,6 @@ class OrderService:
                 )
                 results = cursor.fetchall()
 
-                skany_ids_added = set()
-                print("skany_ids_added: ", skany_ids_added)
                 for row in results:
                     skany = {
                         "indeks": row[0],
@@ -139,9 +141,7 @@ class OrderService:
                         "worker": f"{row[5]} {row[6]}",
                     }
                     formatted_time = skany["data"].strftime("%Y.%m.%d")
-                    if skany["indeks"] not in skany_ids_added:
-                        skany_ids_added.add(skany["indeks"])
-                        skany_dict[formatted_time].append(skany)
+                    skany_dict[formatted_time].append(skany)
 
             zlecenie_obj["skans"] = []
             for formatted_time, skany_list in skany_dict.items():
