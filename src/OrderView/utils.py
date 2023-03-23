@@ -11,6 +11,7 @@ class OrderViewPaginnator(PageNumberPagination):
     def get_paginated_response(self, data):
         return Response(OrderedDict([
             ('count', self.page.paginator.count),
+            ("current_page", self.page.number),
             ("records_on_page", self.page_size),
             ("all_page_count", (self.page.paginator.count // self.page_size + 1 if self.page.paginator.count % self.page_size != 0 else self.page.paginator.count // self.page_size)),
             ('next', self.get_next_link()),
