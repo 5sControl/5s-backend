@@ -128,7 +128,7 @@ class OrderService:
                     JOIN Skany_vs_Zlecenia sz ON s.indeks = sz.indeksskanu
                     JOIN Stanowiska st ON s.stanowisko = st.indeks
                     JOIN Uzytkownicy u ON s.uzytkownik = u.indeks
-                    WHERE sz.indekszlecenia = %s
+                    WHERE sz.indekszlecenia = ?
                     AND s.data <= CONVERT(datetime, GETUTCDATE())
                     """,
                     (zlecenie_obj["indeks"],),
