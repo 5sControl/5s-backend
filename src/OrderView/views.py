@@ -26,20 +26,6 @@ class GetAllProductAPIView(generics.GenericAPIView):
         )
 
 
-# class GetAllProductAPIView(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def get(self, request):
-#         page = request.query_params.get("page", 1)
-#         paginated_data = OrderViewPaginnator.paginate_queryset(
-#             orderView_service.get_filtered_orders_list(),
-#             request=request,
-#             view=self,
-#         )
-#         serializer = ProductSerializer(paginated_data, many=True)
-#         return OrderViewPaginnator.get_paginated_response(serializer.data)
-
-
 class GetOrderDataByZlecenieAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 

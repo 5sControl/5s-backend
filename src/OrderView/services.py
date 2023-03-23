@@ -6,20 +6,19 @@ from src.MsSqlConnector.connector import connector
 
 class OrderService:
     def get_skanyQueryByIds(self, ids):
+        placeholders = ",".join(["%s" for _ in ids])
         query = """
             SELECT indeks, data, stanowisko, uzytkownik
             FROM Skany
-            WHERE indeks IN (%s)
-        """ % ",".join(
-            [str(id) for id in ids]
-        )
+            WHERE indeks IN ({})
+        """.format(placeholders)
 
         connection = self._get_connection()
         if not connection:
             return False
 
         with connection.cursor() as cursor:
-            cursor.execute(query)
+            cursor.execute(query, ids)
             results = cursor.fetchall()
 
         skanyQuery = []
@@ -42,7 +41,7 @@ class OrderService:
 
         with connection.cursor() as cursor:
             cursor.execute(
-                f"""
+                """
                 SELECT z.indeks, z.data, z.zlecenie, z.klient, z.datawejscia, z.datazakonczenia,
                     z.zakonczone, z.typ, z.color AS orderName, z.terminrealizacji,
                     CASE
@@ -50,8 +49,9 @@ class OrderService:
                         ELSE 'Completed'
                     END AS status
                 FROM zlecenia z
-                WHERE z.zlecenie = '{zlecenie}'
-            """
+                WHERE z.zlecenie = %s
+                """,
+                (zlecenie,)
             )
             results = cursor.fetchall()
         result = self.transform_result(results)
@@ -119,16 +119,17 @@ class OrderService:
 
             with connection.cursor() as cursor:
                 cursor.execute(
-                    f"""
+                    """
                     SELECT s.indeks, s.data, s.stanowisko, s.uzytkownik,
                         st.raport, u.imie, u.nazwisko
                     FROM Skany s
                     JOIN Skany_vs_Zlecenia sz ON s.indeks = sz.indeksskanu
                     JOIN Stanowiska st ON s.stanowisko = st.indeks
                     JOIN Uzytkownicy u ON s.uzytkownik = u.indeks
-                    WHERE sz.indekszlecenia = {zlecenie_obj["indeks"]}
+                    WHERE sz.indekszlecenia = %s
                     AND s.data <= CONVERT(datetime, GETUTCDATE())
-                    """
+                    """,
+                    (zlecenie_obj["indeks"],)
                 )
                 results = cursor.fetchall()
 
