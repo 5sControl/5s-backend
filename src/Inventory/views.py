@@ -19,7 +19,7 @@ class ItemsViewSet(ModelViewSet):
 
 class ItemsHistoryViewSet(APIView):
     """History items"""
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, camera_ip, date, start_time, end_time):
         report_view = ReportListView()
