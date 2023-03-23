@@ -19,7 +19,9 @@ class Items(models.Model):
     low_stock_level = models.IntegerField(verbose_name="Low stock level")
     email = models.EmailField(blank=True, null=True, verbose_name="Email to send notifications")
     camera = models.ForeignKey(Camera, related_name='camera_id', on_delete=models.CASCADE)
-    date_created = models.DateTimeField(verbose_name="Date created", auto_now=True)
+    date_created = models.DateTimeField(verbose_name="Date created", auto_now_add=True)
+    date_updated = models.DateTimeField(verbose_name="Date updated", auto_now=True)
+    coords = models.TextField(verbose_name="Area coordinates", blank=True, null=True)
 
     def __str__(self):
         return self.name
