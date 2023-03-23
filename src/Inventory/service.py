@@ -21,10 +21,7 @@ def process_item_status(data):
     item.current_stock_level = count
     item.save()
 
-    result = {
-        "item": item_data,
-        "count": count,
-        "status": item_status,
-        "low_stock_level": min_item
-    }
-    return result
+    data["status"] = item_status
+    data["low_stock_level"] = min_item
+
+    return data
