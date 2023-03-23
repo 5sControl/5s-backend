@@ -14,12 +14,12 @@ class ItemsViewSet(ModelViewSet):
     """All items in the inventory"""
     queryset = Items.objects.all().order_by("-id")
     serializer_class = ItemsSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
 
 class ItemsHistoryViewSet(APIView):
     """History items"""
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request, camera_ip, date, start_time, end_time):
         report_view = ReportListView()
