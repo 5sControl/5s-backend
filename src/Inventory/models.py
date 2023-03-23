@@ -9,7 +9,7 @@ class Items(models.Model):
 
     name = models.TextField(max_length=75, verbose_name="Item name")
     status = models.CharField(max_length=20, default="Out of stock")
-    current_stock_level = models.IntegerField(verbose_name="Current stock level", blank=True, null=True)
+    current_stock_level = models.IntegerField(verbose_name="Current stock level", default=0)
     low_stock_level = models.IntegerField(verbose_name="Low stock level")
     email = models.EmailField(blank=True, null=True, verbose_name="Email to send notifications")
     camera = models.ForeignKey(Camera, related_name='camera_id', on_delete=models.CASCADE)
