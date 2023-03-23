@@ -51,7 +51,7 @@ class OrderService:
                             ELSE 'Completed'
                         END AS status
                     FROM zlecenia z
-                    WHERE z.zlecenie = %s
+                    WHERE z.zlecenie = ?
                 """,
                 (str(zlecenie_id),),
             )
