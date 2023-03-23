@@ -23,7 +23,7 @@ from src.Inventory.service import process_item_status
 class ActionViewSet(viewsets.ModelViewSet):
     queryset = Report.objects.all().order_by("-id")
     serializer_class = ReportSerializers
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
