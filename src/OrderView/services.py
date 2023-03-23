@@ -126,21 +126,22 @@ class OrderService:
                 WHERE zlecenie LIKE ?
                 ORDER BY zlecenie
                 """,
-                (str(zlecenie_id) + '%',)
+                (zlecenie_id + '%',)
             )
             results = cursor.fetchall()
 
-        order_list = []
+        order_dict = {}
         for result in results:
-            order_dict = {
-                "indeks": result[0],
-                "zlecenie": result[1],
-                "status": result[2],
-                "terminrealizacji": result[3],
-            }
-            order_list.append(order_dict)
-
-        return order_list
+            order_id = result[1]
+            if order_id not in order_dict:
+                order_dict[order_id] = {
+                    "indeks": result[0],
+                    "zlecenie": result[1],
+                    "status": result[2],
+                    "terminrealizacji": result[3],
+                }
+        
+        return list(order_dict.values())
 
     def get_order(self, zlecenie_id):
         response = {}
