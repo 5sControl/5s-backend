@@ -10,11 +10,11 @@ def process_item_status(data):
     min_item = data_item[0].get('low_stock_level')
 
     if count == 0:
-        item_status = "out_of_stock"
+        item_status = "Out of stock"
     elif count > 0 and count < min_item:
-        item_status = "low_stock_level"
+        item_status = "Low stock level"
     else:
-        item_status = "in_stock"
+        item_status = "In stock"
 
     item = Items.objects.filter(id=item_data).first()
     item.status = item_status
