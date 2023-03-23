@@ -30,7 +30,9 @@ class Finder:
         self.lst = [
             ip
             for ip in self.ips
-            if (ip.startswith("192.168.")) and (ip is not None) and (self.check_camera(ip))
+            if (ip.startswith("192.168."))
+            and (ip is not None)
+            and (self.check_camera(ip))
         ]
         server_ip = os.getenv("IP")
         self.lst.append(server_ip)
