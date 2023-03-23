@@ -6,7 +6,7 @@ from src.MsSqlConnector.services import create_records
 
 
 class CreateSkanyAPIView(generics.GenericAPIView):
-    def get(self, request):
+    def post(self, request):
         response = create_records.create_skany(request.data["beverage"])
         if response:
             return Response(response, status=status.HTTP_201_CREATED)
