@@ -4,12 +4,6 @@ from src.Cameras.models import Camera
 from src.Reports.models import Report
 
 
-# class StatusItemChoice(models.TextChoices):
-#     in_stock = 'In stock'
-#     low_stock_level = 'Low stock level'
-#     out_of_stock = 'Out of stock'
-
-
 class Items(models.Model):
     """Models items"""
 
