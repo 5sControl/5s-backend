@@ -104,7 +104,7 @@ class OrderService:
     def get_filtered_order_dict(self, zlecenie_id):
         connection = self._get_connection()
         if not connection:
-            return False
+            return []
 
         with connection.cursor() as cursor:
             cursor.execute(
@@ -123,22 +123,24 @@ class OrderService:
                                             ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
                     FROM zlecenia z
                 ) as subquery
-                WHERE rn = 1 AND zlecenie = ?
+                WHERE zlecenie LIKE ?
+                ORDER BY zlecenie
                 """,
-                (str(zlecenie_id),)
+                (str(zlecenie_id) + '%',)
             )
-            result = cursor.fetchone()
+            results = cursor.fetchall()
 
-        if result:
+        order_list = []
+        for result in results:
             order_dict = {
                 "indeks": result[0],
                 "zlecenie": result[1],
                 "status": result[2],
                 "terminrealizacji": result[3],
             }
-            return order_dict
+            order_list.append(order_dict)
 
-        return None
+        return order_list
 
     def get_order(self, zlecenie_id):
         response = {}
