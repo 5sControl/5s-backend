@@ -22,9 +22,9 @@ def process_item_status(data):
     item.save()
 
     result = {
-        'item': item_data,
-        'count': count,
-        'status': item_status,
-        'low_stock_level': min_item
+        "item": item_data,
+        "count": count,
+        "status": item_status,
+        "low_stock_level": min_item
     }
     return result
