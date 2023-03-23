@@ -9,32 +9,35 @@ from src.OrderView.services import orderView_service, connector
 from src.OrderView.utils import OrderViewPaginnator
 
 
-# class GetAllProductAPIView(generics.GenericAPIView):
-#     permission_classes = [IsAuthenticated]
-#     pagination_class = OrderViewPaginnator
-
-#     def get(self, request):
-#         response = orderView_service.get_filtered_orders_list()
-#         if response:
-#             return Response(response, status=status.HTTP_200_OK)
-#         return Response(
-#             {"success": False, "message": "Database connection error"},
-#             status=status.HTTP_403_FORBIDDEN,
-#         )
-
-
-class GetAllProductAPIView(APIView):
+class GetAllProductAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
+    pagination_class = OrderViewPaginnator
+    serializer_class = ProductSerializer
 
     def get(self, request):
-        page = request.query_params.get("page", 1)
-        paginated_data = OrderViewPaginnator.paginate_queryset(
-            orderView_service.get_filtered_orders_list(),
-            request=request,
-            view=self,
+        response = orderView_service.get_filtered_orders_list()
+        if response:
+            paginated_items = self.paginate_queryset(response)
+            serializer = self.serializer_class(paginated_items, many=True)
+            return self.get_paginated_response(serializer.data)
+        return Response(
+            {"success": False, "message": "Database connection error"},
+            status=status.HTTP_403_FORBIDDEN,
         )
-        serializer = ProductSerializer(paginated_data, many=True)
-        return OrderViewPaginnator.get_paginated_response(serializer.data)
+
+
+# class GetAllProductAPIView(APIView):
+#     permission_classes = [IsAuthenticated]
+
+#     def get(self, request):
+#         page = request.query_params.get("page", 1)
+#         paginated_data = OrderViewPaginnator.paginate_queryset(
+#             orderView_service.get_filtered_orders_list(),
+#             request=request,
+#             view=self,
+#         )
+#         serializer = ProductSerializer(paginated_data, many=True)
+#         return OrderViewPaginnator.get_paginated_response(serializer.data)
 
 
 class GetOrderDataByZlecenieAPIView(generics.GenericAPIView):
