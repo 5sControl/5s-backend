@@ -5,10 +5,11 @@ from rest_framework.exceptions import ValidationError
 
 from src.OrderView.serializers import DatabaseConnectionSerializer
 from src.OrderView.services import orderView_service, connector
-
+from src.OrderView.utils import OrderViewPaginnator
 
 class GetAllProductAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
+    pagination_class = OrderViewPaginnator
 
     def get(self, request):
         response = orderView_service.get_filtered_orders_list()
