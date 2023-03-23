@@ -1,7 +1,9 @@
-from django.http import HttpResponse
-from rest_framework import generics
-from src.StaffControl.Employees.serializers import RegisterSerializer, UserSerializer
+from rest_framework import status, generics
 from rest_framework.response import Response
+
+from src.StaffControl.Employees.serializers import RegisterSerializer, UserSerializer
+
+from config.camera_finder import finder
 
 
 class RegisterView(generics.GenericAPIView):
@@ -23,12 +25,10 @@ class RegisterView(generics.GenericAPIView):
         )
 
 
-def setcookie(request):
-    response = HttpResponse("Cookie Set")
-    response.set_cookie("java-tutorial", "javatpoint.com")
-    return response
-
-
-def getcookie(request):
-    tutorial = request.COOKIES["java-tutorial"]
-    return HttpResponse("java tutorials @: " + tutorial)
+class FindCameraAPIView(generics.GenericAPIView):
+    def get(self, request, *args, **kwargs):
+        """
+        Returns a list of cameras available to connect
+        """
+        cameras = finder.start()
+        return Response({"results": cameras}, status=status.HTTP_200_OK)

@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     # Common application
     "src.Algorithms",
     "src.OrderView",
+    "src.MsSqlConnector",
     "src.Cameras.apps.CamerasConfig",
     "src.CompanyLicense.apps.CompanyLicenseConfig",
     "src.Inventory.apps.InventoryConfig",
@@ -156,7 +157,6 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=7 * (60 * 24)),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": False,
-    "BLACKLIST_AFTER_ROTATION": True,
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
     "VERIFYING_KEY": None,

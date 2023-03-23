@@ -1,22 +1,24 @@
 from datetime import datetime, timezone
 from collections import defaultdict
 
-from src.OrderView.ms_sql_connection import ms_sql_service
+from src.MsSqlConnector.connector import connector
 
 
 class OrderService:
     def get_skanyQueryByIds(self, ids):
+        placeholders = ",".join(["%s" for _ in ids])
         query = """
             SELECT indeks, data, stanowisko, uzytkownik
             FROM Skany
-            WHERE indeks IN (%s)
-        """ % ",".join(
-            [str(id) for id in ids]
-        )
+            WHERE indeks IN ({})
+        """.format(placeholders)
 
-        connection = ms_sql_service.get_database_connection()
+        connection = self._get_connection()
+        if not connection:
+            return False
+
         with connection.cursor() as cursor:
-            cursor.execute(query)
+            cursor.execute(query, ids)
             results = cursor.fetchall()
 
         skanyQuery = []
@@ -33,10 +35,13 @@ class OrderService:
         return skanyQuery
 
     def get_zlecenia_query_by_zlecenie(self, zlecenie):
-        connection = ms_sql_service.get_database_connection()
+        connection = self._get_connection()
+        if not connection:
+            return False
+
         with connection.cursor() as cursor:
             cursor.execute(
-                f"""
+                """
                 SELECT z.indeks, z.data, z.zlecenie, z.klient, z.datawejscia, z.datazakonczenia,
                     z.zakonczone, z.typ, z.color AS orderName, z.terminrealizacji,
                     CASE
@@ -44,17 +49,22 @@ class OrderService:
                         ELSE 'Completed'
                     END AS status
                 FROM zlecenia z
-                WHERE z.zlecenie = '{zlecenie}'
-            """
+                WHERE z.zlecenie = %s
+                """,
+                (zlecenie,)
             )
             results = cursor.fetchall()
         result = self.transform_result(results)
+        print("RESULT: ", result)
         return result
 
     def get_filtered_orders_list(
         self,
     ):
-        connection = ms_sql_service.get_database_connection()
+        connection = self._get_connection()
+        if not connection:
+            return False
+
         with connection.cursor() as cursor:
             cursor.execute(
                 """
@@ -94,25 +104,32 @@ class OrderService:
         status = "Completed"
 
         zlecenia_dict = self.get_zlecenia_query_by_zlecenie(zlecenie_id)
+        if not zlecenia_dict:
+            return False
 
         for zlecenie_obj in zlecenia_dict:
+            print("Zlecenie obj is ", zlecenie_obj)
             skany_dict = defaultdict(list)
             if zlecenie_obj["status"] == "Started":
                 status = "Started"
 
-            connection = ms_sql_service.get_database_connection()
+            connection = self._get_connection()
+            if not connection:
+                return False
+
             with connection.cursor() as cursor:
                 cursor.execute(
-                    f"""
+                    """
                     SELECT s.indeks, s.data, s.stanowisko, s.uzytkownik,
                         st.raport, u.imie, u.nazwisko
                     FROM Skany s
                     JOIN Skany_vs_Zlecenia sz ON s.indeks = sz.indeksskanu
                     JOIN Stanowiska st ON s.stanowisko = st.indeks
                     JOIN Uzytkownicy u ON s.uzytkownik = u.indeks
-                    WHERE sz.indekszlecenia = {zlecenie_obj["indeks"]}
+                    WHERE sz.indekszlecenia = %s
                     AND s.data <= CONVERT(datetime, GETUTCDATE())
-                    """
+                    """,
+                    (zlecenie_obj["indeks"],)
                 )
                 results = cursor.fetchall()
 
@@ -179,6 +196,14 @@ class OrderService:
                 }
             )
         return transformed_result
+
+    def _get_connection(self):
+        try:
+            connection = connector.get_database_connection()
+        except Exception:
+            return False
+        else:
+            return connection
 
 
 orderView_service = OrderService()
