@@ -11,7 +11,9 @@ class OrderService:
             SELECT indeks, data, stanowisko, uzytkownik
             FROM Skany
             WHERE indeks IN ({})
-        """.format(placeholders)
+        """.format(
+            placeholders
+        )
 
         connection = self._get_connection()
         if not connection:
@@ -34,7 +36,7 @@ class OrderService:
 
         return skanyQuery
 
-    def get_zlecenia_query_by_zlecenie(self, zlecenie):
+    def get_zlecenia_query_by_zlecenie(self, zlecenie_id):
         connection = self._get_connection()
         if not connection:
             return False
@@ -42,16 +44,16 @@ class OrderService:
         with connection.cursor() as cursor:
             cursor.execute(
                 """
-                SELECT z.indeks, z.data, z.zlecenie, z.klient, z.datawejscia, z.datazakonczenia,
-                    z.zakonczone, z.typ, z.color AS orderName, z.terminrealizacji,
-                    CASE
-                        WHEN z.zakonczone = 0 AND z.datawejscia IS NOT NULL THEN 'Started'
-                        ELSE 'Completed'
-                    END AS status
-                FROM zlecenia z
-                WHERE z.zlecenie = %s
+                    SELECT z.indeks, z.data, z.zlecenie, z.klient, z.datawejscia, z.datazakonczenia,
+                        z.zakonczone, z.typ, z.color AS orderName, z.terminrealizacji,
+                        CASE
+                            WHEN z.zakonczone = 0 AND z.datawejscia IS NOT NULL THEN 'Started'
+                            ELSE 'Completed'
+                        END AS status
+                    FROM zlecenia z
+                    WHERE z.zlecenie = %s
                 """,
-                (zlecenie,)
+                (str(zlecenie_id),),
             )
             results = cursor.fetchall()
         result = self.transform_result(results)
@@ -129,7 +131,7 @@ class OrderService:
                     WHERE sz.indekszlecenia = %s
                     AND s.data <= CONVERT(datetime, GETUTCDATE())
                     """,
-                    (zlecenie_obj["indeks"],)
+                    (zlecenie_obj["indeks"],),
                 )
                 results = cursor.fetchall()
 
