@@ -1,9 +1,15 @@
+import json
+
 from rest_framework import serializers
 
 from src.Inventory.models import Items
 
 
 class ItemsSerializer(serializers.ModelSerializer):
+    """
+    Items Serializer
+    """
+
     class Meta:
         model = Items
         fields = ["id",
@@ -17,4 +23,3 @@ class ItemsSerializer(serializers.ModelSerializer):
                   "date_updated",
                   "coords"
                   ]
-
