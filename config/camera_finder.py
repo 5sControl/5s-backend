@@ -1,6 +1,8 @@
+import os
+import re
+
 from wsdiscovery.discovery import ThreadedWSDiscovery as WSDiscovery
 from wsdiscovery import Scope
-import re
 
 
 class Finder:
@@ -15,6 +17,10 @@ class Finder:
             ipaddresses.append(ipaddress)
 
         wsd.stop()
+        #  FIXME: Emulated connection
+        server_ip = os.getenv("IP")
+        self.lst.append(server_ip)
+
         return ipaddresses
 
 
