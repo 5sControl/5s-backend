@@ -30,5 +30,5 @@ class FindCameraAPIView(generics.GenericAPIView):
         """
         Returns a list of cameras available to connect
         """
-        cameras = finder.start()
+        cameras = finder.fetch_devices()
         return Response({"results": cameras}, status=status.HTTP_200_OK)

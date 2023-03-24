@@ -29,13 +29,15 @@ class GetAllProductAPIView(generics.GenericAPIView):
 class GetProductByIdAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, zlecenie_id):
-        response = orderView_service.get_filtered_order_dict(zlecenie_id)
-        if response:
-            return Response(response, status=status.HTTP_200_OK)
+    def get(self, request):
+        zlecenie_id = self.request.query_params.get('q', None)
+        if zlecenie_id:
+            response = orderView_service.get_filtered_order_dict(zlecenie_id)
+            if response:
+                return Response(response, status=status.HTTP_200_OK)
         return Response(
-            {"success": False, "message": "Database connection error"},
-            status=status.HTTP_403_FORBIDDEN,
+            {"success": False, "message": "Invalid request parameter"},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
 
