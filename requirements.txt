@@ -71,5 +71,8 @@ typing_extensions==4.4.0
 tzdata==2022.7
 uritemplate==4.1.1
 urllib3==1.26.13
-WSDiscovery==2.0.0
 zeep==4.2.1
+# find camera dep
+python3-nmap==1.6.0
+WSDiscovery==2.0.0
+netifaces2==0.0.16
