@@ -80,9 +80,9 @@ class OrderService:
                         ROW_NUMBER() OVER (PARTITION BY z.zlecenie
                                             ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
                     FROM zlecenia z
-                    WHERE z.zlecenie LIKE %s
+                    WHERE z.zlecenie LIKE ?
                     """,
-                    (f"%{search}%",),
+                    (f"{search}%",),
                 )
             else:
                 cursor.execute(
