@@ -17,14 +17,14 @@ class GetAllProductAPIView(generics.GenericAPIView):
     def get(self, request):
         search = request.GET.get('search')
         response = orderView_service.get_filtered_orders_list(search)
-        if response:
-            paginated_items = self.paginate_queryset(response)
-            serializer = self.serializer_class(paginated_items, many=True)
-            return self.get_paginated_response(serializer.data)
-        return Response(
-            {"success": False, "message": "Database connection error"},
-            status=status.HTTP_403_FORBIDDEN,
-        )
+        if not response["connection"]:
+            return Response(
+                {"success": False, "message": "Database connection error"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+        paginated_items = self.paginate_queryset(response)
+        serializer = self.serializer_class(paginated_items, many=True)
+        return self.get_paginated_response(serializer.data)
 
 
 class GetOrderDataByZlecenieAPIView(generics.GenericAPIView):

@@ -63,7 +63,7 @@ class OrderService:
     def get_filtered_orders_list(self, search=None):
         connection = self._get_connection()
         if not connection:
-            return False
+            return {"connection": False}
 
         with connection.cursor() as cursor:
             if search:
