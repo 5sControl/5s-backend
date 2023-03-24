@@ -81,6 +81,7 @@ class OrderService:
                                             ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
                     FROM zlecenia z
                     WHERE z.zlecenie LIKE ?
+                    ORDER BY zlecenie
                     """,
                     (f"{search}%",),
                 )
