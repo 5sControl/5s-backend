@@ -31,13 +31,9 @@ class Finder:
                 executor.submit(self.check_camera, ip)
                 for ip in self.get_ips_from_urls(self.urls)
             ]
-            self.lst = [
-                ip
-                for ip, result in zip(self.get_ips_from_urls(self.urls), futures)
-                if result
-            ]
-        server_ip = os.getenv("IP")
-        self.lst.append(server_ip)
+            for ip, result in zip(self.get_ips_from_urls(self.urls), futures):
+                if result and ip not in self.lst:
+                    self.lst.append(ip)
         return self.lst
 
     def check_camera(self, ip_address):
