@@ -19,7 +19,7 @@ class Report(models.Model):
     start_tracking = models.CharField(max_length=100, blank=True, null=True)
     stop_tracking = models.CharField(max_length=100, blank=True, null=True)
     violation_found = models.BooleanField(blank=True, null=True, default=None)
-    extra = models.CharField(max_length=50, blank=True, null=True)
+    extra = models.JSONField(blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
     status = models.CharField(
