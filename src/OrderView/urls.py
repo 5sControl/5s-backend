@@ -16,7 +16,7 @@ urlpatterns = [
         name="get orders by id",
     ),
     path("all-orders/", GetAllProductAPIView.as_view(), name="get all orders"),
-    path("search/", GetProductByIdAPIView.as_view(), name="get order by id"),
+    path("all-orders/search/", GetProductByIdAPIView.as_view(), name="get order by id"),
     # database configuration
     path(
         "create-connection/", CreateConectionAPIView.as_view(), name="mssql connection"
