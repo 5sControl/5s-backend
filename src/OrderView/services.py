@@ -78,46 +78,55 @@ class OrderService:
                         END AS status,
                         z.terminrealizacji,
                         ROW_NUMBER() OVER (PARTITION BY z.zlecenie
-                                            ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
+                                            ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn,
+                        COUNT(*) OVER (PARTITION BY z.zlecenie) as cnt
                     FROM zlecenia z
                     WHERE z.zlecenie LIKE ?
-                    ORDER BY z.zlecenie
+                    GROUP BY z.zlecenie, z.indeks, z.zakonczone, z.datawejscia, z.terminrealizacji
                     """,
                     (f"{search}%",),
                 )
             else:
                 cursor.execute(
                     """
-                    SELECT *
-                    FROM (
-                        SELECT z.indeks,
-                            z.zlecenie,
-                            CASE
-                                WHEN z.zakonczone = '0' AND z.datawejscia IS NOT NULL THEN 'Started'
-                                WHEN z.zakonczone = '1' THEN 'Completed'
-                                ELSE 'Unknown'
-                            END AS status,
-                            z.terminrealizacji,
-                            ROW_NUMBER() OVER (PARTITION BY z.zlecenie
-                                                ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
-                        FROM zlecenia z
-                    ) as subquery
-                    WHERE rn = 1
+                    SELECT z.indeks,
+                        z.zlecenie,
+                        CASE
+                            WHEN z.zakonczone = '0' AND z.datawejscia IS NOT NULL THEN 'Started'
+                            WHEN z.zakonczone = '1' THEN 'Completed'
+                            ELSE 'Unknown'
+                        END AS status,
+                        z.terminrealizacji,
+                        ROW_NUMBER() OVER (PARTITION BY z.zlecenie
+                                            ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn,
+                        COUNT(*) OVER (PARTITION BY z.zlecenie) as cnt
+                    FROM zlecenia z
+                    GROUP BY z.zlecenie, z.indeks, z.zakonczone, z.datawejscia, z.terminrealizacji
+                    HAVING rn = 1
                     """
                 )
             results = cursor.fetchall()
 
         orders_list = []
         for result in results:
-            order_dict = {
-                "indeks": result[0],
-                "zlecenie": result[1],
-                "status": result[2],
-                "terminrealizacji": result[3],
-            }
+            if result[-1] > 1:
+                order_dict = {
+                    "indeks": result[0],
+                    "zlecenie": result[1],
+                    "status": f"{result[2]} ({result[-1]} records)",
+                    "terminrealizacji": result[3],
+                }
+            else:
+                order_dict = {
+                    "indeks": result[0],
+                    "zlecenie": result[1],
+                    "status": result[2],
+                    "terminrealizacji": result[3],
+                }
             orders_list.append(order_dict)
 
         return orders_list
+
 
     def get_order(self, zlecenie_id):
         response = {}
