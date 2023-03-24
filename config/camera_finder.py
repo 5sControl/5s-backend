@@ -34,6 +34,8 @@ class Finder:
             for ip, result in zip(self.get_ips_from_urls(self.urls), futures):
                 if result and ip not in self.lst:
                     self.lst.append(ip)
+        em_ip_camera = os.getenv("IP")
+        self.lst.append(em_ip_camera)
         return self.lst
 
     def check_camera(self, ip_address):
