@@ -110,10 +110,10 @@ class OrderService:
         for result in results:
             print(results)
             order_dict = {
-                "indeks": result[0],
-                "zlecenie": result[1],
-                "status": result[2],
-                "terminrealizacji": result[3],
+                "indeks": result[3],
+                "zlecenie": result[0],
+                "status": result[1],
+                "terminrealizacji": result[2],
             }
             orders_list.append(order_dict)
         print("Orders: ", orders_list)
