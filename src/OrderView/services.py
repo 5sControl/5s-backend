@@ -69,7 +69,7 @@ class OrderService:
             if search:
                 cursor.execute(
                     """
-                    SELECT z.indeks,
+                    SELECT DISTINCT
                         z.zlecenie,
                         CASE
                             WHEN z.zakonczone = '0' AND z.datawejscia IS NOT NULL THEN 'Started'
