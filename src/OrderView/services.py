@@ -76,49 +76,45 @@ class OrderService:
                             WHEN z.zakonczone = '1' THEN 'Completed'
                             ELSE 'Unknown'
                         END AS status,
-                        z.terminrealizacji
+                        z.terminrealizacji,
+                        ROW_NUMBER() OVER (PARTITION BY z.zlecenie
+                                            ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
                     FROM zlecenia z
                     WHERE z.zlecenie LIKE ?
-                    GROUP BY z.zlecenie, z.indeks, z.terminrealizacji
-                    ORDER BY z.zlecenie
+                    GROUP BY z.zlecenie
                     """,
-                    (f"{search}%",)
+                    (f"{search}%",),
                 )
             else:
                 cursor.execute(
                     """
-                    SELECT z.indeks,
-                        z.zlecenie,
-                        CASE
-                            WHEN z.zakonczone = '0' AND z.datawejscia IS NOT NULL THEN 'Started'
-                            WHEN z.zakonczone = '1' THEN 'Completed'
-                            ELSE 'Unknown'
-                        END AS status,
-                        z.terminrealizacji
-                    FROM zlecenia z
-                    GROUP BY z.zlecenie, z.indeks, status, z.terminrealizacji
-                    ORDER BY z.zlecenie
+                    SELECT *
+                    FROM (
+                        SELECT z.indeks,
+                            z.zlecenie,
+                            CASE
+                                WHEN z.zakonczone = '0' AND z.datawejscia IS NOT NULL THEN 'Started'
+                                WHEN z.zakonczone = '1' THEN 'Completed'
+                                ELSE 'Unknown'
+                            END AS status,
+                            z.terminrealizacji,
+                            ROW_NUMBER() OVER (PARTITION BY z.zlecenie
+                                                ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
+                        FROM zlecenia z
+                    ) as subquery
+                    WHERE rn = 1
+                    GROUP BY subquery.zlecenie
                     """
                 )
             results = cursor.fetchall()
 
-        orders_dict = {}
+        orders_list = []
         for result in results:
-            zlecenie = result[1]
-            if zlecenie not in orders_dict:
-                orders_dict[zlecenie] = []
             order_dict = {
                 "indeks": result[0],
+                "zlecenie": result[1],
                 "status": result[2],
                 "terminrealizacji": result[3],
-            }
-            orders_dict[zlecenie].append(order_dict)
-
-        orders_list = []
-        for zlecenie, orders in orders_dict.items():
-            order_dict = {
-                "zlecenie": zlecenie,
-                "orders": orders,
             }
             orders_list.append(order_dict)
 
