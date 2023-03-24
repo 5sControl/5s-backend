@@ -69,44 +69,33 @@ class OrderService:
             if search:
                 cursor.execute(
                     """
-                SELECT *
-                FROM (
-                    SELECT z.indeks,
-                        z.zlecenie,
+                    SELECT z.zlecenie,
                         CASE
                             WHEN z.zakonczone = '0' AND z.datawejscia IS NOT NULL THEN 'Started'
                             WHEN z.zakonczone = '1' THEN 'Completed'
                             ELSE 'Unknown'
                         END AS status,
                         z.terminrealizacji,
-                        ROW_NUMBER() OVER (PARTITION BY z.zlecenie
-                                            ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
+                        COUNT(*) as order_count
                     FROM zlecenia z
-                ) as subquery
-                WHERE zlecenie LIKE ?
-                ORDER BY zlecenie
-                """,
-                    (search + "%",),
+                    WHERE z.zlecenie LIKE ?
+                    GROUP BY z.zlecenie
+                    """,
+                    (f"{search}%",),
                 )
             else:
                 cursor.execute(
                     """
-                    SELECT *
-                    FROM (
-                        SELECT z.indeks,
-                            z.zlecenie,
-                            CASE
-                                WHEN z.zakonczone = '0' AND z.datawejscia IS NOT NULL THEN 'Started'
-                                WHEN z.zakonczone = '1' THEN 'Completed'
-                                ELSE 'Unknown'
-                            END AS status,
-                            z.terminrealizacji,
-                            ROW_NUMBER() OVER (PARTITION BY z.zlecenie
-                                                ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
-                        FROM zlecenia z
-                    ) as subquery
-                    WHERE rn = 1
-                    GROUP BY subquery.zlecenie
+                    SELECT z.zlecenie,
+                        CASE
+                            WHEN z.zakonczone = '0' AND z.datawejscia IS NOT NULL THEN 'Started'
+                            WHEN z.zakonczone = '1' THEN 'Completed'
+                            ELSE 'Unknown'
+                        END AS status,
+                        z.terminrealizacji,
+                        COUNT(*) as order_count
+                    FROM zlecenia z
+                    GROUP BY z.zlecenie
                     """
                 )
             results = cursor.fetchall()
@@ -114,10 +103,10 @@ class OrderService:
         orders_list = []
         for result in results:
             order_dict = {
-                "indeks": result[0],
-                "zlecenie": result[1],
-                "status": result[2],
-                "terminrealizacji": result[3],
+                "zlecenie": result[0],
+                "status": result[1],
+                "terminrealizacji": result[2],
+                "order_count": result[3]
             }
             orders_list.append(order_dict)
 
