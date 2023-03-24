@@ -4,7 +4,7 @@ import re
 
 
 class Finder:
-    def fetch_devices():
+    def fetch_devices(self):
         wsd = WSDiscovery()
         scope1 = Scope("onvif://www.onvif.org/Profile")
         wsd.start()
@@ -16,5 +16,6 @@ class Finder:
 
         wsd.stop()
         return ipaddresses
+
 
 finder = Finder()
