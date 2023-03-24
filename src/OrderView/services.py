@@ -108,6 +108,7 @@ class OrderService:
 
         orders_list = []
         for result in results:
+            print(results)
             order_dict = {
                 "indeks": result[0],
                 "zlecenie": result[1],
