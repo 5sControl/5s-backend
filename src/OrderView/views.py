@@ -27,14 +27,16 @@ class GetAllProductAPIView(generics.GenericAPIView):
 
 
 class GetProductByIdAPIView(generics.GenericAPIView):
+    pagination_class = OrderViewPaginnator
+    serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         zlecenie_id = self.request.query_params.get('q', None)
         if zlecenie_id:
             response = orderView_service.get_filtered_order_dict(zlecenie_id)
-            if response:
-                return Response(response, status=status.HTTP_200_OK)
+            paginated_items = self.paginate_queryset(response)
+            return self.get_paginated_response(paginated_items.data)
         return Response(
             {"success": False, "message": "Invalid request parameter"},
             status=status.HTTP_400_BAD_REQUEST,
