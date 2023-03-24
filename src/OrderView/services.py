@@ -115,7 +115,7 @@ class OrderService:
                 "terminrealizacji": result[3],
             }
             orders_list.append(order_dict)
-
+        print("Orders: ", orders_list)
         return orders_list
 
     def get_order(self, zlecenie_id):
