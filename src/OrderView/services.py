@@ -79,7 +79,7 @@ class OrderService:
                         z.terminrealizacji
                     FROM zlecenia z
                     WHERE z.zlecenie LIKE ?
-                    GROUP BY z.zlecenie, z.indeks, status, z.terminrealizacji
+                    GROUP BY z.zlecenie, z.indeks, z.terminrealizacji
                     ORDER BY z.zlecenie
                     """,
                     (f"{search}%",)
