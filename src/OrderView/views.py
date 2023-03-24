@@ -15,9 +15,11 @@ class GetAllProductAPIView(generics.GenericAPIView):
     serializer_class = ProductSerializer
 
     def get(self, request):
-        response = orderView_service.get_filtered_orders_list()
+        page_size = self.request.GET.get('page_size')
+        search = self.request.GET.get('search')
+        response = orderView_service.get_filtered_orders_list(search)
         if response:
-            paginated_items = self.paginate_queryset(response)
+            paginated_items = self.paginate_queryset(response, page_size)
             serializer = self.serializer_class(paginated_items, many=True)
             return self.get_paginated_response(serializer.data)
         return Response(
@@ -27,16 +29,14 @@ class GetAllProductAPIView(generics.GenericAPIView):
 
 
 class GetProductByIdAPIView(generics.GenericAPIView):
-    pagination_class = OrderViewPaginnator
-    serializer_class = ProductSerializer
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         zlecenie_id = self.request.query_params.get('q', None)
         if zlecenie_id:
             response = orderView_service.get_filtered_order_dict(zlecenie_id)
-            paginated_items = self.paginate_queryset(response)
-            return self.get_paginated_response(paginated_items.data)
+            if response:
+                return Response(response, status=status.HTTP_200_OK)
         return Response(
             {"success": False, "message": "Invalid request parameter"},
             status=status.HTTP_400_BAD_REQUEST,

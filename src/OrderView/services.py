@@ -60,18 +60,15 @@ class OrderService:
         print("RESULT: ", result)
         return result
 
-    def get_filtered_orders_list(
-        self,
-    ):
+    def get_filtered_orders_list(self, search=None):
         connection = self._get_connection()
         if not connection:
             return False
 
         with connection.cursor() as cursor:
-            cursor.execute(
-                """
-                SELECT *
-                FROM (
+            if search:
+                cursor.execute(
+                    """
                     SELECT z.indeks,
                         z.zlecenie,
                         CASE
@@ -83,10 +80,30 @@ class OrderService:
                         ROW_NUMBER() OVER (PARTITION BY z.zlecenie
                                             ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
                     FROM zlecenia z
-                ) as subquery
-                WHERE rn = 1
-            """
-            )
+                    WHERE z.zlecenie LIKE %s
+                    """,
+                    (f"%{search}%",),
+                )
+            else:
+                cursor.execute(
+                    """
+                    SELECT *
+                    FROM (
+                        SELECT z.indeks,
+                            z.zlecenie,
+                            CASE
+                                WHEN z.zakonczone = '0' AND z.datawejscia IS NOT NULL THEN 'Started'
+                                WHEN z.zakonczone = '1' THEN 'Completed'
+                                ELSE 'Unknown'
+                            END AS status,
+                            z.terminrealizacji,
+                            ROW_NUMBER() OVER (PARTITION BY z.zlecenie
+                                                ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
+                        FROM zlecenia z
+                    ) as subquery
+                    WHERE rn = 1
+                    """
+                )
             results = cursor.fetchall()
 
         orders_list = []
