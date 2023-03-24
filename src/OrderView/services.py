@@ -118,48 +118,6 @@ class OrderService:
 
         return orders_list
 
-    def get_filtered_order_dict(self, zlecenie_id):
-        connection = self._get_connection()
-        if not connection:
-            return []
-
-        with connection.cursor() as cursor:
-            cursor.execute(
-                """
-                SELECT *
-                FROM (
-                    SELECT z.indeks,
-                        z.zlecenie,
-                        CASE
-                            WHEN z.zakonczone = '0' AND z.datawejscia IS NOT NULL THEN 'Started'
-                            WHEN z.zakonczone = '1' THEN 'Completed'
-                            ELSE 'Unknown'
-                        END AS status,
-                        z.terminrealizacji,
-                        ROW_NUMBER() OVER (PARTITION BY z.zlecenie
-                                            ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
-                    FROM zlecenia z
-                ) as subquery
-                WHERE zlecenie LIKE ?
-                ORDER BY zlecenie
-                """,
-                (zlecenie_id + '%',)
-            )
-            results = cursor.fetchall()
-
-        order_dict = {}
-        for result in results:
-            order_id = result[1]
-            if order_id not in order_dict:
-                order_dict[order_id] = {
-                    "indeks": result[0],
-                    "zlecenie": result[1],
-                    "status": result[2],
-                    "terminrealizacji": result[3],
-                }
-        
-        return list(order_dict.values())
-
     def get_order(self, zlecenie_id):
         response = {}
         status = "Completed"
