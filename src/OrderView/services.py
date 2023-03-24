@@ -69,6 +69,8 @@ class OrderService:
             if search:
                 cursor.execute(
                     """
+                SELECT *
+                FROM (
                     SELECT z.indeks,
                         z.zlecenie,
                         CASE
@@ -80,10 +82,11 @@ class OrderService:
                         ROW_NUMBER() OVER (PARTITION BY z.zlecenie
                                             ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
                     FROM zlecenia z
-                    WHERE z.zlecenie LIKE ?
-                    GROUP BY z.zlecenie
-                    """,
-                    (f"{search}%",),
+                ) as subquery
+                WHERE zlecenie LIKE ?
+                ORDER BY zlecenie
+                """,
+                    (search + "%",),
                 )
             else:
                 cursor.execute(
@@ -119,7 +122,6 @@ class OrderService:
             orders_list.append(order_dict)
 
         return orders_list
-
 
     def get_order(self, zlecenie_id):
         response = {}

@@ -15,7 +15,7 @@ class GetAllProductAPIView(generics.GenericAPIView):
     serializer_class = ProductSerializer
 
     def get(self, request):
-        search = request.GET.get('search')
+        search = request.GET.get("search")
         response = orderView_service.get_filtered_orders_list(search)
         # if response:
         paginated_items = self.paginate_queryset(response)
