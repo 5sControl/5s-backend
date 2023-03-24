@@ -106,17 +106,17 @@ class OrderService:
                 )
             results = cursor.fetchall()
 
-        orders_list = []
+        orders_dict = {}
         for result in results:
-            print(results)
-            order_dict = {
-                "indeks": result[3],
-                "zlecenie": result[0],
-                "status": result[1],
-                "terminrealizacji": result[2],
-            }
-            orders_list.append(order_dict)
-        print("Orders: ", orders_list)
+            if result[0] not in orders_dict:
+                orders_dict[result[0]] = {
+                    "indeks": result[3],
+                    "zlecenie": result[0],
+                    "status": result[1],
+                    "terminrealizacji": result[2]
+                }
+
+        orders_list = list(orders_dict.values())
         return orders_list
 
     def get_order(self, zlecenie_id):
