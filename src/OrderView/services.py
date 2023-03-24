@@ -76,15 +76,13 @@ class OrderService:
                             WHEN z.zakonczone = '1' THEN 'Completed'
                             ELSE 'Unknown'
                         END AS status,
-                        z.terminrealizacji,
-                        ROW_NUMBER() OVER (PARTITION BY z.zlecenie
-                                            ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn,
-                        COUNT(*) OVER (PARTITION BY z.zlecenie) as cnt
+                        z.terminrealizacji
                     FROM zlecenia z
                     WHERE z.zlecenie LIKE ?
-                    GROUP BY z.zlecenie, z.indeks, z.zakonczone, z.datawejscia, z.terminrealizacji
+                    GROUP BY z.zlecenie, z.indeks, status, z.terminrealizacji
+                    ORDER BY z.zlecenie
                     """,
-                    (f"{search}%",),
+                    (f"{search}%",)
                 )
             else:
                 cursor.execute(
@@ -96,33 +94,32 @@ class OrderService:
                             WHEN z.zakonczone = '1' THEN 'Completed'
                             ELSE 'Unknown'
                         END AS status,
-                        z.terminrealizacji,
-                        ROW_NUMBER() OVER (PARTITION BY z.zlecenie
-                                            ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn,
-                        COUNT(*) OVER (PARTITION BY z.zlecenie) as cnt
+                        z.terminrealizacji
                     FROM zlecenia z
-                    GROUP BY z.zlecenie, z.indeks, z.zakonczone, z.datawejscia, z.terminrealizacji
-                    HAVING rn = 1
+                    GROUP BY z.zlecenie, z.indeks, status, z.terminrealizacji
+                    ORDER BY z.zlecenie
                     """
                 )
             results = cursor.fetchall()
 
-        orders_list = []
+        orders_dict = {}
         for result in results:
-            if result[-1] > 1:
-                order_dict = {
-                    "indeks": result[0],
-                    "zlecenie": result[1],
-                    "status": f"{result[2]} ({result[-1]} records)",
-                    "terminrealizacji": result[3],
-                }
-            else:
-                order_dict = {
-                    "indeks": result[0],
-                    "zlecenie": result[1],
-                    "status": result[2],
-                    "terminrealizacji": result[3],
-                }
+            zlecenie = result[1]
+            if zlecenie not in orders_dict:
+                orders_dict[zlecenie] = []
+            order_dict = {
+                "indeks": result[0],
+                "status": result[2],
+                "terminrealizacji": result[3],
+            }
+            orders_dict[zlecenie].append(order_dict)
+
+        orders_list = []
+        for zlecenie, orders in orders_dict.items():
+            order_dict = {
+                "zlecenie": zlecenie,
+                "orders": orders,
+            }
             orders_list.append(order_dict)
 
         return orders_list
