@@ -30,7 +30,7 @@ class GetProductByIdAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        zlecenie_id = request.GET.get('q', None)
+        zlecenie_id = self.request.query_params.get('q', None)
         if zlecenie_id:
             response = orderView_service.get_filtered_order_dict(zlecenie_id)
             if response:
