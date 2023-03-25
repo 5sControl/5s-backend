@@ -62,14 +62,37 @@ class OrderService:
 
     def get_order_list(self, search=None):
         if search:
-            self._filtered_orders_list(search)
+            results = self._filtered_orders_list(search)
+            orders_dict = {}
+            for result in results:
+                if result[0] not in orders_dict:
+                    orders_dict[result[0]] = {
+                        "indeks": result[3],
+                        "zlecenie": result[0],
+                        "status": result[1],
+                        "terminrealizacji": result[2],
+                    }
+
+            orders_list = list(orders_dict.values())
+            return orders_list
         else:
-            self._get_all_list_of_orders()
+            results = self._get_all_list_of_orders()
+            orders_list = []
+            for result in results:
+                order_dict = {
+                    "indeks": result[0],
+                    "zlecenie": result[1],
+                    "status": result[2],
+                    "terminrealizacji": result[3],
+                }
+                orders_list.append(order_dict)
+
+            return orders_list
 
     def _filtered_orders_list(self, zlecenie_id):
         connection = self._get_connection()
         if not connection:
-            return False
+            raise ValueError("No connection to database")
 
         with connection.cursor() as cursor:
             cursor.execute(
@@ -90,24 +113,12 @@ class OrderService:
                 (f"{zlecenie_id}%",),
             )
             results = cursor.fetchall()
+        return results
 
-        orders_dict = {}
-        for result in results:
-            if result[0] not in orders_dict:
-                orders_dict[result[0]] = {
-                    "indeks": result[3],
-                    "zlecenie": result[0],
-                    "status": result[1],
-                    "terminrealizacji": result[2]
-                }
-
-        orders_list = list(orders_dict.values())
-        return orders_list
-
-    def _get_all_list_of_orders(self, zlecenie_id):
+    def _get_all_list_of_orders(self):
         connection = self._get_connection()
         if not connection:
-            return False
+            raise ValueError("No connection to database")
 
         with connection.cursor() as cursor:
             cursor.execute(
@@ -130,18 +141,7 @@ class OrderService:
                     """
             )
             results = cursor.fetchall()
-
-        orders_list = []
-        for result in results:
-            order_dict = {
-                "indeks": result[0],
-                "zlecenie": result[1],
-                "status": result[2],
-                "terminrealizacji": result[3],
-            }
-            orders_list.append(order_dict)
-
-        return orders_list
+        return results
 
     def get_order(self, zlecenie_id):
         response = {}
