@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 
 from src.OrderView.serializers import DatabaseConnectionSerializer, ProductSerializer
-from src.OrderView.services import orderView_service, connector
+from src.OrderView.services import orderView_service
 from src.OrderView.utils import OrderViewPaginnator
 
 from src.MsSqlConnector.connector import connector as connector_service
@@ -39,7 +39,7 @@ class CreateConectionAPIView(generics.GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            connection = connector.create_connection(request.data)
+            connection = connector_service.create_connection(request.data)
         except ValidationError as e:
             error_detail = str(e.detail.get("detail", ""))
             return Response(
@@ -63,7 +63,7 @@ class DeleteConectionAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, id):
-        connector.delete_connection(id)
+        connector_service.delete_connection(id)
         return Response(
             {"success": True, "message": "Database was successfully deleted"},
             status=status.HTTP_200_OK,
@@ -72,5 +72,5 @@ class DeleteConectionAPIView(generics.GenericAPIView):
 
 class GetDatabasesAPIView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
-    queryset = connector.get_conections()
+    queryset = connector_service.get_conections()
     serializer_class = DatabaseConnectionSerializer
