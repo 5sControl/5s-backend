@@ -1,6 +1,5 @@
 from rest_framework.response import Response
 from rest_framework import status, generics
-from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
 
@@ -16,15 +15,10 @@ class GetAllProductAPIView(generics.GenericAPIView):
 
     def get(self, request):
         search = request.GET.get("search")
-        response = orderView_service.get_filtered_orders_list(search)
-        # if response:
+        response = orderView_service.get_order_list(search)
         paginated_items = self.paginate_queryset(response)
         serializer = self.serializer_class(paginated_items, many=True)
         return self.get_paginated_response(serializer.data)
-        # return Response(
-        #     {"success": False, "message": "Database connection error"},
-        #     status=status.HTTP_403_FORBIDDEN,
-        # )
 
 
 class GetOrderDataByZlecenieAPIView(generics.GenericAPIView):
