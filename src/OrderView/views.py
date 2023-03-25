@@ -45,7 +45,7 @@ class CreateConectionAPIView(generics.GenericAPIView):
             return Response(
                 {
                     "success": False,
-                    "message": e.detail["data"],
+                    "message": e,
                 },  # TODO: return message istead object
                 status=status.HTTP_400_BAD_REQUEST,
             )
