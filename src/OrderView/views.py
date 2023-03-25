@@ -42,10 +42,12 @@ class CreateConectionAPIView(generics.GenericAPIView):
         try:
             connection = connector.create_connection(request.data)
         except ValidationError as e:
+            print(e)
+            print(e["detail"])
             return Response(
                 {
                     "success": False,
-                    "message": e,
+                    "message": e["detail"],
                 },  # TODO: return message istead object
                 status=status.HTTP_400_BAD_REQUEST,
             )
