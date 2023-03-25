@@ -15,7 +15,13 @@ class GetAllProductAPIView(generics.GenericAPIView):
 
     def get(self, request):
         search = request.GET.get("search")
-        response = orderView_service.get_order_list(search)
+        try:
+            response = orderView_service.get_order_list(search)
+        except ValidationError:
+            return Response(
+                {"success": False, "message": "Database connection error"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         paginated_items = self.paginate_queryset(response)
         serializer = self.serializer_class(paginated_items, many=True)
         return self.get_paginated_response(serializer.data)
@@ -42,11 +48,14 @@ class CreateConectionAPIView(generics.GenericAPIView):
         try:
             connection = connector.create_connection(request.data)
         except ValidationError as e:
-            error_detail = str(e.detail.get('detail', ''))
-            return Response({
-                "success": False,
-                "message": error_detail,
-            }, status=status.HTTP_400_BAD_REQUEST)
+            error_detail = str(e.detail.get("detail", ""))
+            return Response(
+                {
+                    "success": False,
+                    "message": error_detail,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         return Response(
             {
                 "success": True,
