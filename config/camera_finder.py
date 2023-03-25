@@ -19,7 +19,7 @@ class Finder:
         wsd.stop()
         #  FIXME: Emulated connection
         server_ip = os.getenv("IP")
-        self.lst.append(server_ip)
+        ipaddresses.append(server_ip)
 
         return ipaddresses
 
