@@ -7,21 +7,18 @@ from src.OrderView.serializers import DatabaseConnectionSerializer, ProductSeria
 from src.OrderView.services import orderView_service, connector
 from src.OrderView.utils import OrderViewPaginnator
 
+from src.MsSqlConnector.connector import connector as connector_service
+
 
 class GetAllProductAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
     pagination_class = OrderViewPaginnator
     serializer_class = ProductSerializer
 
+    @connector_service.check_database_connection
     def get(self, request):
         search = request.GET.get("search")
-        try:
-            response = orderView_service.get_order_list(search)
-        except ValidationError:
-            return Response(
-                {"success": False, "message": "Database connection error"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
+        response = orderView_service.get_order_list(search)
         paginated_items = self.paginate_queryset(response)
         serializer = self.serializer_class(paginated_items, many=True)
         return self.get_paginated_response(serializer.data)
@@ -30,14 +27,10 @@ class GetAllProductAPIView(generics.GenericAPIView):
 class GetOrderDataByZlecenieAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
+    @connector_service.check_database_connection
     def get(self, request, zlecenie_id):
         response = orderView_service.get_order(zlecenie_id)
-        if response:
-            return Response(response, status=status.HTTP_200_OK)
-        return Response(
-            {"success": False, "message": "Database connection error"},
-            status=status.HTTP_403_FORBIDDEN,
-        )
+        return Response(response, status=status.HTTP_200_OK)
 
 
 # TODO: Replace views below to Connector application

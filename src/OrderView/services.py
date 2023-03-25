@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from collections import defaultdict
 
-from src.MsSqlConnector.connector import connector
+from src.MsSqlConnector.connector import connector as connector_service
 
 
 class OrderService:
@@ -37,9 +37,7 @@ class OrderService:
         return skanyQuery
 
     def get_zlecenia_query_by_zlecenie(self, zlecenie_id):
-        connection = self._get_connection()
-        if not connection:
-            return False
+        connection = connector_service.get_database_connection()
 
         with connection.cursor() as cursor:
             cursor.execute(
@@ -90,9 +88,7 @@ class OrderService:
             return orders_list
 
     def _filtered_orders_list(self, zlecenie_id):
-        connection = self._get_connection()
-        if not connection:
-            raise ValueError("No connection to database")
+        connection = connector_service.get_database_connection()
 
         with connection.cursor() as cursor:
             cursor.execute(
@@ -116,9 +112,7 @@ class OrderService:
         return results
 
     def _get_all_list_of_orders(self):
-        connection = self._get_connection()
-        if not connection:
-            raise ValueError("No connection to database")
+        connection = connector_service.get_database_connection()
 
         with connection.cursor() as cursor:
             cursor.execute(
@@ -148,8 +142,6 @@ class OrderService:
         status = "Completed"
 
         zlecenia_dict = self.get_zlecenia_query_by_zlecenie(zlecenie_id)
-        if not zlecenia_dict:
-            return False
 
         for zlecenie_obj in zlecenia_dict:
             print("Zlecenie obj is ", zlecenie_obj)
@@ -157,9 +149,7 @@ class OrderService:
             if zlecenie_obj["status"] == "Started":
                 status = "Started"
 
-            connection = self._get_connection()
-            if not connection:
-                return False
+            connection = connector_service.get_database_connection()
 
             with connection.cursor() as cursor:
                 cursor.execute(
@@ -240,14 +230,6 @@ class OrderService:
                 }
             )
         return transformed_result
-
-    def _get_connection(self):
-        try:
-            connection = connector.get_database_connection()
-        except Exception:
-            return False
-        else:
-            return connection
 
 
 orderView_service = OrderService()
