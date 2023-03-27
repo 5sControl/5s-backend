@@ -25,7 +25,7 @@ class GetAllProductAPIView(generics.GenericAPIView):
 
 
 class GetOrderDataByZlecenieAPIView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     @connector_service.check_database_connection
     def get(self, request, zlecenie_id):
