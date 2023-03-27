@@ -35,30 +35,54 @@ class CreateMsSqlRecordsService:
             ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
         )
         """
-
-        params_for_skan = (
-            indeks_skany,
-            0,
-            current_time,
-            0,
-            "test data",
-            1,
-            12,
-            2,
-            0,
-            44,
-            1,
-            64,
-            0,
-            14,
-            5,
-            "test data",
-            "test data",
-            1,
-            2,
-            2,
-            0,
-        )
+        if beverage == "tea":
+            params_for_skan = (
+                indeks_skany,
+                0,
+                current_time,
+                0,
+                "test data",
+                1,
+                12,
+                2,
+                0,
+                44,
+                1,
+                64,
+                0,
+                14,
+                5,
+                "test data",
+                "test data",
+                1,
+                2,
+                2,
+                0,
+            )
+        elif beverage == "coffee":
+            params_for_skan = (
+                indeks_skany,
+                0,
+                current_time,
+                0,
+                "test data",
+                1,
+                12,
+                2,
+                0,
+                45,
+                1,
+                64,
+                0,
+                14,
+                5,
+                "test data",
+                "test data",
+                1,
+                2,
+                2,
+                0,
+            )
 
         query_for_skans_vs_zlecenia = """
         INSERT INTO skany_vs_zlecenia (
