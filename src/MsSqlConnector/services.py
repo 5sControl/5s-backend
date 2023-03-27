@@ -15,11 +15,6 @@ class CreateMsSqlRecordsService:
         now = datetime.datetime.now()
         current_time = now.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
 
-        print("connection: ", connection)
-        print("indeks_skany: ", indeks_skany)
-        print("indeks_skany_vs_zlecenia: ", indeks_skany_vs_zlecenia)
-        print("datetime: ", current_time)
-
         if not connection:
             return False
         if not indeks_skany:
