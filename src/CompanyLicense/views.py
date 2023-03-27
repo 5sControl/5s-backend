@@ -1,6 +1,7 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
 
 from django.utils import timezone
 
@@ -60,3 +61,12 @@ class CompanyInfoView(APIView):
             "days_left": is_license_active.split(",")[0],
         }
         return Response(response_data, status=200)
+
+
+@api_view(['GET'])
+def version(request):
+    with open('versions.txt', 'r') as file:
+        data = []
+        for line in file:
+            data.append(line.strip())
+        return Response(data)
