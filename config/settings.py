@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "src.Cameras.apps.CamerasConfig",
     "src.CompanyLicense.apps.CompanyLicenseConfig",
     "src.Inventory.apps.InventoryConfig",
+    "src.Mailer.apps.MailerConfig",
     # Collections reports
     "src.Reports.apps.ReportsConfig",
     "src.ImageReport.apps.ImageConfig",
