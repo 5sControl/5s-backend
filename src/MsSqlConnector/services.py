@@ -6,7 +6,7 @@ from src.MsSqlConnector.connector import connector
 class CreateMsSqlRecordsService:
     def __init__(self):
         self.zlecenie = "PRW199234"  # this is the random zlecenia without any skany
-        self.indeks_zlecenia = 363993  # this is the zlecenia indeks without any skany
+        self.indeks_zlecenia = 363992  # this is the zlecenia indeks without any skany
 
     def create_skany(self, beverage):
         connection = connector.get_database_connection()
@@ -35,6 +35,7 @@ class CreateMsSqlRecordsService:
             ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
         )
         """
+        print(beverage)
         if beverage == "tea":
             params_for_skan = (
                 indeks_skany,
