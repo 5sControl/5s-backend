@@ -66,7 +66,8 @@ class CompanyInfoView(APIView):
 @api_view(['GET'])
 def version(request):
     with open('versions.txt', 'r') as file:
-        data = []
-        for line in file:
-            data.append(line.strip())
-        return Response(data)
+        result = []
+        for item in file:
+            parts = item.split(': ')
+            result.append({"name": parts[0], "version": (parts[1]).strip()})
+        return Response(result)
