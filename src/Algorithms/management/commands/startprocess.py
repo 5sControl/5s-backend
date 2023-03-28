@@ -61,5 +61,3 @@ class Command(BaseCommand):
                     logger.info(
                         f"{camera_algorithm.algorithm} were successfully restored and given a new PID -> {new_process_id}."
                     )
-        def _get_extra_data(self):
-
