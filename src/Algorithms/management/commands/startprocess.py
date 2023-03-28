@@ -33,7 +33,7 @@ class Command(BaseCommand):
                 for item in algorithm_items:
                     data.append({
                         "itemId": item.id,
-                        "coords": [json.loads(item.coords)]
+                        "coords": item.coords
                     })
                 if not data:
                     continue
