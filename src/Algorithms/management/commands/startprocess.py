@@ -27,9 +27,9 @@ class Command(BaseCommand):
         )
         ALGORITHM_URL = os.environ.get("ALGORITHM_URL")
         for camera_algorithm in all_camera_algorithms:
+            data = []
             if camera_algorithm.algorithm.name == "min_max_control":
                 algorithm_items = Items.objects.filter(camera=camera_algorithm.camera)
-                data = []
                 for item in algorithm_items:
                     data.append({
                         "itemId": item.id,
