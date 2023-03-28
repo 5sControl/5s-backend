@@ -135,6 +135,7 @@ class AlgorithmsService:
             if algorithm.name == "min_max_control":
                 data = []
                 algorithm_items = Items.objects.filter(camera=camera.id)
+                print("algo items", algorithm_items.values())
                 for item in algorithm_items:
                     data.append({
                         "itemId": item.id,
