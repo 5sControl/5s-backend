@@ -140,8 +140,8 @@ class AlgorithmsService:
                         "itemId": item.id,
                         "coords": item.coords
                     })
+                    print(f"coords: {item.coords}\nid {item.id}")
                 print(f"camera id: {camera.id}")
-                print(f"coords: {item.coords}")
             else:
                 data = None
             result = yolo_proccesing.start_yolo_processing(
