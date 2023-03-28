@@ -31,11 +31,12 @@ class Command(BaseCommand):
                 algorithm_items = Items.objects.filter(camera=camera_algorithm.camera)
                 data = []
                 for item in algorithm_items:
-                    item_data = {
+                    data.append({
                         "itemId": item.id,
                         "coords": [json.loads(item.coords)]
-                    }
-                    data.append(item_data)
+                    })
+                if not data:
+                    continue
                 try:
                     result = yolo_proccesing.start_yolo_processing(
                         camera=camera_algorithm.camera,
