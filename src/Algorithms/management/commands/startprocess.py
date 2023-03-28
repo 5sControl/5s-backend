@@ -1,5 +1,9 @@
+import json
 import os
+
 from django.core.management.base import BaseCommand
+
+from src.Inventory.models import Items
 
 from ....core.logger import logger
 
@@ -23,11 +27,16 @@ class Command(BaseCommand):
         )
         ALGORITHM_URL = os.environ.get("ALGORITHM_URL")
         for camera_algorithm in all_camera_algorithms:
+            if camera_algorithm.algorithm.name == "min_max_control":
+                item = Items.objects.get(camera=camera_algorithm.camera)
+                data = json.loads(item.coords)
+            data = None
             try:
                 result = yolo_proccesing.start_yolo_processing(
                     camera=camera_algorithm.camera,
                     algorithm=camera_algorithm.algorithm,
                     url=ALGORITHM_URL,
+                    data=data,
                 )
             except Exception:
                 logger.critical(
