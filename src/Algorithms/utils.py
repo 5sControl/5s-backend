@@ -18,6 +18,7 @@ class YoloProccesing:
             "server_url": url,
             "extra": data,
         }
+        print("RESPONSE FOR ALGORITHM: ", response)
         request = requests.post(
             url=f"{url}:3333/run",
             json=response,
