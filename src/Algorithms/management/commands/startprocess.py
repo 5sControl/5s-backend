@@ -34,8 +34,6 @@ class Command(BaseCommand):
                         "itemId": item.id,
                         "coords": item.coords
                     })
-                if not data:
-                    continue
                 try:
                     result = yolo_proccesing.start_yolo_processing(
                         camera=camera_algorithm.camera,

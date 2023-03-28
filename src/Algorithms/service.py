@@ -5,6 +5,7 @@ from django.utils import timezone
 from src.CompanyLicense.decorators import check_active_algorithms
 from src.Algorithms.models import Algorithm, CameraAlgorithm, CameraAlgorithmLog
 from src.Cameras.service import camera_service
+from src.Inventory.models import Items
 
 from .utils import yolo_proccesing
 
@@ -131,9 +132,17 @@ class AlgorithmsService:
                     f"Record with algorithm {algorithm.name}, camera {camera.id}, and server url {server_url} already exists"
                 )
                 continue
-
+            
+            data = []
+            if algorithm.name == "min_max_control":
+                algorithm_items = Items.objects.filter(camera=camera.id)
+                for item in algorithm_items:
+                    data.append({
+                        "itemId": item.id,
+                        "coords": item.coords
+                    })
             result = yolo_proccesing.start_yolo_processing(
-                camera, algorithm, server_url
+                camera=camera, algorithm=algorithm, url=server_url, data=data
             )
             if not result["success"] or "pid" not in result:
                 return False
