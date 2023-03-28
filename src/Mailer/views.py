@@ -1,29 +1,10 @@
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from email.mime.application import MIMEApplication
 from rest_framework import generics
-from django.http import HttpResponse
 from django.conf import settings
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import SMTPSettings
 from django.core.mail import send_mail
-from .serializers import SMTPSettingsSerializer, EmailSerializer
-
-
-class MailerViewSet(APIView):
-    def post(self, request, *args, **kwargs):
-
-        send_mail(
-            'Subject here',
-            'Hed is the message.',
-            'Taqtile@yandex.by',
-            ['Dimskay-1988@mail.ru'],
-            fail_silently=False,
-        )
-
-        return Response({'success': True})
+from .serializers import SMTPSettingsSerializer
 
 
 class EmailView(APIView):
