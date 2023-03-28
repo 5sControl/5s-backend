@@ -132,15 +132,18 @@ class AlgorithmsService:
                     f"Record with algorithm {algorithm.name}, camera {camera.id}, and server url {server_url} already exists"
                 )
                 continue
-            
-            data = []
             if algorithm.name == "min_max_control":
+                data = []
                 algorithm_items = Items.objects.filter(camera=camera.id)
                 for item in algorithm_items:
                     data.append({
                         "itemId": item.id,
                         "coords": item.coords
                     })
+                print(f"camera id: {camera.id}")
+                print(f"coords: {camera.coords}")
+            else:
+                data = None
             result = yolo_proccesing.start_yolo_processing(
                 camera=camera, algorithm=algorithm, url=server_url, data=data
             )
