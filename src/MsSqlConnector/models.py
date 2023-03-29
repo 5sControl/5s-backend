@@ -13,11 +13,3 @@ class DatabaseConnection(models.Model):
     password = models.CharField(
         max_length=200, blank=False, null=False
     )  # TODO: should be hashed
-
-
-# TODO
-class Skany_Vs_Reports(models.Model):
-    report = models.ForeignKey(
-        Report, on_delete=models.CASCADE, blank=False, null=False
-    )
-    skany_indeks = models.CharField(max_length=50, blank=False, null=False)
