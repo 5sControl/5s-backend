@@ -1,6 +1,7 @@
 from rest_framework.exceptions import NotFound
 
 from django.utils import timezone
+from src.Cameras.models import Camera
 
 from src.CompanyLicense.decorators import check_active_algorithms
 from src.Algorithms.models import Algorithm, CameraAlgorithm, CameraAlgorithmLog
@@ -12,7 +13,6 @@ from .utils import yolo_proccesing
 from typing import Tuple, Union, List
 
 from ..core.logger import logger
-from src.StaffControl.Locations.models import Camera
 
 
 class AlgorithmsService:

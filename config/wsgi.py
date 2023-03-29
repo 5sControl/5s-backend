@@ -1,5 +1,5 @@
 """
-WSGI config for StaffControl project.
+WSGI config for 5SControl.
 """
 import os
 
