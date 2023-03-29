@@ -114,8 +114,12 @@ class MsSqlConnector:
             if DatabaseConnection.objects.first() is not None:
                 return func(*args, **kwargs)
             else:
-                response_data = {"status": False, "message": "database connection doesnt exist"}
+                response_data = {
+                    "status": False,
+                    "message": "database connection doesnt exist",
+                }
                 return Response(response_data, status=status.HTTP_403_FORBIDDEN)
+
         return wrapper
 
 
