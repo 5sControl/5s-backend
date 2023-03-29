@@ -1,8 +1,6 @@
 from datetime import datetime, timezone
 from collections import defaultdict
 
-from django.db.models import Q
-
 from src.MsSqlConnector.connector import connector as connector_service
 from src.Reports.models import Report
 
@@ -177,8 +175,8 @@ class OrderService:
                     for report in reports:
                         try:
                             if report["extra"]["skany_index"] == row[0]:
-                                status = report.violation_found
-                        except KeyError:
+                                status = report["violation_found"]
+                        except (KeyError, TypeError):
                             continue
                     skany = {
                         "indeks": row[0],
