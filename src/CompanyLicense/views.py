@@ -71,3 +71,4 @@ def version(request):
             parts = item.split(': ')
             result.append({"name": parts[0], "version": (parts[1]).strip()})
         return Response(result)
+

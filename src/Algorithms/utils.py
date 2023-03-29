@@ -9,18 +9,21 @@ from src.Cameras.models import Camera
 
 class YoloProccesing:
     def start_yolo_processing(
-        self, camera: Camera, algorithm: Algorithm, url: str
+        self, camera: Camera, algorithm: Algorithm, url: str, data=None
     ) -> dict:
         rtsp_camera_url = link_generator.get_camera_rtsp_link_by_camera(camera)
         response = {
             "camera_url": rtsp_camera_url["camera_url"],
             "algorithm": algorithm.name,
             "server_url": url,
+            "extra": data,
         }
+        print("RESPONSE FOR ALGORITHM: ", response)
         request = requests.post(
             url=f"{url}:3333/run",
             json=response,
         )
+        print(f"ALGORITHM {algorithm.name}")
         request_json = request.json()
         request_json["server_url"] = url
         request_json["status"] = True
