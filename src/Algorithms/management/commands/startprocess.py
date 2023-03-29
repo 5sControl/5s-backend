@@ -34,28 +34,28 @@ class Command(BaseCommand):
                         "itemId": item.id,
                         "coords": item.coords
                     })
-                try:
-                    result = yolo_proccesing.start_yolo_processing(
-                        camera=camera_algorithm.camera,
-                        algorithm=camera_algorithm.algorithm,
-                        url=ALGORITHM_URL,
-                        data=data,
-                    )
-                except Exception:
-                    logger.critical(
-                        f"Camera {camera_algorithm.camera} with alogithm {camera_algorithm.algorithm}"
-                    )
-                    logger.critical(f"has not been renewed. Server url -> {ALGORITHM_URL}")
-                else:
-                    if not result["success"] or "pid" not in result:
-                        logger.critical("Cannot find status in response")
+            try:
+                result = yolo_proccesing.start_yolo_processing(
+                    camera=camera_algorithm.camera,
+                    algorithm=camera_algorithm.algorithm,
+                    url=ALGORITHM_URL,
+                    data=data,
+                )
+            except Exception:
+                logger.critical(
+                    f"Camera {camera_algorithm.camera} with alogithm {camera_algorithm.algorithm}"
+                )
+                logger.critical(f"has not been renewed. Server url -> {ALGORITHM_URL}")
+            else:
+                if not result["success"] or "pid" not in result:
+                    logger.critical("Cannot find status in response")
 
-                    new_process_id = result["pid"]
+                new_process_id = result["pid"]
 
-                    camera_algorithm.process_id = new_process_id
-                    camera_algorithm.save()
+                camera_algorithm.process_id = new_process_id
+                camera_algorithm.save()
 
-                    logger.info(f"Camera {camera_algorithm.camera} with alogithm")
-                    logger.info(
-                        f"{camera_algorithm.algorithm} were successfully restored and given a new PID -> {new_process_id}."
-                    )
+                logger.info(f"Camera {camera_algorithm.camera} with alogithm")
+                logger.info(
+                    f"{camera_algorithm.algorithm} were successfully restored and given a new PID -> {new_process_id}."
+                )
