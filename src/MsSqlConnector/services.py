@@ -108,6 +108,16 @@ class CreateMsSqlRecordsService:
         else:
             return True
 
+    def get_max_skany_indeks_by_typ(self, typ):
+        connection = connector.get_database_connection()
+        if not connection:
+            return False
+
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT MAX(indeks) FROM skany WHERE typ = ?", (typ,))
+            result = cursor.fetchone()[0]
+        return result
+
     def _get_max_indeks_skany_table(self):
         connection = connector.get_database_connection()
         if not connection:

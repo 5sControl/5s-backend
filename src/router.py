@@ -9,16 +9,15 @@ from rest_framework import permissions
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="StaffControl API",
+        title="5SControl API",
         default_version="v3.1.3",
-        description="StaffControl Api implementation",
+        description="5SControl Api implementation",
     ),
     public=True,
     permission_classes=[permissions.AllowAny],
 )
 
 routes = [
-    path("staff-control/", include("src.StaffControl.staffcontrol_router")),
     path("cameras/", include("src.Cameras.urls")),
     path("algorithms/", include("src.Algorithms.urls")),
     path("reports/", include("src.Reports.urls")),

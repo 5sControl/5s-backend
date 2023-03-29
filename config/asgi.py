@@ -1,5 +1,5 @@
 """
-ASGI config for StaffControl project.
+ASGI config for 5SControl.
 """
 import os
 

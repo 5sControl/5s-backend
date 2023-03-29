@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 from collections import defaultdict
 
 from src.MsSqlConnector.connector import connector as connector_service
+from src.Reports.models import Report
 
 
 class OrderService:
@@ -169,6 +170,14 @@ class OrderService:
 
                 skany_ids_added = set()
                 for row in results:
+                    reports = Report.objects.filter(algorithm__name='operation_control').values()
+                    status = None
+                    for report in reports:
+                        try:
+                            if report["extra"]["skany_index"] == row[0]:
+                                status = report["violation_found"]
+                        except (KeyError, TypeError):
+                            continue
                     skany = {
                         "indeks": row[0],
                         "data": row[1].replace(tzinfo=timezone.utc),
@@ -176,6 +185,7 @@ class OrderService:
                         "uzytkownik": row[3],
                         "raport": row[4],
                         "worker": f"{row[5]} {row[6]}",
+                        "status": status,
                     }
                     formatted_time = skany["data"].strftime("%Y.%m.%d")
                     if skany["indeks"] not in skany_ids_added:
