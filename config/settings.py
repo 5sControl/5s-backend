@@ -25,6 +25,10 @@ INSTALLED_APPS = [
     "djoser",
     "corsheaders",
     "drf_yasg",
+    # Main application
+    "src.StaffControl.Employees.apps.EmployeesConfig",
+    "src.StaffControl.Locations.apps.LocationsConfig",
+    "src.StaffControl.History.apps.HistoryConfig",
     # Common application
     "src.Algorithms",
     "src.OrderView",
