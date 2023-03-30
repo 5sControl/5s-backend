@@ -1,24 +1,24 @@
 import datetime
+from random import choice
 
 from src.MsSqlConnector.connector import connector
 
 
 class CreateMsSqlRecordsService:
+    # 128 - eLang
+    # 144 - 5S Control
+    # 145 - Manifest
+    # 132 - healthUapp
     def __init__(self):
-        self.zlecenie = "PRW199234"  # this is the random zlecenia without any skany
-        self.indeks_zlecenia = 363992  # this is the zlecenia indeks without any skany
+        self.zlecenie_and_indeks = {"PRW199234": 363992, "PRW199235": 364570, "PRW199236": 364571}
+        self.indeks_zlecenia = [363992, 364570, 364571]
 
-    def create_skany(self, beverage):
+    def create_skany(self, beverage, worker):
         connection = connector.get_database_connection()
         indeks_skany = self._get_max_indeks_skany_table()
         indeks_skany_vs_zlecenia = self._get_max_indeks_skany_vs_zlecenia_table()
         now = datetime.datetime.now()
         current_time = now.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
-
-        if not connection:
-            return False
-        if not indeks_skany:
-            indeks_skany = 1
 
         query_for_skan = """
         INSERT INTO skany (
@@ -30,56 +30,52 @@ class CreateMsSqlRecordsService:
             ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
         )
         """
-        print(beverage)
         if beverage == "tea":
-            params_for_skan = (
-                indeks_skany,
-                0,
-                current_time,
-                0,
-                "test data",
-                1,
-                12,
-                2,
-                0,
-                44,
-                1,
-                64,
-                0,
-                14,
-                5,
-                "test data",
-                "test data",
-                1,
-                2,
-                2,
-                0,
-            )
+            raport = 44
         elif beverage == "coffee":
-            params_for_skan = (
-                indeks_skany,
-                0,
-                current_time,
-                0,
-                "test data",
-                1,
-                12,
-                2,
-                0,
-                45,
-                1,
-                64,
-                0,
-                14,
-                5,
-                "test data",
-                "test data",
-                1,
-                2,
-                2,
-                0,
-            )
+            raport = 45
+        elif beverage == "water":
+            raport = 46
+        elif beverage == "milk":
+            raport = 47
 
+        if worker == "elang":
+            imie_nazwisko = 128
+        elif worker == "5s control":
+            imie_nazwisko = 144
+        elif worker == "manifest":
+            imie_nazwisko = 145
+        elif worker == "healthuapp":
+            imie_nazwisko = 132
+
+        print(beverage)
+        print(imie_nazwisko)
+
+        params_for_skan = (
+            indeks_skany,
+            0,
+            current_time,
+            0,
+            "test data",
+            1,
+            12,
+            2,
+            0,
+            raport,
+            1,
+            imie_nazwisko,
+            0,
+            14,
+            5,
+            "test data",
+            "test data",
+            1,
+            2,
+            2,
+            0,
+        )
+
+        random_choice_zlecenia = choice(self.indeks_zlecenia)
         query_for_skans_vs_zlecenia = """
         INSERT INTO skany_vs_zlecenia (
             Indeks, IndeksSkanu, IndeksZlecenia, IndeksDodatka, Duplicated
@@ -90,7 +86,7 @@ class CreateMsSqlRecordsService:
         params_for_skans_vs_zlecenia = (
             indeks_skany_vs_zlecenia,
             indeks_skany,
-            self.indeks_zlecenia,
+            random_choice_zlecenia,
             None,
             1,
         )
@@ -113,6 +109,8 @@ class CreateMsSqlRecordsService:
         if not connection:
             return False
 
+        connection = connector.get_database_connection()
+
         with connection.cursor() as cursor:
             cursor.execute("SELECT MAX(indeks) FROM skany WHERE typ = ?", (typ,))
             result = cursor.fetchone()[0]
@@ -123,6 +121,8 @@ class CreateMsSqlRecordsService:
         if not connection:
             return False
 
+        connection = connector.get_database_connection()
+
         with connection.cursor() as cursor:
             cursor.execute("SELECT MAX(indeks) FROM skany")
             result = cursor.fetchone()[0]
@@ -132,6 +132,8 @@ class CreateMsSqlRecordsService:
         connection = connector.get_database_connection()
         if not connection:
             return False
+
+        connection = connector.get_database_connection()
 
         with connection.cursor() as cursor:
             cursor.execute("SELECT MAX(indeks) FROM skany_vs_zlecenia")
