@@ -1,7 +1,7 @@
 from rest_framework import status, generics
 from rest_framework.response import Response
 
-from config.base_serializer import RegisterSerializer, UserSerializer
+from src.StaffControl.Employees.serializers import RegisterSerializer, UserSerializer
 
 from config.camera_finder import finder
 
