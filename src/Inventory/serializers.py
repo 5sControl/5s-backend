@@ -34,6 +34,7 @@ class ItemsSerializer(serializers.ModelSerializer):
         def update(self, instance, validated_data):
             # update item
             instance = super().update(instance, validated_data)
+            print(f"Updated item {instance}")
 
             # stopped process
             process_id = CameraAlgorithm.objects.filter(
