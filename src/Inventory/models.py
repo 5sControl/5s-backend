@@ -2,6 +2,13 @@ from django.db import models
 
 from src.Cameras.models import Camera
 from src.Reports.models import Report
+from src.Cameras.models import Camera
+from src.Algorithms.models import Algorithm
+from src.Algorithms.models import CameraAlgorithm
+
+from django.db.models import Q
+
+from src.Algorithms.utils import yolo_proccesing
 
 
 class Items(models.Model):
@@ -19,3 +26,23 @@ class Items(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        is_update = bool(self.pk)
+        instance = super().save(*args, **kwargs)
+        if is_update:
+            # stopped process
+            from src.Algorithms.service import algorithms_services
+            process_id = CameraAlgorithm.objects.filter(
+                Q(camera_id=self.camera) & Q(algorithm__name='min_max_control')
+            ).values_list('process_id', flat=True).first()
+            if process_id is not None:
+                yolo_proccesing.stop_process(pid=process_id)
+                algorithms_services.update_status_of_algorithm_by_pid(pid=process_id)
+
+            # started process
+            camera = Camera.objects.filter(id=self.camera)
+            algorithm = Algorithm.objects.filter(name='min_max_control')
+            algorithms_services.create_new_records(cameras=[camera], algorithm=algorithm)
+
+        return instance
