@@ -1,5 +1,8 @@
 from datetime import datetime, timezone
+
 from collections import defaultdict
+
+import itertools
 
 from src.MsSqlConnector.connector import connector as connector_service
 from src.Reports.models import Report
@@ -73,7 +76,7 @@ class OrderService:
 
     def _build_query(self, search, status):
         query = """
-            SELECT DISTINCT
+            SELECT DISTINCT ON (z.zlecenie)
                 z.indeks,
                 z.zlecenie,
                 CASE
