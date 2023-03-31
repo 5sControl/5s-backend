@@ -60,65 +60,26 @@ class OrderService:
         return result
 
     def get_order_list(self, search=None, status=None):
-        connection = connector_service.get_database_connection()
-        with connection.cursor() as cursor:
-            if search:
-                cursor.execute(
-                    """
-                    SELECT DISTINCT
-                        z.zlecenie,
-                        CASE
-                            WHEN z.zakonczone = '0' AND z.datawejscia IS NOT NULL THEN 'Started'
-                            WHEN z.zakonczone = '1' THEN 'Completed'
-                            ELSE 'Unknown'
-                        END AS status,
-                        z.terminrealizacji,
-                        ROW_NUMBER() OVER (PARTITION BY z.zlecenie
-                                            ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
-                    FROM zlecenia z
-                    WHERE z.zlecenie LIKE %s
-                    """,
-                    (f"{search}%",),
-                )
-            else:
-                cursor.execute(
-                    """
-                    SELECT *
-                    FROM (
-                        SELECT z.indeks,
-                            z.zlecenie,
-                            CASE
-                                WHEN z.zakonczone = '0' AND z.datawejscia IS NOT NULL THEN 'Started'
-                                WHEN z.zakonczone = '1' THEN 'Completed'
-                                ELSE 'Unknown'
-                            END AS status,
-                            z.terminrealizacji,
-                            ROW_NUMBER() OVER (PARTITION BY z.zlecenie
-                                                ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
-                        FROM zlecenia z
-                    ) as subquery
-                    WHERE rn = 1
-                    """
-                )
+        if search:
+            results = self._filtered_orders_list(search)
+        else:
+            results = self._get_all_list_of_orders()
 
-            results = cursor.fetchall()
-            orders_dict = {}
-            for result in results:
-                if result[0] not in orders_dict:
-                    orders_dict[result[0]] = {
-                        "indeks": result[3] if search else result[0],
-                        "zlecenie": result[0],
-                        "status": result[1],
-                        "terminrealizacji": result[2],
-                    }
+        orders_dict = {}
+        for result in results:
+            if result[0] not in orders_dict:
+                orders_dict[result[0]] = {
+                    "indeks": result[3] if search else result[0],
+                    "zlecenie": result[0],
+                    "status": result[1],
+                    "terminrealizacji": result[2],
+                }
 
             orders_list = list(orders_dict.values())
             return orders_list
 
-
     def _filtered_orders_list(self, zlecenie_id):
         connection = connector_service.get_database_connection()
-
         with connection.cursor() as cursor:
             cursor.execute(
                 """
@@ -133,7 +94,7 @@ class OrderService:
                     ROW_NUMBER() OVER (PARTITION BY z.zlecenie
                                         ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
                 FROM zlecenia z
-                WHERE z.zlecenie LIKE ?
+                WHERE z.zlecenie LIKE %s
                 """,
                 (f"{zlecenie_id}%",),
             )
@@ -146,24 +107,25 @@ class OrderService:
         with connection.cursor() as cursor:
             cursor.execute(
                 """
-                    SELECT *
-                    FROM (
-                        SELECT z.indeks,
-                            z.zlecenie,
-                            CASE
-                                WHEN z.zakonczone = '0' AND z.datawejscia IS NOT NULL THEN 'Started'
-                                WHEN z.zakonczone = '1' THEN 'Completed'
-                                ELSE 'Unknown'
-                            END AS status,
-                            z.terminrealizacji,
-                            ROW_NUMBER() OVER (PARTITION BY z.zlecenie
-                                                ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
-                        FROM zlecenia z
-                    ) as subquery
-                    WHERE rn = 1
-                    """
+                SELECT *
+                FROM (
+                    SELECT z.indeks,
+                        z.zlecenie,
+                        CASE
+                            WHEN z.zakonczone = '0' AND z.datawejscia IS NOT NULL THEN 'Started'
+                            WHEN z.zakonczone = '1' THEN 'Completed'
+                            ELSE 'Unknown'
+                        END AS status,
+                        z.terminrealizacji,
+                        ROW_NUMBER() OVER (PARTITION BY z.zlecenie
+                                            ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
+                    FROM zlecenia z
+                ) as subquery
+                WHERE rn = 1
+                """
             )
             results = cursor.fetchall()
+
         return results
 
     def get_order(self, zlecenie_id):
