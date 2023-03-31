@@ -160,7 +160,9 @@ class OrderService:
 
                 skany_ids_added = set()
                 for row in results:
-                    reports = Report.objects.filter(algorithm__name='operation_control').values()
+                    reports = Report.objects.filter(
+                        algorithm__name="operation_control"
+                    ).values()
                     status = None
                     for report in reports:
                         try:
@@ -186,6 +188,8 @@ class OrderService:
             for formatted_time, skany_list in skany_dict.items():
                 for skany in skany_list:
                     zlecenie_obj["skans"].append(skany)
+
+        print(response["products"])
 
         response["products"] = list(zlecenia_dict)
         response["status"] = status
