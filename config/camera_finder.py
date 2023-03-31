@@ -13,7 +13,7 @@ class Finder:
         services = wsd.searchServices(scopes=[scope1])
         ipaddresses = []
         for service in services:
-            ipaddress = re.search('(\d+|\.)+', str(service.getXAddrs()[0])).group(0)
+            ipaddress = re.search("(\d+|\.)+", str(service.getXAddrs()[0])).group(0)
             ipaddresses.append(ipaddress)
 
         wsd.stop()
