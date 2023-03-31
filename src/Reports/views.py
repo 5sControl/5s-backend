@@ -110,7 +110,7 @@ class ReportListView(APIView):
         if camera_ip:
             queryset = queryset.filter(camera__id=camera_ip)
         if algorithm_name:
-            queryset = queryset.filter(algorithm__name=algorithm_name)
+            queryset = queryset.exclude(algorithm__name='min_max_control').filter(algorithm__name=algorithm_name)
 
         queryset = queryset.order_by("algorithm__name", "camera__id")
 
