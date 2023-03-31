@@ -76,7 +76,7 @@ class OrderService:
 
     def _build_query(self, search, status):
         query = """
-            SELECT DISTINCT ON (z.zlecenie)
+            SELECT DISTINCT
                 z.indeks,
                 z.zlecenie,
                 CASE
@@ -89,6 +89,7 @@ class OrderService:
                                     ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
             FROM zlecenia z
             WHERE 1=1
+            GROUP BY z.zlecenie
         """
 
         params = []
