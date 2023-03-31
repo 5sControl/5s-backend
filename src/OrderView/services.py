@@ -59,7 +59,7 @@ class OrderService:
         print("RESULT: ", result)
         return result
 
-    def get_order_list(self, search=None):
+    def get_order_list(self, search=None, status=None):
         connection = connector_service.get_database_connection()
         with connection.cursor() as cursor:
             if search:
