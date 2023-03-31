@@ -60,11 +60,14 @@ class OrderService:
         return result
 
     def get_order_list(self, search=None, status=None):
-        orders_list = []
-        results = self._filtered_orders_list(search) if search else self._get_all_list_of_orders()
+        if search:
+            results = self._filtered_orders_list(search)
+        else:
+            results = self._get_all_list_of_orders()
 
+        orders_list = []
         for result in results:
-            if status is None or status == 1 and result[2] == "Completed" or status == 0 and result[2] == "Started":
+            if status is None or (status == 1 and result[2] == "Completed") or (status == 0 and result[2] == "Started"):
                 order_dict = {
                     "indeks": result[0],
                     "zlecenie": result[1],
@@ -74,6 +77,7 @@ class OrderService:
                 orders_list.append(order_dict)
 
         return orders_list
+
 
     def _filtered_orders_list(self, zlecenie_id):
         connection = connector_service.get_database_connection()
