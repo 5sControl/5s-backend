@@ -107,10 +107,10 @@ class OrderService:
             for result in results:
                 if result[0] not in orders_dict:
                     orders_dict[result[0]] = {
-                        "indeks": result[3] if search else result[0],
-                        "zlecenie": result[0],
-                        "status": result[1],
-                        "terminrealizacji": result[2],
+                        "indeks": result[0],
+                        "zlecenie": result[1],
+                        "status": result[2],
+                        "terminrealizacji": result[3],
                     }
 
             orders_list = list(orders_dict.values())
