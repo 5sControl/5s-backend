@@ -63,36 +63,45 @@ class OrderService:
         connection = connector_service.get_database_connection()
 
         with connection.cursor() as cursor:
-            query = """
-                SELECT DISTINCT
-                    z.indeks,
-                    z.zlecenie,
-                    CASE
-                        WHEN z.zakonczone = '0' AND z.datawejscia IS NOT NULL THEN 'Started'
-                        WHEN z.zakonczone = '1' THEN 'Completed'
-                        ELSE 'Unknown'
-                    END AS status,
-                    z.terminrealizacji,
-                    ROW_NUMBER() OVER (PARTITION BY z.zlecenie
-                                        ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
-                FROM zlecenia z
-                WHERE 1=1
-            """
-
-            params = []
-            if search:
-                query += " AND z.zlecenie LIKE ?"
-                params.append(f"{search}%")
-            if status is not None and status != "all":
-                if status == "completed":
-                    params.append(str(1))
-                elif status == "started":
-                    params.append(str(0))
-                query += " AND z.zakonczone = ?"
-
-            cursor.execute(query, tuple(params))
+            query, params = self._build_query(search, status)
+            cursor.execute(query, params)
             results = cursor.fetchall()
 
+        orders_dict = self._build_orders_dict(results)
+        orders_list = list(orders_dict.values())
+        return orders_list
+
+    def _build_query(self, search, status):
+        query = """
+            SELECT DISTINCT
+                z.indeks,
+                z.zlecenie,
+                CASE
+                    WHEN z.zakonczone = '0' AND z.datawejscia IS NOT NULL THEN 'Started'
+                    WHEN z.zakonczone = '1' THEN 'Completed'
+                    ELSE 'Unknown'
+                END AS status,
+                z.terminrealizacji,
+                ROW_NUMBER() OVER (PARTITION BY z.zlecenie
+                                    ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
+            FROM zlecenia z
+            WHERE 1=1
+        """
+
+        params = []
+        if search:
+            query += " AND z.zlecenie LIKE ?"
+            params.append(f"{search}%")
+
+        if status is not None:
+            if status == "completed":
+                query += " AND z.zakonczone = 1"
+            elif status == "started":
+                query += " AND z.zakonczone = 0"
+
+        return query, tuple(params)
+
+    def _build_orders_dict(self, results):
         orders_dict = {}
         for result in results:
             if result[0] not in orders_dict:
@@ -102,9 +111,7 @@ class OrderService:
                     "status": result[2],
                     "terminrealizacji": result[3],
                 }
-        orders_list = list(orders_dict.values())
-
-        return orders_list
+        return orders_dict
 
     def get_order(self, zlecenie_id):
         response = {}
