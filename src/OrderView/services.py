@@ -83,9 +83,12 @@ class OrderService:
             if search:
                 query += " AND z.zlecenie LIKE ?"
                 params.append(f"{search}%")
-            if status is not None:
+            if status is not None and status != "all":
+                if status == "completed":
+                    params.append(str(1))
+                elif status == "started":
+                    params.append(str(0))
                 query += " AND z.zakonczone = ?"
-                params.append(str(status))
 
             cursor.execute(query, tuple(params))
             results = cursor.fetchall()
