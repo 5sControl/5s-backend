@@ -3,7 +3,7 @@ from datetime import datetime, timezone
 from collections import defaultdict
 
 from src.MsSqlConnector.connector import connector as connector_service
-from src.Reports.models import Report
+from src.Reports.models import SkanyReport
 
 
 class OrderService:
@@ -152,24 +152,13 @@ class OrderService:
                 results = cursor.fetchall()
 
                 skany_ids_added = set()
-                # for row in results:
-                #     status = None
-                #     report = Report.objects.filter(
-                #         algorithm__name="operation_control", skany_index=row[0].first()
-                #     )
-                #     if report:
-                #         status = report.violation_found
                 for row in results:
-                    reports = Report.objects.filter(
-                        algorithm__name="operation_control"
-                    ).values()
                     status = None
-                    for report in reports:
-                        try:
-                            if report["extra"]["skany_index"] == row[0]:
-                                status = report["violation_found"]
-                        except (KeyError, TypeError):
-                            continue
+                    skany_report = SkanyReport.objects.filter(
+                        report__algorithm__name="operation_control", skany_index=row[0].first()
+                    )
+                    if skany_report:
+                        status = skany_report.report.violation_found
                     skany = {
                         "indeks": row[0],
                         "data": row[1].replace(tzinfo=timezone.utc),
