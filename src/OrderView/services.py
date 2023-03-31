@@ -102,7 +102,7 @@ class OrderService:
             elif status == "started":
                 query += " AND z.zakonczone = 0"
 
-        return query + " GROUP BY z.zlecenie", tuple(params)
+        return query, tuple(params)
 
     def _build_orders_dict(self, results):
         orders_dict = {}
