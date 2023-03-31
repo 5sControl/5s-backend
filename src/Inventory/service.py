@@ -11,7 +11,7 @@ def process_item_status(data):
 
         count = item_data['count']
         data_item = Items.objects.filter(id=item_data['itemId']).values('current_stock_level', 'low_stock_level')
-        min_item = data_item[0].get('low_stock_level')
+        min_item = data_item[0]['low_stock_level']
 
         if count == 0:
             item_status = "Out of stock"
