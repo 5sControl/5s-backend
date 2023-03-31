@@ -18,7 +18,8 @@ class GetAllProductAPIView(generics.GenericAPIView):
     @connector_service.check_database_connection
     def get(self, request):
         search = request.GET.get("search")
-        response = orderView_service.get_order_list(search)
+        status = request.GET.get("status")
+        response = orderView_service.get_order_list(search=search, status=status)
         paginated_items = self.paginate_queryset(response)
         serializer = self.serializer_class(paginated_items, many=True)
         return self.get_paginated_response(serializer.data)
