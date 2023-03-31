@@ -155,8 +155,8 @@ class OrderService:
                 for row in results:
                     status = None
                     skany_report = SkanyReport.objects.filter(
-                        report__algorithm__name="operation_control", skany_index=row[0].first()
-                    )
+                        report__algorithm__name="operation_control", skany_index=row[0]
+                    ).first()
                     if skany_report:
                         status = skany_report.report.violation_found
                     skany = {
