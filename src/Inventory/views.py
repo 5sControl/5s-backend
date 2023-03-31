@@ -41,10 +41,10 @@ class ItemsViewSet(ModelViewSet):
 class ItemsHistoryViewSet(APIView):
     """History items"""
 
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     @validate_license
-    def get(self, request, camera_ip, date, start_time, end_time, item_id=None):
+    def get(self, request, date, start_time, end_time, item_id=None):
 
         algorithm_name = 'min_max_control'
         date_obj = datetime.strptime(date, "%Y-%m-%d").date()
@@ -58,8 +58,6 @@ class ItemsHistoryViewSet(APIView):
             Q(date_created__gte=start_of_day) & Q(date_created__lte=end_of_day)
         ).order_by("-date_created", "-id")
 
-        if camera_ip:
-            queryset = queryset.filter(camera__id=camera_ip)
         if algorithm_name:
             queryset = queryset.filter(algorithm__name=algorithm_name)
         if item_id:
