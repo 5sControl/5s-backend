@@ -10,7 +10,11 @@ class CreateMsSqlRecordsService:
     # 145 - Manifest
     # 132 - healthUapp
     def __init__(self):
-        self.zlecenie_and_indeks = {"PRW199234": 363992, "PRW199235": 364570, "PRW199236": 364571}
+        self.zlecenie_and_indeks = {
+            "PRW199234": 363992,
+            "PRW199235": 364570,
+            "PRW199236": 364571,
+        }
         self.indeks_zlecenia = [363992, 364570, 364571]
 
     def create_skany(self, beverage, worker):

@@ -18,10 +18,24 @@ class GetAllProductAPIView(generics.GenericAPIView):
     @connector_service.check_database_connection
     def get(self, request):
         search = request.GET.get("search")
-        status = request.GET.get("status")
-        response = orderView_service.get_order_list(search=search, status=status)
+        order_status = request.GET.get("order-status")
+        operation_status = request.GET.getlist("operation-status")
+        operation_name = request.GET.getlist("operation-name")
+
+        print(
+            f"search: {search}, order_status: {order_status}, operation_status: {operation_status}, operation_name: {operation_name}"
+        )
+
+        response = orderView_service.get_order_list(
+            search=search,
+            order_status=order_status,
+            operation_status=operation_status,
+            operation_name=operation_name,
+        )
+
         paginated_items = self.paginate_queryset(response)
         serializer = self.serializer_class(paginated_items, many=True)
+
         return self.get_paginated_response(serializer.data)
 
 

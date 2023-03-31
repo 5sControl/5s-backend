@@ -30,10 +30,7 @@ class Command(BaseCommand):
             if camera_algorithm.algorithm.name == "min_max_control":
                 algorithm_items = Items.objects.filter(camera=camera_algorithm.camera)
                 for item in algorithm_items:
-                    data.append({
-                        "itemId": item.id,
-                        "coords": item.coords
-                    })
+                    data.append({"itemId": item.id, "coords": item.coords})
             try:
                 result = yolo_proccesing.start_yolo_processing(
                     camera=camera_algorithm.camera,

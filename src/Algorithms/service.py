@@ -137,10 +137,7 @@ class AlgorithmsService:
                 algorithm_items = Items.objects.filter(camera=camera.id)
                 print("algo items", algorithm_items.values())
                 for item in algorithm_items:
-                    data.append({
-                        "itemId": item.id,
-                        "coords": item.coords
-                    })
+                    data.append({"itemId": item.id, "coords": item.coords})
                     print(f"coords: {item.coords}\nid {item.id}")
                 print(f"camera id: {camera.id}")
             else:
