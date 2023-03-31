@@ -6,10 +6,15 @@ from rest_framework import status
 from rest_framework.renderers import JSONRenderer
 
 from src.Inventory.models import Items
+from src.Reports.models import Report
+
+from django.db.models import Q
+from datetime import datetime
+
+from src.CompanyLicense.decorators import validate_license
 
 from src.Inventory.serializers import ItemsSerializer
-
-from src.Reports.views import ReportListView
+from src.Reports.serializers import ReportSerializers
 
 
 class CustomJSONRenderer(JSONRenderer):
@@ -38,8 +43,30 @@ class ItemsHistoryViewSet(APIView):
 
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, camera_ip, date, start_time, end_time):
-        report_view = ReportListView()
-        response = report_view.get(request, "min_max_control", camera_ip, date, start_time, end_time)
-        data = response.data
-        return Response(data)
+    @validate_license
+    def get(self, request, camera_ip, date, start_time, end_time, item_id=None):
+
+        algorithm_name = 'min_max_control'
+        date_obj = datetime.strptime(date, "%Y-%m-%d").date()
+        start_time_obj = datetime.strptime(start_time, "%H:%M:%S").time()
+        end_time_obj = datetime.strptime(end_time, "%H:%M:%S").time()
+
+        start_of_day = datetime.combine(date_obj, start_time_obj)
+        end_of_day = datetime.combine(date_obj, end_time_obj)
+
+        queryset = Report.objects.filter(
+            Q(date_created__gte=start_of_day) & Q(date_created__lte=end_of_day)
+        ).order_by("-date_created", "-id")
+
+        if camera_ip:
+            queryset = queryset.filter(camera__id=camera_ip)
+        if algorithm_name:
+            queryset = queryset.filter(algorithm__name=algorithm_name)
+        if item_id:
+            queryset = queryset.filter(extra__0__itemId=item_id)
+
+        queryset = queryset.order_by("algorithm__name", "camera__id")
+
+        serializer = ReportSerializers(queryset, many=True)
+
+        return Response(serializer.data)
