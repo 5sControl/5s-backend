@@ -65,7 +65,7 @@ class OrderService:
             if search:
                 cursor.execute(
                     """
-                    SELECT
+                    SELECT DISTINCT
                         z.indeks,
                         z.zlecenie,
                         CASE
@@ -81,13 +81,12 @@ class OrderService:
                     """,
                     (f"{search}%",),
                 )
-                results = cursor.fetchall()
             else:
-                with connection.cursor() as cursor:
-                    cursor.execute(
-                        """
-                        SELECT
-                            z.indeks,
+                cursor.execute(
+                    """
+                    SELECT *
+                    FROM (
+                        SELECT z.indeks,
                             z.zlecenie,
                             CASE
                                 WHEN z.zakonczone = '0' AND z.datawejscia IS NOT NULL THEN 'Started'
@@ -97,19 +96,13 @@ class OrderService:
                             z.terminrealizacji,
                             ROW_NUMBER() OVER (PARTITION BY z.zlecenie
                                                 ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
-                        FROM (
-                            SELECT z.indeks,
-                                z.zlecenie,
-                                z.zakonczone,
-                                z.datawejscia,
-                                z.terminrealizacji
-                            FROM zlecenia z
-                        ) as subquery
-                        WHERE rn = 1
-                        """
-                    )
-            results = cursor.fetchall()
+                        FROM zlecenia z
+                    ) as subquery
+                    WHERE rn = 1
+                    """
+                )
 
+            results = cursor.fetchall()
         orders_dict = {}
         print(results)
         for result in results:
