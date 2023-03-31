@@ -89,7 +89,6 @@ class OrderService:
                                     ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
             FROM zlecenia z
             WHERE 1=1
-            GROUP BY z.zlecenie
         """
 
         params = []
@@ -103,7 +102,7 @@ class OrderService:
             elif status == "started":
                 query += " AND z.zakonczone = 0"
 
-        return query, tuple(params)
+        return query + " GROUP BY z.zlecenie", tuple(params)
 
     def _build_orders_dict(self, results):
         orders_dict = {}
