@@ -2,8 +2,6 @@ from datetime import datetime, timezone
 
 from collections import defaultdict
 
-import itertools
-
 from src.MsSqlConnector.connector import connector as connector_service
 from src.Reports.models import Report
 
@@ -62,11 +60,13 @@ class OrderService:
         print("RESULT: ", result)
         return result
 
-    def get_order_list(self, search=None, status=None):
+    def get_order_list(
+        self, search=None, order_status=None, operation_status=None, operation_name=None
+    ):
         connection = connector_service.get_database_connection()
 
         with connection.cursor() as cursor:
-            query, params = self._build_query(search, status)
+            query, params = self._build_query(search, order_status, operation_status)
             cursor.execute(query, params)
             results = cursor.fetchall()
 
@@ -74,7 +74,7 @@ class OrderService:
         orders_list = list(orders_dict.values())
         return orders_list
 
-    def _build_query(self, search, status):
+    def _build_query(self, search, order_status, operation_status):
         query = """
             SELECT DISTINCT
                 z.indeks,
@@ -96,10 +96,10 @@ class OrderService:
             query += " AND z.zlecenie LIKE ?"
             params.append(f"{search}%")
 
-        if status is not None:
-            if status == "completed":
+        if order_status is not None:
+            if order_status == "completed":
                 query += " AND z.zakonczone = 1"
-            elif status == "started":
+            elif order_status == "started":
                 query += " AND z.zakonczone = 0"
 
         return query, tuple(params)
@@ -152,6 +152,13 @@ class OrderService:
                 results = cursor.fetchall()
 
                 skany_ids_added = set()
+                # for row in results:
+                #     status = None
+                #     report = Report.objects.filter(
+                #         algorithm__name="operation_control", skany_index=row[0].first()
+                #     )
+                #     if report:
+                #         status = report.violation_found
                 for row in results:
                     reports = Report.objects.filter(
                         algorithm__name="operation_control"
