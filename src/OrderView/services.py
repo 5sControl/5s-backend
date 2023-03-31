@@ -76,7 +76,7 @@ class OrderService:
                         ROW_NUMBER() OVER (PARTITION BY z.zlecenie
                                             ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
                     FROM zlecenia z
-                    WHERE z.zlecenie LIKE %s
+                    WHERE z.zlecenie LIKE ?
                     """,
                     (f"{search}%",),
                 )
@@ -103,6 +103,7 @@ class OrderService:
 
             results = cursor.fetchall()
             orders_dict = {}
+            print(results)
             for result in results:
                 if result[0] not in orders_dict:
                     orders_dict[result[0]] = {
