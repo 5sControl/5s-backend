@@ -76,8 +76,7 @@ class OrderService:
 
     def _build_query(self, search, status):
         query = """
-            SELECT DISTINCT
-                z.indeks,
+            SELECT MIN(z.indeks) AS indeks,
                 z.zlecenie,
                 CASE
                     WHEN z.zakonczone = '0' AND z.datawejscia IS NOT NULL THEN 'Started'
@@ -103,6 +102,7 @@ class OrderService:
                 query += " AND z.zakonczone = 0"
 
         return query + " GROUP BY z.zlecenie", tuple(params)
+
 
     def _build_orders_dict(self, results):
         orders_dict = {}
