@@ -1,4 +1,5 @@
 from src.MsSqlConnector.services import create_records
+from src.Reports.models import SkanyReport
 
 
 def edit_extra(data):
@@ -10,3 +11,13 @@ def edit_extra(data):
 
     return data
 
+
+def create_records_skany(report, skany):
+    """
+    save skany index and report in database
+    """
+    if skany.get('skany_index'):
+        SkanyReport.objects.create(report=report, skany_index=skany['skany_index'])
+    else:
+        SkanyReport.objects.create(report=report)
+    return

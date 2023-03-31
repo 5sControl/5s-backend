@@ -32,3 +32,18 @@ class Report(models.Model):
     class Meta:
         verbose_name = "Report"
         verbose_name_plural = "Reports"
+
+
+class SkanyReport(models.Model):
+    """
+    Models skany report 'id'
+    """
+    report = models.ForeignKey(Report, on_delete=models.CASCADE)
+    skany_index = models.IntegerField(null=True, verbose_name="sany index")
+
+    def __str__(self):
+        return f"{self.id}"
+
+    class Meta:
+        verbose_name = "ReportSkany"
+        verbose_name_plural = "ReportsSkany"
