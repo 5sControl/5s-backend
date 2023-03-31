@@ -1,5 +1,8 @@
 from datetime import datetime, timezone
+
 from collections import defaultdict
+
+import itertools
 
 from src.MsSqlConnector.connector import connector as connector_service
 from src.Reports.models import Report
@@ -61,60 +64,62 @@ class OrderService:
 
     def get_order_list(self, search=None, status=None):
         connection = connector_service.get_database_connection()
+
         with connection.cursor() as cursor:
-            if search:
-                cursor.execute(
-                    """
-                    SELECT DISTINCT
-                        z.zlecenie,
-                        CASE
-                            WHEN z.zakonczone = '0' AND z.datawejscia IS NOT NULL THEN 'Started'
-                            WHEN z.zakonczone = '1' THEN 'Completed'
-                            ELSE 'Unknown'
-                        END AS status,
-                        z.terminrealizacji,
-                        ROW_NUMBER() OVER (PARTITION BY z.zlecenie
-                                            ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
-                    FROM zlecenia z
-                    WHERE z.zlecenie LIKE ?
-                    """,
-                    (f"{search}%",),
-                )
-            else:
-                cursor.execute(
-                    """
-                    SELECT *
-                    FROM (
-                        SELECT z.indeks,
-                            z.zlecenie,
-                            CASE
-                                WHEN z.zakonczone = '0' AND z.datawejscia IS NOT NULL THEN 'Started'
-                                WHEN z.zakonczone = '1' THEN 'Completed'
-                                ELSE 'Unknown'
-                            END AS status,
-                            z.terminrealizacji,
-                            ROW_NUMBER() OVER (PARTITION BY z.zlecenie
-                                                ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
-                        FROM zlecenia z
-                    ) as subquery
-                    WHERE rn = 1
-                    """
-                )
-
+            query, params = self._build_query(search, status)
+            cursor.execute(query, params)
             results = cursor.fetchall()
-            orders_dict = {}
-            print(results)
-            for result in results:
-                if result[0] not in orders_dict:
-                    orders_dict[result[0]] = {
-                        "indeks": result[3] if search else result[0],
-                        "zlecenie": result[0],
-                        "status": result[1],
-                        "terminrealizacji": result[2],
-                    }
 
-            orders_list = list(orders_dict.values())
-            return orders_list
+        orders_dict = self._build_orders_dict(results)
+        orders_list = list(orders_dict.values())
+        return orders_list
+
+    def _build_query(self, search, status):
+        query = """
+            SELECT DISTINCT
+                z.indeks,
+                z.zlecenie,
+                CASE
+                    WHEN z.zakonczone = '0' AND z.datawejscia IS NOT NULL THEN 'Started'
+                    WHEN z.zakonczone = '1' THEN 'Completed'
+                    ELSE 'Unknown'
+                END AS status,
+                z.terminrealizacji,
+                ROW_NUMBER() OVER (PARTITION BY z.zlecenie
+                                    ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
+            FROM zlecenia z
+            WHERE 1=1
+        """
+
+        params = []
+        if search:
+            query += " AND z.zlecenie LIKE ?"
+            params.append(f"{search}%")
+
+        if status is not None:
+            if status == "completed":
+                query += " AND z.zakonczone = 1"
+            elif status == "started":
+                query += " AND z.zakonczone = 0"
+
+        return query, tuple(params)
+
+    def _build_orders_dict(self, results):
+        orders_dict = {}
+        for result in results:
+            zlecenie = result[1]
+            if zlecenie not in orders_dict:
+                orders_dict[zlecenie] = {
+                    "indeks": result[0],
+                    "zlecenie": zlecenie,
+                    "status": result[2],
+                    "terminrealizacji": result[3],
+                }
+            else:
+                orders_dict[zlecenie]["indeks"] = result[0]
+                orders_dict[zlecenie]["status"] = result[2]
+                orders_dict[zlecenie]["terminrealizacji"] = result[3]
+        return orders_dict
 
     def get_order(self, zlecenie_id):
         response = {}
