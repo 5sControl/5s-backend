@@ -116,9 +116,9 @@ class OrderService:
 
         if operation_status is not None:
             skanys = self.get_skany_indexes(operation_status)
-            print(skanys)
+            print("Skans was founded: ", skanys)
+            zlecenie = self.get_zlecenie_indeks_by_skany_indeks(skanys)
             if skanys:
-                zlecenie = self.get_zlecenie_indeks_by_skany_indeks(skanys)
                 query += " AND z.zlecenie = IN ({})".format(
                     ", ".join("?" * len(zlecenie))
                 )
@@ -149,28 +149,32 @@ class OrderService:
         zlecenia_indeks_list = []
 
         connection = connector_service.get_database_connection()
+        if skany_list:
+            skany_indeks = ','.join(str(indeks) for indeks in skany_list)
+            query_zl_indeks = f"""
+                SELECT DISTINCT indekszlecenia
+                FROM skany_vs_zlecenia
+                WHERE indeksskanu IN ({skany_indeks})
+            """
 
-        skany_indeks = ','.join(str(indeks) for indeks in skany_list)
-        query_zl_indeks = f"""
-            SELECT DISTINCT indekszlecenia
-            FROM skany_vs_zlecenia
-            WHERE indeksskanu IN ({skany_indeks})
-        """
+            with connection.cursor() as cursor:
+                cursor.execute(query_zl_indeks)
+                zlecenia_indeks_list = [result[0] for result in cursor.fetchall()]
+        else:
+            return None
+        if zlecenia_indeks_list:
+            zzlecenie_indeks = ','.join(str(indeks) for indeks in zlecenia_indeks_list)
+            query_zl = f"""
+                SELECT DISTINCT zlecenie
+                FROM zlecenia
+                WHERE indeks IN ({zzlecenie_indeks})
+            """
 
-        with connection.cursor() as cursor:
-            cursor.execute(query_zl_indeks)
-            zlecenia_indeks_list = [result[0] for result in cursor.fetchall()]
-
-        zzlecenie_indeks = ','.join(str(indeks) for indeks in zlecenia_indeks_list)
-        query_zl = f"""
-            SELECT DISTINCT zlecenie
-            FROM zlecenia
-            WHERE indeks IN ({zzlecenie_indeks})
-        """
-
-        with connection.cursor() as cursor:
-            cursor.execute(query_zl)
-            zlecenie_list = [result[0] for result in cursor.fetchall()]
+            with connection.cursor() as cursor:
+                cursor.execute(query_zl)
+                zlecenie_list = [result[0] for result in cursor.fetchall()]
+        else:
+            return None
 
         return zlecenie_list
 
