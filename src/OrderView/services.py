@@ -4,10 +4,16 @@ from collections import defaultdict
 
 from src.MsSqlConnector.connector import connector as connector_service
 from src.Reports.models import SkanyReport
-from src.Reports.service import get_skany_indexes
+from src.Reports.service import self.get_skany_indexes
 
 
 class OrderService:
+    def __init__(self,):
+        self.STATUS_TO_FIELD_VALUE = {
+            'violation': False,
+            'compliance': True,
+        }
+
     def get_skanyQueryByIds(self, ids):
         placeholders = ",".join(["%s" for _ in ids])
         query = """
@@ -109,7 +115,7 @@ class OrderService:
                 query += " AND z.zakonczone = 0"
 
         if operation_status is not None:
-            skanys = get_skany_indexes(operation_status)
+            skanys = self.get_skany_indexes(operation_status)
             print(skanys)
             if skanys:
                 zlecenie = self.get_zlecenie_indeks_by_skany_indeks(skanys)
@@ -279,6 +285,16 @@ class OrderService:
             cursor.execute(query)
             indeks_skany = [result[0] for result in cursor.fetchall()]
         return indeks_skany
+
+    def self.get_skany_indexes(self, statuses):
+        status_set = set(statuses) - set(['no data'])
+        skany_indexes = list(SkanyReport.objects.filter(report__violation_found__in=[self.STATUS_TO_FIELD_VALUE[status] for status in status_set]).values_list('skany_index', flat=True))
+
+        if 'no data' in statuses:
+            all_skany_indeks = orderView_service.get_all_skany_indeks()
+            skany_indexes += all_skany_indeks
+
+        return skany_indexes
 
 
 orderView_service = OrderService()
