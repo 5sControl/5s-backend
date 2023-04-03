@@ -47,4 +47,4 @@ def get_skany_video_info(time, camera_ip="192.168.1.168"):
         json=response,
     )
 
-    return request
+    return request.json()
