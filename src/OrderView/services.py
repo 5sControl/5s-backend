@@ -118,16 +118,14 @@ class OrderService:
                 query += " AND z.zakonczone = 0"
 
         if operation_status is not None:
-            skanys = self.get_skany_indexes(operation_status)
+            skanys = self.get_skany_indeks_from_report(operation_status)
             print("Skans was founded: ", skanys)
             if skanys:
                 zlecenie = self.get_zlecenie_indeks_by_skany_indeks(skanys)
                 if zlecenie:
-                    query += " AND z.zlecenie = IN ({})".format(
-                        ", ".join("?" * len(zlecenie))
+                    query += " AND z.zlecenie IN ({})".format(
+                        ", ".join([f"'{z}'" for z in zlecenie])
                     )
-                    for indeks in zlecenie:
-                        params.append(f"{indeks}%")
                 else:
                     query += " AND z.zlecenie = 'Not-Found-Data'"
             else:
@@ -299,7 +297,7 @@ class OrderService:
             indeks_skany = [result[0] for result in cursor.fetchall()]
         return indeks_skany
 
-    def get_skany_indexes(self, statuses):
+    def get_skany_indeks_from_report(self, statuses):
         status_set = set(statuses) - set(["no data"])
         skany_indexes = list(
             SkanyReport.objects.filter(
@@ -327,7 +325,7 @@ class OrderService:
         with connection.cursor() as cursor:
             cursor.execute(query)
             results = cursor.fetchall()
-        
+
         for operation_names in results:
             list_of_names.append(operation_names[0])
 
