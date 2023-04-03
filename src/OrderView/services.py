@@ -131,6 +131,12 @@ class OrderService:
         if operation_name != []:
             zlecenie_by_stanowisko = self.get_zlecenie_by_operation_names(operation_name)
             print(zlecenie_by_stanowisko)
+            if zlecenie_by_stanowisko:
+                query += " AND z.zlecenie IN ({})".format(
+                    ", ".join([f"'{z_by_s}'" for z_by_s in zlecenie_by_stanowisko])
+                )
+            else:
+                query += " AND z.zlecenie = 'Not-Found-Data'"
 
         return query, tuple(params)
 
