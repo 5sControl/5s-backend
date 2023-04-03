@@ -4,7 +4,6 @@ from collections import defaultdict
 
 from src.MsSqlConnector.connector import connector as connector_service
 from src.Reports.models import SkanyReport
-from src.Reports.service import self.get_skany_indexes
 
 
 class OrderService:
