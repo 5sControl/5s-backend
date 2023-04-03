@@ -45,6 +45,7 @@ class Items(models.Model):
                 camera = Camera.objects.filter(id=self.camera)
                 algorithm = Algorithm.objects.filter(name='min_max_control')
                 server_url = yolo_proccesing.get_algorithm_url()
+                print(server_url)
                 algorithms_services.create_new_records(cameras=[camera], algorithm=algorithm, server_url=server_url)
         except Exception as exc:
             print(f"Exception {exc}")
