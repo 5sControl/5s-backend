@@ -149,26 +149,26 @@ class OrderService:
 
         connection = connector_service.get_database_connection()
 
-        query_zl_indeks = """
+        skany_indeks = ','.join(str(indeks) for indeks in skany_list)
+        query_zl_indeks = f"""
             SELECT DISTINCT indekszlecenia
             FROM skany_vs_zlecenia
-            WHERE indeksskanu IN ({})
-        """.format(
-            ", ".join("?" * len(skany_list))
-        )
+            WHERE indeksskanu IN ({skany_indeks})
+        """
+
         with connection.cursor() as cursor:
-            cursor.execute(query_zl_indeks, skany_list)
+            cursor.execute(query_zl_indeks)
             zlecenia_indeks_list = [result[0] for result in cursor.fetchall()]
 
-        query_zl = """
+        zzlecenie_indeks = ','.join(str(indeks) for indeks in zlecenia_indeks_list)
+        query_zl = f"""
             SELECT DISTINCT zlecenie
             FROM zlecenia
-            WHERE indeks IN ({})
-        """.format(
-            ", ".join("?" * len(zlecenia_indeks_list))
-        )
+            WHERE indeks IN ({zzlecenie_indeks})
+        """
+
         with connection.cursor() as cursor:
-            cursor.execute(query_zl, zlecenia_indeks_list)
+            cursor.execute(query_zl)
             zlecenie_list = [result[0] for result in cursor.fetchall()]
 
         return zlecenie_list
