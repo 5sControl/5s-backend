@@ -149,32 +149,31 @@ class OrderService:
         zlecenia_indeks_list = []
 
         connection = connector_service.get_database_connection()
-        if skany_list:
-            skany_indeks = ','.join(str(indeks) for indeks in skany_list)
-            query_zl_indeks = f"""
-                SELECT DISTINCT indekszlecenia
-                FROM skany_vs_zlecenia
-                WHERE indeksskanu IN ({skany_indeks})
-            """
 
-            with connection.cursor() as cursor:
-                cursor.execute(query_zl_indeks)
-                zlecenia_indeks_list = [result[0] for result in cursor.fetchall()]
-        else:
-            return None
+        skany_indeks = ','.join(str(indeks) for indeks in skany_list)
+        query_zl_indeks = f"""
+            SELECT DISTINCT indekszlecenia
+            FROM skany_vs_zlecenia
+            WHERE indeksskanu IN ({skany_indeks})
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(query_zl_indeks)
+            zlecenia_indeks_list = [result[0] for result in cursor.fetchall()]
+
         if zlecenia_indeks_list:
-            zzlecenie_indeks = ','.join(str(indeks) for indeks in zlecenia_indeks_list)
-            query_zl = f"""
-                SELECT DISTINCT zlecenie
-                FROM zlecenia
-                WHERE indeks IN ({zzlecenie_indeks})
-            """
-
-            with connection.cursor() as cursor:
-                cursor.execute(query_zl)
-                zlecenie_list = [result[0] for result in cursor.fetchall()]
+            zlecenie_indeks = ','.join(str(indeks) for indeks in zlecenia_indeks_list)
         else:
-            return None
+            zlecenie_indeks = 'nothing, was founded'
+        query_zl = f"""
+            SELECT DISTINCT zlecenie
+            FROM zlecenia
+            WHERE indeks IN ({zlecenie_indeks})
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(query_zl)
+            zlecenie_list = [result[0] for result in cursor.fetchall()]
 
         return zlecenie_list
 
