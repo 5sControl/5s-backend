@@ -227,7 +227,7 @@ class OrderService:
 
                     time_obj = datetime.fromisoformat(row[1].replace(tzinfo=timezone.utc).replace('Z', '+00:00')).replace(tzinfo=timezone.utc)
                     new_time_str = time_obj.strftime("%Y-%m-%d %H:%M:%S.%f")
-                    
+                    print(row[1])
                     video_data = get_skany_video_info(time=new_time_str)
 
                     skany = {
