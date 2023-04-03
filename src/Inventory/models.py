@@ -43,7 +43,7 @@ class Items(models.Model):
             # started process
             camera = Camera.objects.filter(id=self.camera)
             print("camera", camera)
-            algorithm = Algorithm.objects.filter(name='min_max_control')
+            algorithm = Algorithm.objects.first(name='min_max_control')
             print("algorithm", algorithm)
             server_url = yolo_proccesing.get_algorithm_url()
             print("server_url", server_url)
