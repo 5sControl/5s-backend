@@ -30,6 +30,7 @@ def create_records_skany(report, skany):
 
 
 def get_skany_indexes(*statuses):
+    print(*statuses)
     status_field_values = [STATUS_TO_FIELD_VALUE[status] for status in statuses]
     skany_indexes = SkanyReport.objects.filter(report__violation_found__in=status_field_values).values_list('skany_index', flat=True)
     return list(skany_indexes)
