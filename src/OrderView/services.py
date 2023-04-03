@@ -67,7 +67,12 @@ class OrderService:
         connection = connector_service.get_database_connection()
 
         with connection.cursor() as cursor:
-            query, params = self._build_query(search, order_status, operation_status)
+            query, params = self._build_query(
+                search=search,
+                order_status=order_status,
+                operation_status=operation_status,
+                operation_name=operation_name,
+            )
             cursor.execute(query, params)
             results = cursor.fetchall()
 
@@ -75,7 +80,7 @@ class OrderService:
         orders_list = list(orders_dict.values())
         return orders_list
 
-    def _build_query(self, search, order_status, operation_status):
+    def _build_query(self, search, order_status, operation_status, operation_name):
         query = """
             SELECT DISTINCT
                 z.indeks,
@@ -107,8 +112,13 @@ class OrderService:
             skanys = get_skany_indexes(operation_status)
             print(skanys)
             if skanys:
-                zlcenies = self.get_zlecenie_indeks_by_skany_indeks(skanys)
-                query += " AND z.zlecenie = IN ({})".format(', '.join('?' * len(zlcenies)))
+                zlecenie = self.get_zlecenie_indeks_by_skany_indeks(skanys)
+                query += " AND z.zlecenie = IN ({})".format(
+                    ", ".join("?" * len(zlecenie))
+                )
+
+        if operation_name is not None:
+            ...
 
         return query, tuple(params)
 
@@ -138,7 +148,9 @@ class OrderService:
             SELECT DISTINCT indekszlecenia
             FROM skany_vs_zlecenia
             WHERE indeksskanu IN ({})
-        """.format(', '.join('?' * len(skany_list)))
+        """.format(
+            ", ".join("?" * len(skany_list))
+        )
         with connection.cursor() as cursor:
             cursor.execute(query_zl_indeks, skany_list)
             zlecenia_indeks_list = [result[0] for result in cursor.fetchall()]
@@ -147,7 +159,9 @@ class OrderService:
             SELECT DISTINCT zlecenie
             FROM zlecenia
             WHERE indeks IN ({})
-        """.format(', '.join('?' * len(zlecenia_indeks_list)))
+        """.format(
+            ", ".join("?" * len(zlecenia_indeks_list))
+        )
         with connection.cursor() as cursor:
             cursor.execute(query_zl, zlecenia_indeks_list)
             zlecenie_list = [result[0] for result in cursor.fetchall()]
@@ -254,6 +268,17 @@ class OrderService:
                 }
             )
         return transformed_result
+
+    def get_all_skany_indeks(self):
+        connection = connector_service.get_database_connection()
+        query = """
+            SELECT indeksskanu
+            FROM skany_vs_zlecenia
+        """
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            indeks_skany = [result[0] for result in cursor.fetchall()]
+        return indeks_skany
 
 
 orderView_service = OrderService()
