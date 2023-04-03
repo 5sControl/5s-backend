@@ -78,6 +78,7 @@ class OrderService:
                 operation_status=operation_status,
                 operation_name=operation_name,
             )
+            print(query, params)
             cursor.execute(query, params)
             results = cursor.fetchall()
 
