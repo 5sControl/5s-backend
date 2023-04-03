@@ -31,7 +31,7 @@ class ItemsViewSet(ModelViewSet):
     queryset = Items.objects.all().order_by("-id")
     serializer_class = ItemsSerializer
     renderer_classes = [CustomJSONRenderer]
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def perform_destroy(self, instance):
         instance.delete()
@@ -41,7 +41,7 @@ class ItemsViewSet(ModelViewSet):
 class ItemsHistoryViewSet(APIView):
     """History items"""
 
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     @validate_license
     def get(self, request, date, start_time, end_time, item_id=None):
