@@ -124,6 +124,7 @@ class OrderService:
                     query += " AND z.zlecenie = IN ({})".format(
                         ", ".join("?" * len(zlecenie))
                     )
+                    params.append(f"{zlecenie}%")
                 else:
                     query += " AND z.zlecenie = 'Not-Found-Data'"
             else:
