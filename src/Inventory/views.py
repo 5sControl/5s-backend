@@ -57,11 +57,11 @@ class ItemsHistoryViewSet(APIView):
         queryset = Report.objects.filter(
             Q(date_created__gte=start_of_day) & Q(date_created__lte=end_of_day)
         ).order_by("-date_created", "-id")
-        print(queryset.values())
         if algorithm_name:
             queryset = queryset.filter(algorithm__name=algorithm_name)
         if item_id:
             queryset = queryset.filter(extra__0__itemId=item_id)
+        print(queryset.values())
 
         queryset = queryset.order_by("algorithm__name", "camera__id")
 
