@@ -124,9 +124,9 @@ class OrderService:
                         ", ".join("?" * len(zlecenie))
                     )
                 else:
-                    query += " AND z.zlecenie = Not-Found-Data"
+                    query += " AND z.zlecenie = 'Not-Found-Data'"
             else:
-                query += " AND z.zlecenie = Not-Found-Data"
+                query += " AND z.zlecenie = 'Not-Found-Data'"
 
         if operation_name is not None:
             ...
