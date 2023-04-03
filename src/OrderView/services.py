@@ -132,8 +132,9 @@ class OrderService:
             else:
                 query += " AND z.zlecenie = 'Not-Found-Data'"
 
-        if operation_name is not None:
-            ...
+        if operation_name != []:
+            zlecenie_by_stanowisko = self.get_zlecenie_by_operation_names(operation_name)
+            print(zlecenie_by_stanowisko)
 
         return query, tuple(params)
 
@@ -235,7 +236,7 @@ class OrderService:
                         "raport": row[4],
                         "worker": f"{row[5]} {row[6]}",
                         "status": status,
-                        "video_data": video_data
+                        "video_data": video_data,
                     }
 
                     formatted_time = skany["date"].strftime("%Y.%m.%d")
@@ -336,6 +337,35 @@ class OrderService:
             list_of_names.append(operation_names[0])
 
         return list_of_names
+
+    def get_zlecenie_by_operation_names(self, operation_names):
+        connection = connector_service.get_database_connection()
+        zlecenie = []
+
+        query = """
+            SELECT DISTINCT indekszlecenia
+            FROM Skany_vs_Zlecenia
+            WHERE indeksskanu IN (
+                SELECT DISTINCT indeks
+                FROM Skany
+                WHERE stanowisko IN (
+                    SELECT DISTINCT indeks
+                    FROM Stanowiska
+                    WHERE raport IN ({})
+                )
+            )
+        """.format(
+            ", ".join([f"'{op_name}'" for op_name in operation_names])
+        )
+
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            results = cursor.fetchall()
+
+        for indeks_zlecenie in results:
+            zlecenie.append(indeks_zlecenie[0])
+
+        return zlecenie
 
 
 orderView_service = OrderService()
