@@ -125,6 +125,8 @@ class OrderService:
                     )
                 else:
                     query += " AND z.zlecenie = Not-Found-Data"
+            else:
+                query += " AND z.zlecenie = Not-Found-Data"
 
         if operation_name is not None:
             ...
