@@ -104,11 +104,7 @@ class OrderService:
                 query += " AND z.zakonczone = 0"
 
         if operation_status is not None:
-            if operation_status == "compliance":
-                skanys = get_skany_indexes(True)
-            elif operation_status == "violation":
-                skanys = get_skany_indexes(False)
-
+            skanys = get_skany_indexes(operation_status)
             zlcenies = self.get_zlecenie_indeks_by_skany_indeks(skanys)
             query += " AND z.zlecenie = IN ({})".format(', '.join('?' * len(zlcenies)))
 
