@@ -132,7 +132,7 @@ class OrderService:
             zlecenie_by_stanowisko = self.get_zlecenie_by_operation_names(operation_name)
             print(zlecenie_by_stanowisko)
             if zlecenie_by_stanowisko:
-                query += " AND z.zlecenie IN ({})".format(
+                query += " AND z.indeks IN ({})".format(
                     ", ".join([f"'{z_by_s}'" for z_by_s in zlecenie_by_stanowisko])
                 )
             else:
