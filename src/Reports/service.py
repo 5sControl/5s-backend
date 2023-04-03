@@ -21,3 +21,11 @@ def create_records_skany(report, skany):
     else:
         SkanyReport.objects.create(report=report)
     return
+
+
+def get_skany_indexes(status=None):
+    """
+    Returns a list of SkanyReport skany_index values for all reports.
+    """
+    skany_indexes = SkanyReport.objects.filter(report__violation_found=status).values_list('skany_index', flat=True)
+    return list(skany_indexes)
