@@ -4,4 +4,4 @@ from .models import IndexOperations
 
 @admin.register(IndexOperations)
 class IndexOperationsAdmin(admin.ModelAdmin):
-    list_display = ("type_operation", )
+    list_display = ("type_operation",)

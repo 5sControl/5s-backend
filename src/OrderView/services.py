@@ -123,7 +123,9 @@ class OrderService:
             if skanys:
                 zlecenie = self.get_zlecenie_indeks_by_skany_indeks(skanys)
                 if zlecenie:
-                    query += f" AND z.zlecenie IN ({', '.join([str(z) for z in zlecenie])})"
+                    query += " AND z.zlecenie IN ({})".format(
+                        ", ".join([f"'{z}'" for z in zlecenie])
+                    )
                 else:
                     query += " AND z.zlecenie = 'Not-Found-Data'"
             else:
@@ -323,7 +325,7 @@ class OrderService:
         with connection.cursor() as cursor:
             cursor.execute(query)
             results = cursor.fetchall()
-        
+
         for operation_names in results:
             list_of_names.append(operation_names[0])
 
