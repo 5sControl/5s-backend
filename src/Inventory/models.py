@@ -48,7 +48,7 @@ class Items(models.Model):
                 print("algorithm", algorithm)
                 server_url = yolo_proccesing.get_algorithm_url()
                 print("server_url", server_url)
-                algorithms_services.create_new_records(cameras=[camera], algorithm=algorithm, server_url=server_url)
+                algorithms_services.create_new_records(cameras=camera, algorithm=algorithm, server_url=server_url)
         except Exception as exc:
             print(f"Exception {exc}")
         return instance
