@@ -156,7 +156,7 @@ class OrderService:
             FROM skany_vs_zlecenia
             WHERE indeksskanu IN ({skany_indeks})
         """
-
+        print(query_zl_indeks)
         with connection.cursor() as cursor:
             cursor.execute(query_zl_indeks)
             zlecenia_indeks_list = [result[0] for result in cursor.fetchall()]
