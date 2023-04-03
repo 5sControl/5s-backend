@@ -4,6 +4,7 @@ from collections import defaultdict
 
 from src.MsSqlConnector.connector import connector as connector_service
 from src.Reports.models import SkanyReport
+from src.Reports.service import get_skany_indexes
 
 
 class OrderService:
@@ -102,6 +103,15 @@ class OrderService:
             elif order_status == "started":
                 query += " AND z.zakonczone = 0"
 
+        if operation_status is not None:
+            if operation_status == "compliance":
+                skanys = get_skany_indexes(True)
+            elif operation_status == "violation":
+                skanys = get_skany_indexes(False)
+
+            zlcenies = self.get_zlecenie_indeks_by_skany_indeks(skanys)
+            query += " AND z.zlecenie = IN ({})".format(', '.join('?' * len(zlcenies)))
+
         return query, tuple(params)
 
     def _build_orders_dict(self, results):
@@ -120,6 +130,31 @@ class OrderService:
                 orders_dict[zlecenie]["status"] = result[2]
                 orders_dict[zlecenie]["terminrealizacji"] = result[3]
         return orders_dict
+
+    def get_zlecenie_indeks_by_skany_indeks(self, skany_list):
+        zlecenia_indeks_list = []
+
+        connection = connector_service.get_database_connection()
+
+        query_zl_indeks = """
+            SELECT DISTINCT indekszlecenia
+            FROM skany_vs_zlecenia
+            WHERE indeksskanu IN ({})
+        """.format(', '.join('?' * len(skany_list)))
+        with connection.cursor() as cursor:
+            cursor.execute(query_zl_indeks, skany_list)
+            zlecenia_indeks_list = [result[0] for result in cursor.fetchall()]
+
+        query_zl = """
+            SELECT DISTINCT zlecenie
+            FROM zlecenia
+            WHERE indeks IN ({})
+        """.format(', '.join('?' * len(zlecenia_indeks_list)))
+        with connection.cursor() as cursor:
+            cursor.execute(query_zl, zlecenia_indeks_list)
+            zlecenie_list = [result[0] for result in cursor.fetchall()]
+
+        return zlecenie_list
 
     def get_order(self, zlecenie_id):
         response = {}
