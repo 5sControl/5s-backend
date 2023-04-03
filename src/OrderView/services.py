@@ -317,6 +317,7 @@ class OrderService:
 
     def get_operation_names(self):
         connection = connector_service.get_database_connection()
+        list_of_names = []
 
         query = """
             SELECT DISTINCT Raport
@@ -326,8 +327,11 @@ class OrderService:
         with connection.cursor() as cursor:
             cursor.execute(query)
             results = cursor.fetchall()
+        
+        for operation_names in results:
+            list_of_names.append(operation_names[0])
 
-        return results
+        return list_of_names
 
 
 orderView_service = OrderService()
