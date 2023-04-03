@@ -225,7 +225,7 @@ class OrderService:
                     if skany_report:
                         status = skany_report.report.violation_found
 
-                    video_data = get_skany_video_info(time=row[1][:-3])
+                    video_data = get_skany_video_info(time=str(row[1])[:-3])
 
                     skany = {
                         "indeks": row[0],
