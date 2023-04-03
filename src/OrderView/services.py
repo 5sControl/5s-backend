@@ -7,10 +7,12 @@ from src.Reports.models import SkanyReport
 
 
 class OrderService:
-    def __init__(self,):
+    def __init__(
+        self,
+    ):
         self.STATUS_TO_FIELD_VALUE = {
-            'violation': False,
-            'compliance': True,
+            "violation": False,
+            "compliance": True,
         }
 
     def get_skanyQueryByIds(self, ids):
@@ -158,7 +160,7 @@ class OrderService:
 
         connection = connector_service.get_database_connection()
 
-        skany_indeks = ','.join(str(indeks) for indeks in skany_list)
+        skany_indeks = ",".join(str(indeks) for indeks in skany_list)
         query_zl_indeks = f"""
             SELECT DISTINCT indekszlecenia
             FROM skany_vs_zlecenia
@@ -170,9 +172,9 @@ class OrderService:
             zlecenia_indeks_list = [result[0] for result in cursor.fetchall()]
 
         if zlecenia_indeks_list:
-            zlecenie_indeks = ','.join(str(indeks) for indeks in zlecenia_indeks_list)
+            zlecenie_indeks = ",".join(str(indeks) for indeks in zlecenia_indeks_list)
         else:
-            zlecenie_indeks = 'nothing, was founded'
+            zlecenie_indeks = "nothing, was founded"
         query_zl = f"""
             SELECT DISTINCT zlecenie
             FROM zlecenia
@@ -298,14 +300,34 @@ class OrderService:
         return indeks_skany
 
     def get_skany_indexes(self, statuses):
-        status_set = set(statuses) - set(['no data'])
-        skany_indexes = list(SkanyReport.objects.filter(report__violation_found__in=[self.STATUS_TO_FIELD_VALUE[status] for status in status_set]).values_list('skany_index', flat=True))
+        status_set = set(statuses) - set(["no data"])
+        skany_indexes = list(
+            SkanyReport.objects.filter(
+                report__violation_found__in=[
+                    self.STATUS_TO_FIELD_VALUE[status] for status in status_set
+                ]
+            ).values_list("skany_index", flat=True)
+        )
 
-        if 'no data' in statuses:
+        if "no data" in statuses:
             all_skany_indeks = orderView_service.get_all_skany_indeks()
             skany_indexes += all_skany_indeks
 
         return skany_indexes
+
+    def get_operation_names(self):
+        connection = connector_service.get_database_connection()
+
+        query = """
+            SELECT DISTINCT Raport
+            FROM Stanowiska
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            results = cursor.fetchall()
+
+        return results
 
 
 orderView_service = OrderService()
