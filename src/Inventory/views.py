@@ -17,25 +17,25 @@ from src.Inventory.serializers import ItemsSerializer
 from src.Reports.serializers import ReportSerializers
 
 
-class CustomJSONRenderer(JSONRenderer):
-    def render(self, data, accepted_media_type=None, renderer_context=None):
-        if renderer_context and 'response' in renderer_context:
-            response = renderer_context['response']
-            if response.status_code == status.HTTP_204_NO_CONTENT:
-                return super().render({"message": "Item deleted successfully."}, accepted_media_type, renderer_context)
-        return super().render(data, accepted_media_type, renderer_context)
+# class CustomJSONRenderer(JSONRenderer):
+#     def render(self, data, accepted_media_type=None, renderer_context=None):
+#         if renderer_context and 'response' in renderer_context:
+#             response = renderer_context['response']
+#             if response.status_code == status.HTTP_204_NO_CONTENT:
+#                 return super().render({"message": "Item deleted successfully."}, accepted_media_type, renderer_context)
+#         return super().render(data, accepted_media_type, renderer_context)
 
 
 class ItemsViewSet(ModelViewSet):
     """All items in the inventory"""
     queryset = Items.objects.all().order_by("-id")
     serializer_class = ItemsSerializer
-    renderer_classes = [CustomJSONRenderer]
-    permission_classes = [IsAuthenticated]
+    # renderer_classes = [CustomJSONRenderer]
+    # permission_classes = [IsAuthenticated]
 
-    def perform_destroy(self, instance):
-        instance.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+    # def perform_destroy(self, instance):
+    #     instance.delete()
+    #     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ItemsHistoryViewSet(APIView):
