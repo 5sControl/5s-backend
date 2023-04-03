@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from collections import defaultdict
 
 from src.MsSqlConnector.connector import connector as connector_service
+from src.OrderView.utils import get_skany_video_info
 from src.Reports.models import SkanyReport
 
 
@@ -223,16 +224,23 @@ class OrderService:
                     ).first()
                     if skany_report:
                         status = skany_report.report.violation_found
+
+                    time_obj = datetime.fromisoformat(row[1].replace(tzinfo=timezone.utc).replace('Z', '+00:00'))
+                    new_time_str = time_obj.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]
+                    video_data = get_skany_video_info(time=new_time_str)
+
                     skany = {
                         "indeks": row[0],
-                        "data": row[1].replace(tzinfo=timezone.utc),
+                        "date": row[1].replace(tzinfo=timezone.utc),
                         "stanowisko": row[2],
                         "uzytkownik": row[3],
                         "raport": row[4],
                         "worker": f"{row[5]} {row[6]}",
                         "status": status,
+                        "video_data": video_data
                     }
-                    formatted_time = skany["data"].strftime("%Y.%m.%d")
+
+                    formatted_time = skany["date"].strftime("%Y.%m.%d")
                     if skany["indeks"] not in skany_ids_added:
                         skany_ids_added.add(skany["indeks"])
                         skany_dict[formatted_time].append(skany)

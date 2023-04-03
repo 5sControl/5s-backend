@@ -1,9 +1,12 @@
 import math
 
+import requests
+
 from collections import OrderedDict
 
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
+from src.Algorithms.utils import YoloProccesing
 
 
 class OrderViewPaginnator(PageNumberPagination):
@@ -29,3 +32,18 @@ class OrderViewPaginnator(PageNumberPagination):
                 ]
             )
         )
+
+
+# FIXME: camera ip should be dynamic
+def get_skany_video_info(time, camera_ip="192.168.1.168"):
+    host = YoloProccesing.get_algorithm_url()
+    response = {
+        "camera_ip": camera_ip,
+        "time": time,
+    }
+    request = requests.post(
+        url=f"{host}:3456/is_video_available/",
+        json=response,
+    )
+
+    return request
