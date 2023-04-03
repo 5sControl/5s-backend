@@ -66,7 +66,6 @@ class OrderService:
             )
             results = cursor.fetchall()
         result = self.transform_result(results)
-        print("RESULT: ", result)
         return result
 
     def get_order_list(
@@ -81,8 +80,6 @@ class OrderService:
                 operation_status=operation_status,
                 operation_name=operation_name,
             )
-            print("QUERY", query)
-            print("PARAMS", params)
             cursor.execute(query, params)
             results = cursor.fetchall()
 
@@ -120,7 +117,6 @@ class OrderService:
 
         if operation_status != []:
             skanys = self.get_skany_indeks_from_report(operation_status)
-            print("Skans was founded: ", skanys)
             if skanys:
                 zlecenie = self.get_zlecenie_indeks_by_skany_indeks(skanys)
                 if zlecenie:
@@ -194,7 +190,6 @@ class OrderService:
         zlecenia_dict = self.get_zlecenia_query_by_zlecenie(zlecenie_id)
 
         for zlecenie_obj in zlecenia_dict:
-            print("Zlecenie obj is ", zlecenie_obj)
             skany_dict = defaultdict(list)
             if zlecenie_obj["status"] == "Started":
                 status = "Started"
