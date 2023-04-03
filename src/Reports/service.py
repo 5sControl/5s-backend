@@ -1,6 +1,12 @@
 from src.MsSqlConnector.services import create_records
 from src.Reports.models import SkanyReport
 
+STATUS_TO_FIELD_VALUE = {
+    'violation': False,
+    'compliance': True,
+    'no date': None
+}
+
 
 def edit_extra(data):
     try:
@@ -24,5 +30,6 @@ def create_records_skany(report, skany):
 
 
 def get_skany_indexes(*statuses):
-    skany_indexes = SkanyReport.objects.filter(report__violation_found__in=statuses).values_list('skany_index', flat=True)
+    status_field_values = [STATUS_TO_FIELD_VALUE[status] for status in statuses]
+    skany_indexes = SkanyReport.objects.filter(report__violation_found__in=status_field_values).values_list('skany_index', flat=True)
     return list(skany_indexes)
