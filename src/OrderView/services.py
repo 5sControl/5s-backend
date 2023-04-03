@@ -7,10 +7,12 @@ from src.Reports.models import SkanyReport
 
 
 class OrderService:
-    def __init__(self,):
+    def __init__(
+        self,
+    ):
         self.STATUS_TO_FIELD_VALUE = {
-            'violation': False,
-            'compliance': True,
+            "violation": False,
+            "compliance": True,
         }
 
     def get_skanyQueryByIds(self, ids):
@@ -78,7 +80,8 @@ class OrderService:
                 operation_status=operation_status,
                 operation_name=operation_name,
             )
-            print(query, params)
+            print("QUERY", query)
+            print("PARAMS", params)
             cursor.execute(query, params)
             results = cursor.fetchall()
 
@@ -117,11 +120,18 @@ class OrderService:
         if operation_status is not None:
             skanys = self.get_skany_indexes(operation_status)
             print("Skans was founded: ", skanys)
-            zlecenie = self.get_zlecenie_indeks_by_skany_indeks(skanys)
             if skanys:
-                query += " AND z.zlecenie = IN ({})".format(
-                    ", ".join("?" * len(zlecenie))
-                )
+                zlecenie = self.get_zlecenie_indeks_by_skany_indeks(skanys)
+                if zlecenie:
+                    query += " AND z.zlecenie = IN ({})".format(
+                        ", ".join("?" * len(zlecenie))
+                    )
+                    for indeks in zlecenie:
+                        params.append(f"{indeks}%")
+                else:
+                    query += " AND z.zlecenie = 'Not-Found-Data'"
+            else:
+                query += " AND z.zlecenie = 'Not-Found-Data'"
 
         if operation_name is not None:
             ...
@@ -150,21 +160,21 @@ class OrderService:
 
         connection = connector_service.get_database_connection()
 
-        skany_indeks = ','.join(str(indeks) for indeks in skany_list)
+        skany_indeks = ",".join(str(indeks) for indeks in skany_list)
         query_zl_indeks = f"""
             SELECT DISTINCT indekszlecenia
             FROM skany_vs_zlecenia
             WHERE indeksskanu IN ({skany_indeks})
         """
-        print(query_zl_indeks)
+
         with connection.cursor() as cursor:
             cursor.execute(query_zl_indeks)
             zlecenia_indeks_list = [result[0] for result in cursor.fetchall()]
 
         if zlecenia_indeks_list:
-            zlecenie_indeks = ','.join(str(indeks) for indeks in zlecenia_indeks_list)
+            zlecenie_indeks = ",".join(str(indeks) for indeks in zlecenia_indeks_list)
         else:
-            zlecenie_indeks = 'nothing, was founded'
+            zlecenie_indeks = "nothing, was founded"
         query_zl = f"""
             SELECT DISTINCT zlecenie
             FROM zlecenia
@@ -290,14 +300,38 @@ class OrderService:
         return indeks_skany
 
     def get_skany_indexes(self, statuses):
-        status_set = set(statuses) - set(['no data'])
-        skany_indexes = list(SkanyReport.objects.filter(report__violation_found__in=[self.STATUS_TO_FIELD_VALUE[status] for status in status_set]).values_list('skany_index', flat=True))
+        status_set = set(statuses) - set(["no data"])
+        skany_indexes = list(
+            SkanyReport.objects.filter(
+                report__violation_found__in=[
+                    self.STATUS_TO_FIELD_VALUE[status] for status in status_set
+                ]
+            ).values_list("skany_index", flat=True)
+        )
 
-        if 'no data' in statuses:
+        if "no data" in statuses:
             all_skany_indeks = orderView_service.get_all_skany_indeks()
             skany_indexes += all_skany_indeks
 
         return skany_indexes
+
+    def get_operation_names(self):
+        connection = connector_service.get_database_connection()
+        list_of_names = []
+
+        query = """
+            SELECT DISTINCT Raport
+            FROM Stanowiska
+        """
+
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            results = cursor.fetchall()
+        
+        for operation_names in results:
+            list_of_names.append(operation_names[0])
+
+        return list_of_names
 
 
 orderView_service = OrderService()
