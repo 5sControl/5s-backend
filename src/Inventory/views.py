@@ -31,7 +31,7 @@ class ItemsViewSet(ModelViewSet):
     queryset = Items.objects.all().order_by("-id")
     serializer_class = ItemsSerializer
     renderer_classes = [CustomJSONRenderer]
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def perform_destroy(self, instance):
         instance.delete()
@@ -41,7 +41,7 @@ class ItemsViewSet(ModelViewSet):
 class ItemsHistoryViewSet(APIView):
     """History items"""
 
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     @validate_license
     def get(self, request, date, start_time, end_time, item_id=None):
@@ -57,12 +57,12 @@ class ItemsHistoryViewSet(APIView):
         queryset = Report.objects.filter(
             Q(date_created__gte=start_of_day) & Q(date_created__lte=end_of_day)
         ).order_by("-date_created", "-id")
+
         if algorithm_name:
             queryset = queryset.filter(algorithm__name=algorithm_name)
-        print("algorithm__name", queryset.values())
+
         if item_id:
-            queryset = queryset.filter(extra__0_itemId=item_id)
-        print("extra__0__itemId", queryset.values())
+            queryset = queryset.filter(extra__icontains=f'"itemId": {item_id}')
 
         queryset = queryset.order_by("algorithm__name", "camera__id")
 
