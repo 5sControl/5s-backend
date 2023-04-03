@@ -285,7 +285,7 @@ class OrderService:
             indeks_skany = [result[0] for result in cursor.fetchall()]
         return indeks_skany
 
-    def self.get_skany_indexes(self, statuses):
+    def get_skany_indexes(self, statuses):
         status_set = set(statuses) - set(['no data'])
         skany_indexes = list(SkanyReport.objects.filter(report__violation_found__in=[self.STATUS_TO_FIELD_VALUE[status] for status in status_set]).values_list('skany_index', flat=True))
 
