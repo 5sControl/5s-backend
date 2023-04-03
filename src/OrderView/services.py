@@ -117,11 +117,12 @@ class OrderService:
         if operation_status is not None:
             skanys = self.get_skany_indexes(operation_status)
             print("Skans was founded: ", skanys)
-            zlecenie = self.get_zlecenie_indeks_by_skany_indeks(skanys)
             if skanys:
-                query += " AND z.zlecenie = IN ({})".format(
-                    ", ".join("?" * len(zlecenie))
-                )
+                zlecenie = self.get_zlecenie_indeks_by_skany_indeks(skanys)
+                if zlecenie:
+                    query += " AND z.zlecenie = IN ({})".format(
+                        ", ".join("?" * len(zlecenie))
+                    )
 
         if operation_name is not None:
             ...
@@ -156,7 +157,7 @@ class OrderService:
             FROM skany_vs_zlecenia
             WHERE indeksskanu IN ({skany_indeks})
         """
-        print(query_zl_indeks)
+
         with connection.cursor() as cursor:
             cursor.execute(query_zl_indeks)
             zlecenia_indeks_list = [result[0] for result in cursor.fetchall()]
