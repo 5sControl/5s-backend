@@ -129,7 +129,9 @@ class OrderService:
                 query += " AND z.zlecenie = 'Not-Found-Data'"
 
         if operation_name != []:
-            zlecenie_by_stanowisko = self.get_zlecenie_by_operation_names(operation_name)
+            zlecenie_by_stanowisko = self.get_zlecenie_by_operation_names(
+                operation_name
+            )
             print(zlecenie_by_stanowisko)
             if zlecenie_by_stanowisko:
                 query += " AND z.zlecenie IN ({})".format(
@@ -341,18 +343,16 @@ class OrderService:
 
     def get_zlecenie_by_operation_names(self, operation_names):
         connection = connector_service.get_database_connection()
+
         zlecenie = []
 
         query = """
             SELECT DISTINCT zlecenia.zlecenie
-            FROM Skany_vs_Zlecenia skany_zlecenia
-            JOIN Zlecenia zlecenia ON skany_zlecenia.indekszlecenia = zlecenia.indekszlecenia
-            WHERE skany_zlecenia.indeksskanu IN (
-                SELECT DISTINCT skany.indeks
-                FROM Skany skany
-                JOIN Stanowiska stanowiska ON skany.stanowisko = stanowiska.indeks
-                WHERE stanowiska.raport IN ({})
-            )
+            FROM Stanowiska
+            INNER JOIN Skany ON Stanowiska.indeks = Skany.stanowisko
+            INNER JOIN Skany_vs_Zlecenia ON Skany.indeks = Skany_vs_Zlecenia.indeksskanu
+            INNER JOIN zlecenia ON Skany_vs_Zlecenia.indekszlecenia = zlecenia.indeks
+            WHERE Stanowiska.raport IN ({})
         """.format(
             ", ".join([f"'{op_name}'" for op_name in operation_names])
         )
@@ -361,8 +361,8 @@ class OrderService:
             cursor.execute(query)
             results = cursor.fetchall()
 
-        for zlec in results:
-            zlecenie.append(zlec[0])
+        for indeks_zlecenie in results:
+            zlecenie.append(indeks_zlecenie[0])
 
         return zlecenie
 
