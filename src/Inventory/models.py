@@ -42,11 +42,8 @@ class Items(models.Model):
 
             # started process
             camera = Camera.objects.filter(id=self.camera)
-            print("camera", camera)
             algorithm = Algorithm.objects.filter(name='min_max_control')
-            print("algorithm", algorithm[0])
             server_url = yolo_proccesing.get_algorithm_url()
-            print("server_url", server_url)
             algorithms_services.create_new_records(cameras=camera, algorithm=algorithm[0], server_url=server_url)
 
         return instance
