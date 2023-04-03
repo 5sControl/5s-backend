@@ -118,7 +118,7 @@ class OrderService:
             elif order_status == "started":
                 query += " AND z.zakonczone = 0"
 
-        if operation_status is not None:
+        if operation_status == []:
             skanys = self.get_skany_indeks_from_report(operation_status)
             print("Skans was founded: ", skanys)
             if skanys:
