@@ -66,7 +66,6 @@ class OrderService:
             )
             results = cursor.fetchall()
         result = self.transform_result(results)
-        print("RESULT: ", result)
         return result
 
     def get_order_list(
@@ -81,8 +80,6 @@ class OrderService:
                 operation_status=operation_status,
                 operation_name=operation_name,
             )
-            print("QUERY", query)
-            print("PARAMS", params)
             cursor.execute(query, params)
             results = cursor.fetchall()
 
@@ -120,7 +117,6 @@ class OrderService:
 
         if operation_status != []:
             skanys = self.get_skany_indeks_from_report(operation_status)
-            print("Skans was founded: ", skanys)
             if skanys:
                 zlecenie = self.get_zlecenie_indeks_by_skany_indeks(skanys)
                 if zlecenie:
@@ -132,8 +128,17 @@ class OrderService:
             else:
                 query += " AND z.zlecenie = 'Not-Found-Data'"
 
-        if operation_name is not None:
-            ...
+        if operation_name != []:
+            zlecenie_by_stanowisko = self.get_zlecenie_by_operation_names(
+                operation_name
+            )
+            print(zlecenie_by_stanowisko)
+            if zlecenie_by_stanowisko:
+                query += " AND z.zlecenie IN ({})".format(
+                    ", ".join([f"'{z_by_s}'" for z_by_s in zlecenie_by_stanowisko])
+                )
+            else:
+                query += " AND z.zlecenie = 'Not-Found-Data'"
 
         return query, tuple(params)
 
@@ -193,7 +198,6 @@ class OrderService:
         zlecenia_dict = self.get_zlecenia_query_by_zlecenie(zlecenie_id)
 
         for zlecenie_obj in zlecenia_dict:
-            print("Zlecenie obj is ", zlecenie_obj)
             skany_dict = defaultdict(list)
             if zlecenie_obj["status"] == "Started":
                 status = "Started"
@@ -235,7 +239,7 @@ class OrderService:
                         "raport": row[4],
                         "worker": f"{row[5]} {row[6]}",
                         "status": status,
-                        "video_data": video_data
+                        "video_data": video_data,
                     }
 
                     formatted_time = skany["date"].strftime("%Y.%m.%d")
@@ -336,6 +340,31 @@ class OrderService:
             list_of_names.append(operation_names[0])
 
         return list_of_names
+
+    def get_zlecenie_by_operation_names(self, operation_names):
+        connection = connector_service.get_database_connection()
+
+        zlecenie = []
+
+        query = """
+            SELECT DISTINCT zlecenia.zlecenie
+            FROM Stanowiska
+            INNER JOIN Skany ON Stanowiska.indeks = Skany.stanowisko
+            INNER JOIN Skany_vs_Zlecenia ON Skany.indeks = Skany_vs_Zlecenia.indeksskanu
+            INNER JOIN zlecenia ON Skany_vs_Zlecenia.indekszlecenia = zlecenia.indeks
+            WHERE Stanowiska.raport IN ({})
+        """.format(
+            ", ".join([f"'{op_name}'" for op_name in operation_names])
+        )
+
+        with connection.cursor() as cursor:
+            cursor.execute(query)
+            results = cursor.fetchall()
+
+        for indeks_zlecenie in results:
+            zlecenie.append(indeks_zlecenie[0])
+
+        return zlecenie
 
 
 orderView_service = OrderService()
