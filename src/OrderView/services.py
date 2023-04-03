@@ -123,6 +123,8 @@ class OrderService:
                     query += " AND z.zlecenie = IN ({})".format(
                         ", ".join("?" * len(zlecenie))
                     )
+                else:
+                    query += " AND z.zlecenie = Not-Found-Data"
 
         if operation_name is not None:
             ...
