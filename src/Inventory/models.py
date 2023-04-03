@@ -29,8 +29,10 @@ class Items(models.Model):
 
     def save(self, *args, **kwargs):
         is_update = bool(self.pk)
+        camera_updated = self.pk and self.camera_id != self.__class__.objects.get(pk=self.pk).camera_id
+        coords_updated = self.pk and self.coords != self.__class__.objects.get(pk=self.pk).coords
         instance = super().save(*args, **kwargs)
-        if is_update:
+        if is_update and (camera_updated or coords_updated):
             # stopped process
             from src.Algorithms.service import algorithms_services
             process_id = CameraAlgorithm.objects.filter(
