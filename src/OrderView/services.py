@@ -105,8 +105,9 @@ class OrderService:
 
         if operation_status is not None:
             skanys = get_skany_indexes(operation_status)
-            zlcenies = self.get_zlecenie_indeks_by_skany_indeks(skanys)
-            if zlcenies:
+            print(skanys)
+            if skanys:
+                zlcenies = self.get_zlecenie_indeks_by_skany_indeks(skanys)
                 query += " AND z.zlecenie = IN ({})".format(', '.join('?' * len(zlcenies)))
 
         return query, tuple(params)
