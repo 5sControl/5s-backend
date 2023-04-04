@@ -133,6 +133,7 @@ class SearchReportListView(GenericAPIView):
         algorithm_name = self.request.query_params.get("algorithm")
 
         queryset = Report.objects.all().order_by("-id")
+        queryset = queryset.exclude(algorithm__name='min_max_control')
 
         if start_time:
             queryset = queryset.filter(date_created__gte=f"{date} {start_time}")
@@ -141,7 +142,7 @@ class SearchReportListView(GenericAPIView):
         if camera_id:
             queryset = queryset.filter(camera__id=camera_id)
         if algorithm_name:
-            queryset = queryset.exclude(algorithm__name='min_max_control').filter(algorithm__name=algorithm_name)
+            queryset = queryset.filter(algorithm__name=algorithm_name)
 
         queryset = queryset.order_by("-id")
 
