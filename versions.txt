@@ -1,10 +1,9 @@
-5S Control version: 0.1.0
+5S Control version: 0.2.0
 Idle Control: 0.1.0
-Operation Control: 0.2.2
-Tool Control: 0.0.1
+Operation Control: 0.2.3
 Machine Control: 0.1.0
 Safety Control ear protection: 0.1.0
 Safety Control head protection: 0.1.0
 Safety Control hand protection: 0.1.0
 Safety Control reflective jacket: 0.1.0
-MinMax Control: 0.0.2
+MinMax Control: 0.0.3
