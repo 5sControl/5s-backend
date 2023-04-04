@@ -19,6 +19,7 @@ urlpatterns = [
 urlpatterns += [
     path("admin/", admin.site.urls),
     path("api/", include(routes)),
+    static(settings.VIDEO_URL, document_root=settings.VIDEO_ROOT)
 ]
 
 if settings.DEBUG:
