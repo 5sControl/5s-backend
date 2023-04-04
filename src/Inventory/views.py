@@ -1,4 +1,5 @@
 from rest_framework.permissions import IsAuthenticated
+from django.db.models import Case, When, Value, IntegerField
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -28,10 +29,24 @@ class CustomJSONRenderer(JSONRenderer):
 
 class ItemsViewSet(ModelViewSet):
     """All items in the inventory"""
-    queryset = Items.objects.all().order_by("-id")
+    queryset = Items.objects.all()
     serializer_class = ItemsSerializer
     renderer_classes = [CustomJSONRenderer]
     # permission_classes = [IsAuthenticated]
+
+    ALLOWED_STATUSES = ["Out of stock", "Low stock level", "In stock"]
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        status = self.request.query_params.get('status', None)
+
+        # check if status is valid, else sort by default order
+        if status in self.ALLOWED_STATUSES:
+            queryset = queryset.order_by('status', 'id')
+        else:
+            queryset = queryset.order_by('id')
+
+        return queryset
 
     def perform_destroy(self, instance):
         instance.delete()
