@@ -19,10 +19,6 @@ jobs:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
-#     - name: Send Deployment Response
-#       run: |
-#         curl https://a992-134-17-26-206.eu.ngrok.io/
-    - name: Install Dependencies
+    - name: Send Deployment Response
       run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        curl https://5958-134-17-26-206.ngrok.io
