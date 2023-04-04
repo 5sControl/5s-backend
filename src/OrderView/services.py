@@ -222,12 +222,12 @@ class OrderService:
 
                 skany_ids_added = set()
                 for row in results:
-                    status = None
+                    operation_status = None
                     skany_report = SkanyReport.objects.filter(
                         report__algorithm__name="operation_control", skany_index=row[0]
                     ).first()
                     if skany_report:
-                        status = skany_report.report.violation_found
+                        operation_status = skany_report.report.violation_found
 
                     video_data = get_skany_video_info(time=str(row[1])[:-3])
 
@@ -238,7 +238,7 @@ class OrderService:
                         "uzytkownik": row[3],
                         "raport": row[4],
                         "worker": f"{row[5]} {row[6]}",
-                        "status": status,
+                        "status": operation_status,
                         "video_data": video_data,
                     }
 
