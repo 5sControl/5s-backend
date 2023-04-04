@@ -1,17 +1,13 @@
-from rest_framework.routers import DefaultRouter
-
 from django.urls import path, include
 
-from src.Inventory.views import ItemsViewSet, ItemsHistoryViewSet
+from src.Inventory.views import ItemsListAPIView, ItemsRetrieveAPIView, ItemsHistoryViewSet, ItemsCreateAPIView
 
-router_inventory = DefaultRouter()
-router_inventory.register(r"items", ItemsViewSet, basename="items")
 
 urlpatterns = [
-    path('', include(router_inventory.urls)),
-    path('items/', ItemsViewSet.as_view({'get': 'list'}), name='items-list'),
+    path('items/', ItemsListAPIView.as_view(), name='items-list'),
+    path('items/create/', ItemsCreateAPIView.as_view(), name='items-create'),
+    path('items/<int:id>/', ItemsRetrieveAPIView.as_view(), name='items-detail'),
     path("history/<str:date>/<str:start_time>/<str:end_time>/<int:item_id>/",
          ItemsHistoryViewSet.as_view()),
     path("history/<str:date>/<str:start_time>/<str:end_time>/", ItemsHistoryViewSet.as_view()),
-    path("", include(router_inventory.urls)),
 ]

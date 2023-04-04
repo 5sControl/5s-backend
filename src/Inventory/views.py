@@ -1,10 +1,10 @@
 from rest_framework.permissions import IsAuthenticated
-from django.db.models import Case, When, Value, IntegerField
+from rest_framework.generics import RetrieveAPIView, CreateAPIView
+from django.http import Http404
 from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
-from rest_framework.renderers import JSONRenderer
 
 from src.Inventory.models import Items
 from src.Reports.models import Report
@@ -18,39 +18,56 @@ from src.Inventory.serializers import ItemsSerializer
 from src.Reports.serializers import ReportSerializers
 
 
-class CustomJSONRenderer(JSONRenderer):
-    def render(self, data, accepted_media_type=None, renderer_context=None):
-        if renderer_context and 'response' in renderer_context:
-            response = renderer_context['response']
-            if response.status_code == status.HTTP_204_NO_CONTENT:
-                return super().render({"message": "Item deleted successfully."}, accepted_media_type, renderer_context)
-        return super().render(data, accepted_media_type, renderer_context)
-
-
-class ItemsViewSet(ModelViewSet):
-    """All items in the inventory"""
+class ItemsListAPIView(ListAPIView):
     queryset = Items.objects.all()
     serializer_class = ItemsSerializer
-    renderer_classes = [CustomJSONRenderer]
     # permission_classes = [IsAuthenticated]
-
     ALLOWED_STATUSES = ["Out of stock", "Low stock level", "In stock"]
 
     def get_queryset(self):
-        queryset = super().get_queryset()
         status = self.request.query_params.get('status', None)
+        if status is not None:
+            return self.queryset.filter(status=status)
 
-        # check if status is valid, else sort by default order
-        if status in self.ALLOWED_STATUSES:
-            queryset = queryset.order_by('status', 'id')
-        else:
-            queryset = queryset.order_by('id')
+        queryset = Items.objects.filter(status__in=self.ALLOWED_STATUSES)
+
+        queryset = sorted(queryset, key=lambda x: self.ALLOWED_STATUSES.index(x.status))
 
         return queryset
 
-    def perform_destroy(self, instance):
+
+class ItemsCreateAPIView(CreateAPIView):
+    queryset = Items.objects.all()
+    serializer_class = ItemsSerializer
+    # permission_classes = [IsAuthenticated]
+
+
+class ItemsRetrieveAPIView(RetrieveAPIView):
+    queryset = Items.objects.all()
+    serializer_class = ItemsSerializer
+    # permission_classes = [IsAuthenticated]
+    lookup_field = 'id'
+
+    def get(self, request, *args, **kwargs):
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data)
+        except Http404:
+            return Response({'detail': 'Not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    def put(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
         instance.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({'message': 'Item deleted successfully.'}, status=status.HTTP_204_NO_CONTENT)
 
 
 class ItemsHistoryViewSet(APIView):
