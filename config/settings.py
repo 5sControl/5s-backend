@@ -1,6 +1,7 @@
 from pathlib import Path
 from datetime import timedelta
 from decouple import config
+import os
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -121,6 +122,9 @@ STATIC_ROOT = BASE_DIR / "static/"
 
 MEDIA_URL = "/images/"
 MEDIA_ROOT = BASE_DIR / "images/"
+
+VIDEO_URL = "/videos/"
+VIDEO_ROOT = BASE_DIR / "videos/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

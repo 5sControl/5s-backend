@@ -18,8 +18,10 @@ urlpatterns = [
 # main routes
 urlpatterns += [
     path("admin/", admin.site.urls),
-    path("api/", include(routes)),
+    path("api/", include(routes))
 ]
+
+urlpatterns += static(settings.VIDEO_URL, document_root=settings.VIDEO_ROOT)
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
