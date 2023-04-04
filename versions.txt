@@ -1,4 +1,4 @@
-5S Control version: 0.2.0
+5S Control version: 0.2.2
 Idle Control: 0.1.0
 Operation Control: 0.2.3
 Machine Control: 0.1.0
