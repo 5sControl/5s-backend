@@ -122,9 +122,6 @@ STATIC_ROOT = BASE_DIR / "static/"
 MEDIA_URL = "/images/"
 MEDIA_ROOT = BASE_DIR / "images/"
 
-VIDEO_URL = "/videos/"
-VIDEO_ROOT = BASE_DIR / "videos/"
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 REST_FRAMEWORK = {
