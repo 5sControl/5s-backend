@@ -39,40 +39,40 @@ def process_item_status(data):
     return result
 
 
-def stop_all_items_algorithm():
-    """stop algorithm"""
-    cameras_items = Items.objects.values_list('camera__name', flat=True).distinct()
-    for camera in cameras_items:
-        from src.Algorithms.utils import yolo_proccesing
-        process_id = CameraAlgorithm.objects.filter(
-            Q(camera_id=camera) & Q(algorithm__name='min_max_control')
-        ).values_list('process_id', flat=True).first()
-        if process_id is not None:
-            yolo_proccesing.stop_process(pid=process_id)
-            algorithms_services.update_status_of_algorithm_by_pid(pid=process_id)
-    return start_all_items_algorithm(cameras_items)
-
-
-def start_all_items_algorithm(cameras_items):
-    """start process"""
-    for camera_data in cameras_items:
-
-        algorithm = Algorithm.objects.filter(name='min_max_control')
-        camera = Camera.objects.first(camera_data)
-
-        data = []
-        from src.Algorithms.utils import yolo_proccesing
-        server_url = yolo_proccesing.get_algorithm_url()
-        algorithm_items = Items.objects.filter(camera=camera_data)
-        print("algo items", algorithm_items.values())
-
-        for item in algorithm_items:
-            data.append({"itemId": item.id, "coords": item.coords})
-            print(f"coords: {item.coords}\nid {item.id}")
-        print(f"camera id: {camera_data}")
-
-        if len(data) == 0:
-            data = None
-        result = yolo_proccesing.start_yolo_processing(camera=camera, algorithm=algorithm[0], url=server_url, data=data)
-        print("result", result)
-    return
+# def stop_all_items_algorithm():
+#     """stop algorithm"""
+#     cameras_items = Items.objects.values_list('camera__name', flat=True).distinct()
+#     for camera in cameras_items:
+#         from src.Algorithms.utils import yolo_proccesing
+#         process_id = CameraAlgorithm.objects.filter(
+#             Q(camera_id=camera) & Q(algorithm__name='min_max_control')
+#         ).values_list('process_id', flat=True).first()
+#         if process_id is not None:
+#             yolo_proccesing.stop_process(pid=process_id)
+#             algorithms_services.update_status_of_algorithm_by_pid(pid=process_id)
+#     return start_all_items_algorithm(cameras_items)
+#
+#
+# def start_all_items_algorithm(cameras_items):
+#     """start process"""
+#     for camera_data in cameras_items:
+#
+#         algorithm = Algorithm.objects.filter(name='min_max_control')
+#         camera = Camera.objects.first(camera_data)
+#
+#         data = []
+#         from src.Algorithms.utils import yolo_proccesing
+#         server_url = yolo_proccesing.get_algorithm_url()
+#         algorithm_items = Items.objects.filter(camera=camera_data)
+#         print("algo items", algorithm_items.values())
+#
+#         for item in algorithm_items:
+#             data.append({"itemId": item.id, "coords": item.coords})
+#             print(f"coords: {item.coords}\nid {item.id}")
+#         print(f"camera id: {camera_data}")
+#
+#         if len(data) == 0:
+#             data = None
+#         result = yolo_proccesing.start_yolo_processing(camera=camera, algorithm=algorithm[0], url=server_url, data=data)
+#         print("result", result)
+#     return
