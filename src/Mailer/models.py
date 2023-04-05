@@ -10,6 +10,8 @@ class SMTPSettings(models.Model):
     port = models.IntegerField()
     username = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
+    email_use_tls = models.BooleanField(default=False)
+    email_use_ssl = models.BooleanField(default=True)
 
     def __str__(self):
         return self.username

@@ -189,13 +189,3 @@ CSRF_TRUSTED_ORIGINS = [
     "https://*",
     "https://fe9e-134-17-26-206.eu.ngrok.io/",
 ]
-
-# settings SMTP server
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.yandex.ru'
-EMAIL_PORT = 465
-EMAIL_USE_TLS = False
-EMAIL_USE_SSL = True
-EMAIL_HOST_USER = 'Taqtile@yandex.by'
-EMAIL_HOST_PASSWORD = 'bwsotzfyfueuzfqz'
-DEFAULT_FROM_EMAIL = 'Taqtile@yandex.by'

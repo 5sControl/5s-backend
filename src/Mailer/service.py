@@ -1,18 +1,29 @@
 from django.core.mail import send_mail
 from rest_framework.response import Response
+from src.Mailer.models import SMTPSettings
+from django.core.mail.backends.smtp import EmailBackend
 
 
-def send_message(item, count):
+def send_email(subject, message, recipient_list):
+    try:
+        smtp_settings = SMTPSettings.objects.first()
+    except SMTPSettings.DoesNotExist:
+        raise Exception('SMTP configuration is not defined')
 
-    if item[0].get("email") == None:
-        return print(f'We notify you when the minimum balance of the {item[0].get("name")} is reached, the minimum balance is {count} out of {item[0].get("low_stock_level")}.')
-    else:
-        send_mail(
-            'Balance notice',
-            f'We notify you when the minimum balance of the {item[0].get("name")} is reached, the minimum balance is {count} out of {item[0].get("low_stock_level")}.',
-            'Taqtile@yandex.by',
-            [f'{item[0].get("email")}'],
-            fail_silently=False,
-        )
-
-        return Response({'success': True})
+    connection = EmailBackend(
+        host=smtp_settings.server,
+        port=smtp_settings.port,
+        username=smtp_settings.username,
+        password=smtp_settings.password,
+        use_tls=smtp_settings.email_use_tls,
+        use_ssl=smtp_settings.email_use_ssl,
+    )
+    send_mail(
+        subject,
+        message,
+        smtp_settings.username,
+        recipient_list,
+        fail_silently=False,
+        connection=connection,
+    )
+    return Response({'success': True})
