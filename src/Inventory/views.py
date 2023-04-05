@@ -27,11 +27,16 @@ class ItemsListAPIView(ListAPIView):
     def get_queryset(self):
         status = self.request.query_params.get('status', None)
         if status is not None:
-            return self.queryset.filter(status=status)
+            queryset = self.queryset.filter(status=status)
+        else:
+            queryset = self.queryset.filter(status__in=self.ALLOWED_STATUSES)
 
-        queryset = Items.objects.filter(status__in=self.ALLOWED_STATUSES)
-
-        queryset = sorted(queryset, key=lambda x: self.ALLOWED_STATUSES.index(x.status))
+            order = self.request.query_params.get('order', None)
+            if order == 'desc':
+                reversed_statuses = list(reversed(self.ALLOWED_STATUSES))
+                queryset = sorted(queryset, key=lambda x: reversed_statuses.index(x.status))
+            else:
+                queryset = sorted(queryset, key=lambda x: self.ALLOWED_STATUSES.index(x.status))
 
         return queryset
 
