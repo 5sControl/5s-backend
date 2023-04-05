@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 
 from src.Inventory.models import Items
 
-from ....core.logger import logger
+from src.Core.logger import logger
 
 from src.Algorithms.models import CameraAlgorithm
 from src.Algorithms.utils import yolo_proccesing

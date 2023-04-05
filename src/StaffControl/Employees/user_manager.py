@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 
-from src.core.logger import logger
+from src.Core.logger import logger
 
 
 class UserManager:

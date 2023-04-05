@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
-from src.core.permissions import IsStaffPermission, IsSuperuserPermission
+from src.Core.permissions import IsStaffPermission, IsSuperuserPermission
 
 from src.Algorithms.models import Algorithm
 from src.Algorithms.service import algorithms_services, camera_algorithm_logs_service
