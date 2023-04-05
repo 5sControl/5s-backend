@@ -27,6 +27,7 @@ routes = [
     path("connector/", include("src.MsSqlConnector.urls")),
     path("inventory/", include("src.Inventory.urls")),
     path("mailer/", include("src.Mailer.urls")),
+    path("core/", include("src.Core.urls")),
     path(
         "swagger/",
         schema_view.with_ui("swagger", cache_timeout=0),
