@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     "src.Reports.apps.ReportsConfig",
     "src.ImageReport.apps.ImageConfig",
     "src.Mailer.apps.MailerConfig",
-    "src.Core"
+    "src.Core.apps.CoreConfig"
 ]
 
 TEMPLATES = [
