@@ -5,7 +5,7 @@ from .views import (
 
 urlpatterns = [
     path(
-        "deploy/<str:zlecenie_id>/",
+        "deploy/",
         StartDeployment.as_view(),
         name="redirect to go server",
     ),
