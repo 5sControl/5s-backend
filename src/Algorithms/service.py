@@ -11,7 +11,7 @@ from .utils import yolo_proccesing
 
 from typing import Tuple, Union, List
 
-from ..core.logger import logger
+from src.Core.logger import logger
 from src.StaffControl.Locations.models import Camera
 
 
