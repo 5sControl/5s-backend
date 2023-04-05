@@ -7,7 +7,7 @@ from src.Cameras.serializers import (
     CameraSerializer,
 )
 from src.Cameras.utils import zip_maker
-from src.core.permissions import IsStaffPermission, IsSuperuserPermission
+from src.Core.permissions import IsStaffPermission, IsSuperuserPermission
 
 from .service import link_generator, camera_service
 

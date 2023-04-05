@@ -5,7 +5,7 @@ import requests
 
 from .models import Camera
 
-from src.core.logger import logger
+from src.Core.logger import logger
 from ..CompanyLicense.decorators import check_active_cameras
 
 
