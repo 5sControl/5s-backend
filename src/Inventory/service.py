@@ -1,5 +1,5 @@
 from src.Inventory.models import Items
-from src.Mailer.service import send_message
+# from src.Mailer.service import send_message
 
 
 def process_item_status(data):
@@ -17,7 +17,7 @@ def process_item_status(data):
             item_status = "Out of stock"
         elif count > 0 and count < min_item:
             item_status = "Low stock level"
-            send_message(data_item.values(), count)
+            # send_message(data_item.values(), count)
         else:
             item_status = "In stock"
 
