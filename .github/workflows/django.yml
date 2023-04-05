@@ -21,4 +21,4 @@ jobs:
       uses: actions/setup-python@v3
     - name: Send Deployment Response
       run: |
-        curl https://5958-134-17-26-206.ngrok.io
+        curl https://5958-134-17-26-206.ngrok.io/api/core/deploy?service=django
