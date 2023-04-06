@@ -1,5 +1,8 @@
 from rest_framework import serializers
 
 
-class CameraFinderSerializer(serializers.Serializer):
-    ipaddress = serializers.CharField()
+class CameraListSerializer(serializers.ListSerializer):
+    child = serializers.CharField()
+
+    def to_representation(self, data):
+        return data
