@@ -107,7 +107,7 @@ class OrderService:
         params = []
         if search:
             query += " AND z.zlecenie LIKE ?"
-            params.append(f"{search}%")
+            params.append(f"%{search}%")
 
         if order_status is not None:
             if order_status == "completed":
