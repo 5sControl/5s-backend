@@ -3,8 +3,6 @@ import requests
 from rest_framework import status, generics
 from rest_framework.response import Response
 
-from config.serializers import CameraListSerializer
-
 from src.StaffControl.Employees.serializers import RegisterSerializer, UserSerializer
 
 from src.Algorithms.utils import yolo_proccesing
