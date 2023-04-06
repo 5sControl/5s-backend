@@ -41,7 +41,6 @@ class Items(models.Model):
                 algorithms_services.update_status_of_algorithm_by_pid(pid=process_id)
 
             # started process
-            print("started process", self.camera)
             camera = Camera.objects.filter(id=self.camera)
             algorithm = Algorithm.objects.filter(name='min_max_control')
             server_url = yolo_proccesing.get_algorithm_url()
