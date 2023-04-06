@@ -19,7 +19,7 @@ class Items(models.Model):
     camera = models.ForeignKey(Camera, related_name='camera_id', on_delete=models.CASCADE)
     date_created = models.DateTimeField(verbose_name="Date created", auto_now_add=True)
     date_updated = models.DateTimeField(verbose_name="Date updated", auto_now=True)
-    coords = models.JSONField(verbose_name="Area coordinates", blank=True, null=True)
+    coords = models.JSONField(verbose_name="Area coordinates", blank=False, null=False)
 
     def __str__(self):
         return self.name
