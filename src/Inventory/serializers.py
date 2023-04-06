@@ -15,7 +15,6 @@ class ItemsSerializer(serializers.ModelSerializer):
                   "status",
                   "current_stock_level",
                   "low_stock_level",
-                  "email",
                   "camera",
                   "date_created",
                   "date_updated",
