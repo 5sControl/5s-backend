@@ -31,7 +31,7 @@ class RegisterView(generics.GenericAPIView):
 
 class FindCameraAPIView(generics.GenericAPIView):
     def get(self, request, *args, **kwargs):
-        cameras = requests.get(f"{yolo_proccesing.get_algorithm_url}:7654/get_all_onvif_cameras/")
+        cameras = requests.get(f"{yolo_proccesing.get_algorithm_url()}:7654/get_all_onvif_cameras/")
         serializer = CameraListSerializer(data=cameras.json())
         serializer.is_valid(raise_exception=True)
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
