@@ -31,12 +31,16 @@ class ItemsListAPIView(ListAPIView):
         else:
             queryset = self.queryset.filter(status__in=self.ALLOWED_STATUSES)
 
-            order = self.request.query_params.get('order', None)
-            if order == 'desc':
-                reversed_statuses = list(reversed(self.ALLOWED_STATUSES))
-                queryset = sorted(queryset, key=lambda x: reversed_statuses.index(x.status))
-            else:
-                queryset = sorted(queryset, key=lambda x: self.ALLOWED_STATUSES.index(x.status))
+        camera = self.request.query_params.get('camera', None)
+        if camera is not None:
+            queryset = queryset.filter(camera=camera)
+
+        order = self.request.query_params.get('order', None)
+        if order == 'desc':
+            reversed_statuses = list(reversed(self.ALLOWED_STATUSES))
+            queryset = sorted(queryset, key=lambda x: reversed_statuses.index(x.status))
+        else:
+            queryset = sorted(queryset, key=lambda x: self.ALLOWED_STATUSES.index(x.status))
 
         return queryset
 
