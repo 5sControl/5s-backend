@@ -34,14 +34,14 @@ class Items(models.Model):
             # stopped process
             from src.Algorithms.service import algorithms_services
             process_id = CameraAlgorithm.objects.filter(
-                Q(camera_id=self.camera) & Q(algorithm__name='min_max_control')
+                Q(camera_id=instance.camera) & Q(algorithm__name='min_max_control')
             ).values_list('process_id', flat=True).first()
             if process_id is not None:
                 yolo_proccesing.stop_process(pid=process_id)
                 algorithms_services.update_status_of_algorithm_by_pid(pid=process_id)
 
             # started process
-            camera = Camera.objects.filter(id=self.camera)
+            camera = Camera.objects.filter(id=instance.camera)
             algorithm = Algorithm.objects.filter(name='min_max_control')
             server_url = yolo_proccesing.get_algorithm_url()
             algorithms_services.create_new_records(cameras=camera, algorithm=algorithm[0], server_url=server_url)
