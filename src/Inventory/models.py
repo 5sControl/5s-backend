@@ -1,8 +1,4 @@
 from django.db import models
-
-from src.Cameras.models import Camera
-# from src.Inventory.service import stop_all_items_algorithm, start_all_items_algorithm
-from src.Reports.models import Report
 from src.Cameras.models import Camera
 from src.Algorithms.models import Algorithm
 from src.Algorithms.models import CameraAlgorithm
@@ -33,7 +29,8 @@ class Items(models.Model):
         camera_updated = self.pk and self.camera_id != self.__class__.objects.get(pk=self.pk).camera_id
         coords_updated = self.pk and self.coords != self.__class__.objects.get(pk=self.pk).coords
         instance = super().save(*args, **kwargs)
-        if is_update and (camera_updated or coords_updated):
+
+        if not is_update or camera_updated or coords_updated:
             # stopped process
             from src.Algorithms.service import algorithms_services
             process_id = CameraAlgorithm.objects.filter(
@@ -48,8 +45,5 @@ class Items(models.Model):
             algorithm = Algorithm.objects.filter(name='min_max_control')
             server_url = yolo_proccesing.get_algorithm_url()
             algorithms_services.create_new_records(cameras=camera, algorithm=algorithm[0], server_url=server_url)
-
-        # data = stop_all_items_algorithm()
-        # start_all_items_algorithm(data)
 
         return instance
