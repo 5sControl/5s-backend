@@ -1,5 +1,6 @@
 from rest_framework import status, generics
 from rest_framework.response import Response
+from config.serializers import CameraFinderSerializer
 
 from src.StaffControl.Employees.serializers import RegisterSerializer, UserSerializer
 
@@ -31,4 +32,5 @@ class FindCameraAPIView(generics.GenericAPIView):
         Returns a list of cameras available to connect
         """
         cameras = finder.fetch_devices()
-        return Response({"results": cameras}, status=status.HTTP_200_OK)
+        serializer = CameraFinderSerializer(cameras, many=True)
+        return Response({"results": serializer.data}, status=status.HTTP_200_OK)
