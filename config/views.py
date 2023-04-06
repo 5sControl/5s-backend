@@ -1,10 +1,13 @@
+import requests
+
 from rest_framework import status, generics
 from rest_framework.response import Response
+
 from config.serializers import CameraListSerializer
 
 from src.StaffControl.Employees.serializers import RegisterSerializer, UserSerializer
 
-from config.camera_finder import finder
+from src.Algorithms.utils import yolo_proccesing
 
 
 class RegisterView(generics.GenericAPIView):
@@ -27,11 +30,9 @@ class RegisterView(generics.GenericAPIView):
 
 
 class FindCameraAPIView(generics.GenericAPIView):
-    serializer_class = CameraListSerializer
-
     def get(self, request, *args, **kwargs):
-        """
-        Returns a list of cameras available to connect
-        """
-        cameras = finder.fetch_devices()
-        return Response(cameras, status=status.HTTP_200_OK)
+        cameras = requests.get(f"{yolo_proccesing.get_algorithm_url}:7654/get_all_onvif_cameras/")
+        serializer = CameraListSerializer(data=cameras.json())
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
+
