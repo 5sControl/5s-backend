@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from src.Mailer.models import SMTPSettings
+from src.Mailer.models import SMTPSettings, Messages
 
 
 class SMTPSettingsSerializer(serializers.ModelSerializer):
@@ -8,7 +8,9 @@ class SMTPSettingsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class EmailSerializer(serializers.Serializer):
-    to_email = serializers.EmailField()
-    subject = serializers.CharField(max_length=255)
-    message = serializers.CharField()
+class MessagesSerializer(serializers.ModelSerializer):
+    recipients = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+
+    class Meta:
+        model = Messages
+        fields = ['id', 'subject', 'message', 'is_send', 'date_created', 'date_updated', 'recipients']
