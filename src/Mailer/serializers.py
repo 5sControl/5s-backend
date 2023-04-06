@@ -10,11 +10,10 @@ class SMTPSettingsSerializer(serializers.ModelSerializer):
 
 class MessagesSerializer(serializers.ModelSerializer):
     recipients = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-    to = serializers.ListField(child=serializers.EmailField())
 
     class Meta:
         model = Messages
-        fields = ['id', 'subject', 'message', 'is_send', 'date_created', 'date_updated', 'to', 'recipients']
+        fields = ['id', 'subject', 'message', 'is_send', 'date_created', 'date_updated', 'recipients']
         read_only_fields = ('is_send', )
 
 
