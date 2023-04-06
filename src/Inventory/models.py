@@ -33,9 +33,12 @@ class Items(models.Model):
         if not is_update or camera_updated or coords_updated:
             # stopped process
             from src.Algorithms.service import algorithms_services
-            process_id = CameraAlgorithm.objects.filter(
-                Q(camera_id=instance.camera) & Q(algorithm__name='min_max_control')
-            ).values_list('process_id', flat=True).first()
+            try:
+                process_id = CameraAlgorithm.objects.filter(
+                    Q(camera_id=instance.camera) & Q(algorithm__name='min_max_control')
+                ).values_list('process_id', flat=True).first()
+            except Exception as ex:
+                raise ex
             if process_id is not None:
                 yolo_proccesing.stop_process(pid=process_id)
                 algorithms_services.update_status_of_algorithm_by_pid(pid=process_id)
