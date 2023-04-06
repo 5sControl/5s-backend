@@ -31,5 +31,15 @@ class RegisterView(generics.GenericAPIView):
 
 class FindCameraAPIView(generics.GenericAPIView):
     def get(self, request, *args, **kwargs):
-        cameras = requests.get(f"{yolo_proccesing.get_algorithm_url()}:7654/get_all_onvif_cameras/")
-        return Response(cameras, status=status.HTTP_200_OK)
+        cameras_response = requests.get(
+            f"{yolo_proccesing.get_algorithm_url()}:7654/get_all_onvif_cameras/"
+        )
+        try:
+            cameras = cameras_response.json()
+        except ValueError as e:
+            return Response(
+                {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+        response_data = {"result": cameras}
+        return Response(response_data, status=status.HTTP_200_OK)

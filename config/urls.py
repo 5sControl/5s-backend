@@ -16,10 +16,7 @@ urlpatterns = [
     path("find_cameras/", FindCameraAPIView.as_view(), name="find cameras"),
 ]
 # main routes
-urlpatterns += [
-    path("admin/", admin.site.urls),
-    path("api/", include(routes))
-]
+urlpatterns += [path("admin/", admin.site.urls), path("api/", include(routes))]
 
 urlpatterns += static(settings.VIDEO_URL, document_root=settings.VIDEO_ROOT)
 
