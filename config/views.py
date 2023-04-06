@@ -39,5 +39,5 @@ class FindCameraAPIView(generics.GenericAPIView):
                 {"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-        response_data = {"result": cameras}
+        response_data = {"results": cameras}
         return Response(response_data, status=status.HTTP_200_OK)
