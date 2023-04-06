@@ -29,23 +29,20 @@ class Items(models.Model):
         camera_updated = self.pk and self.camera_id != self.__class__.objects.get(pk=self.pk).camera_id
         coords_updated = self.pk and self.coords != self.__class__.objects.get(pk=self.pk).coords
         instance = super().save(*args, **kwargs)
-        print("instance", instance)
+
         if not is_update or camera_updated or coords_updated:
             # stopped process
             from src.Algorithms.service import algorithms_services
-            try:
-                process_id = CameraAlgorithm.objects.filter(
-                    Q(camera_id=instance.camera) & Q(algorithm__name='min_max_control')
-                ).values_list('process_id', flat=True).first()
-            except Exception as ex:
-                raise ex
+            process_id = CameraAlgorithm.objects.filter(
+                Q(camera_id=self.camera) & Q(algorithm__name='min_max_control')
+            ).values_list('process_id', flat=True).first()
             if process_id is not None:
                 yolo_proccesing.stop_process(pid=process_id)
                 algorithms_services.update_status_of_algorithm_by_pid(pid=process_id)
 
             # started process
-            print("started process", instance.camera)
-            camera = Camera.objects.filter(id=instance.camera)
+            print("started process", self.camera)
+            camera = Camera.objects.filter(id=self.camera)
             algorithm = Algorithm.objects.filter(name='min_max_control')
             server_url = yolo_proccesing.get_algorithm_url()
             algorithms_services.create_new_records(cameras=camera, algorithm=algorithm[0], server_url=server_url)
