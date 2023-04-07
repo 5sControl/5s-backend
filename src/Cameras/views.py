@@ -1,6 +1,7 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from src.Cameras.camera_delete import delete_camera
 
 from src.Cameras.models import Camera
 from src.Cameras.serializers import (
@@ -47,7 +48,7 @@ class DeleteCameraAPIView(APIView):
 
     def delete(self, request, *args, **kwargs):
         camera_id = request.data["id"]
-        result = camera_service.delete(camera_id)
+        result = delete_camera(camera_id)
         return Response(result)
 
 
