@@ -9,6 +9,10 @@ from src.OrderView.utils import OrderViewPaginnator
 
 from src.MsSqlConnector.connector import connector as connector_service
 
+from src.OrderView.models import IndexOperations
+
+from src.OrderView.serializers import IndexOperationsSerializer
+
 
 class GetAllProductAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
@@ -98,3 +102,13 @@ class GetDatabasesAPIView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = connector_service.get_conections()
     serializer_class = DatabaseConnectionSerializer
+
+
+class IndexOperationsView(generics.ListCreateAPIView):
+    queryset = IndexOperations.objects.all()
+    serializer_class = IndexOperationsSerializer
+
+
+class IndexOperationDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = IndexOperations.objects.all()
+    serializer_class = IndexOperationsSerializer

@@ -6,6 +6,8 @@ from .views import (
     CreateConectionAPIView,
     GetDatabasesAPIView,
     DeleteConectionAPIView,
+    IndexOperationsView,
+    IndexOperationDetailView,
 )
 
 urlpatterns = [
@@ -31,4 +33,6 @@ urlpatterns = [
         DeleteConectionAPIView.as_view(),
         name="delete connection from connection database",
     ),
+    path('index_operations/', IndexOperationsView.as_view(), name='index_operations'),
+    path('index_operations/<int:pk>/', IndexOperationDetailView.as_view(), name='index_operations_detail'),
 ]

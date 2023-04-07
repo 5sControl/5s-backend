@@ -2,6 +2,8 @@ from rest_framework import serializers
 
 from src.MsSqlConnector.models import DatabaseConnection
 
+from src.OrderView.models import IndexOperations
+
 
 class DatabaseConnectionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,3 +16,9 @@ class ProductSerializer(serializers.Serializer):
     zlecenie = serializers.CharField(max_length=255)
     status = serializers.CharField(max_length=255)
     terminrealizacji = serializers.DateTimeField()
+
+
+class IndexOperationsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IndexOperations
+        fields = ['id', 'type_operation']
