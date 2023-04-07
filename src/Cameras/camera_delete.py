@@ -7,13 +7,17 @@ def delete_camera(camera_id):
     query_list_cameraalgorithms = algorithms_services.camera_algorithm_by_camera_id(
         camera_id
     )
+    print(query_list_cameraalgorithms)
     if query_list_cameraalgorithms:
         for camera_algorithms in query_list_cameraalgorithms:
+            print(camera_algorithms)
             pid = camera_algorithms.process_id
             result_stop_process = yolo_proccesing.stop_process(pid)
+            print(result_stop_process)
             if not result_stop_process["status"]:
                 return result_stop_process
             result_update_status = algorithms_services.update_status_of_algorithm_by_pid(pid)
+            print(result_update_status)
             if not result_update_status["status"]:
                 return result_update_status
     Camera.objects.filter(id=camera_id).delete()
