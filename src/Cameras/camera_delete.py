@@ -1,11 +1,11 @@
-from src.Algorithms.service import AlgorithmsService
+from src.Algorithms.service import algorithms_services
 from src.Algorithms.utils import yolo_proccesing
 from src.Cameras.models import Camera
 from src.Algorithms.service import algorithms_services
 
 
 def delete_camera(camera_id):
-    query_list_cameraalgorithms = AlgorithmsService.camera_algorithm_by_camera_id(
+    query_list_cameraalgorithms = algorithms_services.camera_algorithm_by_camera_id(
         camera_id
     )
     if query_list_cameraalgorithms:
