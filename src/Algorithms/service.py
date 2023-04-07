@@ -13,7 +13,6 @@ from .utils import yolo_proccesing
 from typing import Tuple, Union, List
 
 from src.Core.logger import logger
-from src.StaffControl.Locations.models import Camera
 
 
 class AlgorithmsService:
@@ -163,6 +162,9 @@ class AlgorithmsService:
         return CameraAlgorithm.objects.filter(
             algorithm=algorithm, camera__in=cameras.values_list("id", flat=True)
         )
+
+    def camera_algorithm_by_camera_id(self, camera_id):
+        return CameraAlgorithm.objects.filter(camera=camera_id)
 
 
 class CameraAlgorithmLogsService:

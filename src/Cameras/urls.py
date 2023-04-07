@@ -3,11 +3,11 @@ from src.Cameras.views import (
     GetHttpCamerasLinkAPIView,
     GetRtspCamerasLinkByIpAPIView,
     GetDataAPIView,
-)
-from src.Cameras.views import (
     UpdateCameraAPIView,
     PostCameraAPIView,
+    DeleteCameraAPIView,
 )
+
 from django.urls import path
 
 
@@ -26,3 +26,5 @@ urlpatterns += [
 urlpatterns += [
     path("update-camera/", UpdateCameraAPIView.as_view()),
 ]
+# delete
+urlpatterns += [path("delete-camera/", DeleteCameraAPIView.as_view())]

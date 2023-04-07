@@ -30,10 +30,24 @@ class PostCameraAPIView(APIView):
     otherwise an error will be returned
     """
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsSuperuserPermission | IsStaffPermission]
 
     def post(self, request, *args, **kwargs):
         result = camera_service.create_camera(request.data)
+        return Response(result)
+
+
+class DeleteCameraAPIView(APIView):
+    """
+    Delete a camera. If on exist some algorithm on this camera,
+    they will be removed
+    """
+
+    permission_classes = [IsAuthenticated, IsSuperuserPermission | IsStaffPermission]
+
+    def delete(self, request, *args, **kwargs):
+        camera_id = request.data["id"]
+        result = camera_service.delete(camera_id)
         return Response(result)
 
 

@@ -1,7 +1,5 @@
 from django.db import models
 
-from src.Reports.models import Report
-
 
 class DatabaseConnection(models.Model):
     database_type = models.CharField(

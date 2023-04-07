@@ -3,10 +3,13 @@ from django.core.exceptions import ObjectDoesNotExist
 
 import requests
 
-from .models import Camera
-
+from src.Algorithms.service import AlgorithmsService
+from src.Algorithms.utils import yolo_proccesing
+from src.Algorithms.service import algorithms_services
 from src.Core.logger import logger
-from ..CompanyLicense.decorators import check_active_cameras
+from src.CompanyLicense.decorators import check_active_cameras
+
+from .models import Camera
 
 
 class CameraLinkGenerator:
@@ -121,10 +124,11 @@ class CameraService:
         camera_request_data = {"username": username, "password": password, "ip": ip}
         try:
             connect = requests.post(f"{url}:3456/add_camera", json=camera_request_data)
-        except:
+        except Exception as e:
             return {
                 "status": False,
                 "message": f"Camera url not found -> {camera_request_data['ip']}",
+                "error": e,
             }
         else:
             return connect
@@ -156,6 +160,25 @@ class CameraService:
             return False
         else:
             return True
+
+    def delete(self, camera_id):
+        query_list_cameraalgorithms = AlgorithmsService.camera_algorithm_by_camera_id(
+            camera_id
+        )
+        if query_list_cameraalgorithms:
+            for camera_algorithms in query_list_cameraalgorithms:
+                pid = camera_algorithms.process_id
+                result_stop_process = yolo_proccesing.stop_process(pid)
+                if not result_stop_process["status"]:
+                    return result_stop_process
+                result_update_status = algorithms_services.update_status_of_algorithm_by_pid(pid)
+                if not result_update_status["status"]:
+                    return result_update_status
+        Camera.objects.filter(id=camera_id).delete()
+        return {
+            "status": True,
+            "message": f"Camera {camera_id} was successfully deleted."
+        }
 
 
 link_generator = CameraLinkGenerator()
