@@ -41,7 +41,7 @@ class SMTPSettingsRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIVie
 
 
 class MessagesListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Messages.objects.all()
+    queryset = Messages.objects.all().order_by('id')
     serializer_class = MessagesSerializer
 
     def post(self, request, *args, **kwargs):

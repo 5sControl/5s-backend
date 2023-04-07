@@ -8,15 +8,6 @@ class SMTPSettingsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class MessagesSerializer(serializers.ModelSerializer):
-    recipients = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
-
-    class Meta:
-        model = Messages
-        fields = ['id', 'subject', 'message', 'is_send', 'date_created', 'date_updated', 'recipients']
-        read_only_fields = ('is_send', )
-
-
 class EmailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Emails
@@ -37,3 +28,12 @@ class RecipientsSerializer(serializers.ModelSerializer):
         message = validated_data.pop('message')
         recipient = Recipients.objects.create(message=message, email=email, **validated_data)
         return recipient
+
+
+class MessagesSerializer(serializers.ModelSerializer):
+    recipients = EmailsSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Messages
+        fields = ['id', 'subject', 'message', 'is_send', 'date_created', 'date_updated', 'recipients']
+        read_only_fields = ('is_send', )
