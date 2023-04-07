@@ -68,15 +68,16 @@ class ActionsWithPhotos(APIView):
                 start_tracking=start_tracking,
                 stop_tracking=stop_tracking,
             )
-            if request.data.get("algorithm") == "operation_control":
-                create_records_skany(action, extra)
-            elif photos:
+
+            if photos:
                 for photo in photos:
                     image = photo.get("image")
                     date = photo.get("date")
                     photo = Image.objects.create(
                         image=image, date=date, report_id=action
                     )
+                    if request.data.get("algorithm") == "operation_control":
+                        create_records_skany(action, extra)
             else:
                 action.delete()
                 return Response(
