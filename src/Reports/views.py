@@ -69,7 +69,6 @@ class ActionsWithPhotos(APIView):
                 stop_tracking=stop_tracking,
             )
             if request.data.get("algorithm") == "operation_control":
-                print("action", action, "extra", extra)
                 create_records_skany(action, extra)
             elif photos:
                 for photo in photos:
