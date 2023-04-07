@@ -4,7 +4,7 @@ from src.Cameras.models import Camera
 from src.Algorithms.service import algorithms_services
 
 
-def delete_camera(self, camera_id):
+def delete_camera(camera_id):
     query_list_cameraalgorithms = AlgorithmsService.camera_algorithm_by_camera_id(
         camera_id
     )
