@@ -10,7 +10,7 @@ def edit_extra(data):
         data["skany_index"] = skany_index
     except Exception as e:
         print(f'failed to get skany index {e}')
-
+        data.append({"skany_index": None})
     return data
 
 
@@ -18,8 +18,7 @@ def create_records_skany(report, skany):
     """
     save skany index and report in database
     """
-    print("type_skany", type(skany), skany)
-    if skany.get('skany_index'):
+    if skany[0].get('skany_index'):
         SkanyReport.objects.create(report=report, skany_index=skany['skany_index'])
     else:
         SkanyReport.objects.create(report=report)
