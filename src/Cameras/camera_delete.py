@@ -1,7 +1,6 @@
 from src.Algorithms.service import algorithms_services
 from src.Algorithms.utils import yolo_proccesing
 from src.Cameras.models import Camera
-from src.Algorithms.service import algorithms_services
 
 
 def delete_camera(camera_id):
