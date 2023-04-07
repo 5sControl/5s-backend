@@ -35,6 +35,7 @@ itypes==1.2.0
 Jinja2==3.1.2
 lxml==4.9.2
 MarkupSafe==2.1.1
+mssql-django==1.2
 mypy-extensions==1.0.0
 numpy==1.24.1
 oauthlib==3.2.2
@@ -48,6 +49,8 @@ pycodestyle==2.10.0
 pycparser==2.21
 pycryptodome==3.17
 PyJWT==2.6.0
+pymssql==2.2.7
+pyodbc==4.0.35
 python-decouple==3.6
 python3-openid==3.2.0
 pytz==2022.7
@@ -68,5 +71,7 @@ tzdata==2022.7
 uritemplate==4.1.1
 urllib3==1.26.13
 zeep==4.2.1
-# mssql
-pyodbc==4.0.35
+# find camera dep
+python3-nmap==1.6.0
+WSDiscovery==2.0.0
+netifaces2==0.0.16
