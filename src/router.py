@@ -24,7 +24,6 @@ routes = [
     path("reports/", include("src.Reports.urls")),
     path("company/", include("src.CompanyLicense.urls")),
     path("order/", include("src.OrderView.urls")),
-    path("connector/", include("src.MsSqlConnector.urls")),
     path("inventory/", include("src.Inventory.urls")),
     path("mailer/", include("src.Mailer.urls")),
     path("core/", include("src.Core.urls")),
