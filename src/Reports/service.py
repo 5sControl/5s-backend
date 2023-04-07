@@ -22,4 +22,4 @@ def create_records_skany(report, skany):
         SkanyReport.objects.create(report=report, skany_index=skany['skany_index'])
     else:
         SkanyReport.objects.create(report=report)
-    return
+
