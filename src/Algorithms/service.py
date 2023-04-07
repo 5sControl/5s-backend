@@ -2,10 +2,10 @@ from rest_framework.exceptions import NotFound
 
 from django.utils import timezone
 from src.Cameras.models import Camera
+from src.Cameras.service import camera_service
 
 from src.CompanyLicense.decorators import check_active_algorithms
 from src.Algorithms.models import Algorithm, CameraAlgorithm, CameraAlgorithmLog
-from src.Algorithms.imports import camera_service
 from src.Inventory.models import Items
 
 from .utils import yolo_proccesing
