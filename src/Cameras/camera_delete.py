@@ -14,7 +14,7 @@ def delete_camera(camera_id):
             pid = camera_algorithms.process_id
             result_stop_process = yolo_proccesing.stop_process(pid)
             print(result_stop_process)
-            if not result_stop_process["status"]:
+            if not result_stop_process["success"]:
                 return result_stop_process
             result_update_status = algorithms_services.update_status_of_algorithm_by_pid(pid)
             print(result_update_status)
