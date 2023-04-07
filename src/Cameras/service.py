@@ -85,7 +85,7 @@ class CameraService:
             snapshot_request = self.check_ip(ip, username, password, server_url)
             snapshot = snapshot_request.json()
         else:
-            return {"status": False, "message": f"Ip not defined"}
+            return {"status": False, "message": "Ip not defined"}
         if snapshot["status"]:
             camera = Camera(
                 id=ip,
