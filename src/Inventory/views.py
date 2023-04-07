@@ -21,6 +21,7 @@ from src.Reports.serializers import ReportSerializers
 class ItemsListAPIView(ListAPIView):
     queryset = Items.objects.all()
     serializer_class = ItemsSerializer
+    pagination_class = None
     # permission_classes = [IsAuthenticated]
     ALLOWED_STATUSES = ["Out of stock", "Low stock level", "In stock"]
 
