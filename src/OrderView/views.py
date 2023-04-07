@@ -105,10 +105,12 @@ class GetDatabasesAPIView(generics.ListAPIView):
 
 
 class IndexOperationsView(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = IndexOperations.objects.all()
     serializer_class = IndexOperationsSerializer
 
 
 class IndexOperationDetailView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = IndexOperations.objects.all()
     serializer_class = IndexOperationsSerializer
