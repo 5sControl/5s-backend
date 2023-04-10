@@ -79,6 +79,7 @@ class ActionsWithPhotos(APIView):
                         image=image, date=date, report_id=action
                     )
                     if request.data.get("algorithm") == "operation_control":
+                        print("[INFO] Report finded")
                         try:
                             requests.post(f"{HOST}:9876/operation-control/", json=request.data)
                         except Exception as e:
