@@ -1,9 +1,11 @@
+import requests
 from rest_framework import viewsets
 from datetime import datetime
 from django.db.models import Q
 from rest_framework.generics import GenericAPIView
 
 from src.CompanyLicense.decorators import validate_license
+from src.Core.utils import HOST
 
 from src.ImageReport.models import Image
 from src.Cameras.models import Camera
@@ -77,7 +79,12 @@ class ActionsWithPhotos(APIView):
                         image=image, date=date, report_id=action
                     )
                     if request.data.get("algorithm") == "operation_control":
-                        create_records_skany(action, extra)
+                        try:
+                            requests.post(f"{HOST}:9876/operation-control/", json=request.data)
+                        except Exception as e:
+                            print(f"Error while posting operation control {e}")
+                        else:
+                            create_records_skany(action, extra)
             else:
                 action.delete()
                 return Response(
