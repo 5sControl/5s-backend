@@ -1,7 +1,6 @@
 #!/bin/sh
 
 # create tables 
-python manage.py makemigrations
 python manage.py migrate
 
 # fill algorithm table
