@@ -54,7 +54,7 @@ class ActionsWithPhotos(APIView):
             if request.data.get("algorithm") == "min_max_control":
                 extra = process_item_status(request.data.get("extra"))
             elif request.data.get("algorithm") == "operation_control":
-                extra = edit_extra(request.data.get("extra"))
+                extra = edit_extra(request.data.get("extra"), camera)
             else:
                 extra = request.data.get("extra")
         except KeyError:
