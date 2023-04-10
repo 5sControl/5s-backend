@@ -18,7 +18,7 @@ class ProductSerializer(serializers.Serializer):
     terminrealizacji = serializers.DateTimeField()
 
 
-class IndexOperationsSerializer(serializers.ModelSerializer):
+class IndexStanowiskoSerializer(serializers.ModelSerializer):
     class Meta:
         model = IndexOperations
-        fields = ['id', 'type_operation']
+        fields = ['id', 'type_operation', 'camera', ]

@@ -2,6 +2,7 @@ from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
+from rest_framework.viewsets import ModelViewSet
 
 from src.OrderView.serializers import DatabaseConnectionSerializer, ProductSerializer
 from src.OrderView.services import orderView_service
@@ -11,7 +12,7 @@ from src.MsSqlConnector.connector import connector as connector_service
 
 from src.OrderView.models import IndexOperations
 
-from src.OrderView.serializers import IndexOperationsSerializer
+from src.OrderView.serializers import IndexStanowiskoSerializer
 
 
 class GetAllProductAPIView(generics.GenericAPIView):
@@ -104,13 +105,7 @@ class GetDatabasesAPIView(generics.ListAPIView):
     serializer_class = DatabaseConnectionSerializer
 
 
-class IndexOperationsView(generics.ListCreateAPIView):
+class IndexOperationsView(ModelViewSet):
     permission_classes = [IsAuthenticated]
     queryset = IndexOperations.objects.all()
-    serializer_class = IndexOperationsSerializer
-
-
-class IndexOperationDetailView(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticated]
-    queryset = IndexOperations.objects.all()
-    serializer_class = IndexOperationsSerializer
+    serializer_class = IndexStanowiskoSerializer

@@ -1,4 +1,7 @@
-from django.urls import path
+from django.urls import path, include
+
+from rest_framework.routers import DefaultRouter
+
 from .views import (
     GetAllProductAPIView,
     GetOrderDataByZlecenieAPIView,
@@ -7,8 +10,10 @@ from .views import (
     GetDatabasesAPIView,
     DeleteConectionAPIView,
     IndexOperationsView,
-    IndexOperationDetailView,
 )
+
+router = DefaultRouter()
+router.register(r'index_stanowisko', IndexOperationsView, basename='index_stanowisko')
 
 urlpatterns = [
     # get data
@@ -33,6 +38,5 @@ urlpatterns = [
         DeleteConectionAPIView.as_view(),
         name="delete connection from connection database",
     ),
-    path('index_operations/', IndexOperationsView.as_view(), name='index_operations'),
-    path('index_operations/<int:pk>/', IndexOperationDetailView.as_view(), name='index_operations_detail'),
+    path('', include(router.urls)),
 ]
