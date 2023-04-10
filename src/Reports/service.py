@@ -6,6 +6,7 @@ from src.OrderView.models import IndexOperations
 
 def edit_extra(data, camera):
     try:
+        print('print data extra', data)
         operation_index = IndexOperations.objects.filter(camera=camera.id).values('type_operation').last()[
             'type_operation']
         skany_index = create_records.get_max_skany_indeks_by_typ(operation_index)
