@@ -12,7 +12,8 @@ def edit_extra(data, camera):
         data["skany_index"] = int(skany_index)
     except Exception as e:
         print(f'failed to get skany index {e}')
-        data.append({"skany_index": None})
+        if len(data) <= 1:
+            data.append({"skany_index": None})
     return data
 
 
