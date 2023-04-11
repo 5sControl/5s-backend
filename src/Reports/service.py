@@ -5,17 +5,17 @@ from src.OrderView.models import IndexOperations
 
 
 def edit_extra(data, camera):
-    try:
-        print('print data extra', data)
-        operation_index = IndexOperations.objects.filter(camera=camera.id).values('type_operation').last()[
-            'type_operation']
-        skany_index = create_records.get_max_skany_indeks_by_stanowisko(operation_index)
-        data[0]["skany_index"] = int(skany_index)
-        print("skany_index", data)
-    except Exception as e:
-        print(f'failed to get skany index {e}')
-        if len(data) <= 1:
-            data.append({"skany_index": None})
+    # try:
+    print('print data extra', data)
+    operation_index = IndexOperations.objects.filter(camera=camera.id).values('type_operation').last()[
+        'type_operation']
+    skany_index = create_records.get_max_skany_indeks_by_stanowisko(operation_index)
+    data[0]["skany_index"] = int(skany_index)
+    print("skany_index", data)
+    # except Exception as e:
+    #     print(f'failed to get skany index {e}')
+    if len(data) <= 1:
+        data.append({"skany_index": None})
     return data
 
 
