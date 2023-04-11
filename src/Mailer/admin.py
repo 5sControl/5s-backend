@@ -1,5 +1,5 @@
 from django.contrib import admin
-from src.Mailer.models import Emails, Recipients, Messages, SMTPSettings
+from src.Mailer.models import Emails, Recipients, Messages, SMTPSettings, NotificationsSent
 
 
 @admin.register(Emails)
@@ -20,3 +20,8 @@ class MessagesAdmin(admin.ModelAdmin):
 @admin.register(SMTPSettings)
 class SMTPSettingsAdmin(admin.ModelAdmin):
     list_display = ("server", "port", "username", "password", "email_use_tls", "email_use_ssl", "id")
+
+
+@admin.register(NotificationsSent)
+class NotificationsSentAdmin(admin.ModelAdmin):
+    list_display = ("recipients", "date_created")
