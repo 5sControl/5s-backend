@@ -2,7 +2,7 @@ from src.MsSqlConnector.connector import connector
 
 
 class MsSqlConnector:
-    def get_max_skany_indeks_by_stanowisko(self, stanowisko):
+    def get_max_skany_indeks_by_stanowisko(self, stanowisko=50):
         connection = connector.get_database_connection()
         if not connection:
             return False
@@ -12,6 +12,7 @@ class MsSqlConnector:
         with connection.cursor() as cursor:
             cursor.execute("SELECT MAX(indeks) FROM skany WHERE stanowisko = ?", (stanowisko,))
             result = cursor.fetchone()[0]
+
         return result
 
 

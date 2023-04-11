@@ -82,7 +82,8 @@ class ActionsWithPhotos(APIView):
                         print("[INFO] Report finded")
                         print('Response data is ', request.data)
                         try:
-                            requests.post(f"{HOST}:9876/operation-control/", json=request.data)
+                            request = requests.post(f"{HOST}:9876/operation-control/", json=request.data)
+                            print(request)
                         except Exception as e:
                             print(f"Error while posting operation control {e}")
                         else:
