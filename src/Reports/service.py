@@ -23,6 +23,7 @@ def create_records_skany(report, skany):
     """
     save skany index and report in database
     """
+    print("skany", skany, "report", report)
     if skany[0].get('skany_index'):
         SkanyReport.objects.create(report=report, skany_index=skany['skany_index'])
     else:
