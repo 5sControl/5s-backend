@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Report
+from .models import Report, SkanyReport
 
 
 @admin.register(Report)
@@ -14,3 +14,8 @@ class ReportAdmin(admin.ModelAdmin):
         "date_created",
     )
     list_filter = ("id",)
+
+
+@admin.register(SkanyReport)
+class SkanyReportAdmin(admin.ModelAdmin):
+    list_display = ("report", "skany_index")
