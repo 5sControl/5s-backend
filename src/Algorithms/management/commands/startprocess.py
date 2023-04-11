@@ -34,7 +34,7 @@ class Command(BaseCommand):
                         {
                             "itemId": item.id,
                             "coords": item.coords,
-                            "ItemName": item.name,
+                            "itemName": item.name,
                         }
                     )
             try:
