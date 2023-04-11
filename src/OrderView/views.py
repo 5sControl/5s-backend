@@ -22,6 +22,8 @@ class GetAllProductAPIView(generics.GenericAPIView):
 
     @connector_service.check_database_connection
     def get(self, request):
+        from_time = request.GET.get("from")
+        to_time = request.GET.get("to")
         search = request.GET.get("search")
         order_status = request.GET.get("order-status")
         operation_status = request.GET.getlist("operation-status")
@@ -36,6 +38,8 @@ class GetAllProductAPIView(generics.GenericAPIView):
             order_status=order_status,
             operation_status=operation_status,
             operation_name=operation_name,
+            from_time=from_time,
+            to_time=to_time,
         )
 
         paginated_items = self.paginate_queryset(response)

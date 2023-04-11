@@ -69,7 +69,13 @@ class OrderService:
         return result
 
     def get_order_list(
-        self, search=None, order_status=None, operation_status=None, operation_name=None
+        self,
+        search=None,
+        order_status=None,
+        operation_status=None,
+        operation_name=None,
+        from_time=None,
+        to_time=None,
     ):
         connection = connector_service.get_database_connection()
 
@@ -79,7 +85,10 @@ class OrderService:
                 order_status=order_status,
                 operation_status=operation_status,
                 operation_name=operation_name,
+                from_time=from_time,
+                to_time=to_time,
             )
+
             cursor.execute(query, params)
             results = cursor.fetchall()
 
@@ -87,7 +96,7 @@ class OrderService:
         orders_list = list(orders_dict.values())
         return orders_list
 
-    def _build_query(self, search, order_status, operation_status, operation_name):
+    def _build_query(self, search, order_status, operation_status, operation_name, from_time, to_time):
         query = """
             SELECT DISTINCT
                 z.indeks,
@@ -139,6 +148,12 @@ class OrderService:
                 )
             else:
                 query += " AND z.zlecenie = 'Not-Found-Data'"
+
+        if from_time and to_time:
+            query += " AND z.terminrealizacji BETWEEN ? AND ?"
+            params.extend([from_time, to_time])
+
+        query += " ORDER BY z.zlecenie DESC"
 
         return query, tuple(params)
 
