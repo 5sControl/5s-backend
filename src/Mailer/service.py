@@ -8,12 +8,16 @@ from datetime import datetime, time
 
 from django.utils import timezone
 
-from src.Mailer.models import SMTPSettings, Messages
+from src.Mailer.models import SMTPSettings, Recipients
 from django.core.mail.backends.smtp import EmailBackend
 
 
-@send_email_within_hours(time(9, 0), time(18, 0))
-def send_email(subject, message, recipient_list):
+# @send_email_within_hours(time(9, 0), time(18, 0))
+def send_email(item):
+    recipient = Recipients.objects.filter(item_id=item.id).values('email__email', 'message__message', 'message__subject')
+    subject = recipient[0].get('message__subject')
+    message = recipient[0].get('message__message')
+    recipient_list = [d.get('email__email') for d in recipient]
 
     # email service check
     try:
@@ -23,9 +27,9 @@ def send_email(subject, message, recipient_list):
 
     # Check if a message was already sent today
     today = timezone.now().date()
-    sent_today = Messages.objects.filter(date_created__date=today, is_send=True).exists()
-    if sent_today:
-        return Response({'detail': 'A message has already been sent today'}, status=status.HTTP_400_BAD_REQUEST)
+    # sent_today = Messages.objects.filter(date_created__date=today, is_send=True).exists()
+    # if sent_today:
+    #     return Response({'detail': 'A message has already been sent today'}, status=status.HTTP_400_BAD_REQUEST)
 
     # sending email
     connection = EmailBackend(
@@ -45,4 +49,4 @@ def send_email(subject, message, recipient_list):
         connection=connection,
     )
 
-    return Response({'success': True})
+    # return Response({'success': True})
