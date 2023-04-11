@@ -14,8 +14,8 @@ def edit_extra(data, camera):
     print("skany_index", data)
     # except Exception as e:
     #     print(f'failed to get skany index {e}')
-    if len(data) <= 1:
-        data.append({"skany_index": None})
+    # if len(data) <= 1:
+    #     data.append({"skany_index": None})
     return data
 
 
@@ -25,6 +25,6 @@ def create_records_skany(report, skany):
     """
     print("skany", skany, "report", report)
     if skany[0].get('skany_index'):
-        SkanyReport.objects.create(report=report, skany_index=skany['skany_index'])
+        SkanyReport.objects.create(report=report, skany_index=skany[0]['skany_index'])
     else:
         SkanyReport.objects.create(report=report)
