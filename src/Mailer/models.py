@@ -25,7 +25,6 @@ class Messages(models.Model):
 
     subject = models.CharField(max_length=150)
     message = models.TextField()
-    is_send = models.BooleanField(default=False)
     date_created = models.DateTimeField(verbose_name="Date created", auto_now_add=True)
     date_updated = models.DateTimeField(verbose_name="Date updated", auto_now=True)
 
@@ -55,3 +54,15 @@ class Recipients(models.Model):
 
     def __str__(self):
         return f"{self.email.email} - {self.message.subject}"
+
+
+class NotificationsSent(models.Model):
+    """
+    Model for storing records of sent notifications
+    """
+
+    recipients = models.ForeignKey(Recipients, on_delete=models.CASCADE, related_name='notifications')
+    date_created = models.DateTimeField(verbose_name="Date created", auto_now_add=True)
+
+    def __str__(self):
+        return self.recipients.message.subject

@@ -14,7 +14,7 @@ class RecipientAdmin(admin.ModelAdmin):
 
 @admin.register(Messages)
 class MessagesAdmin(admin.ModelAdmin):
-    list_display = ("subject", "message", "is_send", "date_created", "date_updated", "id",)
+    list_display = ("subject", "message", "date_created", "date_updated", "id",)
 
 
 @admin.register(SMTPSettings)
