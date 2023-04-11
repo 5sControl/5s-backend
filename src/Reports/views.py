@@ -81,13 +81,9 @@ class ActionsWithPhotos(APIView):
                     if request.data.get("algorithm") == "operation_control":
                         print("[INFO] Report finded")
                         print('Response data is ', request.data)
-                        try:
-                            request = requests.post(f"{HOST}:9876/operation-control/", json=request.data)
-                            print(request)
-                        except Exception as e:
-                            print(f"Error while posting operation control {e}")
-                        else:
-                            create_records_skany(action, extra)
+                        request = requests.post(f"{HOST}:9876/operation-control/", json=request.data)
+                        print(request)
+                        create_records_skany(action, extra)
             else:
                 action.delete()
                 return Response(
