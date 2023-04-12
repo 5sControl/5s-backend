@@ -240,7 +240,10 @@ class OrderService:
                     operation_status = None
 
                     print(row[0])
-                    skany_report = SkanyReport.objects.get(skany_index=row[0])
+                    try:
+                        skany_report = SkanyReport.objects.get(skany_index=row[0])
+                    except SkanyReport.DoesNotExist:
+                        pass
 
                     operation_status = skany_report.report.violation_found
 
