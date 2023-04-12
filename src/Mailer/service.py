@@ -1,18 +1,11 @@
 from django.core.mail import send_mail
-from rest_framework import status
-from rest_framework.response import Response
-
-from src.Mailer.decorators import send_email_within_hours
 
 from datetime import datetime, time
-
-from django.utils import timezone
 
 from src.Mailer.models import SMTPSettings, Recipients, NotificationsSent
 from django.core.mail.backends.smtp import EmailBackend
 
 
-# @send_email_within_hours(time(9, 0), time(18, 0))
 def send_email(item):
     recipient = Recipients.objects.filter(item_id=item.id).values('email__email', 'message__message', 'message__subject')
     subject = recipient[0].get('message__subject')
@@ -26,27 +19,37 @@ def send_email(item):
         raise Exception('SMTP configuration is not defined')
 
     # Check if a message was already sent today
-    today = timezone.now().date()
-    # sent_today = Messages.objects.filter(date_created__date=today, is_send=True).exists()
-    # if sent_today:
-    #     return Response({'detail': 'A message has already been sent today'}, status=status.HTTP_400_BAD_REQUEST)
+    today = datetime.now().date()
+    start_time = time(9, 0, 0)
+    end_time = time(18, 0, 0)
+    sent_today = NotificationsSent.objects.filter(
+        recipients__item_id=item.id,
+        date_created__date=today,
+        date_created__time__range=(start_time, end_time)
+    ).exists()
+    if not sent_today:
 
-    # sending email
-    connection = EmailBackend(
-        host=smtp_settings.server,
-        port=smtp_settings.port,
-        username=smtp_settings.username,
-        password=smtp_settings.password,
-        use_tls=smtp_settings.email_use_tls,
-        use_ssl=smtp_settings.email_use_ssl,
-    )
-    send_mail(
-        subject,
-        message,
-        smtp_settings.username,
-        recipient_list,
-        fail_silently=False,
-        connection=connection,
-    )
+        # sending email
+        connection = EmailBackend(
+            host=smtp_settings.server,
+            port=smtp_settings.port,
+            username=smtp_settings.username,
+            password=smtp_settings.password,
+            use_tls=smtp_settings.email_use_tls,
+            use_ssl=smtp_settings.email_use_ssl,
+        )
+        send_mail(
+            subject,
+            message,
+            smtp_settings.username,
+            recipient_list,
+            fail_silently=False,
+            connection=connection,
+        )
+
+        # Save the record of sent notifications
+        recipients = Recipients.objects.filter(item_id=item.id)
+        for recipient in recipients:
+            NotificationsSent.objects.create(recipients=recipient)
 
     # return Response({'success': True})
