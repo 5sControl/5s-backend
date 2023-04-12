@@ -122,5 +122,12 @@ class MsSqlConnector:
 
         return wrapper
 
+    def executer(self, connection, query, params):
+        with connection.cursor() as cursor:
+            cursor.execute(query, params)
+            results = cursor.fetchall()
+
+        return results
+
 
 connector = MsSqlConnector()
