@@ -244,8 +244,8 @@ class OrderService:
                         skany_report = SkanyReport.objects.get(skany_index=row[0])
                     except SkanyReport.DoesNotExist:
                         pass
-
-                    operation_status = skany_report.report.violation_found
+                    else:
+                        operation_status = skany_report.report.violation_found
 
                     video_data = get_skany_video_info(time=str(row[1])[:-3])
 
