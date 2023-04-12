@@ -20,7 +20,6 @@ class RecipientsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipients
         fields = ['id', 'email', 'message', 'item']
-        read_only_fields = ('is_send',)
 
     def create(self, validated_data):
         email_data = validated_data.pop('email')
@@ -35,5 +34,5 @@ class MessagesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Messages
-        fields = ['id', 'subject', 'message', 'is_send', 'date_created', 'date_updated', 'recipients']
+        fields = ['id', 'subject', 'message', 'date_created', 'date_updated', 'recipients']
         read_only_fields = ('is_send', )

@@ -8,7 +8,7 @@ from datetime import datetime, time
 
 from django.utils import timezone
 
-from src.Mailer.models import SMTPSettings, Recipients
+from src.Mailer.models import SMTPSettings, Recipients, NotificationsSent
 from django.core.mail.backends.smtp import EmailBackend
 
 

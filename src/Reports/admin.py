@@ -13,7 +13,7 @@ class ReportAdmin(admin.ModelAdmin):
         "violation_found",
         "date_created",
     )
-    list_filter = ("id",)
+    list_filter = ("algorithm", "camera",)
 
 
 @admin.register(SkanyReport)
