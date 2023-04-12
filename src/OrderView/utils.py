@@ -1,4 +1,5 @@
 import math
+from typing import Any, Dict
 
 import requests
 
@@ -36,7 +37,7 @@ class OrderViewPaginnator(PageNumberPagination):
 
 
 # FIXME: camera ip should be dynamic
-def get_skany_video_info(time, camera_ip="192.168.1.168"):
+def get_skany_video_info(time, camera_ip="192.168.1.110") -> Dict[str, Any]:
     host = yolo_proccesing.get_algorithm_url()
     response = {
         "camera_ip": camera_ip,
