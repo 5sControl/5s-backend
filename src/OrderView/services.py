@@ -238,10 +238,13 @@ class OrderService:
                 skany_ids_added = set()
                 for row in results:
                     operation_status = None
-                    skany_report = SkanyReport.objects.filter(
-                        report__algorithm__name="operation_control", skany_index=row[0]
-                    ).first()
-                    if skany_report:
+
+                    print(row[0])
+                    try:
+                        skany_report = SkanyReport.objects.get(skany_index=row[0])
+                    except SkanyReport.DoesNotExist:
+                        pass
+                    else:
                         operation_status = skany_report.report.violation_found
 
                     video_data = get_skany_video_info(time=str(row[1])[:-3])
