@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 from src.MsSqlConnector.connector import connector as connector_service
 
 from src.Reports.models import SkanyReport
@@ -41,7 +41,7 @@ class OrderListService:
         operation_name: Optional[List[str]],
         from_time: Optional[str],
         to_time: Optional[str],
-    ):
+    ) -> Optional[List[Dict[str, Dict[str, Any]]]]:
         connection = connector_service.get_database_connection()
         self.extra_qury = " "
 
@@ -63,7 +63,6 @@ class OrderListService:
         orders_dict = self._build_orders_dict(results)
         orders_list = list(orders_dict.values())
 
-        print('ORDER LIST', orders_list)
         return orders_list
 
     def _build_query(
@@ -123,11 +122,12 @@ class OrderListService:
 
         return self.extra_qury, tuple(params)
 
-    def _build_orders_dict(self, results):
-        print("_build_order_dict", type(results), results)
+    def _build_orders_dict(self, results: List[Tuple[str, ...]]) -> Dict[str, Dict[str, Any]]:
         orders_dict = {}
+
         for result in results:
             zlecenie = result[1]
+
             if zlecenie not in orders_dict:
                 orders_dict[zlecenie] = {
                     "indeks": result[0],
@@ -140,13 +140,10 @@ class OrderListService:
                 orders_dict[zlecenie]["status"] = result[2]
                 orders_dict[zlecenie]["terminrealizacji"] = result[3]
 
-        print(orders_dict)
         return orders_dict
 
-    def get_zlecenie_indeks_by_skany_indeks(self, skany_list):
+    def get_zlecenie_indeks_by_skany_indeks(self, skany_list: List[int]) -> List[str]:
         zlecenia_indeks_list = []
-
-        print("get_zlecenie_indeks_by_s ", skany_list)
 
         connection = connector_service.get_database_connection()
 
@@ -174,20 +171,20 @@ class OrderListService:
         with connection.cursor() as cursor:
             cursor.execute(query_zl)
             zlecenie_list = [result[0] for result in cursor.fetchall()]
-        print("get_zlecenie_indeks_by_s ", zlecenie_list)
+
         return zlecenie_list
 
-    def get_all_skany_indeks(self):
+    def get_all_skany_indeks(self) -> List[int]:
         connection = connector_service.get_database_connection()
 
         fetched = connector_service.executer(connection=connection, query=self.skany_index_query)
         indeks_skany = [result[0] for result in fetched]
 
-        print("get_all_skany_indeks: ", indeks_skany)
         return indeks_skany
 
-    def get_skany_indeks_from_report(self, statuses: List[str]):
+    def get_skany_indeks_from_report(self, statuses: List[str]) -> List[int]:
         status_set = set(statuses) - set(["no data"])
+
         skany_indexes = list(
             SkanyReport.objects.filter(
                 report__violation_found__in=[
@@ -200,13 +197,10 @@ class OrderListService:
             all_skany_indeks = self.get_all_skany_indeks()
             skany_indexes += all_skany_indeks
 
-        # FIXME:
-        print("get_skany_indeks_from_report: ", skany_indexes)
         return skany_indexes
 
-    def get_zlecenie_by_operation_names(self, operation_names):
+    def get_zlecenie_by_operation_names(self, operation_names: List[str]) -> List[str]:
         connection = connector_service.get_database_connection()
-        print("get_zlecenie_by_operation_names ", operation_names)
         zlecenie = []
 
         query = """
@@ -226,7 +220,7 @@ class OrderListService:
 
         for indeks_zlecenie in results:
             zlecenie.append(indeks_zlecenie[0])
-        print("get_zlecenie_by_operation_names ", zlecenie)
+        
         return zlecenie
 
 
