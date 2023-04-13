@@ -23,49 +23,50 @@ class Items(models.Model):
     def __str__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
-        instance = super().save(*args, **kwargs)
-        if self.pk and self.current_stock_level == self.__class__.objects.get(pk=self.pk).current_stock_level:
-            return instance
-        print("STOP")
-        from src.Algorithms.service import algorithms_services
-        process_id = CameraAlgorithm.objects.filter(
-            Q(camera_id=self.camera) & Q(algorithm__name='min_max_control')
-        ).values_list('process_id', flat=True).first()
-        if process_id is not None:
-            yolo_proccesing.stop_process(pid=process_id)
-            algorithms_services.update_status_of_algorithm_by_pid(pid=process_id)
-        print("START")
-        camera = Camera.objects.filter(id=self.camera)
-        algorithm = Algorithm.objects.filter(name='min_max_control')
-        server_url = yolo_proccesing.get_algorithm_url()
-        algorithms_services.create_new_records(cameras=camera, algorithm=algorithm[0], server_url=server_url)
-
-        return instance
-
     # def save(self, *args, **kwargs):
-    #     is_update = bool(self.pk)
-    #     camera_updated = self.pk and self.camera_id != self.__class__.objects.get(pk=self.pk).camera_id
-    #     coords_updated = self.pk and self.coords != self.__class__.objects.get(pk=self.pk).coords
     #     instance = super().save(*args, **kwargs)
-    #
-    #     if not is_update or camera_updated or coords_updated:
-    #         # stopped process
-    #         from src.Algorithms.service import algorithms_services
-    #         process_id = CameraAlgorithm.objects.filter(
-    #             Q(camera_id=self.camera) & Q(algorithm__name='min_max_control')
-    #         ).values_list('process_id', flat=True).first()
-    #         if process_id is not None:
-    #             yolo_proccesing.stop_process(pid=process_id)
-    #             algorithms_services.update_status_of_algorithm_by_pid(pid=process_id)
-    #
-    #         # started process
-    #         camera = Camera.objects.filter(id=self.camera)
-    #         algorithm = Algorithm.objects.filter(name='min_max_control')
-    #         server_url = yolo_proccesing.get_algorithm_url()
-    #         algorithms_services.create_new_records(cameras=camera, algorithm=algorithm[0], server_url=server_url)
+    #     if self.pk and self.current_stock_level == self.__class__.objects.get(pk=self.pk).current_stock_level:
+    #         return instance
+    #     print("STOP")
+    #     from src.Algorithms.service import algorithms_services
+    #     process_id = CameraAlgorithm.objects.filter(
+    #         Q(camera_id=self.camera) & Q(algorithm__name='min_max_control')
+    #     ).values_list('process_id', flat=True).first()
+    #     if process_id is not None:
+    #         yolo_proccesing.stop_process(pid=process_id)
+    #         algorithms_services.update_status_of_algorithm_by_pid(pid=process_id)
+    #     print("START")
+    #     camera = Camera.objects.filter(id=self.camera)
+    #     algorithm = Algorithm.objects.filter(name='min_max_control')
+    #     server_url = yolo_proccesing.get_algorithm_url()
+    #     algorithms_services.create_new_records(cameras=camera, algorithm=algorithm[0], server_url=server_url)
     #
     #     return instance
+
+    def save(self, *args, **kwargs):
+        is_update = bool(self.pk)
+        camera_updated = self.pk and self.camera_id != self.__class__.objects.get(pk=self.pk).camera_id
+        coords_updated = self.pk and self.coords != self.__class__.objects.get(pk=self.pk).coords
+        instance = super().save(*args, **kwargs)
+
+        if not is_update or camera_updated or coords_updated:
+            # stopped process
+            print("stopped process")
+            from src.Algorithms.service import algorithms_services
+            process_id = CameraAlgorithm.objects.filter(
+                Q(camera_id=self.camera) & Q(algorithm__name='min_max_control')
+            ).values_list('process_id', flat=True).first()
+            if process_id is not None:
+                yolo_proccesing.stop_process(pid=process_id)
+                algorithms_services.update_status_of_algorithm_by_pid(pid=process_id)
+            print("started process")
+            # started process
+            camera = Camera.objects.filter(id=self.camera)
+            algorithm = Algorithm.objects.filter(name='min_max_control')
+            server_url = yolo_proccesing.get_algorithm_url()
+            algorithms_services.create_new_records(cameras=camera, algorithm=algorithm[0], server_url=server_url)
+
+        return instance
 
     def delete(self, *args, **kwargs):
         instance = super().delete(*args, **kwargs)
