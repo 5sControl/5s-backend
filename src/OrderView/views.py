@@ -1,5 +1,6 @@
 from django.core.cache import cache
 from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
@@ -60,6 +61,7 @@ class GetOrderDataByZlecenieAPIView(generics.GenericAPIView):
 class OperationNameApiView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
+    @method_decorator(cache_page(30))
     def get(self, request):
         response = operation_service.get_operation_names()
         return Response(response, status=status.HTTP_200_OK)
