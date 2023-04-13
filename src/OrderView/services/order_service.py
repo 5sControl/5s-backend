@@ -2,7 +2,7 @@ from collections import defaultdict
 
 from datetime import datetime, timezone
 
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import pyodbc
 
@@ -107,7 +107,7 @@ class OrderService:
         response["terminrealizacji"] = response["products"][0]["terminrealizacji"]
         return response
 
-    def _setup_operation_status(self, skany_index) -> bool:
+    def _setup_operation_status(self, skany_index) -> Optional[bool]:
         skany_report = SkanyReport.objects.filter(skany_index=skany_index).first()
 
         if not skany_report:
