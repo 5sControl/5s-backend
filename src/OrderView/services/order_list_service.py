@@ -1,14 +1,5 @@
-from collections import defaultdict
-
-from datetime import datetime, timezone
-
-from typing import Dict, List, Tuple
-
-import pyodbc
-
 from src.MsSqlConnector.connector import connector as connector_service
 
-from src.OrderView.utils import get_skany_video_info
 from src.Reports.models import SkanyReport
 
 
@@ -65,6 +56,7 @@ class OrderListService:
         """
 
         params = []
+
         if search:
             query += " AND z.zlecenie LIKE ?"
             params.append(f"%{search}%")
@@ -101,8 +93,11 @@ class OrderListService:
                 query += " AND z.zlecenie = 'Not-Found-Data'"
 
         if from_time and to_time:
-            query += " AND z.terminrealizacji BETWEEN ? AND ?"
-            params.extend([from_time, to_time])
+            if from_time != to_time:
+                query += " AND z.terminrealizacji BETWEEN ? AND ?"
+                params.extend([from_time, to_time])
+            query += " AND z.terminrealizacji == ?"
+            params.append(from_time)
 
         query += " ORDER BY z.zlecenie DESC"
 
