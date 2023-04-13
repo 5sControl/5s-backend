@@ -1,3 +1,4 @@
+from typing import List, Optional, Tuple
 from src.MsSqlConnector.connector import connector as connector_service
 
 from src.Reports.models import SkanyReport
@@ -39,7 +40,15 @@ class OrderListService:
         orders_list = list(orders_dict.values())
         return orders_list
 
-    def _build_query(self, search, order_status, operation_status, operation_name, from_time, to_time):
+    def _build_query(
+        self,
+        search: Optional[str] = None,
+        order_status: Optional[str] = None,
+        operation_status: Optional[List[str]] = None,
+        operation_name: Optional[List[str]] = None,
+        from_time: Optional[str] = None,
+        to_time: Optional[str] = None,
+    ) -> Tuple[str, tuple]:
         query = """
             SELECT DISTINCT
                 z.indeks,
@@ -93,12 +102,12 @@ class OrderListService:
                 query += " AND z.zlecenie = 'Not-Found-Data'"
 
         if from_time and to_time:
-            if from_time != to_time:
-                query += " AND z.terminrealizacji BETWEEN ? AND ?"
-                params.extend([from_time, to_time])
-            else:
+            if from_time == to_time:
                 query += " AND z.terminrealizacji = ?"
                 params.append(from_time)
+            else:
+                query += " AND z.terminrealizacji BETWEEN ? AND ?"
+                params.extend([from_time, to_time])
 
         query += " ORDER BY z.zlecenie DESC"
 
