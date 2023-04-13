@@ -59,7 +59,7 @@ class GetOrderDataByZlecenieAPIView(generics.GenericAPIView):
 class OperationNameApiView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
-    @connector_service.check_database_connection
+    # @connector_service.check_database_connection
     @cache_page(30)
     def get(self, request):
         response = operation_service.get_operation_names()
