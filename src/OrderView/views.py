@@ -34,14 +34,21 @@ class GetAllProductAPIView(generics.GenericAPIView):
         operation_status = request.GET.getlist("operation-status")
         operation_name = request.GET.getlist("operation-name")
 
-        response = order_list_service.get_order_list(
-            search=search,
-            order_status=order_status,
-            operation_status=operation_status,
-            operation_name=operation_name,
-            from_time=from_time,
-            to_time=to_time,
-        )
+        cache_key = f'all_products_{search}_{order_status}_{operation_status}_{operation_name}_{from_time}_{to_time}'
+
+        response = cache.get(cache_key)
+
+        if response is None:
+            response = order_list_service.get_order_list(
+                search=search,
+                order_status=order_status,
+                operation_status=operation_status,
+                operation_name=operation_name,
+                from_time=from_time,
+                to_time=to_time,
+            )
+
+            cache.set(cache_key, response, timeout=120)
 
         paginated_items = self.paginate_queryset(response)
         serializer = self.serializer_class(paginated_items, many=True)
@@ -52,6 +59,7 @@ class GetAllProductAPIView(generics.GenericAPIView):
 class GetOrderDataByZlecenieAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
+    @method_decorator(cache_page(30))
     @connector_service.check_database_connection
     def get(self, request, zlecenie_id):
         response = order_service.get_order(zlecenie_id)
