@@ -1,4 +1,7 @@
 from typing import Any, Dict, List, Optional, Tuple
+
+import pyodbc
+
 from src.MsSqlConnector.connector import connector as connector_service
 
 from src.Reports.models import SkanyReport
@@ -46,6 +49,7 @@ class OrderListService:
         self.extra_qury = " "
 
         self.extra_qury, params = self._build_query(
+            connection=connection,
             search=search,
             order_status=order_status,
             operation_status=operation_status,
@@ -67,6 +71,7 @@ class OrderListService:
 
     def _build_query(
         self,
+        connection: pyodbc.Connection,
         search: Optional[str],
         order_status: Optional[str],
         operation_status: Optional[List[str]],
@@ -89,7 +94,7 @@ class OrderListService:
         if operation_status != []:
             skanys = self.get_skany_indeks_from_report(operation_status)
             if skanys:
-                zlecenie = self.get_zlecenie_indeks_by_skany_indeks(skanys)
+                zlecenie = self.get_zlecenie_indeks_by_skany_indeks(connection, skanys)
                 if zlecenie:
                     self.extra_qury += " AND z.zlecenie IN ({})".format(
                         ", ".join([f"'{z}'" for z in zlecenie])
@@ -100,7 +105,7 @@ class OrderListService:
                 self.extra_qury += " AND z.zlecenie = 'Not-Found-Data'"
 
         if operation_name != []:
-            zlecenie_by_stanowisko = self.get_zlecenie_by_operation_names(
+            zlecenie_by_stanowisko = self.get_zlecenie_by_operation_names(connection,
                 operation_name
             )
             if zlecenie_by_stanowisko:
@@ -142,10 +147,8 @@ class OrderListService:
 
         return orders_dict
 
-    def get_zlecenie_indeks_by_skany_indeks(self, skany_list: List[int]) -> List[str]:
+    def get_zlecenie_indeks_by_skany_indeks(self, connection: pyodbc.Connection, skany_list: List[int]) -> List[str]:
         zlecenia_indeks_list = []
-
-        connection = connector_service.get_database_connection()
 
         skany_indeks = ",".join(str(indeks) for indeks in skany_list)
         query_zl_indeks = f"""
@@ -153,10 +156,8 @@ class OrderListService:
             FROM skany_vs_zlecenia
             WHERE indeksskanu IN ({skany_indeks})
         """
-
-        with connection.cursor() as cursor:
-            cursor.execute(query_zl_indeks)
-            zlecenia_indeks_list = [result[0] for result in cursor.fetchall()]
+        fetched = connector_service.executer(connection=connection, query=query_zl_indeks)
+        zlecenia_indeks_list = [result[0] for result in fetched]
 
         if zlecenia_indeks_list:
             zlecenie_indeks = ",".join(str(indeks) for indeks in zlecenia_indeks_list)
@@ -167,10 +168,8 @@ class OrderListService:
             FROM zlecenia
             WHERE indeks IN ({zlecenie_indeks})
         """
-
-        with connection.cursor() as cursor:
-            cursor.execute(query_zl)
-            zlecenie_list = [result[0] for result in cursor.fetchall()]
+        fetched = connector_service.executer(connection=connection, query=query_zl)
+        zlecenie_list = [result[0] for result in fetched]
 
         return zlecenie_list
 
@@ -199,8 +198,7 @@ class OrderListService:
 
         return skany_indexes
 
-    def get_zlecenie_by_operation_names(self, operation_names: List[str]) -> List[str]:
-        connection = connector_service.get_database_connection()
+    def get_zlecenie_by_operation_names(self, connection: pyodbc.Connection, operation_names: List[str]) -> List[str]:
         zlecenie = []
 
         query = """
@@ -214,13 +212,11 @@ class OrderListService:
             ", ".join([f"'{op_name}'" for op_name in operation_names])
         )
 
-        with connection.cursor() as cursor:
-            cursor.execute(query)
-            results = cursor.fetchall()
+        results = connector_service.executer(connection=connection, query=query)
 
         for indeks_zlecenie in results:
             zlecenie.append(indeks_zlecenie[0])
-        
+
         return zlecenie
 
 
