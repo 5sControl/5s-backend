@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.views.decorators.cache import cache_page
 
 from rest_framework.exceptions import ValidationError
@@ -59,8 +60,7 @@ class GetOrderDataByZlecenieAPIView(generics.GenericAPIView):
 class OperationNameApiView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
-    # @connector_service.check_database_connection
-    @cache_page(30)
+    @cache(timeout=30)
     def get(self, request):
         response = operation_service.get_operation_names()
         return Response(response, status=status.HTTP_200_OK)
