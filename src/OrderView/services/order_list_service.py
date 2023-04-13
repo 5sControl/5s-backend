@@ -5,7 +5,9 @@ from src.Reports.models import SkanyReport
 
 
 class OrderListService:
-    def __init__(self,):
+    def __init__(
+        self,
+    ):
         self.STATUS_TO_FIELD_VALUE = {
             "violation": False,
             "compliance": True,
