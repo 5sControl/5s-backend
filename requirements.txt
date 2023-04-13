@@ -76,4 +76,6 @@ python3-nmap==1.6.0
 WSDiscovery==2.0.0
 netifaces2==0.0.16
 async-timeout==4.0.2
+# redis packages
 redis==4.5.4
+django-redis==5.2.0

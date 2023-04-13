@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "djoser",
     "corsheaders",
     "drf_yasg",
+    "django_redis",
     # Main application
     "src.StaffControl.Employees.apps.EmployeesConfig",
     "src.StaffControl.Locations.apps.LocationsConfig",
