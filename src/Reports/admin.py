@@ -4,28 +4,14 @@ from src.ImageReport.models import Image
 from django.utils.safestring import mark_safe
 
 
-
-# @admin.register(Report)
-# class ReportAdmin(admin.ModelAdmin):
-#     list_display = (
-#         "id",
-#         "algorithm",
-#         "camera",
-#         "start_tracking",
-#         "stop_tracking",
-#         "violation_found",
-#         "date_created",
-#     )
-#     list_filter = ("algorithm", "camera",)
-
-
 class ImageInline(admin.TabularInline):
     model = Image
     extra = 0
     readonly_fields = ['preview']
 
     def preview(self, obj):
-        return mark_safe(f'<img src="http://192.168.1.110/{obj.image}" width="150px" height="120px" />')
+        return mark_safe(f'<img src="http://192.168.1.110/{obj.image}" width="100%" height="100%" />')
+
     preview.short_description = 'Preview'
 
 
