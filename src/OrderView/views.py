@@ -1,3 +1,5 @@
+from django.views.decorators.cache import cache_page
+
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -22,6 +24,7 @@ class GetAllProductAPIView(generics.GenericAPIView):
     serializer_class = ProductSerializer
 
     @connector_service.check_database_connection
+    @cache_page(10, key_prefix='order_list_view')
     def get(self, request):
         from_time = request.GET.get("from")
         to_time = request.GET.get("to")
@@ -49,6 +52,7 @@ class GetOrderDataByZlecenieAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     @connector_service.check_database_connection
+    @cache_page(10)
     def get(self, request, zlecenie_id):
         response = order_service.get_order(zlecenie_id)
         return Response(response, status=status.HTTP_200_OK)
@@ -58,6 +62,7 @@ class OperationNameApiView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     @connector_service.check_database_connection
+    @cache_page(30)
     def get(self, request):
         response = operation_service.get_operation_names()
         return Response(response, status=status.HTTP_200_OK)
