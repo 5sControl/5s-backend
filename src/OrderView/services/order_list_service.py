@@ -96,7 +96,7 @@ class OrderListService:
             if from_time != to_time:
                 query += " AND z.terminrealizacji BETWEEN ? AND ?"
                 params.extend([from_time, to_time])
-            query += " AND z.terminrealizacji == ?"
+            query += " AND z.terminrealizacji = ?"
             params.append(from_time)
 
         query += " ORDER BY z.zlecenie DESC"
