@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 from src.MsSqlConnector.connector import connector as connector_service
 
 from src.Reports.models import SkanyReport
@@ -28,15 +28,20 @@ class OrderListService:
             WHERE 1=1
         """
 
+        self.skany_index_query = """
+            SELECT indeksskanu
+            FROM skany_vs_zlecenia
+        """
+
     def get_order_list(
         self,
-        search: Optional[str] = None,
-        order_status: Optional[str] = None,
-        operation_status: Optional[List[str]] = None,
-        operation_name: Optional[List[str]] = None,
-        from_time: Optional[str] = None,
-        to_time: Optional[str] = None,
-    ):
+        search: Optional[str],
+        order_status: Optional[str],
+        operation_status: Optional[List[str]],
+        operation_name: Optional[List[str]],
+        from_time: Optional[str],
+        to_time: Optional[str],
+    ) -> Optional[List[Dict[str, Dict[str, Any]]]]:
         connection = connector_service.get_database_connection()
         self.extra_qury = " "
 
@@ -62,12 +67,12 @@ class OrderListService:
 
     def _build_query(
         self,
-        search: Optional[str] = None,
-        order_status: Optional[str] = None,
-        operation_status: Optional[List[str]] = None,
-        operation_name: Optional[List[str]] = None,
-        from_time: Optional[str] = None,
-        to_time: Optional[str] = None,
+        search: Optional[str],
+        order_status: Optional[str],
+        operation_status: Optional[List[str]],
+        operation_name: Optional[List[str]],
+        from_time: Optional[str],
+        to_time: Optional[str],
     ) -> Tuple[str, tuple]:
         params = []
 
@@ -117,10 +122,12 @@ class OrderListService:
 
         return self.extra_qury, tuple(params)
 
-    def _build_orders_dict(self, results):
+    def _build_orders_dict(self, results: List[Tuple[str, ...]]) -> Dict[str, Dict[str, Any]]:
         orders_dict = {}
+
         for result in results:
             zlecenie = result[1]
+
             if zlecenie not in orders_dict:
                 orders_dict[zlecenie] = {
                     "indeks": result[0],
@@ -132,9 +139,10 @@ class OrderListService:
                 orders_dict[zlecenie]["indeks"] = result[0]
                 orders_dict[zlecenie]["status"] = result[2]
                 orders_dict[zlecenie]["terminrealizacji"] = result[3]
+
         return orders_dict
 
-    def get_zlecenie_indeks_by_skany_indeks(self, skany_list):
+    def get_zlecenie_indeks_by_skany_indeks(self, skany_list: List[int]) -> List[str]:
         zlecenia_indeks_list = []
 
         connection = connector_service.get_database_connection()
@@ -166,19 +174,17 @@ class OrderListService:
 
         return zlecenie_list
 
-    def get_all_skany_indeks(self):
+    def get_all_skany_indeks(self) -> List[int]:
         connection = connector_service.get_database_connection()
-        query = """
-            SELECT indeksskanu
-            FROM skany_vs_zlecenia
-        """
-        with connection.cursor() as cursor:
-            cursor.execute(query)
-            indeks_skany = [result[0] for result in cursor.fetchall()]
+
+        fetched = connector_service.executer(connection=connection, query=self.skany_index_query)
+        indeks_skany = [result[0] for result in fetched]
+
         return indeks_skany
 
-    def get_skany_indeks_from_report(self, statuses):
+    def get_skany_indeks_from_report(self, statuses: List[str]) -> List[int]:
         status_set = set(statuses) - set(["no data"])
+
         skany_indexes = list(
             SkanyReport.objects.filter(
                 report__violation_found__in=[
@@ -193,9 +199,8 @@ class OrderListService:
 
         return skany_indexes
 
-    def get_zlecenie_by_operation_names(self, operation_names):
+    def get_zlecenie_by_operation_names(self, operation_names: List[str]) -> List[str]:
         connection = connector_service.get_database_connection()
-
         zlecenie = []
 
         query = """
@@ -215,7 +220,7 @@ class OrderListService:
 
         for indeks_zlecenie in results:
             zlecenie.append(indeks_zlecenie[0])
-
+        
         return zlecenie
 
 
