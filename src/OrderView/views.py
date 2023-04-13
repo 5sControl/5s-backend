@@ -11,7 +11,9 @@ from rest_framework.viewsets import ModelViewSet
 from src.MsSqlConnector.connector import connector as connector_service
 from src.OrderView.models import IndexOperations
 from src.OrderView.serializers import (
-    DatabaseConnectionSerializer, IndexStanowiskoSerializer, ProductSerializer
+    DatabaseConnectionSerializer,
+    IndexStanowiskoSerializer,
+    ProductSerializer,
 )
 from src.OrderView.services.operation_service import operation_service
 from src.OrderView.services.order_list_service import order_list_service
@@ -34,7 +36,7 @@ class GetAllProductAPIView(generics.GenericAPIView):
         operation_status = request.GET.getlist("operation-status")
         operation_name = request.GET.getlist("operation-name")
 
-        cache_key = f'all_products_{search}_{order_status}_{operation_status}_{operation_name}_{from_time}_{to_time}'
+        cache_key = f"all_products_{search}_{order_status}_{operation_status}_{operation_name}_{from_time}_{to_time}"
 
         response = cache.get(cache_key)
 

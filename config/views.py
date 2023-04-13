@@ -1,5 +1,8 @@
 import requests
 
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
+
 from rest_framework import status, generics
 from rest_framework.response import Response
 
@@ -28,6 +31,7 @@ class RegisterView(generics.GenericAPIView):
 
 
 class FindCameraAPIView(generics.GenericAPIView):
+    @method_decorator(cache_page(30))
     def get(self, request, *args, **kwargs):
         cameras_response = requests.get(
             f"{yolo_proccesing.get_algorithm_url()}:7654/get_all_onvif_cameras/"

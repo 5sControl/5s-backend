@@ -7,51 +7,12 @@ from src.Reports.models import SkanyReport
 class OrderListService:
     def __init__(
         self,
-    ):
+    ) -> None:
         self.STATUS_TO_FIELD_VALUE = {
             "violation": False,
             "compliance": True,
         }
-
-    def get_order_list(
-        self,
-        search=None,
-        order_status=None,
-        operation_status=None,
-        operation_name=None,
-        from_time=None,
-        to_time=None,
-    ):
-        connection = connector_service.get_database_connection()
-
-        with connection.cursor() as cursor:
-            query, params = self._build_query(
-                search=search,
-                order_status=order_status,
-                operation_status=operation_status,
-                operation_name=operation_name,
-                from_time=from_time,
-                to_time=to_time,
-            )
-
-            print(query, params)
-            cursor.execute(query, params)
-            results = cursor.fetchall()
-
-        orders_dict = self._build_orders_dict(results)
-        orders_list = list(orders_dict.values())
-        return orders_list
-
-    def _build_query(
-        self,
-        search: Optional[str] = None,
-        order_status: Optional[str] = None,
-        operation_status: Optional[List[str]] = None,
-        operation_name: Optional[List[str]] = None,
-        from_time: Optional[str] = None,
-        to_time: Optional[str] = None,
-    ) -> Tuple[str, tuple]:
-        query = """
+        self.main_query = """
             SELECT DISTINCT
                 z.indeks,
                 z.zlecenie,
@@ -67,53 +28,93 @@ class OrderListService:
             WHERE 1=1
         """
 
+    def get_order_list(
+        self,
+        search: Optional[str] = None,
+        order_status: Optional[str] = None,
+        operation_status: Optional[List[str]] = None,
+        operation_name: Optional[List[str]] = None,
+        from_time: Optional[str] = None,
+        to_time: Optional[str] = None,
+    ):
+        connection = connector_service.get_database_connection()
+
+        self.extra_qury, params = self._build_query(
+            search=search,
+            order_status=order_status,
+            operation_status=operation_status,
+            operation_name=operation_name,
+            from_time=from_time,
+            to_time=to_time,
+        )
+
+        results = connector_service.executer(
+            connection=connection,
+            query=self.main_query + self.extra_qury,
+            params=params,
+        )
+
+        orders_dict = self._build_orders_dict(results)
+        orders_list = list(orders_dict.values())
+
+        return orders_list
+
+    def _build_query(
+        self,
+        search: Optional[str] = None,
+        order_status: Optional[str] = None,
+        operation_status: Optional[List[str]] = None,
+        operation_name: Optional[List[str]] = None,
+        from_time: Optional[str] = None,
+        to_time: Optional[str] = None,
+    ) -> Tuple[str, tuple]:
         params = []
 
         if search:
-            query += " AND z.zlecenie LIKE ?"
+            self.extra_qury += " AND z.zlecenie LIKE ?"
             params.append(f"%{search}%")
 
         if order_status is not None:
             if order_status == "completed":
-                query += " AND z.zakonczone = 1"
+                self.extra_qury += " AND z.zakonczone = 1"
             elif order_status == "started":
-                query += " AND z.zakonczone = 0"
+                self.extra_qury += " AND z.zakonczone = 0"
 
         if operation_status != []:
             skanys = self.get_skany_indeks_from_report(operation_status)
             if skanys:
                 zlecenie = self.get_zlecenie_indeks_by_skany_indeks(skanys)
                 if zlecenie:
-                    query += " AND z.zlecenie IN ({})".format(
+                    self.extra_qury += " AND z.zlecenie IN ({})".format(
                         ", ".join([f"'{z}'" for z in zlecenie])
                     )
                 else:
-                    query += " AND z.zlecenie = 'Not-Found-Data'"
+                    self.extra_qury += " AND z.zlecenie = 'Not-Found-Data'"
             else:
-                query += " AND z.zlecenie = 'Not-Found-Data'"
+                self.extra_qury += " AND z.zlecenie = 'Not-Found-Data'"
 
         if operation_name != []:
             zlecenie_by_stanowisko = self.get_zlecenie_by_operation_names(
                 operation_name
             )
             if zlecenie_by_stanowisko:
-                query += " AND z.zlecenie IN ({})".format(
+                self.extra_qury += " AND z.zlecenie IN ({})".format(
                     ", ".join([f"'{z_by_s}'" for z_by_s in zlecenie_by_stanowisko])
                 )
             else:
-                query += " AND z.zlecenie = 'Not-Found-Data'"
+                self.extra_qury += " AND z.zlecenie = 'Not-Found-Data'"
 
         if from_time and to_time:
             if from_time == to_time:
-                query += " AND CAST(terminrealizacji AS DATE) = ?"
+                self.extra_qury += " AND CAST(terminrealizacji AS DATE) = ?"
                 params.append(from_time)
             else:
-                query += " AND z.terminrealizacji BETWEEN ? AND ?"
+                self.extra_qury += " AND z.terminrealizacji BETWEEN ? AND ?"
                 params.extend([from_time, to_time])
 
-        query += " ORDER BY z.zlecenie DESC"
+        self.extra_qury += " ORDER BY z.zlecenie DESC"
 
-        return query, tuple(params)
+        return self.extra_qury, tuple(params)
 
     def _build_orders_dict(self, results):
         orders_dict = {}

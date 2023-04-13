@@ -1,4 +1,4 @@
-from typing import Any, List, Optional
+from typing import Any, Iterable, Optional
 import pyodbc
 
 from rest_framework.response import Response
@@ -123,7 +123,7 @@ class MsSqlConnector:
 
         return wrapper
 
-    def executer(self, connection: pyodbc.Connection, query: str, params: Optional[List[Any]] = None):
+    def executer(self, connection: pyodbc.Connection, query: str, params: Optional[Iterable[Any]] = None):
         with connection.cursor() as cursor:
             if params:
                 cursor.execute(query, params)
