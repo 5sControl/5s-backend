@@ -24,7 +24,6 @@ class GetAllProductAPIView(generics.GenericAPIView):
     serializer_class = ProductSerializer
 
     @connector_service.check_database_connection
-    @cache_page(10, key_prefix='order_list_view')
     def get(self, request):
         from_time = request.GET.get("from")
         to_time = request.GET.get("to")
@@ -52,7 +51,6 @@ class GetOrderDataByZlecenieAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     @connector_service.check_database_connection
-    @cache_page(10)
     def get(self, request, zlecenie_id):
         response = order_service.get_order(zlecenie_id)
         return Response(response, status=status.HTTP_200_OK)
