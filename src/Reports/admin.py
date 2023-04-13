@@ -25,7 +25,7 @@ class ImageInline(admin.TabularInline):
     readonly_fields = ['preview']
 
     def preview(self, obj):
-        return mark_safe(f'<img src="{obj.image}" width="150px" height="120px" />')
+        return mark_safe(f'<img src="http://192.168.1.110/{obj.image}" width="150px" height="120px" />')
     preview.short_description = 'Preview'
 
 
