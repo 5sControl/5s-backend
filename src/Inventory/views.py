@@ -42,7 +42,6 @@ class ItemsListAPIView(ListAPIView):
             queryset = sorted(queryset, key=lambda x: reversed_statuses.index(x.status))
         else:
             queryset = sorted(queryset, key=lambda x: self.ALLOWED_STATUSES.index(x.status))
-        print(queryset)
 
         return queryset
 
