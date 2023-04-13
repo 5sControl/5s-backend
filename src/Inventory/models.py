@@ -29,7 +29,8 @@ class Items(models.Model):
         coords_updated = self.pk and self.coords != self.__class__.objects.get(pk=self.pk).coords
         instance = super().save(*args, **kwargs)
 
-        if not is_update or camera_updated or coords_updated:
+        if not is_update:
+        # if not is_update or camera_updated or coords_updated:
             # stopped process
             from src.Algorithms.service import algorithms_services
             process_id = CameraAlgorithm.objects.filter(
