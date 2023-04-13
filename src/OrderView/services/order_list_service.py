@@ -38,6 +38,7 @@ class OrderListService:
         to_time: Optional[str] = None,
     ):
         connection = connector_service.get_database_connection()
+        self.extra_qury = " "
 
         self.extra_qury, params = self._build_query(
             search=search,
