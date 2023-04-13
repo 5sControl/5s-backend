@@ -1,6 +1,8 @@
 from django.contrib import admin
 from .models import Report, SkanyReport
 from src.ImageReport.models import Image
+from django.utils.safestring import mark_safe
+
 
 
 # @admin.register(Report)
@@ -22,7 +24,7 @@ class ImageInline(admin.StackedInline):
 
 class ReportAdmin(admin.ModelAdmin):
     inlines = [ImageInline]
-    list_display = ['id', 'algorithm', 'camera', 'violation_found', 'num_photos']
+    list_display = ['algorithm', 'id', 'camera', 'violation_found', 'num_photos', 'date_created']
     list_filter = ['algorithm', 'camera', 'violation_found']
     search_fields = ['algorithm__name', 'camera__name']
 
@@ -32,7 +34,7 @@ class ReportAdmin(admin.ModelAdmin):
         return queryset
 
     def num_photos(self, obj):
-        return obj.photos.count()
+        return mark_safe(f'<img src="{obj.image.url}" width="150px" height="120px" />')
 
     num_photos.short_description = 'Number of Photos'
 
