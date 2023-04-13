@@ -1,18 +1,19 @@
+from rest_framework.exceptions import ValidationError
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status, generics
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import ValidationError
 from rest_framework.viewsets import ModelViewSet
 
-from src.OrderView.serializers import DatabaseConnectionSerializer, ProductSerializer
-from src.OrderView.services import orderView_service
-from src.OrderView.utils import OrderViewPaginnator
-
 from src.MsSqlConnector.connector import connector as connector_service
-
 from src.OrderView.models import IndexOperations
+from src.OrderView.serializers import (
+    DatabaseConnectionSerializer, IndexStanowiskoSerializer, ProductSerializer
+)
+from src.OrderView.services.operation_service import operation_service
+from src.OrderView.services.order_list_service import order_list_service
+from src.OrderView.services.order_service import order_service
 
-from src.OrderView.serializers import IndexStanowiskoSerializer
+from src.OrderView.utils import OrderViewPaginnator
 
 
 class GetAllProductAPIView(generics.GenericAPIView):
@@ -29,11 +30,7 @@ class GetAllProductAPIView(generics.GenericAPIView):
         operation_status = request.GET.getlist("operation-status")
         operation_name = request.GET.getlist("operation-name")
 
-        print(
-            f"search: {search}, order_status: {order_status}, operation_status: {operation_status}, operation_name: {operation_name}"
-        )
-
-        response = orderView_service.get_order_list(
+        response = order_list_service.get_order_list(
             search=search,
             order_status=order_status,
             operation_status=operation_status,
@@ -53,7 +50,7 @@ class GetOrderDataByZlecenieAPIView(generics.GenericAPIView):
 
     @connector_service.check_database_connection
     def get(self, request, zlecenie_id):
-        response = orderView_service.get_order(zlecenie_id)
+        response = order_service.get_order(zlecenie_id)
         return Response(response, status=status.HTTP_200_OK)
 
 
@@ -62,7 +59,7 @@ class OperationNameApiView(generics.GenericAPIView):
 
     @connector_service.check_database_connection
     def get(self, request):
-        response = orderView_service.get_operation_names()
+        response = operation_service.get_operation_names()
         return Response(response, status=status.HTTP_200_OK)
 
 

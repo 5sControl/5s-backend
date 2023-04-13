@@ -1,72 +1,23 @@
-from datetime import datetime, timezone
-
 from collections import defaultdict
 
+from datetime import datetime, timezone
+
+from typing import Dict, List, Tuple
+
+import pyodbc
+
 from src.MsSqlConnector.connector import connector as connector_service
+
 from src.OrderView.utils import get_skany_video_info
 from src.Reports.models import SkanyReport
 
 
-class OrderService:
-    def __init__(
-        self,
-    ):
+class OrderListService:
+    def __init__(self,):
         self.STATUS_TO_FIELD_VALUE = {
             "violation": False,
             "compliance": True,
         }
-
-    def get_skanyQueryByIds(self, ids):
-        placeholders = ",".join(["%s" for _ in ids])
-        query = """
-            SELECT indeks, data, stanowisko, uzytkownik
-            FROM Skany
-            WHERE indeks IN ({})
-        """.format(
-            placeholders
-        )
-
-        connection = self._get_connection()
-        if not connection:
-            return False
-
-        with connection.cursor() as cursor:
-            cursor.execute(query, ids)
-            results = cursor.fetchall()
-
-        skanyQuery = []
-        for row in results:
-            skanyQuery.append(
-                {
-                    "indeks": row[0],
-                    "data": row[1].replace(tzinfo=timezone.utc),
-                    "stanowisko": row[2],
-                    "uzytkownik": row[3],
-                }
-            )
-
-        return skanyQuery
-
-    def get_zlecenia_query_by_zlecenie(self, zlecenie_id):
-        connection = connector_service.get_database_connection()
-
-        with connection.cursor() as cursor:
-            cursor.execute(
-                """
-                    SELECT z.indeks, z.data, z.zlecenie, z.klient, z.datawejscia, z.datazakonczenia,
-                        z.zakonczone, z.typ, z.color AS orderName, z.terminrealizacji,
-                        CASE
-                            WHEN z.zakonczone = 0 AND z.datawejscia IS NOT NULL THEN 'Started'
-                            ELSE 'Completed'
-                        END AS status
-                    FROM zlecenia z
-                    WHERE z.zlecenie = ?
-                """,
-                (str(zlecenie_id),),
-            )
-            results = cursor.fetchall()
-        result = self.transform_result(results)
-        return result
 
     def get_order_list(
         self,
@@ -206,114 +157,6 @@ class OrderService:
 
         return zlecenie_list
 
-    def get_order(self, zlecenie_id):
-        response = {}
-        status = "Completed"
-
-        zlecenia_dict = self.get_zlecenia_query_by_zlecenie(zlecenie_id)
-
-        for zlecenie_obj in zlecenia_dict:
-            skany_dict = defaultdict(list)
-            if zlecenie_obj["status"] == "Started":
-                status = "Started"
-
-            connection = connector_service.get_database_connection()
-
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    """
-                    SELECT s.indeks, s.data, s.stanowisko, s.uzytkownik,
-                        st.raport, u.imie, u.nazwisko
-                    FROM Skany s
-                    JOIN Skany_vs_Zlecenia sz ON s.indeks = sz.indeksskanu
-                    JOIN Stanowiska st ON s.stanowisko = st.indeks
-                    JOIN Uzytkownicy u ON s.uzytkownik = u.indeks
-                    WHERE sz.indekszlecenia = ?
-                    AND s.data <= CONVERT(datetime, GETUTCDATE())
-                    """,
-                    (zlecenie_obj["indeks"],),
-                )
-                results = cursor.fetchall()
-
-                skany_ids_added = set()
-                for row in results:
-                    operation_status = None
-
-                    print(row[0])
-                    try:
-                        skany_report = SkanyReport.objects.get(skany_index=row[0])
-                    except SkanyReport.DoesNotExist:
-                        pass
-                    else:
-                        operation_status = skany_report.report.violation_found
-
-                    video_data = get_skany_video_info(time=str(row[1])[:-3])
-
-                    skany = {
-                        "indeks": row[0],
-                        "date": row[1].replace(tzinfo=timezone.utc),
-                        "stanowisko": row[2],
-                        "uzytkownik": row[3],
-                        "raport": row[4],
-                        "worker": f"{row[5]} {row[6]}",
-                        "status": operation_status,
-                        "video_data": video_data,
-                    }
-
-                    formatted_time = skany["date"].strftime("%Y.%m.%d")
-                    if skany["indeks"] not in skany_ids_added:
-                        skany_ids_added.add(skany["indeks"])
-                        skany_dict[formatted_time].append(skany)
-
-            zlecenie_obj["skans"] = []
-            for formatted_time, skany_list in skany_dict.items():
-                for skany in skany_list:
-                    zlecenie_obj["skans"].append(skany)
-
-        response["products"] = list(zlecenia_dict)
-        response["status"] = status
-
-        response["indeks"] = response["products"][0]["indeks"]
-        response["zlecenie"] = response["products"][0]["zlecenie"]
-        response["data"] = response["products"][0]["data"]
-        response["klient"] = response["products"][0]["klient"]
-        response["datawejscia"] = response["products"][0]["datawejscia"]
-        response["orderName"] = response["products"][0]["orderName"]
-        response["datazakonczenia"] = response["products"][0]["datazakonczenia"]
-        response["terminrealizacji"] = response["products"][0]["terminrealizacji"]
-
-        return [response]
-
-    def transform_result(self, result):
-        transformed_result = []
-        for r in result:
-            transformed_result.append(
-                {
-                    "indeks": r[0],
-                    "data": datetime.strptime(
-                        r[1].strftime("%Y-%m-%d %H:%M:%S.%f"), "%Y-%m-%d %H:%M:%S.%f"
-                    ).replace(tzinfo=timezone.utc),
-                    "zlecenie": r[2].strip(),
-                    "klient": r[3].strip(),
-                    "datawejscia": datetime.strptime(
-                        r[4].strftime("%Y-%m-%d %H:%M:%S.%f"), "%Y-%m-%d %H:%M:%S.%f"
-                    ).replace(tzinfo=timezone.utc)
-                    if r[4]
-                    else None,
-                    "datazakonczenia": datetime.strptime(
-                        r[5].strftime("%Y-%m-%d %H:%M:%S.%f"), "%Y-%m-%d %H:%M:%S.%f"
-                    ).replace(tzinfo=timezone.utc)
-                    if r[5]
-                    else None,
-                    "zakonczone": r[6],
-                    "typ": r[7].strip(),
-                    "terminrealizacji": r[9].strip(),
-                    "orderName": None,
-                    "status": r[10].strip(),
-                }
-            )
-        return transformed_result
-
     def get_all_skany_indeks(self):
         connection = connector_service.get_database_connection()
         query = """
@@ -336,28 +179,10 @@ class OrderService:
         )
 
         if "no data" in statuses:
-            all_skany_indeks = orderView_service.get_all_skany_indeks()
+            all_skany_indeks = self.get_all_skany_indeks()
             skany_indexes += all_skany_indeks
 
         return skany_indexes
-
-    def get_operation_names(self):
-        connection = connector_service.get_database_connection()
-        list_of_names = []
-
-        query = """
-            SELECT DISTINCT Raport
-            FROM Stanowiska
-        """
-
-        with connection.cursor() as cursor:
-            cursor.execute(query)
-            results = cursor.fetchall()
-
-        for operation_names in results:
-            list_of_names.append(operation_names[0])
-
-        return list_of_names
 
     def get_zlecenie_by_operation_names(self, operation_names):
         connection = connector_service.get_database_connection()
@@ -385,4 +210,4 @@ class OrderService:
         return zlecenie
 
 
-orderView_service = OrderService()
+order_list_service = OrderListService()
