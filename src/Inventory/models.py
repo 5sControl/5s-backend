@@ -27,7 +27,7 @@ class Items(models.Model):
         instance = super().save(*args, **kwargs)
         if self.pk and self.current_stock_level == self.__class__.objects.get(pk=self.pk).current_stock_level:
             return instance
-
+        print("STOP")
         from src.Algorithms.service import algorithms_services
         process_id = CameraAlgorithm.objects.filter(
             Q(camera_id=self.camera) & Q(algorithm__name='min_max_control')
@@ -35,7 +35,7 @@ class Items(models.Model):
         if process_id is not None:
             yolo_proccesing.stop_process(pid=process_id)
             algorithms_services.update_status_of_algorithm_by_pid(pid=process_id)
-
+        print("START")
         camera = Camera.objects.filter(id=self.camera)
         algorithm = Algorithm.objects.filter(name='min_max_control')
         server_url = yolo_proccesing.get_algorithm_url()
