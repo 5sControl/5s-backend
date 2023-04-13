@@ -31,6 +31,7 @@ class OrderListService:
                 to_time=to_time,
             )
 
+            print(query, params)
             cursor.execute(query, params)
             results = cursor.fetchall()
 
