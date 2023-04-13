@@ -17,14 +17,21 @@ from django.utils.safestring import mark_safe
 #         "date_created",
 #     )
 #     list_filter = ("algorithm", "camera",)
-class ImageInline(admin.StackedInline):
+
+
+class ImageInline(admin.TabularInline):
     model = Image
     extra = 0
+    readonly_fields = ['preview']
+
+    def preview(self, obj):
+        return mark_safe(f'<img src="{obj.image}" width="150px" height="120px" />')
+    preview.short_description = 'Preview'
 
 
 class ReportAdmin(admin.ModelAdmin):
     inlines = [ImageInline]
-    list_display = ['algorithm', 'id', 'camera', 'violation_found', 'num_photos', 'date_created']
+    list_display = ['algorithm', 'id', 'camera', 'violation_found', 'date_created']
     list_filter = ['algorithm', 'camera', 'violation_found']
     search_fields = ['algorithm__name', 'camera__name']
 
@@ -32,11 +39,6 @@ class ReportAdmin(admin.ModelAdmin):
         queryset = super().get_queryset(request)
         queryset = queryset.prefetch_related('photos')
         return queryset
-
-    def num_photos(self, obj):
-        return mark_safe(f'<img src="{obj.image.url}" width="150px" height="120px" />')
-
-    num_photos.short_description = 'Number of Photos'
 
 
 admin.site.register(Report, ReportAdmin)
