@@ -62,6 +62,7 @@ class OperationNameApiView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     @method_decorator(cache_page(30))
+    @connector_service.check_database_connection
     def get(self, request):
         response = operation_service.get_operation_names()
         return Response(response, status=status.HTTP_200_OK)
