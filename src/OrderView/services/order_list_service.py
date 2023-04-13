@@ -103,7 +103,7 @@ class OrderListService:
 
         if from_time and to_time:
             if from_time == to_time:
-                query += " AND z.terminrealizacji = ?"
+                query += " AND CAST(terminrealizacji AS DATE) = ?"
                 params.append(from_time)
             else:
                 query += " AND z.terminrealizacji BETWEEN ? AND ?"
