@@ -28,14 +28,19 @@ class OrderListService:
             WHERE 1=1
         """
 
+        self.skany_index_query = """
+            SELECT indeksskanu
+            FROM skany_vs_zlecenia
+        """
+
     def get_order_list(
         self,
-        search: Optional[str] = None,
-        order_status: Optional[str] = None,
-        operation_status: Optional[List[str]] = None,
-        operation_name: Optional[List[str]] = None,
-        from_time: Optional[str] = None,
-        to_time: Optional[str] = None,
+        search: Optional[str],
+        order_status: Optional[str],
+        operation_status: Optional[List[str]],
+        operation_name: Optional[List[str]],
+        from_time: Optional[str],
+        to_time: Optional[str],
     ):
         connection = connector_service.get_database_connection()
         self.extra_qury = " "
@@ -58,16 +63,17 @@ class OrderListService:
         orders_dict = self._build_orders_dict(results)
         orders_list = list(orders_dict.values())
 
+        print('ORDER LIST', orders_list)
         return orders_list
 
     def _build_query(
         self,
-        search: Optional[str] = None,
-        order_status: Optional[str] = None,
-        operation_status: Optional[List[str]] = None,
-        operation_name: Optional[List[str]] = None,
-        from_time: Optional[str] = None,
-        to_time: Optional[str] = None,
+        search: Optional[str],
+        order_status: Optional[str],
+        operation_status: Optional[List[str]],
+        operation_name: Optional[List[str]],
+        from_time: Optional[str],
+        to_time: Optional[str],
     ) -> Tuple[str, tuple]:
         params = []
 
@@ -118,6 +124,7 @@ class OrderListService:
         return self.extra_qury, tuple(params)
 
     def _build_orders_dict(self, results):
+        print("_build_order_dict", type(results), results)
         orders_dict = {}
         for result in results:
             zlecenie = result[1]
@@ -132,10 +139,14 @@ class OrderListService:
                 orders_dict[zlecenie]["indeks"] = result[0]
                 orders_dict[zlecenie]["status"] = result[2]
                 orders_dict[zlecenie]["terminrealizacji"] = result[3]
+
+        print(orders_dict)
         return orders_dict
 
     def get_zlecenie_indeks_by_skany_indeks(self, skany_list):
         zlecenia_indeks_list = []
+
+        print("get_zlecenie_indeks_by_s ", skany_list)
 
         connection = connector_service.get_database_connection()
 
@@ -163,21 +174,19 @@ class OrderListService:
         with connection.cursor() as cursor:
             cursor.execute(query_zl)
             zlecenie_list = [result[0] for result in cursor.fetchall()]
-
+        print("get_zlecenie_indeks_by_s ", zlecenie_list)
         return zlecenie_list
 
     def get_all_skany_indeks(self):
         connection = connector_service.get_database_connection()
-        query = """
-            SELECT indeksskanu
-            FROM skany_vs_zlecenia
-        """
-        with connection.cursor() as cursor:
-            cursor.execute(query)
-            indeks_skany = [result[0] for result in cursor.fetchall()]
+
+        fetched = connector_service.executer(connection=connection, query=self.skany_index_query)
+        indeks_skany = [result[0] for result in fetched]
+
+        print("get_all_skany_indeks: ", indeks_skany)
         return indeks_skany
 
-    def get_skany_indeks_from_report(self, statuses):
+    def get_skany_indeks_from_report(self, statuses: List[str]):
         status_set = set(statuses) - set(["no data"])
         skany_indexes = list(
             SkanyReport.objects.filter(
@@ -191,11 +200,13 @@ class OrderListService:
             all_skany_indeks = self.get_all_skany_indeks()
             skany_indexes += all_skany_indeks
 
+        # FIXME:
+        print("get_skany_indeks_from_report: ", skany_indexes)
         return skany_indexes
 
     def get_zlecenie_by_operation_names(self, operation_names):
         connection = connector_service.get_database_connection()
-
+        print("get_zlecenie_by_operation_names ", operation_names)
         zlecenie = []
 
         query = """
@@ -215,7 +226,7 @@ class OrderListService:
 
         for indeks_zlecenie in results:
             zlecenie.append(indeks_zlecenie[0])
-
+        print("get_zlecenie_by_operation_names ", zlecenie)
         return zlecenie
 
 
