@@ -54,19 +54,16 @@ class ActionsWithPhotos(APIView):
             photos = request.data.get("photos")
             violation_found = request.data.get("violation_found")
 
-            if request.data.get("algorithm") == "operation_control":
-                try:
-                    request = requests.post(f"{HOST}:9876/operation-control/", json=request.data)
-                except Exception as e:
-                    print("Error: ", e)
-
             if request.data.get("algorithm") == "min_max_control":
                 print("process_item_status", request.data.get("extra"))
                 extra = process_item_status(request.data.get("extra"))
             elif request.data.get("algorithm") == "operation_control":
                 extra = edit_extra(request.data.get("extra"), camera)
+                request = requests.post(f"{HOST}:9876/operation-control/", json=request.data)
+                print("[INFO] Operation control request: ", request.json())
             else:
                 extra = request.data.get("extra")
+
         except KeyError:
             return {"status": False, "message": "The model response is not complete"}
         else:
