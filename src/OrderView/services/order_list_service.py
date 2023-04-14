@@ -38,12 +38,12 @@ class OrderListService:
 
     def get_order_list(
         self,
-        search: Optional[str],
-        order_status: Optional[str],
-        operation_status: Optional[List[str]],
-        operation_name: Optional[List[str]],
-        from_time: Optional[str],
-        to_time: Optional[str],
+        search: str,
+        order_status: str,
+        operation_status: List[str],
+        operation_name: List[str],
+        from_time: str,
+        to_time: str,
     ) -> Optional[List[Dict[str, Dict[str, Any]]]]:
         connection = connector_service.get_database_connection()
         self.extra_qury = " "
@@ -72,12 +72,12 @@ class OrderListService:
     def _build_query(
         self,
         connection: pyodbc.Connection,
-        search: Optional[str],
-        order_status: Optional[str],
-        operation_status: Optional[List[str]],
-        operation_name: Optional[List[str]],
-        from_time: Optional[str],
-        to_time: Optional[str],
+        search: str,
+        order_status: str,
+        operation_status: List[str],
+        operation_name: List[str],
+        from_time: str,
+        to_time: str,
     ) -> Tuple[str, tuple]:
         params = []
 
@@ -105,8 +105,8 @@ class OrderListService:
                 self.extra_qury += " AND z.zlecenie = 'Not-Found-Data'"
 
         if operation_name != []:
-            zlecenie_by_stanowisko = self.get_zlecenie_by_operation_names(connection,
-                operation_name
+            zlecenie_by_stanowisko = self.get_zlecenie_by_operation_names(
+                connection, operation_name
             )
             if zlecenie_by_stanowisko:
                 self.extra_qury += " AND z.zlecenie IN ({})".format(
@@ -127,7 +127,9 @@ class OrderListService:
 
         return self.extra_qury, tuple(params)
 
-    def _build_orders_dict(self, results: List[Tuple[str, ...]]) -> Dict[str, Dict[str, Any]]:
+    def _build_orders_dict(
+        self, results: List[Tuple[str, ...]]
+    ) -> Dict[str, Dict[str, Any]]:
         orders_dict = {}
 
         for result in results:
@@ -147,7 +149,9 @@ class OrderListService:
 
         return orders_dict
 
-    def get_zlecenie_indeks_by_skany_indeks(self, connection: pyodbc.Connection, skany_list: List[int]) -> List[str]:
+    def get_zlecenie_indeks_by_skany_indeks(
+        self, connection: pyodbc.Connection, skany_list: List[int]
+    ) -> List[str]:
         zlecenia_indeks_list = []
 
         skany_indeks = ",".join(str(indeks) for indeks in skany_list)
@@ -156,7 +160,9 @@ class OrderListService:
             FROM skany_vs_zlecenia
             WHERE indeksskanu IN ({skany_indeks})
         """
-        fetched = connector_service.executer(connection=connection, query=query_zl_indeks)
+        fetched = connector_service.executer(
+            connection=connection, query=query_zl_indeks
+        )
         zlecenia_indeks_list = [result[0] for result in fetched]
 
         if zlecenia_indeks_list:
@@ -176,7 +182,9 @@ class OrderListService:
     def get_all_skany_indeks(self) -> List[int]:
         connection = connector_service.get_database_connection()
 
-        fetched = connector_service.executer(connection=connection, query=self.skany_index_query)
+        fetched = connector_service.executer(
+            connection=connection, query=self.skany_index_query
+        )
         indeks_skany = [result[0] for result in fetched]
 
         return indeks_skany
@@ -198,7 +206,9 @@ class OrderListService:
 
         return skany_indexes
 
-    def get_zlecenie_by_operation_names(self, connection: pyodbc.Connection, operation_names: List[str]) -> List[str]:
+    def get_zlecenie_by_operation_names(
+        self, connection: pyodbc.Connection, operation_names: List[str]
+    ) -> List[str]:
         zlecenie = []
 
         query = """
