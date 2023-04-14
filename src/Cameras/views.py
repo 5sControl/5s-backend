@@ -12,7 +12,7 @@ from src.Core.permissions import IsStaffPermission, IsSuperuserPermission
 
 from .service import link_generator, camera_service
 
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 
 
 class GetCameraAPIView(APIView):
@@ -37,7 +37,8 @@ class PostCameraAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
         result = camera_service.create_camera(request.data)
-        return JsonResponse(result)
+        print(result)
+        return HttpResponse(result)
 
 
 class DeleteCameraAPIView(APIView):
