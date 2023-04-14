@@ -31,7 +31,6 @@ class RegisterView(generics.GenericAPIView):
 
 
 class FindCameraAPIView(generics.GenericAPIView):
-    @method_decorator(cache_page(300))
     def get(self, request, *args, **kwargs):
         cameras_response = requests.get(
             f"{yolo_proccesing.get_algorithm_url()}:7654/get_all_onvif_cameras/"
