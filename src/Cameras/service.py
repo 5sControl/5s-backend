@@ -81,6 +81,7 @@ class CameraService:
             logger.info(f"IP {ip}")
             snapshot_request = self.check_ip(ip, username, password, server_url)
             snapshot = snapshot_request.json()
+            print(snapshot)
         else:
             return {"status": False, "message": "Ip not defined"}
         if snapshot["status"]:
@@ -121,6 +122,7 @@ class CameraService:
         camera_request_data = {"username": username, "password": password, "ip": ip}
         try:
             connect = requests.post(f"{url}:3456/add_camera", json=camera_request_data)
+            print(connect)
         except Exception as e:
             return {
                 "status": False,
