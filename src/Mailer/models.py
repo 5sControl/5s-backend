@@ -23,10 +23,19 @@ class Emails(models.Model):
     """
 
     email = models.EmailField(verbose_name="Email to send notifications")
+    is_active = models.BooleanField(default=True, verbose_name="Is activ email")
 
     def __str__(self):
         return self.email
 
 
+class WorkingTime(models.Model):
+    """
+    Time send notifications
+    """
 
+    time_start = models.TimeField(verbose_name="Start time")
+    time_end = models.TimeField(verbose_name="End time")
 
+    def __str__(self):
+        return f"{self.time_end} - {self.time_start}"

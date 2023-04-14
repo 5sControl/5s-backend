@@ -4,7 +4,7 @@ from src.Mailer.models import Emails, SMTPSettings
 
 @admin.register(Emails)
 class EmailAdmin(admin.ModelAdmin):
-    list_display = ("email", "id",)
+    list_display = ("email", "id", 'is_active')
 
 
 @admin.register(SMTPSettings)
