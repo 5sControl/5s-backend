@@ -12,6 +12,8 @@ from src.Core.permissions import IsStaffPermission, IsSuperuserPermission
 
 from .service import link_generator, camera_service
 
+from django.http import JsonResponse
+
 
 class GetCameraAPIView(APIView):
     """Get all cameras"""
@@ -21,7 +23,7 @@ class GetCameraAPIView(APIView):
     def get(self, request, *args, **kwargs):
         cameras = Camera.objects.all()
         serializer = CameraSerializer(cameras, many=True)
-        return Response(serializer.data)
+        return JsonResponse(serializer.data)
 
 
 class PostCameraAPIView(APIView):
