@@ -62,9 +62,6 @@ class ActionsWithPhotos(APIView):
 
             if request.data.get("algorithm") == "min_max_control":
                 print("process_item_status", request.data.get("extra"))
-                try:
-                except Exception as e:
-                    print("Ms sql connot create record. Exception is: ", e)
                 extra = process_item_status(request.data.get("extra"))
             elif request.data.get("algorithm") == "operation_control":
                 extra = edit_extra(request.data.get("extra"), camera)
