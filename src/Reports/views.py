@@ -56,6 +56,10 @@ class ActionsWithPhotos(APIView):
 
             if request.data.get("algorithm") == "min_max_control":
                 print("process_item_status", request.data.get("extra"))
+                try:
+                    request = requests.post(f"{HOST}:9876/operation-control/", json=request.data)
+                except Exception as e:
+                    print("Ms sql connot create record. Exception is: ", e)
                 extra = process_item_status(request.data.get("extra"))
             elif request.data.get("algorithm") == "operation_control":
                 extra = edit_extra(request.data.get("extra"), camera)
@@ -81,15 +85,7 @@ class ActionsWithPhotos(APIView):
                         image=image, date=date, report_id=action
                     )
                 if request.data.get("algorithm") == "operation_control":
-                    print("[INFO] Report finded")
-                    print('Response data is ', request.data)
-                    try:
-                        request = requests.post(f"{HOST}:9876/operation-control/", json=request.data)
-                        print(request)
-                    except Exception as e:
-                        print(f"Error while posting operation control {e}")
-                    else:
-                        create_records_skany(action, extra)
+                    create_records_skany(action, extra)
             else:
                 action.delete()
                 return Response(
