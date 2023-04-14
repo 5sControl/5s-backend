@@ -58,8 +58,8 @@ class ActionsWithPhotos(APIView):
                 print("process_item_status", request.data.get("extra"))
                 extra = process_item_status(request.data.get("extra"))
             elif request.data.get("algorithm") == "operation_control":
-                extra = edit_extra(request.data.get("extra"), camera)
                 fetched = requests.post(f"{HOST}:9876/operation-control/", json=request.data)
+                extra = edit_extra(request.data.get("extra"), camera)
                 print("[INFO] Operation control request: ", fetched.json())
             else:
                 extra = request.data.get("extra")
