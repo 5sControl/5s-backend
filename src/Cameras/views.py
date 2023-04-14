@@ -23,7 +23,7 @@ class GetCameraAPIView(APIView):
     def get(self, request, *args, **kwargs):
         cameras = Camera.objects.all()
         serializer = CameraSerializer(cameras, many=True)
-        return JsonResponse(serializer.data)
+        return Response(serializer.data)
 
 
 class PostCameraAPIView(APIView):
@@ -37,8 +37,7 @@ class PostCameraAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
         result = camera_service.create_camera(request.data)
-        print(result)
-        return Response(result)
+        return JsonResponse(result)
 
 
 class DeleteCameraAPIView(APIView):
