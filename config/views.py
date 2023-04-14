@@ -1,8 +1,5 @@
 import requests
 
-from django.views.decorators.cache import cache_page
-from django.utils.decorators import method_decorator
-
 from rest_framework import status, generics
 from rest_framework.response import Response
 
