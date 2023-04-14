@@ -35,6 +35,7 @@ class PostCameraAPIView(APIView):
 
     def post(self, request, *args, **kwargs):
         result = camera_service.create_camera(request.data)
+        print(result)
         return Response(result)
 
 
