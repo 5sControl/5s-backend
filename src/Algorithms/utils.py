@@ -5,7 +5,6 @@ from src.Cameras.service import link_generator
 
 from src.Algorithms.models import Algorithm, CameraAlgorithm
 from src.Cameras.models import Camera
-min_max_ids = []
 
 class YoloProccesing:
     def start_yolo_processing(
@@ -20,8 +19,6 @@ class YoloProccesing:
         }
         print("RESPONSE FOR ALGORITHM: ", response)
         port = 3333
-        if algorithm.name == 'min_max_control':
-            port = 3020
         request = requests.post(
             url=f"{url}:{port}/run",
             json=response,
@@ -30,8 +27,6 @@ class YoloProccesing:
         request_json = request.json()
         request_json["server_url"] = url
         request_json["status"] = True
-        if algorithm.name == 'min_max_control':
-            min_max_ids.append(request_json["pid"])
 
         return request_json
 
@@ -43,10 +38,6 @@ class YoloProccesing:
         yolo_server_url = self.get_algorithm_url()
 
         port = 3333
-        if pid in min_max_ids:
-            port = 3020
-        while pid in min_max_ids:
-            min_max_ids.remove(pid)
 
         request = requests.post(
             url=f"{yolo_server_url}:{port}/stop",
