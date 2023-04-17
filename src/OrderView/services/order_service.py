@@ -69,7 +69,8 @@ class OrderService:
             operation_status = self._setup_operation_status(row[0])
 
             if row[1] is not None:
-                time = datetime.strptime(row[1], "%Y-%m-%d %H:%M:%S.%f")
+
+                time = datetime.strptime(str(row[1]), "%Y-%m-%d %H:%M:%S.%f")
                 time_utc = time.replace(tzinfo=timezone.utc)
                 video_data = get_skany_video_info(time=time_utc.isoformat())
             else:
