@@ -87,7 +87,7 @@ class OrderService:
 
     def build_skany_dict_item(self, row, operation_status, video_data):
         if row[1] is not None:
-            date = datetime.strptime(row[1], "%Y-%m-%d %H:%M:%S.%f").replace(
+            date = datetime.strptime(str(row[1]), "%Y-%m-%d %H:%M:%S.%f").replace(
                 tzinfo=timezone.utc
             )
         else:
