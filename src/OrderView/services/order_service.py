@@ -67,18 +67,35 @@ class OrderService:
         skany_dict = defaultdict(list)
         for row in results:
             operation_status = self._setup_operation_status(row[0])
-            video_data = get_skany_video_info(time=str(row[1])[:-3])
+
+            if row[1] is not None:
+
+                time = datetime.strptime(str(row[1]), "%Y-%m-%d %H:%M:%S.%f")
+                time_utc = time.replace(tzinfo=timezone.utc)
+                video_data = get_skany_video_info(time=time_utc.isoformat())
+            else:
+                video_data = {"status": False}
+
             skany = self.build_skany_dict_item(row, operation_status, video_data)
             formatted_time = skany["date"].strftime("%Y.%m.%d")
+
             if skany["indeks"] not in skany_ids_added:
                 skany_ids_added.add(skany["indeks"])
                 skany_dict[formatted_time].append(skany)
+
         return skany_dict
 
     def build_skany_dict_item(self, row, operation_status, video_data):
+        if row[1] is not None:
+            date = datetime.strptime(str(row[1]), "%Y-%m-%d %H:%M:%S.%f").replace(
+                tzinfo=timezone.utc
+            )
+        else:
+            date = None
+
         return {
             "indeks": row[0],
-            "date": row[1].replace(tzinfo=timezone.utc),
+            "date": date,
             "stanowisko": row[2],
             "uzytkownik": row[3],
             "raport": row[4],
