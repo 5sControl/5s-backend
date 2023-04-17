@@ -67,7 +67,13 @@ class OrderService:
         skany_dict = defaultdict(list)
         for row in results:
             operation_status = self._setup_operation_status(row[0])
-            video_data = get_skany_video_info(time=str(row[1])[:-3])
+            time = datetime.strptime(row[1], '%Y-%m-%d %H:%M:%S.%f').strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+            if row[1] is not None:
+                video_data = get_skany_video_info(time=time)
+            else:
+                video_data = {
+                    "status": False
+                }
             skany = self.build_skany_dict_item(row, operation_status, video_data)
             formatted_time = skany["date"].strftime("%Y.%m.%d")
             if skany["indeks"] not in skany_ids_added:
