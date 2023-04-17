@@ -25,6 +25,8 @@ INSTALLED_APPS = [
     "corsheaders",
     "drf_yasg",
     "django_redis",
+    "django_extensions",
+    'django_crontab',
     # Main application
     "src.StaffControl.Employees.apps.EmployeesConfig",
     "src.StaffControl.Locations.apps.LocationsConfig",
@@ -96,3 +98,6 @@ VIDEO_URL = "/videos/"
 VIDEO_ROOT = BASE_DIR / "videos/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+CRONJOBS = [    ('0 9 * * *', 'src.Mailer.check_low_stock_items.run', '>> /var/log/cron.log')]
+
