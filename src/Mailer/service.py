@@ -1,17 +1,22 @@
-from django.core.mail import send_mail
+import os
+
 from django.core.mail import EmailMessage
 
 from datetime import datetime, time
 
+from src.Algorithms.utils import yolo_proccesing
 from src.Mailer.models import SMTPSettings, WorkingTime, Emails
 from django.core.mail.backends.smtp import EmailBackend
 
 
-def send_email(item):
+def send_email(item, image_path):
     work_time = WorkingTime.objects.last()
+    server_url = yolo_proccesing.get_algorithm_url()
     email_list = Emails.objects.filter(is_active=True).values('email')
     subject = f'Low Stock Alert: {item.name}'
-    message = f"Low Stock Alert: {item.name}\nThe inventory level of {item.name} in your stock has fallen to a low level. This means that there are only a limited number of units left in stock and that the item may soon become unavailable. The current quantity of {item.current_stock_level} is {item.low_stock_level}. To avoid any inconvenience, we recommend that you take action to replenish your stock of {item.name} as soon as possible."
+    message = f"Low Stock Alert: {item.name}\nThe inventory level of {item.name} in your stock has fallen to a low level. This means that there are only a limited number of units left in stock and that the item may soon become unavailable. The current quantity of {item.current_stock_level} is {item.low_stock_level}. To avoid any inconvenience, we recommend that you take action to replenish your stock of {item.name} as soon as possible.\n\n{server_url}/inventory"
+    image_name = image_path.split('/')[-1]
+
     recipient_list = []
     for email in email_list:
         recipient_list.append(email.get('email'))
@@ -45,11 +50,10 @@ def send_email(item):
             to=recipient_list
         )
 
-        # attach image
-        image_path = '../../images/76cb05d0-2a16-424b-ad5f-b9714a9a1365.jpg'
+        image_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', f'{image_path}')
         with open(image_path, 'rb') as f:
             image_data = f.read()
-        email_message.attach(filename=f'{item.image_item}', content=image_data, mimetype='images/jpg')
+        email_message.attach(filename=f'{image_name}', content=image_data, mimetype='images/jpg')
 
         # send email
-        email_message.send(fail_silently=False, connection=connection)
+        connection.send_messages([email_message])

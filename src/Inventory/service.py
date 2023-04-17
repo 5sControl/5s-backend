@@ -14,13 +14,14 @@ def process_item_status(data):
         data_item = Items.objects.filter(id=item_data['itemId']).values('current_stock_level', 'low_stock_level')
         min_item = data_item[0]['low_stock_level']
         item = Items.objects.filter(id=item_data['itemId']).first()
+        image_path = item_data['image_item']
 
         if count == 0:
             item_status = "Out of stock"
         elif count > 0 and count <= min_item:
             item_status = "Low stock level"
             try:
-                send_email(item)
+                send_email(item, image_path)
             except Exception as e:
                 print(f"Email notification errors: {e}")
         else:

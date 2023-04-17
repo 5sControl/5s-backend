@@ -45,7 +45,6 @@ class ActionViewSet(viewsets.ModelViewSet):
 
 class ActionsWithPhotos(APIView):
     def post(self, request):
-        print(request.data, 'request.data')
         algorithm = Algorithm.objects.get(name=request.data.get("algorithm"))
         try:
             camera = Camera.objects.get(id=request.data.get("camera"))
@@ -55,7 +54,6 @@ class ActionsWithPhotos(APIView):
             violation_found = request.data.get("violation_found")
 
             if request.data.get("algorithm") == "min_max_control":
-                print("process_item_status", request.data.get("extra"))
                 extra = process_item_status(request.data.get("extra"))
             elif request.data.get("algorithm") == "operation_control":
                 fetched = requests.post(f"{HOST}:9876/operation-control/", json=request.data)
