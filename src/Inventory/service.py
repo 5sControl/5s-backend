@@ -17,7 +17,7 @@ def process_item_status(data):
 
         if count == 0:
             item_status = "Out of stock"
-        elif count > 0 and count < min_item:
+        elif count > 0 and count <= min_item:
             item_status = "Low stock level"
             try:
                 send_email(item)
