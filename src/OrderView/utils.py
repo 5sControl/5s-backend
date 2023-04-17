@@ -38,14 +38,19 @@ class OrderViewPaginnator(PageNumberPagination):
 
 # FIXME: camera ip should be dynamic
 def get_skany_video_info(time, camera_ip="192.168.1.110") -> Dict[str, Any]:
-    host = yolo_proccesing.get_algorithm_url()
-    print(time)
+    server_host = yolo_proccesing.get_algorithm_url()
+    video_chacker_host = f"{server_host}:3456/is_video_available/"
+
     response = {
-        "camera_ip": str(yolo_proccesing.get_algorithm_url())[7:],
+        "camera_ip": str(server_host)[7:],
         "time": time,
     }
+
+    print(video_chacker_host)
+    print(response)
+
     request = requests.post(
-        url=f"{host}:3456/is_video_available/",
+        url=f"{video_chacker_host}:3456/is_video_available/",
         json=response,
     )
 
