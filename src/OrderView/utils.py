@@ -41,7 +41,7 @@ def get_skany_video_info(time, camera_ip="192.168.1.110") -> Dict[str, Any]:
     host = yolo_proccesing.get_algorithm_url()
     print(time)
     response = {
-        "camera_ip": camera_ip,
+        "camera_ip": str(yolo_proccesing.get_algorithm_url())[7:],
         "time": time,
     }
     request = requests.post(
