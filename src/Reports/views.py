@@ -57,9 +57,12 @@ class ActionsWithPhotos(APIView):
                 print('extra_min_max_control', request.data.get("extra"))
                 extra = process_item_status(request.data.get("extra"))
             elif request.data.get("algorithm") == "operation_control":
-                fetched = requests.post(f"{HOST}:9876/operation-control/", json=request.data)
+                if 'extra' in request.data and 'place' in request.data['extra'] and request.data['extra']['place'] == 'kitchen':
+                    fetched = requests.post(f"{HOST}:9876/skany/create/", json=request.data['extra']['place'])
+                else:
+                    fetched = requests.post(f"{HOST}:9876/operation-control/", json=request.data)
+                print("Result from oepration control service:", fetched)
                 extra = edit_extra(request.data.get("extra"), camera)
-                print("[INFO] Operation control request: ", fetched.json())
             else:
                 extra = request.data.get("extra")
 
