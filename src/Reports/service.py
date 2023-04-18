@@ -12,6 +12,7 @@ def edit_extra(data, camera):
         data[0]["skany_index"] = int(skany_index)
     else:
         data.append({"skany_index": int(skany_index)})
+    print("data is ", data)
     return data
 
 
