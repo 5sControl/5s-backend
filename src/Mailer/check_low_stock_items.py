@@ -1,6 +1,8 @@
 from django.core.mail import send_mail
 from django.core.mail.backends.smtp import EmailBackend
 
+from django.db.models import Q
+
 from src.Algorithms.utils import yolo_proccesing
 from src.Inventory.models import Items
 from src.Mailer.models import Emails, SMTPSettings
@@ -9,8 +11,8 @@ from src.Mailer.models import Emails, SMTPSettings
 def run():
     """Checks low stock items and sends email notifications"""
 
-    low_stock_items = Items.objects.filter(status="Low stock level").exclude(status="Out of stock")
-    if len(low_stock_items) >= 1:
+    stock_items = Items.objects.filter(Q(status="Low stock level") | Q(status="Out of stock"))
+    if len(stock_items) >= 1:
         email_list = Emails.objects.filter(is_active=True).values('email')
         subject = 'Daily Low Stock Report'
         server_url = yolo_proccesing.get_algorithm_url()
@@ -25,10 +27,10 @@ def run():
         for email in email_list:
             recipient_list.append(email.get('email'))
 
-        if low_stock_items:
+        if stock_items:
             # Build email content for all items with low stock
             message = 'The inventory level of the following items has fallen to a low stock level. We recommend that you take immediate action to replenish your stock to avoid stockouts or shortages.\nHere is the list of items and their corresponding quantities:\n'
-            for item in low_stock_items:
+            for item in stock_items:
                 message += f"{item.name} - {item.current_stock_level}\n"
 
             message += f"\n{server_url}:3000/inventory"
