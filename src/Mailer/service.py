@@ -57,3 +57,6 @@ def send_email(item, image_path):
 
         # send email
         connection.send_messages([email_message])
+
+    else:
+        print('Working time limit, message not sent')
