@@ -9,7 +9,7 @@ def edit_extra(data, camera):
         'type_operation']
     skany_index = create_records.get_max_skany_indeks_by_stanowisko(operation_index)
     if len(data) >= 1:
-        data = data[0][{"skany_index": int(skany_index)}]
+        data[0]["skany_index"] = int(skany_index)
     else:
         data.append({"skany_index": int(skany_index)})
     return data
