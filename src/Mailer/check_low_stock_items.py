@@ -10,7 +10,7 @@ def run():
     """Checks low stock items and sends email notifications"""
 
     low_stock_items = Items.objects.filter(status="Low stock level").exclude(status="Out of stock")
-    if low_stock_items:
+    if len(low_stock_items) >= 1:
         email_list = Emails.objects.filter(is_active=True).values('email')
         subject = 'Daily Low Stock Report'
         server_url = yolo_proccesing.get_algorithm_url()
