@@ -6,6 +6,9 @@ from django.db.models import Q
 from src.Algorithms.utils import yolo_proccesing
 from src.Inventory.models import Items
 from src.Mailer.models import Emails, SMTPSettings
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def run():
@@ -21,6 +24,7 @@ def run():
         try:
             smtp_settings = SMTPSettings.objects.first()
         except SMTPSettings.DoesNotExist:
+            logger.error('SMTP configuration is not defined')
             raise Exception('SMTP configuration is not defined')
 
         recipient_list = []
@@ -43,13 +47,17 @@ def run():
                 use_tls=smtp_settings.email_use_tls,
                 use_ssl=smtp_settings.email_use_ssl,
             )
-            send_mail(
-                subject,
-                message,
-                smtp_settings.username,
-                recipient_list,
-                fail_silently=False,
-                connection=connection,
-            )
+            try:
+                send_mail(
+                    subject,
+                    message,
+                    smtp_settings.username,
+                    recipient_list,
+                    fail_silently=False,
+                    connection=connection,
+                )
+                logger.info(f"Email sent to {recipient_list}")
+            except Exception as e:
+                logger.error(f"Email sending failed with error: {e}")
     else:
-        print(f'There is no critical stock level')
+        logger.info(f'There is no critical stock level')
