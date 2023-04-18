@@ -23,7 +23,7 @@ def process_item_status(data):
             item_status = "Low stock level"
             if prev_status == "In stock":
                 try:
-                    send_email(item, image_path)
+                    send_email(item, image_path, count)
                 except Exception as e:
                     print(f"Email notification errors: {e}")
         else:
