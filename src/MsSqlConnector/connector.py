@@ -123,7 +123,12 @@ class MsSqlConnector:
 
         return wrapper
 
-    def executer(self, connection: pyodbc.Connection, query: str, params: Optional[Iterable[Any]] = None):
+    def executer(
+        self,
+        connection: pyodbc.Connection,
+        query: str,
+        params: Optional[Iterable[Any]] = None,
+    ):
         with connection.cursor() as cursor:
             if params:
                 cursor.execute(query, params)

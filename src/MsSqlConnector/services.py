@@ -10,7 +10,9 @@ class MsSqlConnector:
         connection = connector.get_database_connection()
 
         with connection.cursor() as cursor:
-            cursor.execute("SELECT MAX(indeks) FROM skany WHERE stanowisko = ?", (stanowisko,))
+            cursor.execute(
+                "SELECT MAX(indeks) FROM skany WHERE stanowisko = ?", (stanowisko,)
+            )
             result = cursor.fetchone()[0]
 
         return result

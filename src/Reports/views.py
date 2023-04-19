@@ -57,14 +57,17 @@ class ActionsWithPhotos(APIView):
             if request.data.get("algorithm") == "min_max_control":
                 print('extra_min_max_control', request.data.get("extra"))
                 extra = process_item_status(request.data.get("extra"))
+
             elif request.data.get("algorithm") == "operation_control":
                 try:
                     if request.data['extra'][0]['place'] == 'kitchen':
                         fetched = requests.post(f"{HOST}:9876/skany/create/", json=request.data['extra']['place'])
                         print("Result from operation control service:", fetched)
+
                 except Exception as e:
                     print(e)
                     requests.post(f"{HOST}:9876/operation-control/", json=request.data)
+
                 extra = edit_extra(request.data.get("extra"), camera)
             else:
                 extra = request.data.get("extra")
