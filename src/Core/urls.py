@@ -10,6 +10,6 @@ urlpatterns = [
         name="redirect to go server",
     ),
     path(
-        "is_enough_memory", CheckMemoryStatus.as_view(), name="memory_available",
+        "is_enough_memory/", CheckMemoryStatus.as_view(), name="memory_available",
     )
 ]
