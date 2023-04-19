@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (
-    StartDeployment
+    StartDeployment, CheckMemoryStatus
 )
 
 urlpatterns = [
@@ -9,4 +9,7 @@ urlpatterns = [
         StartDeployment.as_view(),
         name="redirect to go server",
     ),
+    path(
+        "is_enough_memory", CheckMemoryStatus.as_view(), name="memory_available",
+    )
 ]

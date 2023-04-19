@@ -16,7 +16,6 @@ defusedxml==0.7.1
 Django==4.1.4
 django-cors-headers==3.13.0
 django-filter==22.1
-django-mssql-backend==2.8.1
 django-multiupload==0.6.1
 django-picklefield==3.1
 django-templated-mail==1.1.1
@@ -49,8 +48,6 @@ pycodestyle==2.10.0
 pycparser==2.21
 pycryptodome==3.17
 PyJWT==2.6.0
-pymssql==2.2.7
-pyodbc==4.0.35
 python-decouple==3.6
 python3-openid==3.2.0
 pytz==2022.7
@@ -71,10 +68,8 @@ tzdata==2022.7
 uritemplate==4.1.1
 urllib3==1.26.13
 zeep==4.2.1
-# find camera dep
-python3-nmap==1.6.0
-WSDiscovery==2.0.0
-netifaces2==0.0.16
+# ms sql connector
+pyodbc==4.0.35
 async-timeout==4.0.2
 # redis packages
 redis==4.5.4
@@ -82,5 +77,5 @@ django-redis==5.2.0
 django-crontab==0.7.1
 schedule==1.2.0
 django-extensions==3.2.1
-
-
+# to check the free space
+psutil==5.9.5
