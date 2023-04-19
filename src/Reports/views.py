@@ -59,15 +59,15 @@ class ActionsWithPhotos(APIView):
                 extra = process_item_status(request.data.get("extra"))
 
             elif request.data.get("algorithm") == "operation_control":
-                try:
-                    if request.data['extra'][0]['place'] == 'kitchen':
-                        fetched = requests.post(f"{HOST}:9876/skany/create/", json=request.data['extra']['place'])
-                        print("Result from operation control service:", fetched)
-
-                except Exception as e:
-                    print(e)
-                    requests.post(f"{HOST}:9876/operation-control/", json=request.data)
-
+                if 'extra' in request.data:
+                    for data in request.data['extra']:
+                        if 'place' in data:
+                            fetched = requests.post(f"{HOST}:9876/skany/create/", json=request.data['extra']['place'])
+                            print("Will Handled Like Kitchen report")
+                            print("Result from operation control service:", fetched)
+                            break
+                    else:
+                        requests.post(f"{HOST}:9876/operation-control/", json=request.data)
                 extra = edit_extra(request.data.get("extra"), camera)
             else:
                 extra = request.data.get("extra")
