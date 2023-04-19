@@ -62,8 +62,8 @@ class ActionsWithPhotos(APIView):
                 if 'extra' in request.data:
                     for data in request.data['extra']:
                         if 'place' in data:
-                            print("response data is ", request.data['extra'][0]['place'])
-                            fetched = requests.post(f"{HOST}:9876/skany/create/", json=request.data['extra'][0]['place'])
+                            print("response data is ", request.data['extra'][0])
+                            fetched = requests.post(f"{HOST}:9876/skany/create/", json=request.data['extra'][0])
                             print("Will Handled Like Kitchen report")
                             print("Result from operation control service:", fetched)
                             break
