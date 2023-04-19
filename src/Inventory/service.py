@@ -19,13 +19,20 @@ def process_item_status(data):
 
         if count == 0:
             item_status = "Out of stock"
+            if prev_status == "Low stock level" or prev_status == "In stock":
+                try:
+                    send_email(item, image_path, count, item_status)
+                except Exception as e:
+                    print(f"Email notification errors: {e}")
+
         elif count > 0 and count <= min_item:
             item_status = "Low stock level"
             if prev_status == "In stock":
                 try:
-                    send_email(item, image_path, count)
+                    send_email(item, image_path, count, item_status)
                 except Exception as e:
                     print(f"Email notification errors: {e}")
+
         else:
             item_status = "In stock"
 
