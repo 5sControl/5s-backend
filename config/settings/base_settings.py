@@ -27,10 +27,6 @@ INSTALLED_APPS = [
     "django_redis",
     "django_extensions",
     'django_crontab',
-    # Main application
-    "src.StaffControl.Employees.apps.EmployeesConfig",
-    "src.StaffControl.Locations.apps.LocationsConfig",
-    "src.StaffControl.History.apps.HistoryConfig",
     # Common application
     "src.Algorithms",
     "src.OrderView",
@@ -38,6 +34,7 @@ INSTALLED_APPS = [
     "src.Cameras.apps.CamerasConfig",
     "src.CompanyLicense.apps.CompanyLicenseConfig",
     "src.Inventory.apps.InventoryConfig",
+    "src.Employees.apps.EmployeesConfig",
     # Collections reports
     "src.Reports.apps.ReportsConfig",
     "src.ImageReport.apps.ImageConfig",

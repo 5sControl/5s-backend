@@ -18,7 +18,7 @@ schema_view = get_schema_view(
 )
 
 routes = [
-    path("staff-control/", include("src.StaffControl.staffcontrol_router")),
+    path("employees/", include("src.Employees.urls")),
     path("cameras/", include("src.Cameras.urls")),
     path("algorithms/", include("src.Algorithms.urls")),
     path("reports/", include("src.Reports.urls")),
