@@ -24,9 +24,9 @@ class CreateUserView(generics.GenericAPIView):
         if not user_type or not username or not password:
             return Response({"error": "user_type, username, and password are required"})
 
-        if user_type == "staff":
+        if user_type.lower() == "staff":
             user_manager.create_staff(username, password)
-        elif user_type == "worker":
+        elif user_type.lower() == "worker":
             user_manager.create_worker(username, password)
         else:
             return Response(

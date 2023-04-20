@@ -9,6 +9,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
+        ref_name = "user-ser"
         fields = [
             "id",
             "username",
