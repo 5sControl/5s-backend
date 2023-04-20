@@ -19,6 +19,7 @@ class Items(models.Model):
     date_created = models.DateTimeField(verbose_name="Date created", auto_now_add=True)
     date_updated = models.DateTimeField(verbose_name="Date updated", auto_now=True)
     coords = models.JSONField(verbose_name="Area coordinates", blank=False, null=False)
+    prev_status = models.TextField(verbose_name="Previous status", default=None, max_length=30, blank=True, null=True)
 
     def __str__(self):
         return self.name
