@@ -8,7 +8,7 @@ class UserManager:
         if not User.objects.filter(username=username).exists():
             User.objects.create_superuser(
                 username=username,
-                email="owner@example.com",
+                email=None,
                 password=password,
                 is_staff=False,
                 is_superuser=True,
@@ -22,9 +22,9 @@ class UserManager:
     def create_staff(self, username: str, password: str):
         if not User.objects.filter(username=username).exists():
             User.objects.create_user(
-                username,
-                "staff@example.com",
-                password,
+                username=username,
+                email=None,
+                password=password,
                 is_staff=True,
                 is_superuser=False,
             )
@@ -38,7 +38,7 @@ class UserManager:
         if not User.objects.filter(username=username).exists():
             User.objects.create_user(
                 username=username,
-                email="worker@example.com",
+                email=None,
                 password=password,
                 is_staff=False,
                 is_superuser=False,

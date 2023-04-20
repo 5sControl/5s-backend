@@ -12,7 +12,7 @@ class Command(BaseCommand):
         if not User.objects.filter(username="admin").exists():
             User.objects.create_superuser("admin", "admin@example.com", "admin")
             logger.info(
-                f"Superuser created successfully. Username: admin Password: admin"
+                "Superuser created successfully. Username: admin Password: admin"
             )
         else:
             logger.info("Superuser already exists")
