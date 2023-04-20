@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (
-    StartDeployment, CheckMemoryStatus
+    FindCameraAPIView, StartDeployment, CheckMemoryStatus
 )
 
 urlpatterns = [
@@ -11,5 +11,6 @@ urlpatterns = [
     ),
     path(
         "is_enough_memory/", CheckMemoryStatus.as_view(), name="memory_available",
-    )
+    ),
+    path("find_cameras/", FindCameraAPIView.as_view(), name="find cameras"),
 ]
