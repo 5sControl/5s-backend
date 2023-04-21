@@ -69,7 +69,11 @@ class OrderService:
             operation_status = self._setup_operation_status(row[0])
 
             if row[1] is not None:
-                time = datetime.strptime(str(row[1]), "%Y-%m-%d %H:%M:%S.%f")
+                time_string = str(row[1])
+                if "." not in time_string:
+                    time_string += ".000000"
+                time = datetime.strptime(time_string, "%Y-%m-%d %H:%M:%S.%f")
+
                 time_utc = time.replace(tzinfo=timezone.utc)
                 video_data = get_skany_video_info(time=time_utc.isoformat())
             else:
@@ -86,7 +90,10 @@ class OrderService:
 
     def build_skany_dict_item(self, row, operation_status, video_data):
         if row[1] is not None:
-            date = datetime.strptime(str(row[1]), "%Y-%m-%d %H:%M:%S.%f").replace(
+            date_string = str(row[1])
+            if len(date_string) == 19:
+                date_string += ".000"
+            date = datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S.%f").replace(
                 tzinfo=timezone.utc
             )
         else:
@@ -152,7 +159,9 @@ class OrderService:
                     "indeks": data[0],
                     "data": datetime.strptime(
                         data[1].strftime("%Y-%m-%d %H:%M:%S.%f"), "%Y-%m-%d %H:%M:%S.%f"
-                    ).replace(tzinfo=timezone.utc),
+                    ).replace(tzinfo=timezone.utc)
+                    if data[1] is not None
+                    else None,
                     "zlecenie": data[2].strip(),
                     "klient": data[3].strip(),
                     "datawejscia": datetime.strptime(
@@ -167,7 +176,9 @@ class OrderService:
                     else None,
                     "zakonczone": data[6],
                     "typ": data[7].strip(),
-                    "terminrealizacji": data[9].strip() if isinstance(data[9], str) else data[9],
+                    "terminrealizacji": data[9].strip()
+                    if isinstance(data[9], str)
+                    else data[9],
                     "orderName": None,
                     "status": data[10].strip(),
                 }
