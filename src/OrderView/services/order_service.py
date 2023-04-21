@@ -167,7 +167,7 @@ class OrderService:
                     else None,
                     "zakonczone": data[6],
                     "typ": data[7].strip(),
-                    "terminrealizacji": data[9].strip(),
+                    "terminrealizacji": data[9].strip() if isinstance(data[9], str) else data[9],
                     "orderName": None,
                     "status": data[10].strip(),
                 }
