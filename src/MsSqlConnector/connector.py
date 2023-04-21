@@ -18,7 +18,10 @@ class MsSqlConnector:
         database = connection_data["database"]
         username = connection_data["username"]
         password = connection_data["password"]
-        port = connection_data["port"]
+        try:
+            port = connection_data["port"]
+        except Exception:
+            port = 1433
 
         self._is_database_connection_is_stable(
             server, database, username, password, port
