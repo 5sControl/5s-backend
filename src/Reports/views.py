@@ -1,3 +1,4 @@
+import os
 import requests
 from rest_framework import viewsets
 from datetime import datetime
@@ -59,16 +60,18 @@ class ActionsWithPhotos(APIView):
                 extra = process_item_status(request.data.get("extra"))
 
             elif request.data.get("algorithm") == "operation_control":
-                if 'extra' in request.data:
-                    for data in request.data['extra']:
-                        if 'place' in data:
-                            print("response data is ", request.data['extra'][0])
-                            fetched = requests.post(f"{HOST}:9876/skany/create/", json=request.data['extra'][0])
-                            print("Will Handled Like Kitchen report")
-                            print("Result from operation control service:", fetched)
-                            break
-                    else:
-                        requests.post(f"{HOST}:9876/operation-control/", json=request.data)
+                if not os.environ.get("PRODUCTION"):
+                    if 'extra' in request.data:
+                        for data in request.data['extra']:
+                            if 'place' in data:
+                                print("response data is ", request.data['extra'][0])
+                                fetched = requests.post(f"{HOST}:9876/skany/create/", json=request.data['extra'][0])
+                                print("Will Handled Like Kitchen report")
+                                print("Result from operation control service:", fetched)
+                                break
+                        else:
+                            requests.post(f"{HOST}:9876/operation-control/", json=request.data)
+
                 extra = edit_extra(request.data.get("extra"), camera)
             else:
                 extra = request.data.get("extra")
