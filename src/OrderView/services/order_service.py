@@ -159,9 +159,13 @@ class OrderService:
                     "indeks": data[0],
                     "data": datetime.strptime(
                         data[1].strftime("%Y-%m-%d %H:%M:%S.%f"), "%Y-%m-%d %H:%M:%S.%f"
+<<<<<<< HEAD
                     ).replace(tzinfo=timezone.utc)
                     if data[1] is not None
                     else None,
+=======
+                    ).replace(tzinfo=timezone.utc) if data[1] is not None else None,
+>>>>>>> 43759ab ([fix] none type date time)
                     "zlecenie": data[2].strip(),
                     "klient": data[3].strip(),
                     "datawejscia": datetime.strptime(
@@ -176,9 +180,13 @@ class OrderService:
                     else None,
                     "zakonczone": data[6],
                     "typ": data[7].strip(),
+<<<<<<< HEAD
                     "terminrealizacji": data[9].strip()
                     if isinstance(data[9], str)
                     else data[9],
+=======
+                    "terminrealizacji": data[9].strip(),
+>>>>>>> 43759ab ([fix] none type date time)
                     "orderName": None,
                     "status": data[10].strip(),
                 }
