@@ -29,7 +29,6 @@ CORS_ORIGIN_WHITELIST = [
     "http://0.0.0.0:8000",
     "http://*",
     "https://*",
-    "https://cfce-81-7-77-205.ngrok-free.app/",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
