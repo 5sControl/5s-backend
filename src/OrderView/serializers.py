@@ -16,6 +16,7 @@ class ProductSerializer(serializers.Serializer):
     zlecenie = serializers.CharField(max_length=255)
     status = serializers.CharField(max_length=255)
     terminrealizacji = serializers.DateTimeField()
+    datawejscia = serializers.DateTimeField()
 
 
 class IndexStanowiskoSerializer(serializers.ModelSerializer):
