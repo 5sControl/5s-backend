@@ -143,7 +143,6 @@ class OrderListService:
                     "terminrealizacji": result[3],
                     "datawejscia": result[4]
                 }
-                print(orders_dict)
             else:
                 orders_dict[zlecenie]["indeks"] = result[0]
                 orders_dict[zlecenie]["status"] = result[2]
