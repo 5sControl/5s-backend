@@ -19,7 +19,7 @@ class UserManager:
         else:
             logger.info("Superuser already exists")
 
-    def create_staff(self, username: str, password: str):
+    def create_admin(self, username: str, password: str):
         if not User.objects.filter(username=username).exists():
             User.objects.create_user(
                 username=username,
