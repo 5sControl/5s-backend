@@ -32,34 +32,3 @@ class UserSerializer(serializers.ModelSerializer):
             return "admin"
         else:
             return "worker"
-
-
-class RegisterSerializer(serializers.ModelSerializer):
-    """
-    A register serializer that can be used to register new owner
-    """
-
-    password = serializers.CharField(write_only=True, style={"input_type": "password"})
-    repeat_password = serializers.CharField(
-        write_only=True, style={"input_type": "password"}
-    )
-
-    class Meta:
-        model = User
-        fields = [
-            "username",
-            "password",
-            "repeat_password",
-        ]
-        extra_kwargs = {"password": {"write_only": True}}
-
-    def create(self, validated_data):
-        username = validated_data["username"]
-        password = validated_data["password"]
-        repeat_password = validated_data["repeat_password"]
-        if password != repeat_password:
-            raise serializers.ValidationError({"password": "Passwords do not match"})
-        user = User(username=username)
-        user.set_password(password)
-        user.save()
-        return user
