@@ -7,4 +7,4 @@ class DatabaseConnection(models.Model):
     database = models.CharField(max_length=200)
     username = models.CharField(max_length=200)
     password = models.CharField(max_length=200)  # TODO: should be hashed
-    port = models.IntegerField()
+    port = models.IntegerField(default=1433)
