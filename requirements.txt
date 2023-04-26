@@ -68,6 +68,7 @@ async-timeout==4.0.2
 # redis packages
 redis==4.5.4
 django-redis==5.2.0
+# celery packages
 django-crontab==0.7.1
 schedule==1.2.0
 celery==5.2.7
