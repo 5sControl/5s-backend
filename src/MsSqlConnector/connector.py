@@ -1,4 +1,7 @@
+import os
+
 from typing import Any, Iterable, Optional
+
 import pyodbc
 
 from rest_framework.response import Response
@@ -6,6 +9,8 @@ from rest_framework.exceptions import ValidationError
 from rest_framework import status
 
 from src.MsSqlConnector.models import DatabaseConnection
+
+from cryptography.fernet import Fernet
 
 
 class MsSqlConnector:
@@ -20,6 +25,10 @@ class MsSqlConnector:
         password = connection_data["password"]
         port = connection_data["port"]
 
+        key = os.environ.get("HASH")
+        f = Fernet(key)
+        encrypted_password = f.encrypt(password.encode())
+
         self._is_database_connection_is_stable(
             server, database, username, password, port
         )
@@ -30,7 +39,8 @@ class MsSqlConnector:
             server=server,
             database=database,
             username=username,
-            password=password,
+            password=encrypted_password,
+            port=port
         )
         ms_sql_connection.save()
 
@@ -96,7 +106,7 @@ class MsSqlConnector:
         server = connection_data["server"]
         database = connection_data["database"]
         username = connection_data["username"]
-        password = connection_data["password"]
+        password = connection_data.get_password()
         port = connection_data["port"]
 
         conn_str = self._get_connection_string(
