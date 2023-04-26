@@ -106,7 +106,7 @@ class MsSqlConnector:
         server = connection_data["server"]
         database = connection_data["database"]
         username = connection_data["username"]
-        password = connection_data.get_password()
+        password = DatabaseConnection.objects.first().get_password()
         port = connection_data["port"]
 
         conn_str = self._get_connection_string(
