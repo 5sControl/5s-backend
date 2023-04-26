@@ -22,7 +22,10 @@ class CreateUserView(generics.GenericAPIView):
         password = request.data.get("password")
 
         if not user_type or not username or not password:
-            return Response({"error": "user_type, username, and password are required"})
+            return Response(
+                data={"error": "user_type, username, and password are required"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         if not User.objects.filter(username=username).exists():
             if user_type.lower() == "admin":
                 user_manager.create_admin(username, password)
