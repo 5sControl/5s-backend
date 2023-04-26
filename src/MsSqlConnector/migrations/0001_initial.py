@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ("server", models.CharField(max_length=200)),
                 ("database", models.CharField(max_length=200)),
                 ("username", models.CharField(max_length=200)),
-                ("password", models.CharField(max_length=200)),
+                ("password", models.BinaryField()),
                 ("port", models.IntegerField()),
             ],
         ),
