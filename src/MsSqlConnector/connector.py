@@ -25,10 +25,6 @@ class MsSqlConnector:
         password = connection_data["password"]
         port = connection_data["port"]
 
-        key = os.environ.get("HASH")
-        f = Fernet(key)
-        encrypted_password = f.encrypt(password.encode())
-
         self._is_database_connection_is_stable(
             server, database, username, password, port
         )
@@ -39,7 +35,7 @@ class MsSqlConnector:
             server=server,
             database=database,
             username=username,
-            password=encrypted_password,
+            password=password,
             port=port
         )
         ms_sql_connection.save()
@@ -106,7 +102,7 @@ class MsSqlConnector:
         server = connection_data["server"]
         database = connection_data["database"]
         username = connection_data["username"]
-        password = DatabaseConnection.objects.first().get_password()
+        password = connection_data["password"]
         port = connection_data["port"]
 
         conn_str = self._get_connection_string(
