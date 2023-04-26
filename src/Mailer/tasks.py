@@ -1,3 +1,4 @@
+from celery import shared_task
 from django.core.mail import send_mail
 from django.core.mail.backends.smtp import EmailBackend
 
@@ -11,7 +12,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def run():
+@shared_task
+def send_low_stock_notification():
     """Checks low stock items and sends email notifications"""
 
     stock_items = Items.objects.filter(Q(status="Low stock level") | Q(status="Out of stock"))
@@ -59,5 +61,7 @@ def run():
                 logger.info(f"Email sent to {recipient_list}")
             except Exception as e:
                 logger.error(f"Email sending failed with error: {e}")
-    else:
-        logger.info(f'There is no critical stock level')
+        else:
+            logger.info(f'There is no critical stock level')
+
+        return "success True"

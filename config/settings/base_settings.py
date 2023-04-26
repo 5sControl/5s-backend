@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from decouple import config
 
 
@@ -25,6 +26,8 @@ INSTALLED_APPS = [
     "corsheaders",
     "drf_yasg",
     "django_redis",
+    "django_celery_results",
+    "django_celery_beat",
     "django_extensions",
     'django_crontab',
     # Common application
@@ -96,5 +99,4 @@ VIDEO_ROOT = BASE_DIR / "videos/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-CRONJOBS = [    ('0 9 * * *', 'src.Mailer.check_low_stock_items.run', '>> /var/log/cron.log')]
 

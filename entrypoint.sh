@@ -13,7 +13,8 @@ python manage.py startprocess
 # run server
 python manage.py runserver 0.0.0.0:80
 
-# run send message to 9:00
-python manage.py crontab add
+# run celery
+celery -A config.celery worker -l info
+celery -A config.celery beat -l info
 
 
