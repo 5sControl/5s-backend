@@ -1,5 +1,6 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
+from rest_framework import status
 from rest_framework.response import Response
 from src.Cameras.camera_delete import delete_camera
 
@@ -47,9 +48,11 @@ class DeleteCameraAPIView(APIView):
 
     permission_classes = [IsAuthenticated, IsSuperuserPermission | IsStaffPermission]
 
-    def delete(self, request, camera_id):
+    def delete(self, request, *args, **kwargs):
+        super().delete(request, *args, **kwargs)
+        camera_id = kwargs.get('camera_id')
         result = delete_camera(camera_id)
-        return Response(result)
+        return Response(result, status=status.HTTP_200_OK)
 
 
 class UpdateCameraAPIView(APIView):
