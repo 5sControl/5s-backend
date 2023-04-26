@@ -1,3 +1,4 @@
+import base64
 import os
 
 from django.db import models
@@ -15,7 +16,8 @@ class DatabaseConnection(models.Model):
 
     def get_password(self):
         key = os.environ.get("HASH")
-        f = Fernet(key)
+        key_bytes = base64.urlsafe_b64decode(key.encode())
+        f = Fernet(key_bytes)
         password = f.decrypt(self.password).decode()
         return password
 
