@@ -23,7 +23,7 @@ class CreateUserView(generics.GenericAPIView):
 
         if not user_type or not username or not password:
             return Response(
-                data={"error": "user_type, username, and password are required"},
+                data={"error": "User Type, Username, and Password are required"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         if not User.objects.filter(username=username).exists():
@@ -33,12 +33,12 @@ class CreateUserView(generics.GenericAPIView):
                 user_manager.create_worker(username, password)
             else:
                 return Response(
-                    data={"error": 'user_type must be "admin" or "worker"'},
+                    data={"error": 'User Type must be "Admin" or "Worker"'},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
         else:
             return Response(
-                data={"error": 'user exists'},
+                data={"error": 'User Exists'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
