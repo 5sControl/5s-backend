@@ -52,7 +52,10 @@ class DeleteCameraAPIView(APIView):
         print(kwargs.get('camera_id'))
         camera_id = kwargs.get('camera_id')
         result = delete_camera(camera_id)
-        return Response(result, status=status.HTTP_200_OK)
+        if result["status"]:
+            return Response(result, status=status.HTTP_200_OK)
+        else:
+            return Response(result, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdateCameraAPIView(APIView):
