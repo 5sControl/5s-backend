@@ -49,6 +49,7 @@ class DeleteCameraAPIView(APIView):
     permission_classes = [IsAuthenticated, IsSuperuserPermission | IsStaffPermission]
 
     def delete(self, request, *args, **kwargs):
+        print(kwargs.get('camera_id'))
         camera_id = kwargs.get('camera_id')
         result = delete_camera(camera_id)
         return Response(result, status=status.HTTP_200_OK)

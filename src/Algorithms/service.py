@@ -163,9 +163,6 @@ class AlgorithmsService:
             algorithm=algorithm, camera__in=cameras.values_list("id", flat=True)
         )
 
-    def camera_algorithm_by_camera_id(self, camera_id):
-        return CameraAlgorithm.objects.filter(camera=camera_id)
-
 
 class CameraAlgorithmLogsService:
     def get_logs(self):
