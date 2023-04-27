@@ -7,6 +7,19 @@ from drf_yasg import openapi
 
 from rest_framework import permissions
 
+
+routes = [
+    path("employees/", include("src.Employees.urls"), name="employees"),
+    path("cameras/", include("src.Cameras.urls"), name="cameras"),
+    path("algorithms/", include("src.Algorithms.urls"), name="algorithms"),
+    path("reports/", include("src.Reports.urls"), name="reports"),
+    path("company/", include("src.CompanyLicense.urls"), name="company"),
+    path("order/", include("src.OrderView.urls"), name="order"),
+    path("inventory/", include("src.Inventory.urls"), name="inventory"),
+    path("mailer/", include("src.Mailer.urls"), name="mailer"),
+    path("core/", include("src.Core.urls"), name="core"),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
 schema_view = get_schema_view(
     openapi.Info(
         title="StaffControl API",
@@ -15,21 +28,14 @@ schema_view = get_schema_view(
     ),
     public=True,
     permission_classes=[permissions.AllowAny],
+    patterns=routes,
+    urlconf='config.urls',
 )
 
-routes = [
-    path("employees/", include("src.Employees.urls")),
-    path("cameras/", include("src.Cameras.urls")),
-    path("algorithms/", include("src.Algorithms.urls")),
-    path("reports/", include("src.Reports.urls")),
-    path("company/", include("src.CompanyLicense.urls")),
-    path("order/", include("src.OrderView.urls")),
-    path("inventory/", include("src.Inventory.urls")),
-    path("mailer/", include("src.Mailer.urls")),
-    path("core/", include("src.Core.urls")),
+routes += [
     path(
         "swagger/",
-        schema_view.with_ui("swagger", cache_timeout=0),
+        schema_view.with_ui("swagger"),
         name="schema-swagger-ui",
     ),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
