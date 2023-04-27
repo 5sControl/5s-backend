@@ -25,6 +25,7 @@ class OrderListService:
                     ELSE 'Unknown'
                 END AS status,
                 z.terminrealizacji,
+                z.datawejscia,
                 ROW_NUMBER() OVER (PARTITION BY z.zlecenie
                                     ORDER BY CASE WHEN z.zakonczone = '0' THEN 0 ELSE 1 END, z.datawejscia DESC) as rn
             FROM zlecenia z
@@ -117,10 +118,10 @@ class OrderListService:
 
         if from_time and to_time:
             if from_time == to_time:
-                self.extra_qury += " AND CAST(terminrealizacji AS DATE) = ?"
+                self.extra_qury += " AND CAST(datawejscia AS DATE) = ?"
                 params.append(from_time)
             else:
-                self.extra_qury += " AND z.terminrealizacji BETWEEN ? AND ?"
+                self.extra_qury += " AND z.datawejscia BETWEEN ? AND ?"
                 params.extend([from_time, to_time])
 
         self.extra_qury += " ORDER BY z.zlecenie DESC"
@@ -134,18 +135,19 @@ class OrderListService:
 
         for result in results:
             zlecenie = result[1]
-
             if zlecenie not in orders_dict:
                 orders_dict[zlecenie] = {
                     "indeks": result[0],
                     "zlecenie": zlecenie,
                     "status": result[2],
                     "terminrealizacji": result[3],
+                    "datawejscia": result[4],
                 }
             else:
                 orders_dict[zlecenie]["indeks"] = result[0]
                 orders_dict[zlecenie]["status"] = result[2]
                 orders_dict[zlecenie]["terminrealizacji"] = result[3]
+                orders_dict[zlecenie]["datawejscia"] = result[4]
 
         return orders_dict
 

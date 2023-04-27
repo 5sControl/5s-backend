@@ -6,14 +6,14 @@ from .views import (
     GetAllProductAPIView,
     GetOrderDataByZlecenieAPIView,
     OperationNameApiView,
-    CreateConectionAPIView,
+    CreateDatabaseConnectionAPIView,
     GetDatabasesAPIView,
     DeleteConectionAPIView,
     IndexOperationsView,
 )
 
 router = DefaultRouter()
-router.register(r'index_stanowisko', IndexOperationsView, basename='index_stanowisko')
+router.register(r"index_stanowisko", IndexOperationsView, basename="index_stanowisko")
 
 urlpatterns = [
     # get data
@@ -26,7 +26,7 @@ urlpatterns = [
     path("get-operations/", OperationNameApiView.as_view(), name="get operations name"),
     # database configuration
     path(
-        "create-connection/", CreateConectionAPIView.as_view(), name="mssql connection"
+        "create-connection/", CreateDatabaseConnectionAPIView.as_view(), name="mssql connection"
     ),
     path(
         "get-connections/",
@@ -38,5 +38,5 @@ urlpatterns = [
         DeleteConectionAPIView.as_view(),
         name="delete connection from connection database",
     ),
-    path('', include(router.urls)),
+    path("", include(router.urls)),
 ]

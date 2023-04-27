@@ -5,4 +5,10 @@ from .models import DatabaseConnection
 
 @admin.register(DatabaseConnection)
 class DatabaseConnectionAdmin(admin.ModelAdmin):
-    list_display = ("database_type", "server", "database", "username")
+    list_display = (
+        "database_type",
+        "server",
+        "database",
+        "username",
+        "password",
+    )

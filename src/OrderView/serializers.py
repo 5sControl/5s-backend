@@ -8,7 +8,7 @@ from src.OrderView.models import IndexOperations
 class DatabaseConnectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = DatabaseConnection
-        fields = ["id", "database_type", "server", "database", "username"]
+        fields = ["id", "database_type", "server", "database", "username", "port"]
 
 
 class ProductSerializer(serializers.Serializer):
@@ -21,4 +21,8 @@ class ProductSerializer(serializers.Serializer):
 class IndexStanowiskoSerializer(serializers.ModelSerializer):
     class Meta:
         model = IndexOperations
-        fields = ['id', 'type_operation', 'camera', ]
+        fields = [
+            "id",
+            "type_operation",
+            "camera",
+        ]

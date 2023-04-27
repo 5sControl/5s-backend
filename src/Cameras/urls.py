@@ -27,4 +27,4 @@ urlpatterns += [
     path("update-camera/", UpdateCameraAPIView.as_view()),
 ]
 # delete
-urlpatterns += [path("delete-camera/", DeleteCameraAPIView.as_view())]
+urlpatterns += [path("delete-camera/<str:camera_id>/", DeleteCameraAPIView.as_view())]

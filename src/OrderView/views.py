@@ -2,7 +2,6 @@ from django.core.cache import cache
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 
-from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status, generics
@@ -79,26 +78,19 @@ class OperationNameApiView(generics.GenericAPIView):
 
 
 # TODO: Replace views below to Connector application
-class CreateConectionAPIView(generics.GenericAPIView):
+class CreateDatabaseConnectionAPIView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = DatabaseConnectionSerializer
 
-    def post(self, request, *args, **kwargs):
-        try:
-            connection = connector_service.create_connection(request.data)
-        except ValidationError as e:
-            error_detail = str(e.detail.get("detail", ""))
-            return Response(
-                {
-                    "success": False,
-                    "message": error_detail,
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        connection = serializer.save()
         return Response(
             {
                 "success": True,
-                "message": "Database was successfully",
-                "connection": connection,
+                "message": "Database connection was created successfully",
+                "connection": DatabaseConnectionSerializer(connection).data,
             },
             status=status.HTTP_201_CREATED,
         )

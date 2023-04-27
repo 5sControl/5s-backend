@@ -32,15 +32,15 @@ class YoloProccesing:
 
     def stop_process(self, pid: int):
         is_pid_exists = self.is_pid_exists(pid)
+        yolo_server_url = self.get_algorithm_url()
+        port = 3333
+        url = f"{yolo_server_url}:{port}/stop"
+
         if not is_pid_exists:
             return {"status": False, "message": "PID not found"}
 
-        yolo_server_url = self.get_algorithm_url()
-
-        port = 3333
-
         request = requests.post(
-            url=f"{yolo_server_url}:{port}/stop",
+            url=url,
             json={"pid": pid},
         )
         response_json = request.json()
