@@ -9,7 +9,6 @@ class CameraSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "username",
-            "description",
             "is_active",
         )
 
@@ -29,4 +28,3 @@ class CreateCameraSerializer(serializers.Serializer):
 class UpdateCameraSerializer(serializers.Serializer):
     ip = serializers.IPAddressField()
     username = serializers.CharField()
-    description = serializers.CharField()

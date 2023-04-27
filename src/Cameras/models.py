@@ -18,7 +18,6 @@ class Camera(models.Model):
     password = models.CharField(max_length=250)
 
     name = models.CharField(max_length=100, blank=True, null=True)
-    description = models.CharField(max_length=250, blank=True, null=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):

@@ -71,7 +71,6 @@ class CameraService:
     def update_camera_info(self, camera_data):
         camera_id = camera_data["ip"]
         camera_name = camera_data.get("username")
-        camera_description = camera_data.get("description")
 
         try:
             camera = Camera.objects.get(id=camera_id)
@@ -83,8 +82,6 @@ class CameraService:
 
         if camera_name is not None:
             camera.username = camera_name
-        if camera_description is not None:
-            camera.description = camera_description
 
         try:
             camera.full_clean()
