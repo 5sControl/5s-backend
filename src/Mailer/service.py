@@ -1,12 +1,12 @@
 import os
 
 from django.core.mail import EmailMessage
+from django.core.mail.backends.smtp import EmailBackend
 
 from datetime import datetime, time
 
 from src.Algorithms.utils import yolo_proccesing
 from src.Mailer.models import SMTPSettings, WorkingTime, Emails
-from django.core.mail.backends.smtp import EmailBackend
 
 
 def send_email(item, image_path, count, item_status):
@@ -64,3 +64,33 @@ def send_email(item, image_path, count, item_status):
 
     else:
         print('Working time limit, message not sent')
+
+
+def test_smtp_settings(smtp_settings):
+    connection = None
+    try:
+        connection = EmailBackend(
+            host=smtp_settings.server,
+            port=smtp_settings.port,
+            username=smtp_settings.username,
+            password=smtp_settings.password,
+            use_tls=smtp_settings.email_use_tls,
+            use_ssl=smtp_settings.email_use_ssl,
+        )
+        connection.open()
+
+        msg = EmailMessage(
+            'Test message',
+            'This is a test message to check the SMTP settings',
+            smtp_settings.username,
+            ['recipient@example.com'],
+            connection=connection,
+        )
+        msg.send()
+
+        return True
+    except Exception as e:
+        return False, str(e)
+    finally:
+        if connection is not None:
+            connection.close()

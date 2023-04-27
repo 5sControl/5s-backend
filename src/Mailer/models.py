@@ -16,6 +16,14 @@ class SMTPSettings(models.Model):
     def __str__(self):
         return self.server
 
+    def save(self, *args, **kwargs):
+        from src.Mailer.service import test_smtp_settings
+        test = test_smtp_settings(self)
+        if type(test) == bool:
+            super().save(*args, **kwargs)
+        else:
+            raise ValueError('SMTP configuration is incorrect')
+
 
 class Emails(models.Model):
     """
