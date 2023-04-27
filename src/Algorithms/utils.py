@@ -1,40 +1,40 @@
-import os
 import requests
 
-from src.Cameras.service import link_generator
+from src.Cameras.services.link_generator import link_generator
 
-from src.Algorithms.models import Algorithm, CameraAlgorithm
-from src.Cameras.models import Camera
+from src.Algorithms.models import CameraAlgorithm
+
+from src.Core.const import SERVER_URL
+
 
 class YoloProccesing:
     def start_yolo_processing(
-        self, camera: Camera, algorithm: Algorithm, url: str, data=None
-    ) -> dict:
+        self, camera, algorithm, data=None
+    ):
+        port = 3333
         rtsp_camera_url = link_generator.get_camera_rtsp_link_by_camera(camera)
         response = {
             "camera_url": rtsp_camera_url["camera_url"],
             "algorithm": algorithm.name,
-            "server_url": url,
+            "server_url": SERVER_URL,
             "extra": data,
         }
-        print("RESPONSE FOR ALGORITHM: ", response)
-        port = 3333
+
         request = requests.post(
-            url=f"{url}:{port}/run",
+            url=f"{SERVER_URL}:{port}/run",
             json=response,
         )
-        print(f"ALGORITHM {algorithm.name}")
+
         request_json = request.json()
-        request_json["server_url"] = url
+        request_json["server_url"] = SERVER_URL
         request_json["status"] = True
 
         return request_json
 
     def stop_process(self, pid: int):
         is_pid_exists = self.is_pid_exists(pid)
-        yolo_server_url = self.get_algorithm_url()
         port = 3333
-        url = f"{yolo_server_url}:{port}/stop"
+        url = f"{SERVER_URL}:{port}/stop"
 
         if not is_pid_exists:
             return {"status": False, "message": "PID not found"}
@@ -53,11 +53,6 @@ class YoloProccesing:
             return False
         else:
             return True
-
-    def get_algorithm_url(self):
-        ALGORITHM_URL = os.environ.get("ALGORITHM_URL")
-
-        return ALGORITHM_URL
 
 
 yolo_proccesing = YoloProccesing()

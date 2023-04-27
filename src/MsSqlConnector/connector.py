@@ -1,5 +1,3 @@
-import os
-
 from typing import Any, Iterable, Optional
 
 import pyodbc
@@ -9,8 +7,6 @@ from rest_framework.exceptions import ValidationError
 from rest_framework import status
 
 from src.MsSqlConnector.models import DatabaseConnection
-
-from cryptography.fernet import Fernet
 
 
 class MsSqlConnector:

@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import (
-    PutAlgorithmUpdateApiView,
+    AlgorithmUpdateApiView,
     StartProcessingYoloApiView,
     GetAlgorithmStatusApiView,
     GetAlgorithmProcessApiView,
@@ -9,7 +9,7 @@ from .views import (
 )
 
 urlpatterns = [
-    path("update/", PutAlgorithmUpdateApiView.as_view(), name="algorithm-update"),
+    path("update/", AlgorithmUpdateApiView.as_view(), name="algorithm-update"),
     path(
         "create-process/",
         StartProcessingYoloApiView.as_view(),

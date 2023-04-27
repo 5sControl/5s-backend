@@ -1,5 +1,4 @@
 import math
-from typing import Any, Dict
 
 import requests
 
@@ -8,7 +7,7 @@ from collections import OrderedDict
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 
-from src.Algorithms.utils import yolo_proccesing
+from src.Core.const import SERVER_URL
 
 
 class OrderViewPaginnator(PageNumberPagination):
@@ -37,12 +36,11 @@ class OrderViewPaginnator(PageNumberPagination):
 
 
 # FIXME: camera ip should be dynamic
-def get_skany_video_info(time) -> Dict[str, Any]:
-    server_host = yolo_proccesing.get_algorithm_url()
-    video_chacker_host = f"{server_host}:3456/is_video_available/"
+def get_skany_video_info(time):
+    video_chacker_host = f"{SERVER_URL}:3456/is_video_available/"
 
     response = {
-        "camera_ip": str(server_host)[7:],
+        "camera_ip": str(SERVER_URL)[7:],
         "time": time,
     }
 

@@ -3,7 +3,8 @@ from django.core.mail.backends.smtp import EmailBackend
 
 from django.db.models import Q
 
-from src.Algorithms.utils import yolo_proccesing
+from src.Core.const import SERVER_URL
+
 from src.Inventory.models import Items
 from src.Mailer.models import Emails, SMTPSettings
 import logging
@@ -18,7 +19,6 @@ def run():
     if len(stock_items) >= 1:
         email_list = Emails.objects.filter(is_active=True).values('email')
         subject = '5S Control Daily Low Stock Report'
-        server_url = yolo_proccesing.get_algorithm_url()
 
         # email service check
         try:
@@ -37,7 +37,7 @@ def run():
             for item in stock_items:
                 message += f"{item.name} : {item.current_stock_level} (low stock level: {item.low_stock_level})\n"
 
-            message += f"\n{server_url}:3000/inventory\n\nYou are receiving this email because your email account was entered in 5S Control system to receive notifications regarding low stock levels of inventory."
+            message += f"\n{SERVER_URL}:3000/inventory\n\nYou are receiving this email because your email account was entered in 5S Control system to receive notifications regarding low stock levels of inventory."
             # Send email to all users
             connection = EmailBackend(
                 host=smtp_settings.server,
@@ -60,4 +60,4 @@ def run():
             except Exception as e:
                 logger.error(f"Email sending failed with error: {e}")
     else:
-        logger.info(f'There is no critical stock level')
+        logger.info('There is no critical stock level')
