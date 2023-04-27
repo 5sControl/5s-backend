@@ -2,12 +2,8 @@ from django.db import models
 
 from django.core.validators import RegexValidator
 
-# from django.contrib.auth.hashers import make_password
-
 
 class Camera(models.Model):
-    """Model for saving camera information"""
-
     id = models.CharField(
         primary_key=True,
         max_length=30,
@@ -18,12 +14,11 @@ class Camera(models.Model):
             )
         ],
     )
+    username = models.CharField(max_length=100)
+    password = models.CharField(max_length=250)
+
     name = models.CharField(max_length=100, blank=True, null=True)
-
-    username = models.CharField(max_length=100, blank=True, null=True)
-    password = models.CharField(max_length=250, blank=True, null=True)
     description = models.CharField(max_length=250, blank=True, null=True)
-
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
