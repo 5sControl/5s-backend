@@ -2,7 +2,7 @@ from collections import defaultdict
 
 from datetime import datetime, timezone
 
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 import pyodbc
 
@@ -161,7 +161,7 @@ class OrderService:
         result = self.transform_result(results)
         return result
 
-    def transform_result(self, result: List[Tuple]) -> List[Dict]:
+    def transform_result(self, result):
         transformed_result: List = []
         for data in result:
             transformed_result.append(
