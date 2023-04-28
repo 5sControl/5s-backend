@@ -44,8 +44,7 @@ class Items(models.Model):
             # started process
             camera = Camera.objects.filter(id=self.camera)
             algorithm = Algorithm.objects.filter(name='min_max_control')
-            server_url = yolo_proccesing.get_algorithm_url()
-            algorithms_services.create_new_records(cameras=camera, algorithm=algorithm[0], server_url=server_url)
+            algorithms_services.create_new_records(cameras=camera, algorithm=algorithm[0])
 
         return instance
 
@@ -64,7 +63,6 @@ class Items(models.Model):
         # started process
         camera = Camera.objects.filter(id=self.camera)
         algorithm = Algorithm.objects.filter(name='min_max_control')
-        server_url = yolo_proccesing.get_algorithm_url()
-        algorithms_services.create_new_records(cameras=camera, algorithm=algorithm[0], server_url=server_url)
+        algorithms_services.create_new_records(cameras=camera, algorithm=algorithm[0])
 
         return instance
