@@ -1,11 +1,11 @@
 #!/usr/bin/env python
-"""Django's command-line utility for administrative tasks."""
 import os
 import sys
 
+from src.Core.const import PRODUCTION, SERVER_URL
+
 
 def main():
-    """Run administrative tasks."""
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings")
 
     try:
@@ -17,6 +17,10 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
     execute_from_command_line(sys.argv)
+
+    print("Server Configuration:")
+    print(f"SERVER_URL -> {SERVER_URL}")
+    print(f"PRODUCTION -> {PRODUCTION}")
 
 
 if __name__ == "__main__":
