@@ -66,6 +66,7 @@ class OrderService:
     def build_skany_dict(self, results, skany_ids_added):
         skany_dict = defaultdict(list)
         for row in results:
+            print(row)
             operation_status = self._setup_operation_status(row[0])
 
             if row[1] is not None:
