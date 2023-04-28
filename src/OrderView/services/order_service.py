@@ -67,7 +67,6 @@ class OrderService:
     def build_skany_dict(self, results, skany_ids_added):
         skany_dict = defaultdict(list)
         for row in results:
-            print(row)
             operation_status = self._setup_operation_status(row[0])
 
             if row[1] is not None:
@@ -81,6 +80,7 @@ class OrderService:
             else:
                 video_data = {"status": False}
 
+            print(video_data)
             skany = self.build_skany_dict_item(row, operation_status, video_data)
             formatted_time = skany["date"].strftime("%Y.%m.%d")
 

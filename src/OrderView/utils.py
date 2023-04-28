@@ -49,5 +49,6 @@ def get_skany_video_info(time, camera_ip):
         return {"status": False}
     else:
         result = request.json()["camera_ip"] = camera_ip
-
+    print(result)
+    print(response)
     return result
