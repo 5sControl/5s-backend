@@ -8,7 +8,4 @@ class IndexOperations(models.Model):
     """
 
     type_operation = models.IntegerField(verbose_name='id_stanowisko operation control')
-    camera = models.ForeignKey(Camera, verbose_name='operations_control camera', on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"{self.type_operation}"
+    camera = models.OneToOneField(Camera, verbose_name='operations_control camera', on_delete=models.CASCADE)

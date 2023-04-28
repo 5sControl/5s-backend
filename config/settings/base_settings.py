@@ -98,5 +98,3 @@ VIDEO_URL = "/videos/"
 VIDEO_ROOT = BASE_DIR / "videos/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-

@@ -1,16 +1,14 @@
 from rest_framework.exceptions import NotFound
 
 from django.utils import timezone
-from src.Cameras.models import Camera
 from src.Cameras.service import camera_service
 
 from src.CompanyLicense.decorators import check_active_algorithms
 from src.Algorithms.models import Algorithm, CameraAlgorithm, CameraAlgorithmLog
+from src.Core.const import SERVER_URL
 from src.Inventory.models import Items
 
 from .utils import yolo_proccesing
-
-from typing import Tuple, Union, List
 
 from src.Core.logger import logger
 
@@ -57,12 +55,9 @@ class AlgorithmsService:
         return {"status": True, "message": "Camera algorithm was stoped successfully"}
 
     @check_active_algorithms
-    def create_camera_algorithm(
-        self, data: dict
-    ) -> Tuple[List[CameraAlgorithm], List[str]]:
+    def create_camera_algorithm(self, data):
         self.errors = []
         self.created_records = []
-        server_url = data.pop("server_url")
 
         for algorithm_name, camera_ips in data.items():
             if not algorithm_name:
@@ -87,7 +82,7 @@ class AlgorithmsService:
                 )
                 continue
 
-            new_records = self.create_new_records(algorithm, cameras, server_url)
+            new_records = self.create_new_records(algorithm, cameras)
             if new_records:
                 for camera in cameras:
                     camera_algorithm_logs_service.create_log(algorithm.name, camera.id)
@@ -95,7 +90,7 @@ class AlgorithmsService:
             else:
                 for camera in cameras:
                     self.errors.append(
-                        f"YOLO cant start process with next data: {algorithm}, {camera.id}, {server_url}"
+                        f"YOLO cant start process with next data: {algorithm}, {camera.id}, {SERVER_URL}"
                     )
 
         if self.errors:
@@ -115,9 +110,7 @@ class AlgorithmsService:
         else:
             return False
 
-    def create_new_records(
-        self, algorithm: Algorithm, cameras: List[Camera], server_url: str
-    ) -> Union[List[CameraAlgorithm], bool]:
+    def create_new_records(self, algorithm, cameras):
         existing_records = self.get_existing_records(algorithm, cameras)
         new_records = []
 
@@ -129,7 +122,7 @@ class AlgorithmsService:
                 algorithm=algorithm, camera=camera, is_active=True
             ).exists():
                 self.errors.append(
-                    f"Record with algorithm {algorithm.name}, camera {camera.id}, and server url {server_url} already exists"
+                    f"Record with algorithm {algorithm.name}, camera {camera.id}, and server url {SERVER_URL} already exists"
                 )
                 continue
             if algorithm.name == "min_max_control":
@@ -143,7 +136,7 @@ class AlgorithmsService:
             else:
                 data = None
             result = yolo_proccesing.start_yolo_processing(
-                camera=camera, algorithm=algorithm, url=server_url, data=data
+                camera=camera, algorithm=algorithm, data=data
             )
             if not result["success"] or "pid" not in result:
                 return False

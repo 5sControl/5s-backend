@@ -2,11 +2,12 @@ from collections import defaultdict
 
 from datetime import datetime, timezone
 
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional
 
 import pyodbc
 
 from src.MsSqlConnector.connector import connector as connector_service
+from src.OrderView.models import IndexOperations
 
 from src.OrderView.utils import get_skany_video_info
 from src.Reports.models import SkanyReport
@@ -66,12 +67,17 @@ class OrderService:
     def build_skany_dict(self, results, skany_ids_added):
         skany_dict = defaultdict(list)
         for row in results:
+            print(row)
             operation_status = self._setup_operation_status(row[0])
 
             if row[1] is not None:
-                time = datetime.strptime(str(row[1]), "%Y-%m-%d %H:%M:%S.%f")
+                time_string = str(row[1])
+                if "." not in time_string:
+                    time_string += ".000000"
+                time = datetime.strptime(time_string, "%Y-%m-%d %H:%M:%S.%f")
+
                 time_utc = time.replace(tzinfo=timezone.utc)
-                video_data = get_skany_video_info(time=time_utc.isoformat())
+                video_data = get_skany_video_info(time=time_utc.isoformat(), camera_ip=self._get_camera_ips(row[2]))
             else:
                 video_data = {"status": False}
 
@@ -86,7 +92,10 @@ class OrderService:
 
     def build_skany_dict_item(self, row, operation_status, video_data):
         if row[1] is not None:
-            date = datetime.strptime(str(row[1]), "%Y-%m-%d %H:%M:%S.%f").replace(
+            date_string = str(row[1])
+            if len(date_string) == 19:
+                date_string += ".000"
+            date = datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S.%f").replace(
                 tzinfo=timezone.utc
             )
         else:
@@ -123,6 +132,14 @@ class OrderService:
         response["terminrealizacji"] = response["products"][0]["terminrealizacji"]
         return response
 
+    def _get_camera_ips(self, stanowiska):
+        try:
+            camera_ip = IndexOperations.objects.get(type_operation=stanowiska).camera
+        except IndexOperations.DoesNotExist:
+            camera_ip = None
+
+        return camera_ip
+
     def _setup_operation_status(self, skany_index) -> Optional[bool]:
         skany_report = SkanyReport.objects.filter(skany_index=skany_index).first()
 
@@ -144,7 +161,7 @@ class OrderService:
         result = self.transform_result(results)
         return result
 
-    def transform_result(self, result: List[Tuple]) -> List[Dict]:
+    def transform_result(self, result):
         transformed_result: List = []
         for data in result:
             transformed_result.append(
@@ -152,7 +169,9 @@ class OrderService:
                     "indeks": data[0],
                     "data": datetime.strptime(
                         data[1].strftime("%Y-%m-%d %H:%M:%S.%f"), "%Y-%m-%d %H:%M:%S.%f"
-                    ).replace(tzinfo=timezone.utc),
+                    ).replace(tzinfo=timezone.utc)
+                    if data[1] is not None
+                    else None,
                     "zlecenie": data[2].strip(),
                     "klient": data[3].strip(),
                     "datawejscia": datetime.strptime(
@@ -167,7 +186,9 @@ class OrderService:
                     else None,
                     "zakonczone": data[6],
                     "typ": data[7].strip(),
-                    "terminrealizacji": data[9].strip(),
+                    "terminrealizacji": data[9].strip()
+                    if isinstance(data[9], str)
+                    else data[9],
                     "orderName": None,
                     "status": data[10].strip(),
                 }

@@ -6,7 +6,7 @@ from django.db.models import Q
 from rest_framework.generics import GenericAPIView
 
 from src.CompanyLicense.decorators import validate_license
-from src.Core.utils import HOST
+from src.Core.const import SERVER_URL
 
 from src.ImageReport.models import Image
 from src.Cameras.models import Camera
@@ -56,7 +56,6 @@ class ActionsWithPhotos(APIView):
             violation_found = request.data.get("violation_found")
 
             if request.data.get("algorithm") == "min_max_control":
-                print('extra_min_max_control', request.data.get("extra"))
                 extra = process_item_status(request.data.get("extra"))
 
             elif request.data.get("algorithm") == "operation_control":
@@ -64,14 +63,10 @@ class ActionsWithPhotos(APIView):
                     if 'extra' in request.data:
                         for data in request.data['extra']:
                             if 'place' in data:
-                                print("response data is ", request.data['extra'][0])
-                                fetched = requests.post(f"{HOST}:9876/skany/create/", json=request.data['extra'][0])
-                                print("Will Handled Like Kitchen report")
-                                print("Result from operation control service:", fetched)
+                                requests.post(f"{SERVER_URL}:9876/skany/create/", json=request.data['extra'][0])
                                 break
                         else:
-                            requests.post(f"{HOST}:9876/operation-control/", json=request.data)
-
+                            requests.post(f"{SERVER_URL}:9876/operation-control/", json=request.data)
                 extra = edit_extra(request.data.get("extra"), camera)
             else:
                 extra = request.data.get("extra")
