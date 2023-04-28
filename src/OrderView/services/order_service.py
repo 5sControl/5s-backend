@@ -84,7 +84,6 @@ class OrderService:
             else:
                 video_data = {"status": False}
 
-            print(video_data)
             skany = self.build_skany_dict_item(row, operation_status, video_data)
             formatted_time = skany["date"].strftime("%Y.%m.%d")
 

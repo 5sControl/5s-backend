@@ -59,7 +59,9 @@ class ActionsWithPhotos(APIView):
                 extra = process_item_status(request.data.get("extra"))
 
             elif request.data.get("algorithm") == "operation_control":
+                print(request.data.get("algorithm"))
                 if not os.environ.get("PRODUCTION"):
+                    print("start creating skany")
                     if 'extra' in request.data:
                         for data in request.data['extra']:
                             if 'place' in data:
