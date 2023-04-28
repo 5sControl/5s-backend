@@ -1,11 +1,6 @@
 from django.db import models
+
 from src.Cameras.models import Camera
-from src.Algorithms.models import Algorithm
-from src.Algorithms.models import CameraAlgorithm
-
-from django.db.models import Q
-
-from src.Algorithms.utils import yolo_proccesing
 
 
 class Items(models.Model):
@@ -28,43 +23,33 @@ class Items(models.Model):
         is_update = bool(self.pk)
         camera_updated = self.pk and self.camera_id != self.__class__.objects.get(pk=self.pk).camera_id
         coords_updated = self.pk and self.coords != self.__class__.objects.get(pk=self.pk).coords
+        previous_camera = Items.objects.get(id=self.pk).camera_id
         instance = super().save(*args, **kwargs)
 
         if not is_update or camera_updated or coords_updated:
+
             # stopped process
-            print("stopped process")
-            from src.Algorithms.service import algorithms_services
-            process_id = CameraAlgorithm.objects.filter(
-                Q(camera_id=self.camera) & Q(algorithm__name='min_max_control')
-            ).values_list('process_id', flat=True).first()
-            if process_id is not None:
-                yolo_proccesing.stop_process(pid=process_id)
-                algorithms_services.update_status_of_algorithm_by_pid(pid=process_id)
-            print("started process")
+            from src.Inventory.service import stopped_process, started_process
+            stopped_process(self.camera)
+
             # started process
-            camera = Camera.objects.filter(id=self.camera)
-            algorithm = Algorithm.objects.filter(name='min_max_control')
-            server_url = yolo_proccesing.get_algorithm_url()
-            algorithms_services.create_new_records(cameras=camera, algorithm=algorithm[0], server_url=server_url)
+            started_process(self.camera)
+
+            # restart process
+            if camera_updated:
+                stopped_process(previous_camera)
+                started_process(previous_camera)
 
         return instance
 
     def delete(self, *args, **kwargs):
         instance = super().delete(*args, **kwargs)
-        from src.Algorithms.service import algorithms_services
-        process_id = CameraAlgorithm.objects.filter(
-            Q(camera_id=self.camera) & Q(algorithm__name='min_max_control')
-        ).values_list('process_id', flat=True).first()
-        if process_id is not None:
-            yolo_proccesing.stop_process(pid=process_id)
-            algorithms_services.update_status_of_algorithm_by_pid(pid=process_id)
-        else:
-            return instance
+
+        # stopped process
+        from src.Inventory.service import stopped_process, started_process
+        stopped_process(self.camera)
 
         # started process
-        camera = Camera.objects.filter(id=self.camera)
-        algorithm = Algorithm.objects.filter(name='min_max_control')
-        server_url = yolo_proccesing.get_algorithm_url()
-        algorithms_services.create_new_records(cameras=camera, algorithm=algorithm[0], server_url=server_url)
+        started_process(self.camera)
 
         return instance
