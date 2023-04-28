@@ -36,20 +36,19 @@ class OrderViewPaginnator(PageNumberPagination):
 
 
 def get_skany_video_info(time, camera_ip):
-    video_chacker_host = f"{SERVER_URL}:3456/is_video_available/"
-
     response = {
         "camera_ip": camera_ip,
         "time": time,
     }
     try:
         request = requests.post(
-            url=f"{video_chacker_host}:3456/is_video_available/",
+            url=f"{SERVER_URL}:3456/is_video_available/",
             json=response,
         )
     except Exception:
         return {"status": False}
     else:
         result = request.json()["camera_ip"] = camera_ip
-
+    print(result)
+    print(response)
     return result

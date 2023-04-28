@@ -67,7 +67,6 @@ class OrderService:
     def build_skany_dict(self, results, skany_ids_added):
         skany_dict = defaultdict(list)
         for row in results:
-            print(row)
             operation_status = self._setup_operation_status(row[0])
 
             if row[1] is not None:
@@ -75,12 +74,17 @@ class OrderService:
                 if "." not in time_string:
                     time_string += ".000000"
                 time = datetime.strptime(time_string, "%Y-%m-%d %H:%M:%S.%f")
-
                 time_utc = time.replace(tzinfo=timezone.utc)
-                video_data = get_skany_video_info(time=time_utc.isoformat(), camera_ip=self._get_camera_ips(row[2]))
+
+                camera_ip = self._get_camera_ip(row[2])
+                if not camera_ip:
+                    video_data = {"status": False}
+                else:
+                    video_data = get_skany_video_info(time=time_utc.isoformat(), camera_ip=camera_ip)
             else:
                 video_data = {"status": False}
 
+            print(video_data)
             skany = self.build_skany_dict_item(row, operation_status, video_data)
             formatted_time = skany["date"].strftime("%Y.%m.%d")
 
@@ -132,7 +136,7 @@ class OrderService:
         response["terminrealizacji"] = response["products"][0]["terminrealizacji"]
         return response
 
-    def _get_camera_ips(self, stanowiska):
+    def _get_camera_ip(self, stanowiska):
         try:
             camera_ip = IndexOperations.objects.get(type_operation=stanowiska).camera
         except IndexOperations.DoesNotExist:
