@@ -7,6 +7,7 @@ from typing import Dict, List, Optional, Tuple
 import pyodbc
 
 from src.MsSqlConnector.connector import connector as connector_service
+from src.OrderView.models import IndexOperations
 
 from src.OrderView.utils import get_skany_video_info
 from src.Reports.models import SkanyReport
@@ -75,7 +76,7 @@ class OrderService:
                 time = datetime.strptime(time_string, "%Y-%m-%d %H:%M:%S.%f")
 
                 time_utc = time.replace(tzinfo=timezone.utc)
-                video_data = get_skany_video_info(time=time_utc.isoformat())
+                video_data = get_skany_video_info(time=time_utc.isoformat(), camera_ip=self._get_camera_ips(row[2]))
             else:
                 video_data = {"status": False}
 
@@ -129,6 +130,14 @@ class OrderService:
         response["datazakonczenia"] = response["products"][0]["datazakonczenia"]
         response["terminrealizacji"] = response["products"][0]["terminrealizacji"]
         return response
+
+    def _get_camera_ips(self, stanowiska):
+        try:
+            camera_ip = IndexOperations.objects.get(type_operation=stanowiska).camera
+        except IndexOperations.DoesNotExist:
+            camera_ip = None
+
+        return camera_ip
 
     def _setup_operation_status(self, skany_index) -> Optional[bool]:
         skany_report = SkanyReport.objects.filter(skany_index=skany_index).first()
