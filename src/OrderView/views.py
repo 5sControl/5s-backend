@@ -19,6 +19,7 @@ from src.OrderView.services.order_list_service import order_list_service
 from src.OrderView.services.order_service import order_service
 
 from src.OrderView.utils import OrderViewPaginnator
+from src.MsSqlConnector.connector import connector
 
 
 class GetAllProductAPIView(generics.GenericAPIView):
@@ -85,15 +86,26 @@ class CreateDatabaseConnectionAPIView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        connection = serializer.save()
-        return Response(
-            {
-                "success": True,
-                "message": "Database connection was created successfully",
-                "connection": DatabaseConnectionSerializer(connection).data,
-            },
-            status=status.HTTP_201_CREATED,
-        )
+
+        if connector.is_stable(serializer.data):
+            connection = serializer.save()
+            return Response(
+                {
+                    "success": True,
+                    "message": "Database connection was created successfully",
+                    "connection": DatabaseConnectionSerializer(connection).data,
+                },
+                status=status.HTTP_201_CREATED,
+            )
+        else:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Database connection was not created successfully",
+                    "connection": DatabaseConnectionSerializer(connection).data,
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class DeleteConectionAPIView(generics.GenericAPIView):
