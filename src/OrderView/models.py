@@ -11,4 +11,4 @@ class IndexOperations(models.Model):
     camera = models.ForeignKey(Camera, verbose_name='operations_control camera', on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.type_operation}"
+        return self.type_operation
