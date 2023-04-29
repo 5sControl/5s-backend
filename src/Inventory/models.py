@@ -22,7 +22,12 @@ class Items(models.Model):
         is_update = bool(self.pk)
         camera_updated = self.pk and self.camera_id != self.__class__.objects.get(pk=self.pk).camera_id
         coords_updated = self.pk and self.coords != self.__class__.objects.get(pk=self.pk).coords
-        previous_camera = Items.objects.get(id=self.pk).camera_id
+
+        try:
+            previous_camera = Items.objects.get(id=self.pk).camera_id
+        except Exception as e:
+            print(e)
+
         instance = super().save(*args, **kwargs)
 
         if not is_update or camera_updated or coords_updated:
