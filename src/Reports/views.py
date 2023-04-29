@@ -1,4 +1,3 @@
-import os
 import requests
 from rest_framework import viewsets
 from datetime import datetime
@@ -6,7 +5,7 @@ from django.db.models import Q
 from rest_framework.generics import GenericAPIView
 
 from src.CompanyLicense.decorators import validate_license
-from src.Core.const import SERVER_URL
+from src.Core.const import PRODUCTION, SERVER_URL
 
 from src.ImageReport.models import Image
 from src.Cameras.models import Camera
@@ -59,7 +58,9 @@ class ActionsWithPhotos(APIView):
                 extra = process_item_status(request.data.get("extra"))
 
             elif request.data.get("algorithm") == "operation_control":
-                if not os.environ.get("PRODUCTION"):
+                print(request.data.get("algorithm"))
+                if not PRODUCTION:
+                    print("start creating skany")
                     if 'extra' in request.data:
                         for data in request.data['extra']:
                             if 'place' in data:
