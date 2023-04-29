@@ -30,8 +30,11 @@ class YoloProccesing:
         request_json = request.json()
         request_json["server_url"] = SERVER_URL
         request_json["status"] = True
-        if algorithm.name == 'min_max_control':
-            min_max_ids.append(request_json["pid"])
+        try:
+            if algorithm.name == 'min_max_control':
+                min_max_ids.append(request_json["pid"])
+        except:
+            print('pid not exist')
 
         return request_json
 
