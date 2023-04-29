@@ -74,7 +74,7 @@ def stopped_process(camera):
     if process_id is not None:
         yolo_proccesing.stop_process(pid=process_id)
         algorithms_services.update_status_of_algorithm_by_pid(pid=process_id)
-        print("stopped process")
+        print("stopped process", camera)
 
 
 def started_process(camera_item):
@@ -84,4 +84,4 @@ def started_process(camera_item):
     camera = Camera.objects.filter(id=camera_item)
     algorithm = Algorithm.objects.filter(name='min_max_control')
     algorithms_services.create_new_records(cameras=camera, algorithm=algorithm[0])
-    print("started process")
+    print("started process", camera)
