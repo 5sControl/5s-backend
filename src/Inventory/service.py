@@ -83,6 +83,5 @@ def started_process(camera_item):
     # started process
     camera = Camera.objects.filter(id=camera_item)
     algorithm = Algorithm.objects.filter(name='min_max_control')
-    server_url = yolo_proccesing.get_algorithm_url()
-    algorithms_services.create_new_records(cameras=camera, algorithm=algorithm[0], server_url=server_url)
+    algorithms_services.create_new_records(cameras=camera, algorithm=algorithm[0])
     print("started process")
