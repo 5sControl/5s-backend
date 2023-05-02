@@ -36,6 +36,7 @@ class CameraProcessSerializer(serializers.ModelSerializer):
 class AlgorithmSerializer(serializers.ModelSerializer):
     class Meta:
         model = Algorithm
+        fields = ("id", "name")
         ref_name = "algo-serializer"
 
 
