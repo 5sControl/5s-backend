@@ -11,11 +11,11 @@ from src.Core.exceptions import InvalidResponseError, SenderError
 from src.Core.utils import Sender
 from src.Inventory.models import Items
 from src.OrderView.models import IndexOperations
+from src.Cameras.models import Camera
+from src.Algorithms.models import Algorithm, CameraAlgorithm
 
 from ..serializers import CameraModelSerializer
 from ..services.logs_services import logs_service
-from ..models.algorithm import Algorithm, CameraAlgorithm
-from ..models.camera import Camera
 
 
 def CreateCameraAlgorithms(data: Dict[str, Any]) -> None:

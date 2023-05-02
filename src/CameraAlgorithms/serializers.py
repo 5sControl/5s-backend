@@ -1,8 +1,7 @@
 from rest_framework import serializers
+from src.Algorithms.models import CameraAlgorithm, CameraAlgorithmLog
 
-from src.CameraAlgorithms.models.algorithm import CameraAlgorithm, CameraAlgorithmLog
-
-from .models.camera import Camera
+from src.Cameras.models import Camera
 
 
 class CameraModelSerializer(serializers.ModelSerializer):
