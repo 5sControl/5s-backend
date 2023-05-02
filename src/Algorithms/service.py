@@ -138,7 +138,7 @@ class AlgorithmsService:
             result = yolo_proccesing.start_yolo_processing(
                 camera=camera, algorithm=algorithm, data=data
             )
-            if not result["success"] or "pid" not in result:
+            if not result["status"] or "pid" not in result:
                 return False
 
             new_record = CameraAlgorithm(
