@@ -12,6 +12,7 @@ routes = [
     path("employees/", include("src.Employees.urls"), name="employees"),
     path("cameras/", include("src.Cameras.urls"), name="cameras"),
     path("algorithms/", include("src.Algorithms.urls"), name="algorithms"),
+    path("camera-algorithms/", include("src.CameraAlgorithms.urls"), name="camera-algorithms"),
     path("reports/", include("src.Reports.urls"), name="reports"),
     path("company/", include("src.CompanyLicense.urls"), name="company"),
     path("order/", include("src.OrderView.urls"), name="order"),
