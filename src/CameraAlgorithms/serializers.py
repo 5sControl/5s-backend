@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from src.Algorithms.models import CameraAlgorithm, CameraAlgorithmLog
+from src.Algorithms.models import Algorithm, CameraAlgorithm, CameraAlgorithmLog
 
 from src.Cameras.models import Camera
 
@@ -33,11 +33,9 @@ class CameraProcessSerializer(serializers.ModelSerializer):
         fields = ("id", "name")
 
 
-class AlgorithmSerializer(serializers.Serializer):
-    name = serializers.CharField()
-    config = serializers.DictField()
-
+class AlgorithmSerializer(serializers.ModelSerializer):
     class Meta:
+        model = Algorithm
         ref_name = "algo-serializer"
 
 
@@ -70,6 +68,7 @@ class UpdateCameraSerializer(serializers.Serializer):
 
     class Meta:
         ref_name = "update-camera"
+
 
 class CameraAlgorithmFullSerializer(serializers.ModelSerializer):
     algorithm = AlgorithmSerializer()

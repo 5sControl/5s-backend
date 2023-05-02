@@ -73,9 +73,8 @@ class AlgorithmProcessApiView(generics.GenericAPIView):
     serializer_class = CameraAlgorithmFullSerializer
 
     def get(self, request, *args, **kwargs):
-        serialized_data = self.serializer_class(
-            CameraAlgorithm.objects.all(), many=True
-        )
+        process = CameraAlgorithm.objects.all()
+        serialized_data = self.serializer_class(process, many=True)
         return Response(serialized_data.data, status=status.HTTP_200_OK)
 
 
