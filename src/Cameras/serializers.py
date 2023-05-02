@@ -10,7 +10,6 @@ class CameraSerializer(serializers.ModelSerializer):
             "name",
             "username",
             "password",
-            "description",
             "is_active",
         ]
 
