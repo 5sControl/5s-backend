@@ -1,13 +1,15 @@
 from celery.schedules import crontab
 
-from .base_settings import BASE_DIR
-
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "database" / "db.sqlite3",
-    },
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'fiveScontrol',
+        'USER': 'admin',
+        'PASSWORD': 'just4Taqtile',
+        'HOST': 'db',
+        'PORT': '5432',
+    }
 }
 
 
