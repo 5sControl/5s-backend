@@ -9,7 +9,6 @@ class CamerasAdmin(admin.ModelAdmin):
         "name",
         "username",
         "password",
-        "description",
         "is_active",
     )
     list_filter = ("id",)
