@@ -7,6 +7,7 @@ from src.Cameras.models import Camera
 class CameraModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Camera
+        ref_name = "camera-model-serializer"
         fields = (
             "id",
             "name",
@@ -21,10 +22,14 @@ class CameraSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
 
+    class Meta:
+        ref_name = "camera-serializer"
+
 
 class CameraProcessSerializer(serializers.ModelSerializer):
     class Meta:
         model = Camera
+        ref_name = "camera-process-serializer"
         fields = ("id", "name")
 
 
@@ -32,25 +37,39 @@ class AlgorithmSerializer(serializers.Serializer):
     name = serializers.CharField()
     config = serializers.DictField()
 
+    class Meta:
+        ref_name = "algo-serializer"
+
 
 class AlgorithmStatusSerializer(serializers.Serializer):
     true = AlgorithmSerializer(many=True)
     false = AlgorithmSerializer(many=True)
+
+    class Meta:
+        ref_name = "algo-status"
 
 
 class CameraAlgoritmsSerializer(serializers.Serializer):
     camera = CameraSerializer()
     algorithms = AlgorithmSerializer(many=True)
 
+    class Meta:
+        ref_name = "camera-algo"
+
 
 class StopAlgorithmSerializer(serializers.Serializer):
     pid = serializers.IntegerField()
+
+    class Meta:
+        ref_name = "stop-algo"
 
 
 class UpdateCameraSerializer(serializers.Serializer):
     ip = serializers.IPAddressField()
     username = serializers.CharField()
 
+    class Meta:
+        ref_name = "update-camera"
 
 class CameraAlgorithmFullSerializer(serializers.ModelSerializer):
     algorithm = AlgorithmSerializer()
@@ -58,10 +77,12 @@ class CameraAlgorithmFullSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CameraAlgorithm
+        ref_name = "camera-algor-full"
         fields = ["camera", "algorithm", "process_id", "is_active"]
 
 
 class CameraAlgorithmLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = CameraAlgorithmLog
+        ref_name = "camera-algo-logs"
         fields = "__all__"
