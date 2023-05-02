@@ -25,6 +25,9 @@ class AlgorithmStatusSerializer(serializers.Serializer):
     true = AlgorithmSerializer(many=True)
     false = AlgorithmSerializer(many=True)
 
+    class Meta:
+        ref_name = "algorithm_status"
+
 
 class CameraAlgorithmSerializer(serializers.ModelSerializer):
     class Meta:
