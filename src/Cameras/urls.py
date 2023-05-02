@@ -2,19 +2,29 @@ from src.Cameras.views import (
     GetCameraAPIView,
     GetHttpCamerasLinkAPIView,
     GetRtspCamerasLinkByIpAPIView,
-    CreateCameraAPIView,
+    GetDataAPIView,
     UpdateCameraAPIView,
+    PostCameraAPIView,
     DeleteCameraAPIView,
 )
 
 from django.urls import path
 
 
+# post
 urlpatterns = [
-    path("", GetCameraAPIView.as_view(), name="camera"),
-    path("get-camera-http-links/", GetHttpCamerasLinkAPIView.as_view(), name="http-links"),
-    path("get-camera-rtsp-by-ip-links/", GetRtspCamerasLinkByIpAPIView.as_view(), name="rtsp-by-ip-links"),
-    path("create-camera/", CreateCameraAPIView.as_view(), name="create-camera"),
-    path("update-camera/", UpdateCameraAPIView.as_view(), name="update-camera"),
-    path('delete_camera/<str:pk>/', DeleteCameraAPIView.as_view(), name="delete-camera"),
+    path("create-camera/", PostCameraAPIView.as_view()),
 ]
+# get
+urlpatterns += [
+    path("", GetCameraAPIView.as_view()),
+    path("get-camera-http-links/", GetHttpCamerasLinkAPIView.as_view()),
+    path("get-camera-rtsp-by-ip-links/", GetRtspCamerasLinkByIpAPIView.as_view()),
+    path("get-data/", GetDataAPIView.as_view()),
+]
+# put/patch
+urlpatterns += [
+    path("update-camera/", UpdateCameraAPIView.as_view()),
+]
+# delete
+urlpatterns += [path("delete-camera/<str:camera_id>/", DeleteCameraAPIView.as_view())]
