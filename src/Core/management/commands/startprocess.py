@@ -40,7 +40,7 @@ class Command(BaseCommand):
                     f"Camera {camera_algorithm.camera} with alogithm {camera_algorithm.algorithm}"
                 )
             else:
-                if not result["success"] or "pid" not in result:
+                if not result["status"] or "pid" not in result:
                     logger.critical("Cannot find status in response")
 
                 new_process_id = result["pid"]
