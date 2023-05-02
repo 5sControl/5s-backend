@@ -29,7 +29,6 @@ class YoloProccesing:
         print(f"ALGORITHM {algorithm.name}")
         request_json = request.json()
         request_json["server_url"] = SERVER_URL
-        request_json["status"] = True
         try:
             if algorithm.name == 'min_max_control':
                 min_max_ids.append(request_json["pid"])
