@@ -1,6 +1,6 @@
 from datetime import timezone
 
-from src.Algorithms.models import CameraAlgorithmLog
+from src.CameraAlgorithms.models.algorithm import CameraAlgorithmLog
 
 
 class CameraAlgorithmLogsService:
