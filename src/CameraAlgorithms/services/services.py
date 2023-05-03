@@ -170,7 +170,7 @@ def create_camera_algorithms(
             response = send_run_request(request)
 
         new_record = CameraAlgorithm(
-            algorithm=algorithm_obj.id,
+            algorithm=algorithm_obj,
             camera=camera,
             process_id=response["pid"],
         )
