@@ -24,10 +24,13 @@ from .serializers import (
 )
 
 
-class CameraAPIView(generics.ListAPIView):
+class CameraAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
-    queryset = Camera.objects.all()
-    serializer_class = CameraModelSerializer
+
+    def get(self, request, *args, **kwargs):
+        cameras = Camera.objects.all()
+        serializer = CameraModelSerializer(cameras, many=True)
+        return Response(serializer.data)
 
 
 class UpdateCameraAPIView(generics.GenericAPIView):
