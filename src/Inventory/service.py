@@ -55,8 +55,9 @@ def process_item_status(data):
             else:
                 item.prev_status = item.status
 
+        if not data_item[0]['multi_row']:
+            item.current_stock_level = count
         item.status = item_status
-        item.current_stock_level = count
         item.save()
 
         item_data["status"] = item_status
