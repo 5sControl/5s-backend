@@ -1,17 +1,6 @@
 from celery.schedules import crontab
 
 
-
-# from .base_settings import BASE_DIR
-#
-#
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "database" / "db.sqlite3",
-#     },
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
