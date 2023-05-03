@@ -11,7 +11,7 @@ def delete_camera(camera_id):
     for camera_algorithms in query_list_cameraalgorithms:
         pid = camera_algorithms.process_id
         result_stop_process = yolo_proccesing.stop_process(pid)
-        if not result_stop_process["success"]:
+        if not result_stop_process["status"]:
             return {
                 "status": False,
                 "message": f"Can't stop process on camera {camera_algorithms.camera} algorithm {camera_algorithms.algorithm}"
