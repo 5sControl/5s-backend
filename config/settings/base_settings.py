@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     "django_extensions",
     'django_crontab',
     # Common application
+    "src.CameraAlgorithms",
     "src.Algorithms",
     "src.OrderView",
     "src.MsSqlConnector",
