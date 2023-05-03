@@ -1,5 +1,7 @@
 from celery.schedules import crontab
 
+from src.Core.const import SERVER_URL
+
 
 DATABASES = {
     'default': {
@@ -7,7 +9,7 @@ DATABASES = {
         'NAME': 'fiveScontrol',
         'USER': 'admin',
         'PASSWORD': 'just4Taqtile',
-        'HOST': 'localhost',
+        'HOST': SERVER_URL[7:],
         'PORT': '5432',
     }
 }
