@@ -27,6 +27,8 @@ def Sender(operation, data, cstm_port=None):
         link = f"{SERVER_URL}:{port}{url}"
 
     request = requests.post(link, json=data)
+    print(request)
+    print(request.json())
     request.raise_for_status()
 
     return request.json()
