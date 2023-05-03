@@ -1,7 +1,5 @@
 from django.db import models
 
-from datetime import datetime
-
 from src.Algorithms.models import Algorithm
 from src.Cameras.models import Camera
 

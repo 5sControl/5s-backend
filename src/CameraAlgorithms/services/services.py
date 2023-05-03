@@ -117,15 +117,17 @@ def create_camera_algorithms(
     camera: Dict[str, str], algorithms: List[Dict[str, Any]]
 ) -> None:
     camera_obj = Camera.objects.get(id=camera["ip"])
+    new_records = [algorithm_data['name'] for algorithm_data in algorithms]
+    existing_algorithms = [ca.algorithm.name for ca in CameraAlgorithm.objects.filter(camera=camera_obj)]
 
-    for algorithm in algorithms:
+    algorithm_to_delete = set(existing_algorithms) - set(new_records)
+    new_algorithms = set(new_records) - set(existing_algorithms)
+
+    for algorithm in new_algorithms:
         algorithm_obj = Algorithm.objects.get(name=algorithm["name"])
         rtsp_link: str = camera_rtsp_link(camera_obj.id)
         data: List[Dict[str, Any]] = []
         response: Dict = {}
-
-        if CameraAlgorithm.objects.filter(algorithm=algorithm_obj, camera=camera_obj).exists():
-            continue
 
         request: Dict[str, Any] = {
             "camera_url": rtsp_link,
@@ -177,6 +179,15 @@ def create_camera_algorithms(
             process_id=response["pid"],
         )
         new_record.save()
+
+        print(f"New record -> {algorithm_obj.name} on camera {camera_obj.id}")
+
+    for algorithm_name in algorithm_to_delete:
+        algorithm_pid: int = CameraAlgorithm.objects.get(algorithm__name=algorithm).process_id
+        StopCameraAlgorithm(algorithm_pid)
+        UpdateStatusAlgorithm(algorithm_pid)
+
+        print(f"Successfully deleted -> {algorithm_name} with pid {algorithm_pid}")
 
 
 def camera_rtsp_link(id: str) -> str:
