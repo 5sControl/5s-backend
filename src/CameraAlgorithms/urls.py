@@ -16,7 +16,7 @@ urlpatterns = [
     path("camera/", CameraAPIView.as_view(), name="camera"),
     path("update-camera/", UpdateCameraAPIView.as_view(), name="camera-update"),
     path(
-        "delete_camera/<str:pk>/", DeleteCameraAPIView.as_view(), name="camera-delete"
+        "delete-camera/<str:pk>/", DeleteCameraAPIView.as_view(), name="camera-delete"
     ),
     path(
         "create-process/",
