@@ -124,9 +124,6 @@ def create_camera_algorithms(
         data: List[Dict[str, Any]] = []
         response: Dict = {}
 
-        print(algorithm_obj)
-        print(rtsp_link)
-
         request: Dict[str, Any] = {
             "camera_url": rtsp_link,
             "algorithm": algorithm_obj.name,
@@ -153,7 +150,8 @@ def create_camera_algorithms(
 
         if algorithm_obj.name == "operation_control":
             indx_operation = IndexOperations(
-                type_operation=algorithm["config"]["operation_control_id"]
+                type_operation=algorithm["config"]["operation_control_id"],
+                camera=camera_obj,
             )
             indx_operation.save()
             response = send_run_request(request)
