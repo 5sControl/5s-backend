@@ -17,7 +17,7 @@ from .serializers import (
     AlgorithmStatusSerializer,
     CameraAlgorithmFullSerializer,
     CameraModelSerializer,
-    CameraSerializer,
+    CreateCameraAlgorithmSerializer,
     StopAlgorithmSerializer,
     UpdateCameraSerializer,
     CameraAlgorithmLogSerializer,
@@ -96,10 +96,11 @@ class StopProcessApiView(generics.GenericAPIView):
 
 class CreateCameraAlgorithmsApiView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated, IsSuperuserPermission | IsStaffPermission]
-    serializer_class = CameraSerializer
+    serializer_class = CreateCameraAlgorithmSerializer
 
     def post(self, request, *args, **kwargs):
-        serializer = CameraSerializer(data=request.data)
+        serializer = CreateCameraAlgorithmSerializer(data=request.data)
+        print(request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
         CreateCameraAlgorithms(data)

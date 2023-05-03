@@ -1,6 +1,5 @@
 from django.core.management.base import BaseCommand
 
-from src.Core.logger import logger
 from src.Algorithms.models import Algorithm
 
 

@@ -16,14 +16,28 @@ class CameraModelSerializer(serializers.ModelSerializer):
         )
 
 
-class CameraSerializer(serializers.Serializer):
+class CreateCameraSerializer(serializers.Serializer):
     ip = serializers.IPAddressField()
     name = serializers.CharField(required=False)
     username = serializers.CharField()
     password = serializers.CharField()
 
+
+class CreateConfigSerializer(serializers.Serializer):
+    operation_control_id = serializers.CharField()
+
+
+class CreateAlgorithmSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    config = CreateConfigSerializer()
+
+
+class CreateCameraAlgorithmSerializer(serializers.Serializer):
+    camera = CreateCameraSerializer()
+    algorithms = CreateAlgorithmSerializer(many=True)
+
     class Meta:
-        ref_name = "camera-serializer"
+        ref_name = "camera-algo"
 
 
 class CameraProcessSerializer(serializers.ModelSerializer):
@@ -46,14 +60,6 @@ class AlgorithmStatusSerializer(serializers.Serializer):
 
     class Meta:
         ref_name = "algo-status"
-
-
-class CameraAlgoritmsSerializer(serializers.Serializer):
-    camera = CameraSerializer()
-    algorithms = AlgorithmSerializer(many=True)
-
-    class Meta:
-        ref_name = "camera-algo"
 
 
 class StopAlgorithmSerializer(serializers.Serializer):
