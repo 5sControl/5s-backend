@@ -100,8 +100,8 @@ class CreateCameraAlgorithmsApiView(generics.GenericAPIView):
 
     def post(self, request, *args, **kwargs):
         serializer = CreateCameraAlgorithmSerializer(data=request.data)
-        print(request.data)
         serializer.is_valid(raise_exception=True)
+        print(request.data)
         data = serializer.validated_data
         CreateCameraAlgorithms(data)
         return Response(status=status.HTTP_201_CREATED)

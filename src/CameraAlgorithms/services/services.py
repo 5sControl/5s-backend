@@ -21,7 +21,7 @@ from ..services.logs_services import logs_service
 def CreateCameraAlgorithms(data: Dict[str, Any]) -> None:
     camera: Dict[str, str] = data["camera"]
     algorithms: List[Dict[str, Any]] = data["algorithms"]
-
+    print("Creating camera algorithms")
     create_camera(camera)
     create_camera_algorithms(camera, algorithms)
 
