@@ -22,8 +22,9 @@ def CreateCameraAlgorithms(data: Dict[str, Any]) -> None:
     camera: Dict[str, str] = data["camera"]
     algorithms: List[Dict[str, Any]] = data["algorithms"]
 
+    print("Before camera creation")
     create_camera(camera)
-    print("Camera")
+    print("Before camera algorithms creation")
     create_camera_algorithms(camera, algorithms)
 
 
@@ -86,7 +87,7 @@ def create_camera(camera: Dict[str, str]) -> None:
     username: str = camera["username"]
     password: str = camera["password"]
 
-    camera_data: Dict[str, str] = {
+    camera_request: Dict[str, str] = {
         "ip": ip,
         "name": name,
         "username": username,
@@ -94,9 +95,16 @@ def create_camera(camera: Dict[str, str]) -> None:
     }
 
     try:
-        Sender("add_camera", camera_data)
+        Sender("add_camera", camera_request)
     except requests.exceptions.HTTPError as e:
         raise SenderError("/add_camera") from e
+
+    camera_data: Dict[str, str] = {
+        "ip": ip,
+        "name": name,
+        "username": username,
+        "password": password,
+    }
 
     serializer = CameraModelSerializer(data=camera_data)
     serializer.is_valid(raise_exception=True)
