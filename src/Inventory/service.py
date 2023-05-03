@@ -17,7 +17,9 @@ def process_item_status(data):
     for item_data in data:
 
         count = item_data['count']
-        data_item = Items.objects.filter(id=item_data['itemId']).values('current_stock_level', 'low_stock_level', 'status')
+        red_line = item_data['low_stock_level']
+        data_item = Items.objects.filter(id=item_data['itemId']).values('current_stock_level', 'low_stock_level',
+                                                                        'status', 'multi_row')
         min_item = data_item[0]['low_stock_level']
         image_path = item_data['image_item']
         level_previous_status = data_item[0]['status']
@@ -35,7 +37,7 @@ def process_item_status(data):
                 if item.prev_status != None:
                     item.prev_status = item.status
 
-        elif count > 0 and count <= min_item:
+        elif (count > 0 and count <= min_item) or red_line == True and data_item[0]['multi_row']:
             item_status = "Low stock level"
             if level_previous_status == "In stock":
                 previous_status = "Low stock level"
