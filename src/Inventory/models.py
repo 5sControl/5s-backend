@@ -8,12 +8,13 @@ class Items(models.Model):
     name = models.TextField(max_length=75, verbose_name="Item name")
     status = models.CharField(max_length=20, default="Out of stock")
     current_stock_level = models.IntegerField(verbose_name="Current stock level", default=0)
-    low_stock_level = models.IntegerField(verbose_name="Low stock level")
+    low_stock_level = models.IntegerField(verbose_name="Low stock level", default=0)
     camera = models.ForeignKey(Camera, related_name='camera_id', on_delete=models.CASCADE)
     date_created = models.DateTimeField(verbose_name="Date created", auto_now_add=True)
     date_updated = models.DateTimeField(verbose_name="Date updated", auto_now=True)
     coords = models.JSONField(verbose_name="Area coordinates")
     prev_status = models.TextField(verbose_name="Previous status", default=None, max_length=30, blank=True, null=True)
+    multi_row = models.BooleanField(verbose_name="Multi row", default=False)
 
     def __str__(self):
         return self.name

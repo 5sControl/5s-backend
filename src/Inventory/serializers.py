@@ -18,5 +18,6 @@ class ItemsSerializer(serializers.ModelSerializer):
                   "camera",
                   "date_created",
                   "date_updated",
-                  "coords"
+                  "coords",
+                  "multi_row"
                   ]
