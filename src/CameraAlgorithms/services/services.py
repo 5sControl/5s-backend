@@ -22,9 +22,7 @@ def CreateCameraAlgorithms(data: Dict[str, Any]) -> None:
     camera: Dict[str, str] = data["camera"]
     algorithms: List[Dict[str, Any]] = data["algorithms"]
 
-    print("Before camera creation")
     create_camera(camera)
-    print("Before camera algorithms creation")
     create_camera_algorithms(camera, algorithms)
 
 
@@ -93,6 +91,9 @@ def create_camera(camera: Dict[str, str]) -> None:
         "username": username,
         "password": password,
     }
+
+    if Camera.objects.filter(id=ip).exists():
+        return
 
     try:
         Sender("add_camera", camera_request)
