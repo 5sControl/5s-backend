@@ -100,7 +100,7 @@ def create_camera(camera: Dict[str, str]) -> None:
         raise SenderError("/add_camera") from e
 
     camera_data: Dict[str, str] = {
-        "ip": ip,
+        "id": ip,
         "name": name,
         "username": username,
         "password": password,
