@@ -21,8 +21,9 @@ from ..services.logs_services import logs_service
 def CreateCameraAlgorithms(data: Dict[str, Any]) -> None:
     camera: Dict[str, str] = data["camera"]
     algorithms: List[Dict[str, Any]] = data["algorithms"]
-    print("Creating camera algorithms")
+
     create_camera(camera)
+    print("Camera")
     create_camera_algorithms(camera, algorithms)
 
 
@@ -114,6 +115,9 @@ def create_camera_algorithms(
         data: List[Dict[str, Any]] = []
         response: Dict = {}
 
+        print(algorithm_obj)
+        print(rtsp_link)
+
         request: Dict[str, Any] = {
             "camera_url": rtsp_link,
             "algorithm": algorithm_obj.name,
@@ -171,6 +175,7 @@ def camera_rtsp_link(id: str) -> str:
 
 
 def send_run_request(request: Dict[str, Any]) -> Dict[str, Any]:
+    print("Running Sender, ", request)
     try:
         response = Sender("run", request)
     except requests.exceptions.HTTPError as e:
