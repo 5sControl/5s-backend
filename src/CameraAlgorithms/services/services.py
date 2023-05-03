@@ -118,7 +118,7 @@ def create_camera_algorithms(
     camera_obj = Camera.objects.get(id=camera["ip"])
 
     for algorithm in algorithms:
-        algorithm_obj = Algorithm.objects.get(id=algorithm["name"])
+        algorithm_obj = Algorithm.objects.get(name=algorithm["name"])
         rtsp_link: str = camera_rtsp_link(camera_obj.id)
         data: List[Dict[str, Any]] = []
         response: Dict = {}
