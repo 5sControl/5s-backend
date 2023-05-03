@@ -29,7 +29,7 @@ class CreateConfigSerializer(serializers.Serializer):
 
 class CreateAlgorithmSerializer(serializers.Serializer):
     name = serializers.CharField()
-    config = CreateConfigSerializer()
+    config = CreateConfigSerializer(required=False)
 
 
 class CreateCameraAlgorithmSerializer(serializers.Serializer):
