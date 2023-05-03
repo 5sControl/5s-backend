@@ -124,6 +124,9 @@ def create_camera_algorithms(
         data: List[Dict[str, Any]] = []
         response: Dict = {}
 
+        if CameraAlgorithm.objects.filter(algorithm=algorithm_obj, camera=camera_obj).exists():
+            continue
+
         request: Dict[str, Any] = {
             "camera_url": rtsp_link,
             "algorithm": algorithm_obj.name,
