@@ -31,6 +31,8 @@ def DeleteCamera(camera_instance):
 
     for camera_algorithm in query_list_cameraalgorithms:
         pid: int = camera_algorithm.process_id
+        if camera_algorithm.algorithm.name == 'operation_control':
+            IndexOperations.objects.get(camera=camera_algorithm.camera).delete()
         stop_camera_algorithm(pid)
         update_status_algorithm(pid)
 
