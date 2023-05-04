@@ -189,7 +189,7 @@ def create_camera_algorithms(
         print(f"New record -> {algorithm_obj.name} on camera {camera_obj.id}")
 
     for algorithm_name in algorithm_to_delete:
-        algorithm_pid: int = CameraAlgorithm.objects.get(algorithm__name=algorithm_name).process_id
+        algorithm_pid: int = CameraAlgorithm.objects.get(algorithm__name=algorithm_name, camera=camera_obj).process_id
         StopCameraAlgorithm(algorithm_pid)
         UpdateStatusAlgorithm(algorithm_pid)
 
