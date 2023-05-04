@@ -62,8 +62,9 @@ def process_item_status(data):
                 item_status = "low_stock_level"
             else:
                 item_status = "In stock"
-
+        else:
             item.current_stock_level = count
+
         print("item_status", item_status)
         item.status = item_status
         item.save()
