@@ -2,8 +2,7 @@ import requests
 
 from typing import Any, Dict, List
 
-from django.core.exceptions import ValidationError
-from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.hashers import make_password
 
 from src.Core.const import SERVER_URL
 
@@ -56,6 +55,7 @@ def create_camera(camera: Dict[str, str]) -> None:
     name: str = camera["name"]
     username: str = camera["username"]
     password: str = camera["password"]
+    hashed_password: str = make_password(password)
 
     camera_request: Dict[str, str] = {
         "ip": ip,
@@ -64,14 +64,11 @@ def create_camera(camera: Dict[str, str]) -> None:
         "password": password,
     }
 
-    if Camera.objects.filter(id=ip).exists():
-        return
-
     camera_obj, created = Camera.objects.update_or_create(
         id=ip,
         defaults={
             "username": username,
-            "password": password,
+            "password": hashed_password,
             "name": name,
         },
     )
@@ -88,7 +85,7 @@ def create_camera(camera: Dict[str, str]) -> None:
         "id": ip,
         "name": name,
         "username": username,
-        "password": password,
+        "password": hashed_password,
     }
 
     serializer = CameraModelSerializer(data=camera_data)
