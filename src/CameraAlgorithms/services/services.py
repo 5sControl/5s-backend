@@ -2,8 +2,6 @@ import requests
 
 from typing import Any, Dict, List
 
-from django.contrib.auth.hashers import make_password
-
 from src.Core.const import SERVER_URL
 
 from src.Core.exceptions import InvalidResponseError, SenderError
@@ -55,7 +53,6 @@ def create_camera(camera: Dict[str, str]) -> None:
     name: str = camera["name"]
     username: str = camera["username"]
     password: str = camera["password"]
-    hashed_password: str = make_password(password)
 
     camera_request: Dict[str, str] = {
         "ip": ip,
@@ -68,7 +65,7 @@ def create_camera(camera: Dict[str, str]) -> None:
         id=ip,
         defaults={
             "username": username,
-            "password": hashed_password,
+            "password": password,
             "name": name,
         },
     )
@@ -85,7 +82,7 @@ def create_camera(camera: Dict[str, str]) -> None:
         "id": ip,
         "name": name,
         "username": username,
-        "password": hashed_password,
+        "password": password,
     }
 
     serializer = CameraModelSerializer(data=camera_data)
