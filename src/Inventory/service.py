@@ -58,8 +58,7 @@ def process_item_status(data):
         if data_item[0]['multi_row']:
             print("red_line", red_line)
             if red_line:
-
-                item_status = "low_stock_level"
+                item_status = "Low stock level"
             else:
                 item_status = "In stock"
         else:
