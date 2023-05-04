@@ -61,8 +61,8 @@ def DeleteCamera(camera_instance):
 
     for camera_algorithm in query_list_cameraalgorithms:
         pid: int = camera_algorithm.process_id
-        StopCameraAlgorithm(pid)
-        UpdateStatusAlgorithm(pid)
+        stop_camera_algorithm(pid)
+        update_status_algorithm(pid)
 
     try:
         camera_id = camera_instance.id
@@ -95,6 +95,18 @@ def create_camera(camera: Dict[str, str]) -> None:
     if Camera.objects.filter(id=ip).exists():
         return
 
+    camera_obj, created = Camera.objects.update_or_create(
+        id=ip,
+        defaults={
+            "username": username,
+            "password": password,
+            "name": name,
+        },
+    )
+    if created:
+        camera_obj.save()
+        return
+
     try:
         Sender("add_camera", camera_request)
     except requests.exceptions.HTTPError as e:
@@ -117,8 +129,10 @@ def create_camera_algorithms(
     camera: Dict[str, str], algorithms: List[Dict[str, Any]]
 ) -> None:
     camera_obj = Camera.objects.get(id=camera["ip"])
-    new_records = [algorithm_data['name'] for algorithm_data in algorithms]
-    existing_algorithms = [ca.algorithm.name for ca in CameraAlgorithm.objects.filter(camera=camera_obj)]
+    new_records = [algorithm_data["name"] for algorithm_data in algorithms]
+    existing_algorithms = [
+        ca.algorithm.name for ca in CameraAlgorithm.objects.filter(camera=camera_obj)
+    ]
 
     algorithm_to_delete = set(existing_algorithms) - set(new_records)
     new_algorithms = set(new_records) - set(existing_algorithms)
@@ -126,7 +140,7 @@ def create_camera_algorithms(
     algorithms = [
         algorithm_data
         for algorithm_data in algorithms
-        if algorithm_data['name'] in new_algorithms
+        if algorithm_data["name"] in new_algorithms
     ]
 
     for algorithm in algorithms:
@@ -189,9 +203,11 @@ def create_camera_algorithms(
         print(f"New record -> {algorithm_obj.name} on camera {camera_obj.id}")
 
     for algorithm_name in algorithm_to_delete:
-        algorithm_pid: int = CameraAlgorithm.objects.get(algorithm__name=algorithm_name, camera=camera_obj).process_id
-        StopCameraAlgorithm(algorithm_pid)
-        UpdateStatusAlgorithm(algorithm_pid)
+        algorithm_pid: int = CameraAlgorithm.objects.get(
+            algorithm__name=algorithm_name, camera=camera_obj
+        ).process_id
+        stop_camera_algorithm(algorithm_pid)
+        update_status_algorithm(algorithm_pid)
 
         print(f"Successfully deleted -> {algorithm_name} with pid {algorithm_pid}")
 
@@ -212,7 +228,7 @@ def send_run_request(request: Dict[str, Any]) -> Dict[str, Any]:
     return response
 
 
-def StopCameraAlgorithm(pid: int) -> Dict[str, Any]:
+def stop_camera_algorithm(pid: int) -> Dict[str, Any]:
     cstm_port = None
     algorithm_name = CameraAlgorithm.objects.get(process_id=pid).algorithm.name
     if algorithm_name == "min_max_control":
@@ -227,7 +243,7 @@ def StopCameraAlgorithm(pid: int) -> Dict[str, Any]:
     return response
 
 
-def UpdateStatusAlgorithm(pid: int):
+def update_status_algorithm(pid: int):
     camera_algorithm = CameraAlgorithm.objects.filter(process_id=pid).first()
     if camera_algorithm:
         logs_service.delete_log(
