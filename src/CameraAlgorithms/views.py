@@ -67,14 +67,10 @@ class AlgorithmDetailApiView(generics.ListAPIView):
     pagination_class = NoPagination
 
 
-class AlgorithmProcessApiView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
+class AlgorithmProcessApiView(generics.ListAPIView):
     serializer_class = CameraAlgorithmFullSerializer
-
-    def get(self, request, *args, **kwargs):
-        process = CameraAlgorithm.objects.all()
-        serialized_data = self.serializer_class(process, many=True)
-        return Response(serialized_data.data, status=status.HTTP_200_OK)
+    queryset = CameraAlgorithm.objects.all()
+    pagination_class = NoPagination
 
 
 class StopProcessApiView(generics.GenericAPIView):
