@@ -8,10 +8,9 @@ from .views import (
     CreateCameraAlgorithmsApiView,
     AlgorithmDetailApiView,
     AlgorithmProcessApiView,
-    StopProcessApiView,
 )
 
-# camera
+
 urlpatterns = [
     path("camera/", CameraAPIView.as_view(), name="camera"),
     path("update-camera/", UpdateCameraAPIView.as_view(), name="camera-update"),
@@ -29,6 +28,5 @@ urlpatterns = [
         name="algorithms-available",
     ),
     path("get-process/", AlgorithmProcessApiView.as_view(), name="camera-process"),
-    path("stop-process/", StopProcessApiView.as_view(), name="algorithms-stop-process"),
     path("logs/", CameraAlgorithmLogListAPIView.as_view(), name="log"),
 ]

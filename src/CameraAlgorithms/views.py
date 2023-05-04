@@ -73,22 +73,6 @@ class DeleteCameraAPIView(generics.DestroyAPIView):
             return Response(result, status=status.HTTP_400_BAD_REQUEST)
 
 
-class StopProcessApiView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated, IsSuperuserPermission | IsStaffPermission]
-    serializer_class = StopAlgorithmSerializer
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        pid = serializer.validated_data["pid"]
-        StopCameraAlgorithm(pid)
-        UpdateStatusAlgorithm(pid)
-        return Response(
-            {"status": True, "message": f"PID {pid} was successfully stopped"},
-            status=status.HTTP_200_OK,
-        )
-
-
 class CreateCameraAlgorithmsApiView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated, IsSuperuserPermission | IsStaffPermission]
     serializer_class = CreateCameraAlgorithmSerializer
