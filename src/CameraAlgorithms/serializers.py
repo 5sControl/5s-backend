@@ -55,12 +55,11 @@ class AlgorithmSerializer(serializers.ModelSerializer):
         ref_name = "algo-serializer"
 
 
-class AlgorithmStatusSerializer(serializers.Serializer):
-    true = AlgorithmSerializer(many=True)
-    false = AlgorithmSerializer(many=True)
-
+class AlgorithmDetailSerializer(serializers.ModelSerializer):
     class Meta:
-        ref_name = "algo-status"
+        model = Algorithm
+        fields = "__all__"
+        ref_name = "algo-serializer"
 
 
 class StopAlgorithmSerializer(serializers.Serializer):
