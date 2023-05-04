@@ -9,7 +9,7 @@ DATABASES = {
         'NAME': 'fiveScontrol',
         'USER': 'admin',
         'PASSWORD': 'just4Taqtile',
-        'HOST': SERVER_URL[7:],
+        'HOST': 'localhost',
         'PORT': '5432',
     }
 }
