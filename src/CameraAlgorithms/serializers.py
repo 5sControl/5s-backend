@@ -84,12 +84,7 @@ class CameraAlgorithmFullSerializer(serializers.ModelSerializer):
     class Meta:
         model = CameraAlgorithm
         ref_name = "camera-algor-full"
-        fields = [
-            "camera",
-            "algorithm",
-            "process_id",
-            "is_active"
-        ]
+        fields = ["camera", "algorithm", "process_id", "is_active"]
 
 
 class CameraAlgorithmLogSerializer(serializers.ModelSerializer):
