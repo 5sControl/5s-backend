@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from src.Algorithms.models import Algorithm, CameraAlgorithm, CameraAlgorithmLog
 from src.Cameras.models import Camera
+from src.Core.paginators import NoPagination
 
 from src.Core.permissions import IsStaffPermission, IsSuperuserPermission
 
@@ -14,7 +15,7 @@ from .services.services import (
     UpdateStatusAlgorithm,
 )
 from .serializers import (
-    AlgorithmStatusSerializer,
+    AlgorithmDetailSerializer,
     CameraAlgorithmFullSerializer,
     CameraModelSerializer,
     CreateCameraAlgorithmSerializer,
@@ -24,13 +25,25 @@ from .serializers import (
 )
 
 
-class CameraAPIView(generics.GenericAPIView):
+class CameraAPIView(generics.ListAPIView):
+    serializer_class = CameraModelSerializer
     permission_classes = [IsAuthenticated]
+    pagination_class = NoPagination
+    queryset = Camera.objects.all()
 
-    def get(self, request, *args, **kwargs):
-        cameras = Camera.objects.all()
-        serializer = CameraModelSerializer(cameras, many=True)
-        return Response(serializer.data)
+
+class AlgorithmDetailApiView(generics.ListAPIView):
+    serializer_class = AlgorithmDetailSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = Algorithm.objects.all()
+    pagination_class = NoPagination
+
+
+class AlgorithmProcessApiView(generics.ListAPIView):
+    serializer_class = CameraAlgorithmFullSerializer
+    queryset = CameraAlgorithm.objects.all()
+    permission_classes = [IsAuthenticated]
+    pagination_class = NoPagination
 
 
 class UpdateCameraAPIView(generics.GenericAPIView):
@@ -58,27 +71,6 @@ class DeleteCameraAPIView(generics.DestroyAPIView):
             return Response(result, status=status.HTTP_200_OK)
         else:
             return Response(result, status=status.HTTP_400_BAD_REQUEST)
-
-
-class AlgorithmStatusApiView(generics.GenericAPIView):
-    serializer_class = AlgorithmStatusSerializer
-
-    def get(self, request, *args, **kwargs):
-        algorithms = Algorithm.objects.all()
-        algorithm_data = {
-            algorithm.name: algorithm.is_available for algorithm in algorithms
-        }
-        return Response(algorithm_data, status=status.HTTP_200_OK)
-
-
-class AlgorithmProcessApiView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
-    serializer_class = CameraAlgorithmFullSerializer
-
-    def get(self, request, *args, **kwargs):
-        process = CameraAlgorithm.objects.all()
-        serialized_data = self.serializer_class(process, many=True)
-        return Response(serialized_data.data, status=status.HTTP_200_OK)
 
 
 class StopProcessApiView(generics.GenericAPIView):
