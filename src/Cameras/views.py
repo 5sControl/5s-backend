@@ -8,7 +8,6 @@ from src.Cameras.models import Camera
 from src.Cameras.serializers import (
     CameraSerializer,
 )
-from src.Cameras.utils import zip_maker
 from src.Core.permissions import IsStaffPermission, IsSuperuserPermission
 
 from .service import link_generator, camera_service
@@ -94,11 +93,3 @@ class GetRtspCamerasLinkByIpAPIView(APIView):
         result = link_generator.get_camera_rtsp_link_by_camera(request.data)
         return Response({"result": result})
 
-
-class GetDataAPIView(APIView):
-    """Make zip"""
-
-    def post(self, request, *args, **kwargs):
-        algorithm = request.data["algorithm"]
-        result = zip_maker.create_zip(algorithm)
-        return Response(result)
