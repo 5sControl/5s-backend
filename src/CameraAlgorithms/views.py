@@ -25,13 +25,25 @@ from .serializers import (
 )
 
 
-class CameraAPIView(generics.GenericAPIView):
+class CameraAPIView(generics.ListAPIView):
+    serializer_class = CameraModelSerializer()
     permission_classes = [IsAuthenticated]
+    pagination_class = NoPagination
+    queryset = Camera.objects.all()
 
-    def get(self, request, *args, **kwargs):
-        cameras = Camera.objects.all()
-        serializer = CameraModelSerializer(cameras, many=True)
-        return Response(serializer.data)
+
+class AlgorithmDetailApiView(generics.ListAPIView):
+    serializer_class = AlgorithmDetailSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = Algorithm.objects.all()
+    pagination_class = NoPagination
+
+
+class AlgorithmProcessApiView(generics.ListAPIView):
+    serializer_class = CameraAlgorithmFullSerializer
+    queryset = CameraAlgorithm.objects.all()
+    permission_classes = [IsAuthenticated]
+    pagination_class = NoPagination
 
 
 class UpdateCameraAPIView(generics.GenericAPIView):
@@ -59,18 +71,6 @@ class DeleteCameraAPIView(generics.DestroyAPIView):
             return Response(result, status=status.HTTP_200_OK)
         else:
             return Response(result, status=status.HTTP_400_BAD_REQUEST)
-
-
-class AlgorithmDetailApiView(generics.ListAPIView):
-    serializer_class = AlgorithmDetailSerializer
-    queryset = Algorithm.objects.all()
-    pagination_class = NoPagination
-
-
-class AlgorithmProcessApiView(generics.ListAPIView):
-    serializer_class = CameraAlgorithmFullSerializer
-    queryset = CameraAlgorithm.objects.all()
-    pagination_class = NoPagination
 
 
 class StopProcessApiView(generics.GenericAPIView):
