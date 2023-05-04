@@ -12,8 +12,8 @@ class StatusReportChoice(models.TextChoices):
 class Report(models.Model):
     """Model report"""
 
-    algorithm = models.ForeignKey(Algorithm, on_delete=models.DO_NOTHING)
-    camera = models.ForeignKey(Camera, on_delete=models.DO_NOTHING)
+    algorithm = models.ForeignKey(Algorithm, on_delete=models.CASCADE)
+    camera = models.ForeignKey(Camera, on_delete=models.CASCADE)
     start_tracking = models.CharField(max_length=100, blank=True, null=True)
     stop_tracking = models.CharField(max_length=100, blank=True, null=True)
     violation_found = models.BooleanField(blank=True, null=True, default=None)
@@ -36,7 +36,7 @@ class SkanyReport(models.Model):
     """
     Models skany report 'id'
     """
-    report = models.ForeignKey(Report, on_delete=models.DO_NOTHING)
+    report = models.ForeignKey(Report, on_delete=models.CASCADE)
     skany_index = models.IntegerField(null=True, verbose_name="sany index")
 
     def __str__(self):
