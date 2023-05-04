@@ -26,36 +26,6 @@ def CreateCameraAlgorithms(data: Dict[str, Any]) -> None:
     create_camera_algorithms(camera, algorithms)
 
 
-def UpdateCameraInfo(camera_data):
-    camera_id = camera_data["ip"]
-    camera_name = camera_data.get("username")
-
-    try:
-        camera = Camera.objects.get(id=camera_id)
-    except ObjectDoesNotExist:
-        return {
-            "status": False,
-            "message": f"Camera with id {camera_id} does not exist",
-        }
-
-    if camera_name is not None:
-        camera.username = camera_name
-
-    try:
-        camera.full_clean()
-        camera.save()
-    except ValidationError as e:
-        return {
-            "status": False,
-            "message": f"Failed to update camera with the id {camera_id}: {str(e)}",
-        }
-    else:
-        return {
-            "status": True,
-            "message": f"Camera with the id {camera_id} has been successfully updated",
-        }
-
-
 def DeleteCamera(camera_instance):
     query_list_cameraalgorithms = CameraAlgorithm.objects.filter(camera=camera_instance)
 
