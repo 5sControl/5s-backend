@@ -70,6 +70,7 @@ def process_item_status(data):
 
         item_data["status"] = item_status
         item_data["low_stock_level"] = min_item
+        item_data["red_line"] = red_line
 
         result.append(item_data)
 
