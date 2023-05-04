@@ -57,7 +57,9 @@ def process_item_status(data):
 
         if not data_item[0]['multi_row']:
             item.current_stock_level = count
-            if data_item[0]['multi_row']:
+            if red_line:
+                item_status = "low_stock_level"
+            else:
                 item_status = "In stock"
         item.status = item_status
         item.save()
