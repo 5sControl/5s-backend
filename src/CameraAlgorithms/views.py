@@ -9,17 +9,14 @@ from src.Core.permissions import IsStaffPermission, IsSuperuserPermission
 
 from .services.services import (
     CreateCameraAlgorithms,
-    StopCameraAlgorithm,
     UpdateCameraInfo,
     DeleteCamera,
-    UpdateStatusAlgorithm,
 )
 from .serializers import (
     AlgorithmDetailSerializer,
     CameraAlgorithmFullSerializer,
     CameraModelSerializer,
     CreateCameraAlgorithmSerializer,
-    StopAlgorithmSerializer,
     UpdateCameraSerializer,
     CameraAlgorithmLogSerializer,
 )
