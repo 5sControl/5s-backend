@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from src.Algorithms.models import Algorithm, CameraAlgorithm, CameraAlgorithmLog
 from src.Cameras.models import Camera
+from src.Core.paginators import NoPagination
 
 from src.Core.permissions import IsStaffPermission, IsSuperuserPermission
 
@@ -63,6 +64,7 @@ class DeleteCameraAPIView(generics.DestroyAPIView):
 class AlgorithmDetailApiView(generics.ListAPIView):
     serializer_class = AlgorithmDetailSerializer
     queryset = Algorithm.objects.all()
+    pagination_class = NoPagination
 
 
 class AlgorithmProcessApiView(generics.GenericAPIView):
