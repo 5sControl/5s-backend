@@ -14,7 +14,7 @@ from .services.services import (
     UpdateStatusAlgorithm,
 )
 from .serializers import (
-    AlgorithmStatusSerializer,
+    AlgorithmDetailSerializer,
     CameraAlgorithmFullSerializer,
     CameraModelSerializer,
     CreateCameraAlgorithmSerializer,
@@ -60,15 +60,9 @@ class DeleteCameraAPIView(generics.DestroyAPIView):
             return Response(result, status=status.HTTP_400_BAD_REQUEST)
 
 
-class AlgorithmStatusApiView(generics.GenericAPIView):
-    serializer_class = AlgorithmStatusSerializer
-
-    def get(self, request, *args, **kwargs):
-        algorithms = Algorithm.objects.all()
-        algorithm_data = {
-            algorithm.name: algorithm.is_available for algorithm in algorithms
-        }
-        return Response(algorithm_data, status=status.HTTP_200_OK)
+class AlgorithmDetailApiView(generics.ListAPIView):
+    serializer_class = AlgorithmDetailSerializer
+    queryset = Algorithm.objects.all()
 
 
 class AlgorithmProcessApiView(generics.GenericAPIView):

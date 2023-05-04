@@ -6,7 +6,7 @@ from .views import (
     UpdateCameraAPIView,
     DeleteCameraAPIView,
     CreateCameraAlgorithmsApiView,
-    AlgorithmStatusApiView,
+    AlgorithmDetailApiView,
     AlgorithmProcessApiView,
     StopProcessApiView,
 )
@@ -24,8 +24,8 @@ urlpatterns = [
         name="camera-algorithm-create",
     ),
     path(
-        "available-process/",
-        AlgorithmStatusApiView.as_view(),
+        "algorithms-detail/",
+        AlgorithmDetailApiView.as_view(),
         name="algorithms-available",
     ),
     path("get-process/", AlgorithmProcessApiView.as_view(), name="camera-process"),
