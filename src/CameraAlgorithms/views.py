@@ -26,7 +26,7 @@ from .serializers import (
 
 
 class CameraAPIView(generics.ListAPIView):
-    serializer_class = CameraModelSerializer()
+    serializer_class = CameraModelSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = NoPagination
     queryset = Camera.objects.all()
