@@ -65,7 +65,7 @@ def process_item_status(data):
         else:
             item.current_stock_level = count
 
-        print("item_status", item_status)
+        print(f"item_id=={item.id}, item_status {item_status}")
         item.status = item_status
         item.save()
 
