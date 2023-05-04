@@ -6,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.viewsets import ModelViewSet
+from src.Core.paginators import OrderViewPaginnator
 
 from src.MsSqlConnector.connector import connector as connector_service
 from src.OrderView.models import IndexOperations
@@ -18,7 +19,6 @@ from src.OrderView.services.operation_service import operation_service
 from src.OrderView.services.order_list_service import order_list_service
 from src.OrderView.services.order_service import order_service
 
-from src.OrderView.utils import OrderViewPaginnator
 from src.MsSqlConnector.connector import connector
 
 
