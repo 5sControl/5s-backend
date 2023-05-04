@@ -3,7 +3,6 @@ from django.urls import path
 from .views import (
     CameraAPIView,
     CameraAlgorithmLogListAPIView,
-    UpdateCameraAPIView,
     DeleteCameraAPIView,
     CreateCameraAlgorithmsApiView,
     AlgorithmDetailApiView,
@@ -13,7 +12,6 @@ from .views import (
 
 urlpatterns = [
     path("camera/", CameraAPIView.as_view(), name="camera"),
-    path("update-camera/", UpdateCameraAPIView.as_view(), name="camera-update"),
     path(
         "delete-camera/<str:pk>/", DeleteCameraAPIView.as_view(), name="camera-delete"
     ),

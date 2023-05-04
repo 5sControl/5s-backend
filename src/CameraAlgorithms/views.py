@@ -43,20 +43,6 @@ class AlgorithmProcessApiView(generics.ListAPIView):
     pagination_class = NoPagination
 
 
-class UpdateCameraAPIView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated, IsSuperuserPermission | IsStaffPermission]
-    serializer_class = UpdateCameraSerializer
-
-    def patch(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        result = UpdateCameraInfo(serializer.validated_data)
-        if result["status"]:
-            return Response(result, status=status.HTTP_200_OK)
-        else:
-            return Response(result, status=status.HTTP_400_BAD_REQUEST)
-
-
 class DeleteCameraAPIView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated, IsSuperuserPermission | IsStaffPermission]
     queryset = Camera.objects.all()
