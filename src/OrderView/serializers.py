@@ -27,3 +27,15 @@ class IndexStanowiskoSerializer(serializers.ModelSerializer):
             "type_operation",
             "camera",
         ]
+
+
+class DeleteConnectionSerializer(serializers.Serializer):
+    pass
+
+
+class OperationNameSerializer(serializers.Serializer):
+    pass
+
+
+class OrderDataByZlecenieSerializer(serializers.ListSerializer):
+    pass

@@ -12,7 +12,10 @@ from src.MsSqlConnector.connector import connector as connector_service
 from src.OrderView.models import IndexOperations
 from src.OrderView.serializers import (
     DatabaseConnectionSerializer,
+    DeleteConnectionSerializer,
     IndexStanowiskoSerializer,
+    OperationNameSerializer,
+    OrderDataByZlecenieSerializer,
     ProductSerializer,
 )
 from src.OrderView.services.operation_service import operation_service
@@ -60,6 +63,7 @@ class GetAllProductAPIView(generics.GenericAPIView):
 
 class GetOrderDataByZlecenieAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = OrderDataByZlecenieSerializer
 
     @method_decorator(cache_page(30))
     @connector_service.check_database_connection
@@ -70,6 +74,7 @@ class GetOrderDataByZlecenieAPIView(generics.GenericAPIView):
 
 class OperationNameApiView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = OperationNameSerializer
 
     @method_decorator(cache_page(30))
     @connector_service.check_database_connection
@@ -111,6 +116,7 @@ class CreateDatabaseConnectionAPIView(generics.CreateAPIView):
 
 class DeleteConectionAPIView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = DeleteConnectionSerializer
 
     def post(self, request, id):
         connector_service.delete_connection(id)

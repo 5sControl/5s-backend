@@ -16,7 +16,6 @@ router = DefaultRouter()
 router.register(r"index_stanowisko", IndexOperationsView, basename="index_stanowisko")
 
 urlpatterns = [
-    # get data
     path(
         "by-order/<str:zlecenie_id>/",
         GetOrderDataByZlecenieAPIView.as_view(),
