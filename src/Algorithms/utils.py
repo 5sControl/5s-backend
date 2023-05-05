@@ -20,7 +20,7 @@ class YoloProccesing:
         }
         print("RESPONSE FOR ALGORITHM: ", response)
         port = 3333
-        if algorithm.name == 'min_max_control':
+        if algorithm.name == 'min_max_control' or algorithm.name == 'idle_control':
             port = 3020
         request = requests.post(
             url=f"{SERVER_URL}:{port}/run",
@@ -30,7 +30,7 @@ class YoloProccesing:
         request_json = request.json()
         request_json["server_url"] = SERVER_URL
         try:
-            if algorithm.name == 'min_max_control':
+            if algorithm.name == 'min_max_control' or algorithm.name == 'idle_control':
                 min_max_ids.append(request_json["pid"])
         except:
             print('pid not exist')
