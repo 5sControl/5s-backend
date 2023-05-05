@@ -15,9 +15,9 @@ from ..serializers import CameraModelSerializer
 from ..services.logs_services import logs_service
 
 
-def CreateCameraAlgorithms(data: Dict[str, Any]) -> None:
-    camera: Dict[str, str] = data["camera"]
-    algorithms: List[Dict[str, Any]] = data["algorithms"]
+def CreateCameraAlgorithms(camera_algorithm_data: Dict[str, Any]) -> None:
+    camera: Dict[str, str] = camera_algorithm_data["camera"]
+    algorithms: List[Dict[str, Any]] = camera_algorithm_data["algorithms"]
 
     create_camera(camera)
     create_camera_algorithms(camera, algorithms)
@@ -69,7 +69,7 @@ def create_camera(camera: Dict[str, str]) -> None:
             "name": name,
         },
     )
-    if created:
+    if not created:
         camera_obj.save()
         return
 
