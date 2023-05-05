@@ -24,44 +24,44 @@ def process_item_status(data):
         image_path = item_data['image_item']
         level_previous_status = data_item[0]['status']
         item = Items.objects.filter(id=item_data['itemId']).first()
-
-        if count == 0:
-            item_status = "Out of stock"
-            if item.prev_status == "Low stock level":
-                try:
-                    item.prev_status = None
-                    send_email(item, image_path, count, item_status)
-                except Exception as e:
-                    print(f"Email notification errors: {e}")
-            else:
-                if item.prev_status != None:
-                    item.prev_status = item.status
-
-        elif (count > 0 and count <= min_item) or red_line == True and data_item[0]['multi_row']:
-            item_status = "Low stock level"
-            if level_previous_status == "In stock":
-                previous_status = "Low stock level"
-                try:
-                    send_email(item, image_path, count, item_status)
-                except Exception as e:
-                    print(f"Email notification errors: {e}")
-            elif item.prev_status != None:
-                item.prev_status = item.status
-
-        else:
-            item_status = "In stock"
-            if item.prev_status == None:
-                item.prev_status = "In stock"
-            else:
-                item.prev_status = item.status
-
         if data_item[0]['multi_row']:
             print("red_line", red_line)
             if red_line:
                 item_status = "Low stock level"
+                item.current_stock_level = min_item - 1
             else:
                 item_status = "In stock"
+                item.current_stock_level = min_item + 1
         else:
+            if count == 0:
+                item_status = "Out of stock"
+                if item.prev_status == "Low stock level":
+                    try:
+                        item.prev_status = None
+                        send_email(item, image_path, count, item_status)
+                    except Exception as e:
+                        print(f"Email notification errors: {e}")
+                else:
+                    if item.prev_status != None:
+                        item.prev_status = item.status
+
+            elif (count > 0 and count <= min_item) or red_line == True and data_item[0]['multi_row']:
+                item_status = "Low stock level"
+                if level_previous_status == "In stock":
+                    previous_status = "Low stock level"
+                    try:
+                        send_email(item, image_path, count, item_status)
+                    except Exception as e:
+                        print(f"Email notification errors: {e}")
+                elif item.prev_status != None:
+                    item.prev_status = item.status
+
+            else:
+                item_status = "In stock"
+                if item.prev_status == None:
+                    item.prev_status = "In stock"
+                else:
+                    item.prev_status = item.status
             item.current_stock_level = count
 
         print(f"item_id=={item.id}, item_status {item_status}")
