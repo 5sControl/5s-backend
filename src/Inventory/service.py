@@ -29,11 +29,11 @@ def process_item_status(data):
             if red_line:
                 item_status = "Low stock level"
                 item.current_stock_level = min_item - 1
-                item_data["low_stock_level"] = min_item - 1
+                item_data["count"] = min_item - 1
             else:
                 item_status = "In stock"
                 item.current_stock_level = min_item + 1
-                item_data["low_stock_level"] = min_item + 1
+                item_data["count"] = min_item + 1
         else:
             if count == 0:
                 item_status = "Out of stock"
@@ -75,7 +75,7 @@ def process_item_status(data):
         item_data["red_line"] = red_line
 
         result.append(item_data)
-
+        print(item_data)
     return result
 
 
