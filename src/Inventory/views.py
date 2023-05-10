@@ -106,7 +106,7 @@ class ItemsHistoryViewSet(APIView):
         if item_id:
             queryset = queryset.filter(extra__icontains=f'"itemId": {item_id}')
 
-        queryset = queryset.order_by("algorithm__name", "camera__id")
+        queryset = queryset.order_by("algorithm__name", "camera__id", "id")
 
         serializer = ReportSerializers(queryset, many=True)
 
