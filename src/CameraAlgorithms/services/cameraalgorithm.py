@@ -12,7 +12,7 @@ from src.Cameras.models import Camera
 from src.Algorithms.models import Algorithm, CameraAlgorithm
 
 from ..serializers import CameraModelSerializer
-from ..services.logs_services import logs_service
+from .logs_services import logs_service
 
 
 def CreateCameraAlgorithms(camera_algorithm_data: Dict[str, Any]) -> None:
@@ -70,7 +70,6 @@ def create_camera(camera: Dict[str, str]) -> None:
         },
     )
     if not created:
-        camera_obj.save()
         return
 
     try:
