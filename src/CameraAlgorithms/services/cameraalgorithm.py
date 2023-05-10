@@ -69,7 +69,7 @@ def create_camera(camera: Dict[str, str]) -> None:
             "name": name,
         },
     )
-    if not created:
+    if created:
         return
 
     try:
