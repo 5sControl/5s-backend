@@ -5,15 +5,19 @@ from src.Cameras.service import link_generator
 
 from src.Algorithms.models import CameraAlgorithm
 from src.Core.const import SERVER_URL
-MIN_MAX_PYTHON = os.environ.get("MIN_MAX_PYTHON")
+
 IDLE_PYTHON = os.environ.get("IDLE_PYTHON")
-IDLE_PYTHON = IDLE_PYTHON.lower() == "true"
-MIN_MAX_PYTHON = MIN_MAX_PYTHON.lower() == "true"
+IDLE_PYTHON = IDLE_PYTHON.lower() == "true" if IDLE_PYTHON is not None else False
+
+MIN_MAX_PYTHON = os.environ.get("MIN_MAX_PYTHON")
+MIN_MAX_PYTHON = MIN_MAX_PYTHON.lower() == "true" if MIN_MAX_PYTHON is not None else False
+
 python_algorithms = []
+
 
 class YoloProccesing:
     def start_yolo_processing(
-        self, camera, algorithm, data=None
+            self, camera, algorithm, data=None
     ) -> dict:
         rtsp_camera_url = link_generator.get_camera_rtsp_link_by_camera(camera)
         response = {
