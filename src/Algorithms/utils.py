@@ -5,7 +5,11 @@ from src.Cameras.service import link_generator
 
 from src.Algorithms.models import CameraAlgorithm
 from src.Core.const import SERVER_URL
-min_max_ids = []
+MIN_MAX_PYTHON = os.environ.get("MIN_MAX_PYTHON")
+IDLE_PYTHON = os.environ.get("IDLE_PYTHON")
+IDLE_PYTHON = IDLE_PYTHON.lower() == "true"
+MIN_MAX_PYTHON = MIN_MAX_PYTHON.lower() == "true"
+python_algorithms = []
 
 class YoloProccesing:
     def start_yolo_processing(
@@ -18,20 +22,27 @@ class YoloProccesing:
             "server_url": SERVER_URL,
             "extra": data,
         }
-        print("RESPONSE FOR ALGORITHM: ", response)
+        print("REQUEST FOR ALGORITHM: ", response)
+
         port = 3333
-        if algorithm.name == 'min_max_control' or algorithm.name == 'idle_control':
+        isPythonAlgorithm = False
+        if algorithm.name == 'min_max_control' and MIN_MAX_PYTHON:
             port = 3020
+            isPythonAlgorithm = True
+        if algorithm.name == 'idle_control' and IDLE_PYTHON:
+            port = 3020
+            isPythonAlgorithm = True
         request = requests.post(
             url=f"{SERVER_URL}:{port}/run",
             json=response,
         )
         print(f"ALGORITHM {algorithm.name}")
         request_json = request.json()
+        print(request_json, 'request from algorithms')
         request_json["server_url"] = SERVER_URL
         try:
-            if algorithm.name == 'min_max_control' or algorithm.name == 'idle_control':
-                min_max_ids.append(request_json["pid"])
+            if isPythonAlgorithm:
+                python_algorithms.append(request_json["pid"])
         except:
             print('pid not exist')
 
@@ -40,10 +51,10 @@ class YoloProccesing:
     def stop_process(self, pid: int):
         is_pid_exists = self.is_pid_exists(pid)
         port = 3333
-        if pid in min_max_ids:
+        if pid in python_algorithms:
             port = 3020
-        while pid in min_max_ids:
-            min_max_ids.remove(pid)
+        while pid in python_algorithms:
+            python_algorithms.remove(pid)
         url = f"{SERVER_URL}:{port}/stop"
 
         if not is_pid_exists:
