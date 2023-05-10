@@ -28,7 +28,7 @@ def DeleteCamera(camera_instance):
 
     for camera_algorithm in query_list_cameraalgorithms:
         pid: int = camera_algorithm.process_id
-        if camera_algorithm.algorithm.name == 'operation_control':
+        if camera_algorithm.algorithm.name == "operation_control":
             IndexOperations.objects.get(camera=camera_algorithm.camera).delete()
         stop_camera_algorithm(pid)
         update_status_algorithm(pid)
@@ -61,28 +61,24 @@ def create_camera(camera: Dict[str, str]) -> None:
         "password": password,
     }
 
-    camera_obj, created = Camera.objects.update_or_create(
-        id=ip,
-        defaults={
-            "username": username,
-            "password": password,
-            "name": name,
-        },
-    )
-    if created:
-        return
-
-    try:
-        Sender("add_camera", camera_request)
-    except requests.exceptions.HTTPError as e:
-        raise SenderError("/add_camera") from e
-
     camera_data: Dict[str, str] = {
         "id": ip,
         "name": name,
         "username": username,
         "password": password,
     }
+
+    try:
+        response = Sender("add_camera", camera_request)
+    except requests.exceptions.HTTPError as e:
+        raise SenderError("/add_camera") from e
+    if not response["status"]:
+        raise InvalidResponseError("/stop", response["status"])
+
+    camera_qs = Camera.objects.filter(id=ip, name=name, username=username, password=password)
+    if camera_qs.exists():
+        camera_qs.update(name=name, username=username, password=password)
+        return
 
     serializer = CameraModelSerializer(data=camera_data)
     serializer.is_valid(raise_exception=True)
