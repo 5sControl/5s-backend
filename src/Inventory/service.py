@@ -25,7 +25,7 @@ def process_item_status(data):
         level_previous_status = data_item[0]['status']
         item = Items.objects.filter(id=item_data['itemId']).first()
         if data_item[0]['multi_row']:
-            print("red_line", red_line)
+
             if red_line:
                 item_status = "Low stock level"
                 item.current_stock_level = min_item - 1
@@ -67,7 +67,8 @@ def process_item_status(data):
             item.current_stock_level = count
             item_data["low_stock_level"] = min_item
 
-        print(f"item_id=={item.id}, item_status {item_status}")
+        print(f"item_id=={item.id}, item_status {item_status}, "
+              f"red_line == {red_line}, multi_row == {data_item[0]['multi_row']}")
         item.status = item_status
         item.save()
 
@@ -75,7 +76,6 @@ def process_item_status(data):
         item_data["red_line"] = red_line
 
         result.append(item_data)
-        print(item_data)
     return result
 
 
@@ -94,7 +94,6 @@ def stopped_process(camera):
 def started_process(camera_item):
     """Started process algorithm MinMax"""
     from src.Algorithms.service import algorithms_services
-    # started process
     camera = Camera.objects.filter(id=camera_item)
     algorithm = Algorithm.objects.filter(name='min_max_control')
     algorithms_services.create_new_records(cameras=camera, algorithm=algorithm[0])
