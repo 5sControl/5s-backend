@@ -7,6 +7,8 @@ from src.Algorithms.models import CameraAlgorithm
 from src.Core.const import SERVER_URL
 MIN_MAX_PYTHON = os.environ.get("MIN_MAX_PYTHON")
 IDLE_PYTHON = os.environ.get("IDLE_PYTHON")
+IDLE_PYTHON = IDLE_PYTHON.lower() == "true"
+MIN_MAX_PYTHON = MIN_MAX_PYTHON.lower() == "true"
 python_algorithms = []
 
 class YoloProccesing:
