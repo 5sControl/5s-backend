@@ -20,7 +20,7 @@ class YoloProccesing:
             "server_url": SERVER_URL,
             "extra": data,
         }
-        print("RESPONSE FOR ALGORITHM: ", response)
+        print("REQUEST FOR ALGORITHM: ", response)
 
         port = 3333
         isPythonAlgorithm = False
@@ -36,6 +36,7 @@ class YoloProccesing:
         )
         print(f"ALGORITHM {algorithm.name}")
         request_json = request.json()
+        print(request_json, 'request from algorithms')
         request_json["server_url"] = SERVER_URL
         try:
             if isPythonAlgorithm:
