@@ -130,7 +130,7 @@ class ReportListView(APIView):
         if algorithm_name:
             queryset = queryset.exclude(algorithm__name='min_max_control').filter(algorithm__name=algorithm_name)
 
-        queryset = queryset.order_by("algorithm__name", "camera__id")
+        queryset = queryset.order_by("algorithm__name", "camera__id", "id")
 
         serializer = ReportSerializers(queryset, many=True)
         return Response(serializer.data)
