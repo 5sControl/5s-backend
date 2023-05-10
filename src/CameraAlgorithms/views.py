@@ -7,7 +7,7 @@ from src.Core.paginators import NoPagination
 
 from src.Core.permissions import IsStaffPermission, IsSuperuserPermission
 
-from .services.services import (
+from .services.cameraalgorithm import (
     CreateCameraAlgorithms,
     DeleteCamera,
 )
