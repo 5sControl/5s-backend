@@ -9,3 +9,9 @@ class InvalidResponseError(Exception):
         self.path = path
         self.status = status
         super().__init__(f"Invalid response. Path: {path}, status: {status}")
+
+
+class DatabaseConnectioneError(Exception):
+    def __init__(self, func_name):
+        self.func_name = func_name
+        super().__init__(f"Database connection error. Function: {func_name}")

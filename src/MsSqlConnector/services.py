@@ -1,19 +1,29 @@
+from src.Core.exceptions import DatabaseConnectioneError
 from src.MsSqlConnector.connector import connector
 
 
 class MsSqlConnector:
-    def get_max_skany_indeks_by_stanowisko(self, stanowisko=50):
+    def extra_data(self, stanowisko: int):
         connection = connector.get_database_connection()
         if not connection:
-            return False
-
-        connection = connector.get_database_connection()
+            raise DatabaseConnectioneError("get_max_skany_indeks_by_stanowisko")
 
         with connection.cursor() as cursor:
             cursor.execute(
-                "SELECT MAX(indeks) FROM skany WHERE stanowisko = ?", (stanowisko,)
+                "SELECT MAX(s.indeks), z.IndeksZlecenia, z.DataWejscia "
+                "FROM skany s "
+                "JOIN Skany_vs_Zlecenia svz ON s.Indeks = svz.IndeksSkanu "
+                "JOIN Zlecenia z ON z.Indeks = svz.IndeksZlecenia "
+                "WHERE s.stanowisko = ?",
+                (stanowisko,)
             )
-            result = cursor.fetchone()[0]
+            row = cursor.fetchone()
+
+        result = {
+            "skany_index": row[0],
+            "zlecenia_index": row[1],
+            "execution_date": row[2],
+        }
 
         return result
 
