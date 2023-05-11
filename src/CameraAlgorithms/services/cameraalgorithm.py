@@ -81,8 +81,6 @@ def create_camera(camera: Dict[str, str]) -> None:
         return
 
     serializer = CameraModelSerializer(data=camera_data)
-    serializer.is_valid(raise_exception=True)
-
     serializer.save()
 
 
