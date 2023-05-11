@@ -1,7 +1,5 @@
 from celery.schedules import crontab
 
-from src.Core.const import SERVER_URL
-
 
 DATABASES = {
     'default': {
