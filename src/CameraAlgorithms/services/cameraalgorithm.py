@@ -80,8 +80,7 @@ def create_camera(camera: Dict[str, str]) -> None:
         camera_qs.update(name=name, username=username, password=password)
         return
 
-    serializer = CameraModelSerializer(data=camera_data)
-    serializer.save()
+    Camera.objects.create(**camera_data, is_active=True)
 
 
 def create_camera_algorithms(
