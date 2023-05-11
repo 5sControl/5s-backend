@@ -37,7 +37,10 @@ class SkanyReport(models.Model):
     Models skany report 'id'
     """
     report = models.ForeignKey(Report, on_delete=models.CASCADE)
-    skany_index = models.IntegerField(null=True, verbose_name="sany index")
+    skany_index = models.IntegerField(null=True, verbose_name="skany index")
+    zlecenie = models.CharField(max_length=50, blank=True, null=True)
+    violation_found = models.BooleanField(blank=True, null=True)
+    execution_date = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.id}"

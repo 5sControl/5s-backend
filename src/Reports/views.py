@@ -20,7 +20,7 @@ from rest_framework.response import Response
 from src.Reports.serializers import ReportSerializers
 
 from src.Inventory.service import process_item_status
-from src.Reports.service import edit_extra, create_records_skany
+from src.Reports.service import edit_extra, create_skanyreport
 
 
 class ActionViewSet(viewsets.ModelViewSet):
@@ -92,7 +92,7 @@ class ActionsWithPhotos(APIView):
                         image=image, date=date, report_id=action
                     )
                 if request.data.get("algorithm") == "operation_control":
-                    create_records_skany(action, extra)
+                    create_skanyreport(action, extra, not violation_found)
             else:
                 action.delete()
                 return Response(
