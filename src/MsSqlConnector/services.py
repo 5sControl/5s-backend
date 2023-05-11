@@ -3,25 +3,28 @@ from src.MsSqlConnector.connector import connector
 
 
 class MsSqlConnector:
-    def extra_data(self, stanowisko: int):
+    def operation_control_data(self, stanowisko: int):
         connection = connector.get_database_connection()
         if not connection:
             raise DatabaseConnectioneError("get_max_skany_indeks_by_stanowisko")
 
         with connection.cursor() as cursor:
             cursor.execute(
-                "SELECT MAX(s.indeks), z.IndeksZlecenia, z.DataWejscia "
-                "FROM skany s "
-                "JOIN Skany_vs_Zlecenia svz ON s.Indeks = svz.IndeksSkanu "
-                "JOIN Zlecenia z ON z.Indeks = svz.IndeksZlecenia "
-                "WHERE s.stanowisko = ?",
-                (stanowisko,)
+                """
+                SELECT MAX(Skany.indeks), Zlecenia.Zlecenie, Zlecenia.DataWejscia
+                FROM Skany
+                JOIN Skany_vs_Zlecenia ON Skany.indeks = Skany_vs_Zlecenia.IndeksSkanu
+                JOIN Zlecenia ON Skany_vs_Zlecenia.IndeksZlecenia = Zlecenia.Indeks
+                WHERE Skany.stanowisko = ?
+                GROUP BY Zlecenia.Zlecenie, Zlecenia.DataWejscia
+                """, (stanowisko,)
             )
-            row = cursor.fetchone()
+
+            row = cursor.fetchall()
 
         result = {
             "skany_index": row[0],
-            "zlecenia_index": row[1],
+            "zlecenie": row[1],
             "execution_date": row[2],
         }
 
