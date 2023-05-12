@@ -14,12 +14,12 @@ def edit_extra(data: List[Dict], camera: Camera):
 
     if len(data) >= 1:
         data[0]["skany_index"] = int(extra_data["skany_index"])
-        data[0]["zlecenie"] = int(extra_data["zlecenie"])
+        data[0]["zlecenie"] = str(extra_data["zlecenie"])
         data[0]["execution_date"] = str(extra_data["execution_date"])
     else:
         data.append({
             "skany_index": int(extra_data["skany_index"]),
-            "zlecenie": int(extra_data["zlecenie"]),
+            "zlecenie": str(extra_data["zlecenie"]),
             "execution_date": str(extra_data["execution_date"]),
         })
 
