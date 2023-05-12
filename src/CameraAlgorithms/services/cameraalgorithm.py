@@ -74,9 +74,16 @@ def create_camera(camera: Dict[str, str]) -> None:
     if not response["status"]:
         raise InvalidResponseError("/stop", response["status"])
 
-    camera_qs = Camera.objects.filter(id=ip, name=name, username=username, password=password)
-    if camera_qs.exists():
-        camera_qs.update(name=name, username=username, password=password)
+    is_camera_exist = Camera.objects.filter(id=ip, name=name, username=username, password=password).exists()
+    if is_camera_exist:
+        return
+
+    try:
+        camera_obj_to_update = Camera.objects.get(id=ip)
+    except Camera.DoesNotExist:
+        return
+    else:
+        camera_obj_to_update.update(name=name, username=username, password=password)
         return
 
     Camera.objects.create(**camera_data, is_active=True)
