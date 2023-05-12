@@ -15,6 +15,12 @@ class Algorithm(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name = "Algorithm"
+        verbose_name_plural = "Algorithms"
+
+        db_table = 'algorithm'
+
 
 class CameraAlgorithm(models.Model):
     """
@@ -28,6 +34,12 @@ class CameraAlgorithm(models.Model):
 
     def __str__(self):
         return f"{self.algorithm} - {self.camera}"
+
+    class Meta:
+        verbose_name = "CameraAlgorithm"
+        verbose_name_plural = "CameraAlgorithms"
+
+        db_table = 'cameraalgorithm'
 
 
 class CameraAlgorithmLog(models.Model):
@@ -48,3 +60,9 @@ class CameraAlgorithmLog(models.Model):
             else:
                 self.status = False
         super(CameraAlgorithmLog, self).save(*args, **kwargs)
+
+    class Meta:
+        verbose_name = "CameraAlgorithmLog"
+        verbose_name_plural = "CameraAlgorithmLogs"
+
+        db_table = 'cameraalgorithmslog'
