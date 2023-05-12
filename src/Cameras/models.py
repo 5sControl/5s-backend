@@ -31,3 +31,5 @@ class Camera(models.Model):
     class Meta:
         verbose_name = "Camera"
         verbose_name_plural = "Cameras"
+
+        db_table = 'camera'
