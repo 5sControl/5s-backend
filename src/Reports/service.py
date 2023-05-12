@@ -27,14 +27,14 @@ def edit_extra(data: List[Dict], camera: Camera):
     return data
 
 
-def create_skanyreport(report: Report, report_data: Dict, violation_found: bool):
+def create_skanyreport(report: Report, report_data: List[Dict], violation_found: bool):
     """
     Save skany index and report in database
     """
 
-    skany_indeks = report_data.get("skany_index")
-    zlecenie = report_data.get("zlecenie")
-    execution_date = report_data.get("execution_date")
+    skany_indeks = report_data[0].get("skany_index")
+    zlecenie = report_data[0].get("zlecenie")
+    execution_date = report_data[0].get("execution_date")
 
     SkanyReport.objects.create(
         report=report,
