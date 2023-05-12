@@ -16,7 +16,9 @@ def get_skany_video_info(time, camera_ip):
         )
     except Exception:
         return {"status": False}
-    else:
-        result = request.json()["camera_ip"] = camera_ip
 
+    result = request.json()
+    result["camera_ip"] = camera_ip
+
+    print(f"[RESULT VIDEO INFO] {result}")
     return result
