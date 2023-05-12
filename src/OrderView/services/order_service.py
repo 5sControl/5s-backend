@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
 import pyodbc
+from src.Cameras.models import Camera
 
 from src.MsSqlConnector.connector import connector as connector_service
 from src.OrderView.models import IndexOperations
@@ -67,7 +68,10 @@ class OrderService:
     def build_skany_dict(self, results, skany_ids_added):
         skany_dict = defaultdict(list)
         for row in results:
-            operation_status = self._setup_operation_status(row[0])
+            stanowiska = row[2]
+            skany_index = row[0]
+
+            operation_status = self._setup_operation_status(skany_index)
 
             if row[1] is not None:
                 time_string = str(row[1])
@@ -77,11 +81,11 @@ class OrderService:
                 time_utc = time.replace(tzinfo=timezone.utc)
 
                 print(f"[ROW2] {row[2]}")
-                camera_ip = self._get_camera_ip(row[2])
-                if not camera_ip:
+                camera_obj = self._get_camera_ip(stanowiska)
+                if not camera_obj:
                     video_data = {"status": False}
                 else:
-                    video_data = get_skany_video_info(time=time_utc.isoformat(), camera_ip=camera_ip)
+                    video_data = get_skany_video_info(time=time_utc.isoformat(), camera_ip=camera_obj.id)
             else:
                 video_data = {"status": False}
 
@@ -136,7 +140,7 @@ class OrderService:
         response["terminrealizacji"] = response["products"][0]["terminrealizacji"]
         return response
 
-    def _get_camera_ip(self, stanowiska):
+    def _get_camera_ip(self, stanowiska: int) -> Optional[Camera]:
         try:
             camera_ip = IndexOperations.objects.get(type_operation=stanowiska).camera
         except IndexOperations.DoesNotExist:
