@@ -32,4 +32,4 @@ admin.site.register(Report, ReportAdmin)
 
 @admin.register(SkanyReport)
 class SkanyReportAdmin(admin.ModelAdmin):
-    list_display = ("report", "skany_index")
+    list_display = ("report", "skany_index", "zlecenie", "violation_found", "execution_date", "id")
