@@ -76,6 +76,7 @@ class OrderService:
                 time = datetime.strptime(time_string, "%Y-%m-%d %H:%M:%S.%f")
                 time_utc = time.replace(tzinfo=timezone.utc)
 
+                print(f"[ROW2] {row[2]}")
                 camera_ip = self._get_camera_ip(row[2])
                 if not camera_ip:
                     video_data = {"status": False}
