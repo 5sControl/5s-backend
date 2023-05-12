@@ -81,12 +81,14 @@ def create_camera(camera: Dict[str, str]) -> None:
     try:
         camera_obj_to_update = Camera.objects.get(id=ip)
     except Camera.DoesNotExist:
+        Camera.objects.create(**camera_data, is_active=True)
         return
     else:
-        camera_obj_to_update.update(name=name, username=username, password=password)
+        camera_obj_to_update.name = name
+        camera_obj_to_update.username = username
+        camera_obj_to_update.password = password
+        camera_obj_to_update.save()
         return
-
-    Camera.objects.create(**camera_data, is_active=True)
 
 
 def create_camera_algorithms(
