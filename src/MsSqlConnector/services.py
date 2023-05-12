@@ -20,7 +20,7 @@ class MsSqlConnector:
                 """, (stanowisko,)
             )
 
-            row = cursor.fetchall()
+            row = cursor.fetchall()[0]
 
         print(row)
         result = {
