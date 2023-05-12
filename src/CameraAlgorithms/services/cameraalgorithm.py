@@ -1,6 +1,6 @@
 import requests
 
-from typing import Any, Dict, List
+from typing import Any, Dict, Iterable, List
 
 from src.Core.const import SERVER_URL
 
@@ -23,7 +23,7 @@ def CreateCameraAlgorithms(camera_algorithm_data: Dict[str, Any]) -> None:
 
 
 def DeleteCamera(camera_instance):
-    query_list_cameraalgorithms = CameraAlgorithm.objects.filter(camera=camera_instance)
+    query_list_cameraalgorithms: Iterable[CameraAlgorithm] = CameraAlgorithm.objects.filter(camera=camera_instance)
 
     for camera_algorithm in query_list_cameraalgorithms:
         pid: int = camera_algorithm.process_id
@@ -33,7 +33,7 @@ def DeleteCamera(camera_instance):
         update_status_algorithm(pid)
 
     try:
-        camera_id = camera_instance.id
+        camera_id: int = camera_instance.id
         camera_instance.delete()
     except Exception as e:
         return {
@@ -74,7 +74,7 @@ def create_camera(camera: Dict[str, str]) -> None:
     if not response["status"]:
         raise InvalidResponseError("/stop", response["status"])
 
-    is_camera_exist = Camera.objects.filter(id=ip, name=name, username=username, password=password).exists()
+    is_camera_exist: Iterable[Camera] = Camera.objects.filter(id=ip, name=name, username=username, password=password).exists()
     if is_camera_exist:
         return
 
@@ -84,9 +84,9 @@ def create_camera(camera: Dict[str, str]) -> None:
         Camera.objects.create(**camera_data, is_active=True)
         return
     else:
-        camera_obj_to_update.name = name
-        camera_obj_to_update.username = username
-        camera_obj_to_update.password = password
+        camera_obj_to_update.name: str = name
+        camera_obj_to_update.username: str = username
+        camera_obj_to_update.password: str = password
         camera_obj_to_update.save()
         return
 

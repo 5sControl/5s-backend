@@ -22,6 +22,7 @@ class MsSqlConnector:
 
             row = cursor.fetchall()
 
+        print(row)
         result = {
             "skany_index": row[0],
             "zlecenie": row[1],
