@@ -11,7 +11,6 @@ from src.OrderView.models import IndexOperations
 from src.Cameras.models import Camera
 from src.Algorithms.models import Algorithm, CameraAlgorithm
 
-from ..serializers import CameraModelSerializer
 from .logs_services import logs_service
 
 
@@ -161,13 +160,18 @@ def create_camera_algorithms(
         print(f"New record -> {algorithm_obj.name} on camera {camera_obj.id}")
 
     for algorithm_name in algorithm_to_delete:
-        algorithm_pid: int = CameraAlgorithm.objects.get(
+        algorithm: Algorithm = CameraAlgorithm.objects.get(
             algorithm__name=algorithm_name, camera=camera_obj
-        ).process_id
-        stop_camera_algorithm(algorithm_pid)
-        update_status_algorithm(algorithm_pid)
+        )
+        pid: int = algorithm.process_id
 
-        print(f"Successfully deleted -> {algorithm_name} with pid {algorithm_pid}")
+        if algorithm_name == "operation_control":
+            IndexOperations.objects.get(camera=camera_obj).delete()
+
+        stop_camera_algorithm(pid)
+        update_status_algorithm(pid)
+
+        print(f"Successfully deleted -> {algorithm_name} with pid {pid}")
 
 
 def camera_rtsp_link(id: str) -> str:
