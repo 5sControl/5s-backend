@@ -2,6 +2,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from src.Core.const import SERVER_URL
 
 from django.utils import timezone
 
@@ -10,6 +11,7 @@ from .serializers import CompanySerializer
 from .models import Company
 from ..Algorithms.models import CameraAlgorithm
 from ..Cameras.models import Camera
+import requests
 
 
 class CompanyViewSet(APIView):
@@ -65,10 +67,30 @@ class CompanyInfoView(APIView):
 
 @api_view(['GET'])
 def version(request):
-    with open('versions.txt', 'r') as file:
-        result = []
-        for item in file:
-            parts = item.split(': ')
-            result.append({"name": parts[0], "version": (parts[1]).strip()})
-        return Response(result)
+    versions = []
+    versions = versions + [{
+        "name": "5S Control version",
+        "version": "0.3.5"
+    }]
 
+    try:
+        js_algs_port = 3333
+        request = requests.post(
+            url=f"{SERVER_URL}:{js_algs_port}/info"
+        )
+        request_json = request.json()
+        versions = versions + request_json
+    except Company.DoesNotExist:
+        return Response({"error": "Versions not found"}, status=404)
+
+    try:
+        py_algs_port = 3020
+        request = requests.post(
+            url=f"{SERVER_URL}:{py_algs_port}/info"
+        )
+        request_json = request.json()
+        versions = versions + request_json
+    except Company.DoesNotExist:
+        return Response({"error": "Versions not found"}, status=404)
+
+    return Response(versions)
