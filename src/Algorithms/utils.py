@@ -6,13 +6,6 @@ from src.Cameras.service import link_generator
 from src.Algorithms.models import CameraAlgorithm
 from src.Core.const import SERVER_URL
 
-IDLE_PYTHON = os.environ.get("IDLE_PYTHON")
-IDLE_PYTHON = IDLE_PYTHON.lower() == "true" if IDLE_PYTHON is not None else False
-
-MIN_MAX_PYTHON = os.environ.get("MIN_MAX_PYTHON")
-MIN_MAX_PYTHON = MIN_MAX_PYTHON.lower() == "true" if MIN_MAX_PYTHON is not None else False
-
-python_algorithms = []
 
 
 class YoloProccesing:
@@ -29,13 +22,6 @@ class YoloProccesing:
         print("REQUEST FOR ALGORITHM: ", response)
 
         port = 3333
-        isPythonAlgorithm = False
-        if algorithm.name == 'min_max_control' and MIN_MAX_PYTHON:
-            port = 3020
-            isPythonAlgorithm = True
-        if algorithm.name == 'idle_control' and IDLE_PYTHON:
-            port = 3020
-            isPythonAlgorithm = True
         request = requests.post(
             url=f"{SERVER_URL}:{port}/run",
             json=response,
@@ -44,21 +30,12 @@ class YoloProccesing:
         request_json = request.json()
         print(request_json, 'request from algorithms')
         request_json["server_url"] = SERVER_URL
-        try:
-            if isPythonAlgorithm:
-                python_algorithms.append(request_json["pid"])
-        except:
-            print('pid not exist')
 
         return request_json
 
     def stop_process(self, pid: int):
         is_pid_exists = self.is_pid_exists(pid)
         port = 3333
-        if pid in python_algorithms:
-            port = 3020
-        while pid in python_algorithms:
-            python_algorithms.remove(pid)
         url = f"{SERVER_URL}:{port}/stop"
 
         if not is_pid_exists:
