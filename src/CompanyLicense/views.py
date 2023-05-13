@@ -80,7 +80,7 @@ def version(request):
         )
         request_json = request.json()
         versions = versions + request_json
-    except Company.DoesNotExist:
+    except e:
         return Response({"error": "Versions not found"}, status=404)
 
     try:
@@ -90,7 +90,7 @@ def version(request):
         )
         request_json = request.json()
         versions = versions + request_json
-    except Company.DoesNotExist:
+    except e:
         return Response({"error": "Versions not found"}, status=404)
 
     return Response(versions)
