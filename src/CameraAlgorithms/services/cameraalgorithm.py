@@ -206,8 +206,6 @@ def stop_camera_algorithm(pid: int) -> Dict[str, Any]:
     cstm_port = None
     algorithm_name = CameraAlgorithm.objects.get(process_id=pid).algorithm.name
     camera_id = CameraAlgorithm.objects.get(process_id=pid).camera.id
-    if algorithm_name == "min_max_control":
-        cstm_port = 3020
 
     try:
         response = Sender("stop", {"pid": pid}, cstm_port=cstm_port)

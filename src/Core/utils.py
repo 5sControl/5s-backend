@@ -16,10 +16,7 @@ def Sender(operation, data, cstm_port=None):
         port = 3456
     if operation == "run":
         url = "/run"
-        if data["algorithm"] == "min_max_control":
-            port = 3020
-        else:
-            port = 3333
+        port = 3333
 
     if operation == "stop":
         url = "/stop"
