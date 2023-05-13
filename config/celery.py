@@ -21,5 +21,5 @@ app.autodiscover_tasks()
 
 
 @app.task(bind=True)
-def send_low_stock_task(self):
-    send_low_stock_notification()
+def debug_task(self):
+    print(f'Request: {self.request!r}')
