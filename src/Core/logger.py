@@ -20,7 +20,7 @@ class Logger:
         self.logger.addHandler(self.file_handler)
 
     def debug(self, message):
-        self.logger.debug(message)
+        self.logger.info(message)
 
     def info(self, message):
         self.logger.info(message)

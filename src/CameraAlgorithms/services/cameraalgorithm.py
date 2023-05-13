@@ -169,7 +169,7 @@ def create_camera_algorithms(
         )
         new_record.save()
 
-        logger.debug(f"New record -> {algorithm_obj.name} on camera {camera_obj.id}")
+        logger.info(f"New record -> {algorithm_obj.name} on camera {camera_obj.id}")
 
     for algorithm_name in algorithm_to_delete:
         algorithm: Algorithm = CameraAlgorithm.objects.get(
@@ -183,7 +183,7 @@ def create_camera_algorithms(
         stop_camera_algorithm(pid)
         update_status_algorithm(pid)
 
-        logger.debug(f"Successfully deleted -> {algorithm_name} with pid {pid}")
+        logger.info(f"Successfully deleted -> {algorithm_name} with pid {pid}")
 
 
 def camera_rtsp_link(id: str) -> str:
@@ -214,8 +214,8 @@ def stop_camera_algorithm(pid: int) -> Dict[str, Any]:
     except requests.exceptions.HTTPError as e:
         raise SenderError("/stop") from e
     
-    logger.debug(f"[INFO] Stopping camera algorithm. Algorithm: {algorithm_name}, camera: {camera_id}, PID: {pid}")
-    logger.debug(response)
+    logger.info(f"[INFO] Stopping camera algorithm. Algorithm: {algorithm_name}, camera: {camera_id}, PID: {pid}")
+    logger.info(response)
     if not response["status"]:
         raise InvalidResponseError("/stop", response["status"])
 

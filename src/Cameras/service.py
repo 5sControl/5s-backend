@@ -79,7 +79,7 @@ class CameraService:
         username = camera_info["username"]
         password = camera_info["password"]
         server_url = camera_info["url"]
-        logger.debug("[INFO] ", ip, username, password)
+        logger.info("[INFO] ", ip, username, password)
         if ip:  # check if ip was sended
             logger.info(f"IP {ip}")
             snapshot_request = self.check_ip(ip, username, password, server_url)
