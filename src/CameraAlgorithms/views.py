@@ -10,11 +10,13 @@ from src.Core.permissions import IsStaffPermission, IsSuperuserPermission
 from .services.cameraalgorithm import (
     CreateCameraAlgorithms,
     DeleteCamera,
+    CheckConnection,
 )
 from .serializers import (
     AlgorithmDetailSerializer,
     CameraAlgorithmFullSerializer,
     CameraModelSerializer,
+    CameraCheckSerializer,
     CreateCameraAlgorithmSerializer,
     CameraAlgorithmLogSerializer,
 )
@@ -25,6 +27,22 @@ class CameraAPIView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     pagination_class = NoPagination
     queryset = Camera.objects.all()
+
+
+class CameraCheckConnection(generics.GenericAPIView):
+    serializer_class = CameraCheckSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = NoPagination
+
+    def get(self, request):
+        serializer = CameraCheckSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        if CheckConnection(serializer.validated_data):
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            data={"message": "Can't connect to camera"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
 
 
 class AlgorithmDetailApiView(generics.ListAPIView):
@@ -61,7 +79,6 @@ class CreateCameraAlgorithmsApiView(generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         serializer = CreateCameraAlgorithmSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        print(serializer.validated_data)
         CreateCameraAlgorithms(serializer.validated_data)
         return Response(status=status.HTTP_201_CREATED)
 

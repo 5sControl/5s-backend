@@ -17,6 +17,12 @@ class CameraModelSerializer(serializers.ModelSerializer):
         )
 
 
+class CameraCheckSerializer(serializers.Serializer):
+    ip = serializers.IPAddressField()
+    username = serializers.CharField()
+    password = serializers.CharField()
+
+
 class CreateCameraSerializer(serializers.Serializer):
     ip = serializers.IPAddressField()
     name = serializers.CharField(required=False)

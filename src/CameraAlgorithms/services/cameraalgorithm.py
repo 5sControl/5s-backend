@@ -22,8 +22,19 @@ def CreateCameraAlgorithms(camera_algorithm_data: Dict[str, Any]) -> None:
     create_camera_algorithms(camera, algorithms)
 
 
+def CheckConnection(camera_data: Dict[str, str]) -> bool:
+    try:
+        response = Sender("add_camera", camera_request)
+    except requests.exceptions.HTTPError as e:
+        raise SenderError("/add_camera") from e
+
+    return response["status"]
+
+
 def DeleteCamera(camera_instance):
-    query_list_cameraalgorithms: Iterable[CameraAlgorithm] = CameraAlgorithm.objects.filter(camera=camera_instance)
+    query_list_cameraalgorithms: Iterable[
+        CameraAlgorithm
+    ] = CameraAlgorithm.objects.filter(camera=camera_instance)
 
     for camera_algorithm in query_list_cameraalgorithms:
         pid: int = camera_algorithm.process_id
@@ -55,7 +66,6 @@ def create_camera(camera: Dict[str, str]) -> None:
 
     camera_request: Dict[str, str] = {
         "ip": ip,
-        "name": name,
         "username": username,
         "password": password,
     }
@@ -67,14 +77,9 @@ def create_camera(camera: Dict[str, str]) -> None:
         "password": password,
     }
 
-    try:
-        response = Sender("add_camera", camera_request)
-    except requests.exceptions.HTTPError as e:
-        raise SenderError("/add_camera") from e
-    if not response["status"]:
-        raise InvalidResponseError("/stop", response["status"])
-
-    is_camera_exist: Iterable[Camera] = Camera.objects.filter(id=ip, name=name, username=username, password=password).exists()
+    is_camera_exist: Iterable[Camera] = Camera.objects.filter(
+        id=ip, name=name, username=username, password=password
+    ).exists()
     if is_camera_exist:
         return
 

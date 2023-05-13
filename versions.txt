@@ -7,3 +7,4 @@ Safety Control head protection: 0.1.0
 Safety Control hand protection: 0.1.0
 Safety Control reflective jacket: 0.1.0
 MinMax Control: 0.3.4
+Frontent: 0.3.0
