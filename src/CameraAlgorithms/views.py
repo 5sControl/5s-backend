@@ -66,10 +66,7 @@ class DeleteCameraAPIView(generics.DestroyAPIView):
     def delete(self, request, *args, **kwargs):
         instance = self.get_object()
         result = DeleteCamera(instance)
-        if result["status"]:
-            return Response(result, status=status.HTTP_200_OK)
-        else:
-            return Response(result, status=status.HTTP_400_BAD_REQUEST)
+        return Response(result, status=status.HTTP_200_OK)
 
 
 class CreateCameraAlgorithmsApiView(generics.GenericAPIView):

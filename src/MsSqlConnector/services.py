@@ -1,5 +1,9 @@
+import logging
+
 from src.Core.exceptions import DatabaseConnectioneError
 from src.MsSqlConnector.connector import connector
+
+logger = logging.getLogger(__name__)
 
 
 class MsSqlConnector:
@@ -21,8 +25,8 @@ class MsSqlConnector:
             )
 
             row = cursor.fetchall()[0]
-
-        print(row)
+            logger.debug(f"data for operation control: {row}")
+        
         result = {
             "skany_index": row[0],
             "zlecenie": row[1],

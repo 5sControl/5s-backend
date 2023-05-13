@@ -1,12 +1,15 @@
+import requests
+import logging
+
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
-
-import requests
 
 from src.Core.logger import logger
 from src.CompanyLicense.decorators import check_active_cameras
 
 from .models import Camera
+
+logger = logging.getLogger(__name__)
 
 
 class CameraLinkGenerator:
@@ -76,7 +79,7 @@ class CameraService:
         username = camera_info["username"]
         password = camera_info["password"]
         server_url = camera_info["url"]
-        print("[INFO] ", ip, username, password)
+        logger.debug("[INFO] ", ip, username, password)
         if ip:  # check if ip was sended
             logger.info(f"IP {ip}")
             snapshot_request = self.check_ip(ip, username, password, server_url)

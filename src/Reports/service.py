@@ -1,10 +1,13 @@
 from typing import List, Dict
+import logging
 
 from src.Cameras.models import Camera
 from src.MsSqlConnector.services import create_records
 
 from src.Reports.models import Report, SkanyReport
 from src.OrderView.models import IndexOperations
+
+logger = logging.getLogger(__name__)
 
 
 def edit_extra(data: List[Dict], camera: Camera):
@@ -23,15 +26,11 @@ def edit_extra(data: List[Dict], camera: Camera):
             "execution_date": str(extra_data["execution_date"]),
         })
 
-    print("data is ", data)
+    logger.debug(f"fianl data is -> {data}")
     return data
 
 
 def create_skanyreport(report: Report, report_data: List[Dict], violation_found: bool):
-    """
-    Save skany index and report in database
-    """
-
     skany_indeks = report_data[0].get("skany_index")
     zlecenie = report_data[0].get("zlecenie")
     execution_date = report_data[0].get("execution_date")

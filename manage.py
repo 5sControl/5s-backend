@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 import os
 import sys
+import logging
 
 from src.Core.const import PRODUCTION, SERVER_URL
+
+logger = logging.getLogger(__name__)
 
 
 def main():
@@ -18,10 +21,11 @@ def main():
         ) from exc
     execute_from_command_line(sys.argv)
 
-    print("Server Configuration:")
-    print(f"SERVER_URL -> {SERVER_URL}")
-    print(f"PRODUCTION -> {PRODUCTION}")
+
 
 
 if __name__ == "__main__":
+    logger.info("Server Configuration:")
+    logger.info(f"SERVER_URL -> {SERVER_URL}")
+    logger.info(f"PRODUCTION -> {PRODUCTION}")
     main()

@@ -1,4 +1,5 @@
 import requests
+import logging
 
 from typing import Any, Dict, Iterable, List
 
@@ -13,12 +14,15 @@ from src.Algorithms.models import Algorithm, CameraAlgorithm
 
 from .logs_services import logs_service
 
+logger = logging.getLogger(__name__)
+
 
 def CreateCameraAlgorithms(camera_algorithm_data: Dict[str, Any]) -> None:
     camera: Dict[str, str] = camera_algorithm_data["camera"]
     algorithms: List[Dict[str, Any]] = camera_algorithm_data["algorithms"]
 
     create_camera(camera)
+    logger.info("Camera created successfully")
     create_camera_algorithms(camera, algorithms)
 
 
@@ -43,14 +47,8 @@ def DeleteCamera(camera_instance):
         stop_camera_algorithm(pid)
         update_status_algorithm(pid)
 
-    try:
-        camera_id: int = camera_instance.id
-        camera_instance.delete()
-    except Exception as e:
-        return {
-            "status": False,
-            "message": f"Failed to delete camera {camera_id}: {str(e)}.",
-        }
+    camera_id: int = camera_instance.id
+    camera_instance.delete()
 
     return {
         "status": True,
@@ -171,7 +169,7 @@ def create_camera_algorithms(
         )
         new_record.save()
 
-        print(f"New record -> {algorithm_obj.name} on camera {camera_obj.id}")
+        logger.debug(msg)(f"New record -> {algorithm_obj.name} on camera {camera_obj.id}")
 
     for algorithm_name in algorithm_to_delete:
         algorithm: Algorithm = CameraAlgorithm.objects.get(
@@ -185,7 +183,7 @@ def create_camera_algorithms(
         stop_camera_algorithm(pid)
         update_status_algorithm(pid)
 
-        print(f"Successfully deleted -> {algorithm_name} with pid {pid}")
+        logger.debug(f"Successfully deleted -> {algorithm_name} with pid {pid}")
 
 
 def camera_rtsp_link(id: str) -> str:
@@ -207,12 +205,17 @@ def send_run_request(request: Dict[str, Any]) -> Dict[str, Any]:
 def stop_camera_algorithm(pid: int) -> Dict[str, Any]:
     cstm_port = None
     algorithm_name = CameraAlgorithm.objects.get(process_id=pid).algorithm.name
+    camera_id = CameraAlgorithm.objects.get(process_id=pid).camera.id
     if algorithm_name == "min_max_control":
         cstm_port = 3020
+
     try:
         response = Sender("stop", {"pid": pid}, cstm_port=cstm_port)
     except requests.exceptions.HTTPError as e:
         raise SenderError("/stop") from e
+    
+    logger.debug(f"[INFO] Stopping camera algorithm. Algorithm: {algorithm_name}, camera: {camera_id}, PID: {pid}")
+    logger.debug(response.json())
     if not response["status"]:
         raise InvalidResponseError("/stop", response["status"])
 
