@@ -215,7 +215,7 @@ def stop_camera_algorithm(pid: int) -> Dict[str, Any]:
         raise SenderError("/stop") from e
     
     logger.debug(f"[INFO] Stopping camera algorithm. Algorithm: {algorithm_name}, camera: {camera_id}, PID: {pid}")
-    logger.debug(response.json())
+    logger.debug(response)
     if not response["status"]:
         raise InvalidResponseError("/stop", response["status"])
 
