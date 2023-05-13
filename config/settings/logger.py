@@ -6,16 +6,14 @@ LOGGING = {
             'class': 'logging.StreamHandler',
         },
         'file': {
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'log.log',
-            'maxBytes': 1024*1024*5,
-            'backupCount': 5,
+            'class': 'logging.FileHandler',
+            'filename': 'logs.log',
         },
     },
     'loggers': {
         'django': {
             'handlers': ['console', 'file'],
-            'level': 'INFO',
+            'level': 'DEBUG',
         },
     },
 }
