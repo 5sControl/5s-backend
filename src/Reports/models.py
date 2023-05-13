@@ -13,7 +13,7 @@ class Report(models.Model):
     """Model report"""
 
     algorithm = models.ForeignKey(Algorithm, on_delete=models.CASCADE)
-    camera = models.ForeignKey(Camera, null=True, on_delete=models.SET_NULL)
+    camera = models.ForeignKey(Camera, null=True, on_delete=models.CASCADE)
     start_tracking = models.CharField(max_length=100, blank=True, null=True)
     stop_tracking = models.CharField(max_length=100, blank=True, null=True)
     violation_found = models.BooleanField(blank=True, null=True, default=None)
