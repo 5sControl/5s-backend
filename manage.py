@@ -25,7 +25,7 @@ def main():
 
 
 if __name__ == "__main__":
-    logger.info("Server Configuration:")
-    logger.info(f"SERVER_URL -> {SERVER_URL}")
-    logger.info(f"PRODUCTION -> {PRODUCTION}")
+    logger.warning("Server Configuration:")
+    logger.warning(f"SERVER_URL -> {SERVER_URL}")
+    logger.warning(f"PRODUCTION -> {PRODUCTION}")
     main()
