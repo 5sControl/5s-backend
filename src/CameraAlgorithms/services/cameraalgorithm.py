@@ -169,7 +169,7 @@ def create_camera_algorithms(
         )
         new_record.save()
 
-        logger.debug(msg)(f"New record -> {algorithm_obj.name} on camera {camera_obj.id}")
+        logger.debug(f"New record -> {algorithm_obj.name} on camera {camera_obj.id}")
 
     for algorithm_name in algorithm_to_delete:
         algorithm: Algorithm = CameraAlgorithm.objects.get(
