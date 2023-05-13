@@ -5,6 +5,7 @@ from .views import (
     CameraAlgorithmLogListAPIView,
     DeleteCameraAPIView,
     CreateCameraAlgorithmsApiView,
+    CameraCheckConnection,
     AlgorithmDetailApiView,
     AlgorithmProcessApiView,
 )
