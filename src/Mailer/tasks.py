@@ -58,10 +58,10 @@ def send_low_stock_notification():
                     fail_silently=False,
                     connection=connection,
                 )
-                logger.info(f"Email sent to {recipient_list}")
+                logger.warning(f"Email sent to {recipient_list}")
             except Exception as e:
                 logger.error(f"Email sending failed with error: {e}")
         else:
-            logger.info(f'There is no critical stock level')
+            logger.warning(f'There is no critical stock level')
 
         return "success True"

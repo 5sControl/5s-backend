@@ -97,7 +97,7 @@ class AlgorithmsService:
             return {"status": False, "message": self.errors}
         else:
             for record in self.created_records:
-                logger.info(f"record -> {record} was created")
+                logger.warning(f"record -> {record} was created")
             return {
                 "status": True,
                 "message": "Camera Algorithm records created successfully",

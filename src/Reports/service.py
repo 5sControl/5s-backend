@@ -26,7 +26,7 @@ def edit_extra(data: List[Dict], camera: Camera):
             "execution_date": str(extra_data["execution_date"]),
         })
 
-    logger.info(f"fianl data is -> {data}")
+    logger.warning(f"fianl data is -> {data}")
     return data
 
 

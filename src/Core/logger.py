@@ -20,10 +20,10 @@ class Logger:
         self.logger.addHandler(self.file_handler)
 
     def debug(self, message):
-        self.logger.info(message)
+        self.logger.warning(message)
 
     def info(self, message):
-        self.logger.info(message)
+        self.logger.warning(message)
 
     def warning(self, message):
         self.logger.warning(message)

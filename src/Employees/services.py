@@ -13,11 +13,11 @@ class UserManager:
                 is_staff=False,
                 is_superuser=True,
             )
-            logger.info(
+            logger.warning(
                 f"Superuser created successfully. Username: {username} Password: {password}"
             )
         else:
-            logger.info("Superuser already exists")
+            logger.warning("Superuser already exists")
 
     def create_admin(self, username: str, password: str):
         if not User.objects.filter(username=username).exists():
@@ -28,11 +28,11 @@ class UserManager:
                 is_staff=True,
                 is_superuser=False,
             )
-            logger.info(
+            logger.warning(
                 f"Staff user created successfully. Username: {username} Password: {password}"
             )
         else:
-            logger.info("User already exists")
+            logger.warning("User already exists")
 
     def create_worker(self, username: str, password: str):
         if not User.objects.filter(username=username).exists():
@@ -43,11 +43,11 @@ class UserManager:
                 is_staff=False,
                 is_superuser=False,
             )
-            logger.info(
+            logger.warning(
                 f"Worker user created successfully. Username: {username} Password: {password}"
             )
         else:
-            logger.info("User already exists")
+            logger.warning("User already exists")
 
 
 user_manager = UserManager()

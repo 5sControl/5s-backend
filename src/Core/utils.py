@@ -31,10 +31,10 @@ def Sender(operation, data, cstm_port=None):
         link = f"{SERVER_URL}:{port}{url}"
 
     request = requests.post(link, json=data)
-    logger.info(f"request status from sender -> {request}")
+    logger.warning(f"request status from sender -> {request}")
     request.raise_for_status()
 
     result = request.json()
-    logger.info(f"result from sender -> {result}")
+    logger.warning(f"result from sender -> {result}")
 
     return result

@@ -25,7 +25,7 @@ class MsSqlConnector:
             )
 
             row = cursor.fetchall()[0]
-            logger.info(f"data for operation control: {row}")
+            logger.warning(f"data for operation control: {row}")
         
         result = {
             "skany_index": row[0],
