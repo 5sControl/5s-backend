@@ -9,8 +9,7 @@ from django.utils import timezone
 from .serializers import CompanySerializer
 
 from .models import Company
-from ..Algorithms.models import CameraAlgorithm
-from ..Cameras.models import Camera
+from src.CameraAlgorithms.models import CameraAlgorithm, Camera
 import requests
 
 
