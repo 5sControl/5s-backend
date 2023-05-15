@@ -6,7 +6,6 @@ from src.Core.const import SERVER_URL
 logger = logging.getLogger(__name__)
 
 
-
 def Sender(operation, data, cstm_port=None):
     url = None
     port = None
