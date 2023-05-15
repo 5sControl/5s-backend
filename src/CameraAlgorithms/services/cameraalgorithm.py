@@ -62,12 +62,6 @@ def create_camera(camera: Dict[str, str]) -> None:
     username: str = camera["username"]
     password: str = camera["password"]
 
-    camera_request: Dict[str, str] = {
-        "ip": ip,
-        "username": username,
-        "password": password,
-    }
-
     camera_data: Dict[str, str] = {
         "id": ip,
         "name": name,

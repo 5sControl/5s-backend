@@ -3,6 +3,7 @@ from src.Algorithms.utils import yolo_proccesing
 from src.Inventory.models import Items
 from src.Cameras.models import Camera
 from src.Algorithms.models import Algorithm
+from src.CameraAlgorithms.services.cameraalgorithm import camera_rtsp_link, send_run_request, stop_camera_algorithm
 
 from src.Mailer.service import send_email
 
@@ -81,20 +82,36 @@ def process_item_status(data):
 
 def stopped_process(camera):
     """Stopped process algorithm MinMax"""
-    from src.Algorithms.service import algorithms_services
-    process_id = CameraAlgorithm.objects.filter(
-        Q(camera_id=camera) & Q(algorithm__name='min_max_control')
-    ).values_list('process_id', flat=True).first()
+
+process_id = CameraAlgorithm.objects.filter(Q(camera_id=camera) & Q(algorithm__name='min_max_control')).values_list('process_id', flat=True).first()
     if process_id is not None:
-        yolo_proccesing.stop_process(pid=process_id)
-        algorithms_services.update_status_of_algorithm_by_pid(pid=process_id)
+        stop_camera_algorithm(pid=process_id)
         print("stopped process", camera)
 
 
-def started_process(camera_item):
+def started_process(camera):
     """Started process algorithm MinMax"""
-    from src.Algorithms.service import algorithms_services
-    camera = Camera.objects.filter(id=camera_item)
-    algorithm = Algorithm.objects.filter(name='min_max_control')
-    algorithms_services.create_new_records(cameras=camera, algorithm=algorithm[0])
-    print("started process", camera)
+
+    camera_url = camera_rtsp_link(camera.id)
+    algorithm = 'min_max_control'
+    algorithm_items = Items.objects.filter(camera=camera)
+
+    extra = []
+    for item in algorithm_items:
+        extra.append(
+            {
+                "itemId": item.id,
+                "coords": item.coords,
+                "itemName": item.name,
+            }
+        )
+
+    data = {
+        "camera_url": camera_url,
+        "algorithm": algorithm,
+        "extra": extra
+    }
+
+    send_run_request(data)
+
+    print("started process", camera_url)
