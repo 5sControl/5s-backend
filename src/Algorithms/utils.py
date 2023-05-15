@@ -1,4 +1,3 @@
-import os
 import requests
 
 from src.Cameras.service import link_generator
@@ -7,11 +6,12 @@ from src.Algorithms.models import CameraAlgorithm
 from src.Core.const import SERVER_URL
 
 
-
 class YoloProccesing:
     def start_yolo_processing(
             self, camera, algorithm, data=None
     ) -> dict:
+        port = 3333
+
         rtsp_camera_url = link_generator.get_camera_rtsp_link_by_camera(camera)
         response = {
             "camera_url": rtsp_camera_url["camera_url"],
@@ -19,23 +19,21 @@ class YoloProccesing:
             "server_url": SERVER_URL,
             "extra": data,
         }
-        print("REQUEST FOR ALGORITHM: ", response)
 
-        port = 3333
         request = requests.post(
             url=f"{SERVER_URL}:{port}/run",
             json=response,
         )
-        print(f"ALGORITHM {algorithm.name}")
+
         request_json = request.json()
-        print(request_json, 'request from algorithms')
         request_json["server_url"] = SERVER_URL
 
         return request_json
 
     def stop_process(self, pid: int):
-        is_pid_exists = self.is_pid_exists(pid)
         port = 3333
+
+        is_pid_exists = self.is_pid_exists(pid)
         url = f"{SERVER_URL}:{port}/stop"
 
         if not is_pid_exists:
@@ -45,6 +43,7 @@ class YoloProccesing:
             url=url,
             json={"pid": pid},
         )
+
         response_json = request.json()
 
         return response_json
