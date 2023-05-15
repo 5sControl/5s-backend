@@ -3,6 +3,7 @@ from src.Algorithms.utils import yolo_proccesing
 from src.Inventory.models import Items
 from src.Cameras.models import Camera
 from src.Algorithms.models import Algorithm
+from src.CameraAlgorithms.services.cameraalgorithm import camera_rtsp_link, send_run_request
 
 from src.Mailer.service import send_email
 
@@ -91,10 +92,29 @@ def stopped_process(camera):
         print("stopped process", camera)
 
 
-def started_process(camera_item):
+def started_process(camera):
     """Started process algorithm MinMax"""
-    from src.Algorithms.service import algorithms_services
-    camera = Camera.objects.filter(id=camera_item)
-    algorithm = Algorithm.objects.filter(name='min_max_control')
-    algorithms_services.create_new_records(cameras=camera, algorithm=algorithm[0])
-    print("started process", camera)
+
+    camera_url = camera_rtsp_link(camera.id)
+    algorithm = 'min_max_control'
+    algorithm_items = Items.objects.filter(camera=camera)
+
+    extra = []
+    for item in algorithm_items:
+        extra.append(
+            {
+                "itemId": item.id,
+                "coords": item.coords,
+                "itemName": item.name,
+            }
+        )
+
+    data = {
+        "camera_url": camera_url,
+        "algorithm": algorithm,
+        "extra": extra
+    }
+
+    send_run_request(data)
+
+    print("started process", camera_url)
