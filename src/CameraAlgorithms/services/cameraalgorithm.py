@@ -211,8 +211,10 @@ def stop_camera_algorithm(pid: int) -> Dict[str, Any]:
         response = Sender("stop", {"pid": pid}, cstm_port=cstm_port)
     except requests.exceptions.HTTPError as e:
         raise SenderError("/stop") from e
-    
-    logger.warning(f"[INFO] Stopping camera algorithm. Algorithm: {algorithm_name}, camera: {camera_id}, PID: {pid}")
+
+    logger.warning(
+        f"[INFO] Stopping camera algorithm. Algorithm: {algorithm_name}, camera: {camera_id}, PID: {pid}"
+    )
     logger.warning(response)
     if not response["status"]:
         raise InvalidResponseError("/stop", response["status"])
