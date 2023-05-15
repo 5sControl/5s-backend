@@ -32,10 +32,8 @@ INSTALLED_APPS = [
     'django_crontab',
     # Common application
     "src.CameraAlgorithms",
-    "src.Algorithms",
     "src.OrderView",
     "src.MsSqlConnector",
-    "src.Cameras.apps.CamerasConfig",
     "src.CompanyLicense.apps.CompanyLicenseConfig",
     "src.Inventory.apps.InventoryConfig",
     "src.Employees.apps.EmployeesConfig",
