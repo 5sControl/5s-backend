@@ -137,7 +137,7 @@ class ReportListView(APIView):
 
 
 class SearchReportListView(GenericAPIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     serializer_class = ReportSerializers
 
     @validate_license
@@ -145,20 +145,27 @@ class SearchReportListView(GenericAPIView):
         date = self.request.query_params.get("date")
         start_time = self.request.query_params.get("start_time")
         end_time = self.request.query_params.get("end_time")
-        camera_id = self.request.query_params.get("camera__id")
-        algorithm_name = self.request.query_params.get("algorithm")
+        camera_ids = self.request.query_params.getlist("camera__id")
+        algorithm_names = self.request.query_params.getlist("algorithm")
 
         queryset = Report.objects.all().order_by("-id")
-        queryset = queryset.exclude(algorithm__name='min_max_control')
 
         if start_time:
             queryset = queryset.filter(date_created__gte=f"{date} {start_time}")
         if end_time:
             queryset = queryset.filter(date_created__lte=f"{date} {end_time}")
-        if camera_id:
-            queryset = queryset.filter(camera__id=camera_id)
-        if algorithm_name:
-            queryset = queryset.filter(algorithm__name=algorithm_name)
+        if camera_ids:
+            camera_filters = Q()
+            for camera_id in camera_ids[0].split(","):
+                camera_filters |= Q(camera__id=camera_id)
+            queryset = queryset.filter(camera_filters)
+        if algorithm_names:
+            algorithm_filters = Q()
+            for algorithm_name in algorithm_names[0].split(","):
+                algorithm_filters |= Q(algorithm__name=algorithm_name)
+            queryset = queryset.filter(algorithm_filters)
+
+        queryset = queryset.exclude(algorithm__name='min_max_control')
 
         queryset = queryset.order_by("-id")
 
