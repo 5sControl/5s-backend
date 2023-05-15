@@ -130,7 +130,7 @@ def create_camera_algorithms(
         response = get_response(
             algorithm_obj=algorithm_obj,
             camera_obj=camera_obj,
-            algorithm_data=algorithm,
+            algorithm=algorithm,
             request=request,
         )
 
