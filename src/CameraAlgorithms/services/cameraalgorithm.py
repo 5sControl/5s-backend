@@ -3,6 +3,8 @@ import logging
 
 from typing import Any, Dict, Iterable, List
 
+from src.Core.const import SERVER_URL
+
 from src.Core.exceptions import InvalidResponseError, SenderError
 from src.Core.utils import Sender
 from src.Inventory.models import Items
@@ -89,23 +91,23 @@ def create_camera(camera: Dict[str, str]) -> None:
 def create_camera_algorithms(
     camera: Dict[str, str], algorithms: List[Dict[str, Any]]
 ) -> None:
-    camera_obj: Camera = Camera.objects.get(id=camera["ip"])
-    new_records: List[str] = [algorithm_data["name"] for algorithm_data in algorithms]
-    existing_algorithms: List[str] = [
+    camera_obj = Camera.objects.get(id=camera["ip"])
+    new_records = [algorithm_data["name"] for algorithm_data in algorithms]
+    existing_algorithms = [
         ca.algorithm.name for ca in CameraAlgorithm.objects.filter(camera=camera_obj)
     ]
 
-    algorithm_to_delete: set = set(existing_algorithms) - set(new_records)
-    new_algorithms: set = set(new_records) - set(existing_algorithms)
+    algorithm_to_delete = set(existing_algorithms) - set(new_records)
+    new_algorithms = set(new_records) - set(existing_algorithms)
 
-    algorithms: List[Dict[str, str]] = [
+    algorithms = [
         algorithm_data
         for algorithm_data in algorithms
         if algorithm_data["name"] in new_algorithms
     ]
 
     for algorithm in algorithms:
-        algorithm_obj: Algorithm = Algorithm.objects.get(name=algorithm["name"])
+        algorithm_obj = Algorithm.objects.get(name=algorithm["name"])
         rtsp_link: str = camera_rtsp_link(camera_obj.id)
         data: List[Dict[str, Any]] = []
         response: Dict = {}
@@ -113,11 +115,12 @@ def create_camera_algorithms(
         request: Dict[str, Any] = {
             "camera_url": rtsp_link,
             "algorithm": algorithm_obj.name,
+            "server_url": SERVER_URL,
             "extra": data,
         }
 
         if algorithm_obj.name == "min_max_control":
-            algorithm_items: Iterable[Items] = Items.objects.filter(camera=camera_obj.id)
+            algorithm_items = Items.objects.filter(camera=camera_obj.id)
             for item in algorithm_items:
                 data.append(
                     {"itemId": item.id, "coords": item.coords, "itemName": item.name}
@@ -127,12 +130,31 @@ def create_camera_algorithms(
 
             response = send_run_request(request)
 
-        response = get_response(
-            algorithm_obj=algorithm_obj,
-            camera_obj=camera_obj,
-            algorithm=algorithm,
-            request=request,
-        )
+        if algorithm_obj.name == "idle_control":
+            response = send_run_request(request)
+
+        if algorithm_obj.name == "machine_control":
+            response = send_run_request(request)
+
+        if algorithm_obj.name == "operation_control":
+            indx_operation = IndexOperations(
+                type_operation=algorithm["config"]["operation_control_id"],
+                camera=camera_obj,
+            )
+            indx_operation.save()
+            response = send_run_request(request)
+
+        if algorithm_obj.name == "safety_control_ear_protection":
+            response = send_run_request(request)
+
+        if algorithm_obj.name == "safety_control_head_protection":
+            response = send_run_request(request)
+
+        if algorithm_obj.name == "safety_control_hand_protection":
+            response = send_run_request(request)
+
+        if algorithm_obj.name == "safety_control_reflective_jacket":
+            response = send_run_request(request)
 
         new_record = CameraAlgorithm(
             algorithm=algorithm_obj,
@@ -156,41 +178,6 @@ def create_camera_algorithms(
         update_status_algorithm(pid)
 
         logger.warning(f"Successfully deleted -> {algorithm_name} with pid {pid}")
-
-
-def get_response(
-    algorithm_obj: Algorithm,
-    camera_obj: Camera,
-    request: Dict[str, str],
-    algorithm: List[Dict[str, str]],
-) -> Dict[str, str]:
-    if algorithm_obj.name == "idle_control":
-        response = send_run_request(request)
-
-    if algorithm_obj.name == "machine_control":
-        response = send_run_request(request)
-
-    if algorithm_obj.name == "operation_control":
-        indx_operation = IndexOperations(
-            type_operation=algorithm["config"]["operation_control_id"],
-            camera=camera_obj,
-        )
-        indx_operation.save()
-        response = send_run_request(request)
-
-    if algorithm_obj.name == "safety_control_ear_protection":
-        response = send_run_request(request)
-
-    if algorithm_obj.name == "safety_control_head_protection":
-        response = send_run_request(request)
-
-    if algorithm_obj.name == "safety_control_hand_protection":
-        response = send_run_request(request)
-
-    if algorithm_obj.name == "safety_control_reflective_jacket":
-        response = send_run_request(request)
-
-    return response
 
 
 def camera_rtsp_link(id: str) -> str:
