@@ -35,7 +35,7 @@ class Items(models.Model):
 
             # stopped process
             from src.Inventory.service import stopped_process, started_process
-            items_camera = Items.objects.filter(camera_id=instance.camera)
+            items_camera = Items.objects.filter(camera_id=self.camera)
             if len(items_camera) > 0:
                 stopped_process(self.camera)
 
