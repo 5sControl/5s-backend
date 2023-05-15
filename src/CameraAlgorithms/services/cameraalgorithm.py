@@ -3,8 +3,6 @@ import logging
 
 from typing import Any, Dict, Iterable, List
 
-from src.Core.const import SERVER_URL
-
 from src.Core.exceptions import InvalidResponseError, SenderError
 from src.Core.utils import Sender
 from src.Inventory.models import Items
@@ -62,12 +60,6 @@ def create_camera(camera: Dict[str, str]) -> None:
     username: str = camera["username"]
     password: str = camera["password"]
 
-    camera_request: Dict[str, str] = {
-        "ip": ip,
-        "username": username,
-        "password": password,
-    }
-
     camera_data: Dict[str, str] = {
         "id": ip,
         "name": name,
@@ -121,7 +113,6 @@ def create_camera_algorithms(
         request: Dict[str, Any] = {
             "camera_url": rtsp_link,
             "algorithm": algorithm_obj.name,
-            "server_url": SERVER_URL,
             "extra": data,
         }
 

@@ -3,7 +3,6 @@ from typing import Dict, Any
 
 from django.core.management.base import BaseCommand
 
-from src.Core.const import SERVER_URL
 from src.Core.exceptions import SenderError, InvalidResponseError
 from src.Inventory.models import Items
 from src.Algorithms.models import CameraAlgorithm
@@ -47,7 +46,6 @@ class Command(BaseCommand):
             request: Dict[str, Any] = {
                 "camera_url": rtsp_link,
                 "algorithm": algorithm_obj.name,
-                "server_url": SERVER_URL,
                 "extra": extra_params,
             }
 
