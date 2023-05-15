@@ -80,8 +80,8 @@ def version(request):
         )
         request_json = request.json()
         versions = versions + request_json
-    except e:
-        return Response({"error": "Versions not found"}, status=404)
+    except Exception as e:
+        return Response({"error": f"Versions not found: {e}"}, status=404)
 
     try:
         py_algs_port = 3020
@@ -90,7 +90,7 @@ def version(request):
         )
         request_json = request.json()
         versions = versions + request_json
-    except e:
-        return Response({"error": "Versions not found"}, status=404)
+    except Exception as e:
+        return Response({"error": f"Versions not found: {e}"}, status=404)
 
     return Response(versions)
