@@ -1,7 +1,7 @@
 from django.db import models
 
-from src.Algorithms.models import Algorithm
-from src.Cameras.models import Camera
+from src.CameraAlgorithms.models import Algorithm
+from src.CameraAlgorithms.models import Camera
 
 
 class StatusReportChoice(models.TextChoices):

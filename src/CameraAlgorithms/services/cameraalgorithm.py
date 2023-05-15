@@ -4,14 +4,13 @@ import logging
 from typing import Any, Dict, Iterable, List
 
 from src.Core.const import SERVER_URL
-
 from src.Core.exceptions import InvalidResponseError, SenderError
 from src.Core.utils import Sender
 from src.Inventory.models import Items
 from src.OrderView.models import IndexOperations
-from src.Cameras.models import Camera
-from src.Algorithms.models import Algorithm, CameraAlgorithm
 
+from ..models import Camera
+from ..models import Algorithm, CameraAlgorithm
 from .logs_services import logs_service
 
 logger = logging.getLogger(__name__)

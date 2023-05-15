@@ -1,5 +1,6 @@
 from django.db import models
-from src.Cameras.models import Camera
+
+from src.CameraAlgorithms.models import Camera
 
 
 class Items(models.Model):

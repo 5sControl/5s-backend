@@ -1,24 +1,22 @@
 import requests
-from rest_framework import viewsets
 from datetime import datetime
+
 from django.db.models import Q
+
 from rest_framework.generics import GenericAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import MethodNotAllowed
+from rest_framework import status, viewsets
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 from src.CompanyLicense.decorators import validate_license
 from src.Core.const import PRODUCTION, SERVER_URL
-
 from src.ImageReport.models import Image
-from src.Cameras.models import Camera
-from src.Algorithms.models import Algorithm
+from src.CameraAlgorithms.models import Camera
+from src.CameraAlgorithms.models import Algorithm
 from src.Reports.models import Report
-
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import MethodNotAllowed
-from rest_framework import status
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from src.Reports.serializers import ReportSerializers
-
 from src.Inventory.service import process_item_status
 from src.Reports.service import edit_extra, create_skanyreport
 
