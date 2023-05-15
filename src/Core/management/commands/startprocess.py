@@ -5,9 +5,8 @@ from django.core.management.base import BaseCommand
 
 from src.Core.exceptions import SenderError, InvalidResponseError
 from src.Inventory.models import Items
-from src.Algorithms.models import CameraAlgorithm
-from src.Cameras.models import Camera
 
+from src.CameraAlgorithms.models import Camera, CameraAlgorithm
 from src.CameraAlgorithms.services.cameraalgorithm import (
     camera_rtsp_link,
     send_run_request,

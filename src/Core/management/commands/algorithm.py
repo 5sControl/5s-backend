@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from src.Algorithms.models import Algorithm
+from src.CameraAlgorithms.models import Algorithm
 from src.Core.const import ALGORITHMS
 
 
