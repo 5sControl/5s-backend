@@ -25,12 +25,12 @@ class Command(BaseCommand):
         camera_algorithms = CameraAlgorithm.objects.filter(is_active=True).exclude(
             process_id=None
         )
-        rtsp_link: str = camera_rtsp_link(camera_obj.id)
 
         for camera_algorithm in camera_algorithms:
             extra_params = []
             camera_obj: Camera = camera_algorithm.camera
             algorithm_obj: CameraAlgorithm = camera_algorithm.algorithm
+            rtsp_link: str = camera_rtsp_link(camera_obj.id)
 
             if camera_algorithm.algorithm.name == "min_max_control":
                 algorithm_items = Items.objects.filter(camera=camera_obj)
