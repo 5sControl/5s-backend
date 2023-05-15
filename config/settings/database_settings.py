@@ -5,7 +5,7 @@ DATABASES = {
         'USER': 'admin',
         'PASSWORD': 'just4Taqtile',
         'HOST': 'localhost',
-        'PORT': '5432',
+        'PORT': '5433',
     }
 }
 

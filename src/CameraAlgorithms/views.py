@@ -1,12 +1,12 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from src.Algorithms.models import Algorithm, CameraAlgorithm, CameraAlgorithmLog
-from src.Cameras.models import Camera
-from src.Core.paginators import NoPagination
 
+from src.Core.paginators import NoPagination
 from src.Core.permissions import IsStaffPermission, IsSuperuserPermission
 
+from .models import Camera
+from .models import Algorithm, CameraAlgorithm, CameraAlgorithmLog
 from .services.cameraalgorithm import (
     CreateCameraAlgorithms,
     DeleteCamera,

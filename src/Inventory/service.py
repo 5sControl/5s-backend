@@ -1,8 +1,5 @@
-from src.Algorithms.models import CameraAlgorithm
-from src.Algorithms.utils import yolo_proccesing
+from src.CameraAlgorithms.models import CameraAlgorithm
 from src.Inventory.models import Items
-from src.Cameras.models import Camera
-from src.Algorithms.models import Algorithm
 from src.CameraAlgorithms.services.cameraalgorithm import camera_rtsp_link, send_run_request, stop_camera_algorithm
 
 from src.Mailer.service import send_email
@@ -82,7 +79,6 @@ def process_item_status(data):
 
 def stopped_process(camera):
     """Stopped process algorithm MinMax"""
-
     process_id = CameraAlgorithm.objects.filter(
         Q(camera_id=camera) & Q(algorithm__name='min_max_control')
     ).values_list('process_id', flat=True).first()

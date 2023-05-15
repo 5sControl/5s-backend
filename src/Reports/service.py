@@ -1,7 +1,7 @@
 from typing import List, Dict
 import logging
 
-from src.Cameras.models import Camera
+from src.CameraAlgorithms.models import Camera
 from src.MsSqlConnector.services import create_records
 
 from src.Reports.models import Report, SkanyReport

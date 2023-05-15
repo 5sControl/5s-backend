@@ -1,8 +1,8 @@
 from rest_framework import serializers
+
 from src.Reports.models import Report
 from src.ImageReport.serializers import PhotoSerializers
-from src.Algorithms.serializers import AlgorithmSerializer
-from src.Cameras.serializers import CameraSerializer
+from src.CameraAlgorithms.serializers import AlgorithmSerializer, CameraReportSerializer
 
 
 class ReportSerializers(serializers.ModelSerializer):
@@ -10,7 +10,7 @@ class ReportSerializers(serializers.ModelSerializer):
 
     photos = PhotoSerializers(many=True)
     algorithm = AlgorithmSerializer(many=False)
-    camera = CameraSerializer(many=False)
+    camera = CameraReportSerializer(many=False)
 
     class Meta:
         model = Report

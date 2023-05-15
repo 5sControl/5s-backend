@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
 import pyodbc
-from src.Cameras.models import Camera
+from src.CameraAlgorithms.models import Camera
 
 from src.MsSqlConnector.connector import connector as connector_service
 from src.OrderView.models import IndexOperations

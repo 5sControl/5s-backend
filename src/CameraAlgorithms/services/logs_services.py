@@ -1,6 +1,6 @@
 from django.utils import timezone
 
-from src.Algorithms.models import CameraAlgorithmLog
+from ..models import CameraAlgorithmLog
 
 
 class CameraAlgorithmLogsService:

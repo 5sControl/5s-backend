@@ -1,12 +1,12 @@
+from datetime import date
 from functools import wraps
-from django.http import HttpResponseForbidden, HttpResponseBadRequest
+
+from django.http import HttpResponseBadRequest
 from django.shortcuts import redirect
 
 from src.CompanyLicense.models import Company
-from src.Cameras.models import Camera
-from src.Algorithms.models import CameraAlgorithm
-
-from datetime import date
+from src.CameraAlgorithms.models import Camera
+from src.CameraAlgorithms.models import CameraAlgorithm
 
 
 def validate_license(view_func):

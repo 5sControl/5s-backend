@@ -9,8 +9,7 @@ from django.utils import timezone
 from .serializers import CompanySerializer
 
 from .models import Company
-from ..Algorithms.models import CameraAlgorithm
-from ..Cameras.models import Camera
+from src.CameraAlgorithms.models import CameraAlgorithm, Camera
 import requests
 
 
@@ -77,16 +76,6 @@ def version(request):
         js_algs_port = 3333
         request = requests.post(
             url=f"{SERVER_URL}:{js_algs_port}/info"
-        )
-        request_json = request.json()
-        versions = versions + request_json
-    except Exception as e:
-        return Response({"error": f"Versions not found: {e}"}, status=404)
-
-    try:
-        py_algs_port = 3020
-        request = requests.post(
-            url=f"{SERVER_URL}:{py_algs_port}/info"
         )
         request_json = request.json()
         versions = versions + request_json
