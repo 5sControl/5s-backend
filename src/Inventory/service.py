@@ -1,6 +1,7 @@
 from src.CameraAlgorithms.models import CameraAlgorithm, Algorithm
 from src.Inventory.models import Items
-from src.CameraAlgorithms.services.cameraalgorithm import camera_rtsp_link, send_run_request, stop_camera_algorithm
+from src.CameraAlgorithms.services.cameraalgorithm import camera_rtsp_link, send_run_request, stop_camera_algorithm, \
+    update_status_algorithm
 
 from src.Mailer.service import send_email
 
@@ -84,6 +85,8 @@ def stopped_process(camera):
     ).values_list('process_id', flat=True).first()
     if process_id is not None:
         stop_camera_algorithm(pid=process_id)
+        if not Items.objects.filter(camera_id=camera.id).exists():
+            update_status_algorithm(pid=process_id)
         print("stopped process", camera)
 
 
