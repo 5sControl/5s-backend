@@ -30,6 +30,7 @@ class Report(models.Model):
     class Meta:
         verbose_name = "Report"
         verbose_name_plural = "Reports"
+        db_table = "report"
 
 
 class SkanyReport(models.Model):
@@ -48,3 +49,4 @@ class SkanyReport(models.Model):
     class Meta:
         verbose_name = "ReportSkany"
         verbose_name_plural = "ReportsSkany"
+        db_table = "skany_report"
