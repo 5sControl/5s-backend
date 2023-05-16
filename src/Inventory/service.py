@@ -1,4 +1,4 @@
-from src.CameraAlgorithms.models import CameraAlgorithm
+from src.CameraAlgorithms.models import CameraAlgorithm, Algorithm
 from src.Inventory.models import Items
 from src.CameraAlgorithms.services.cameraalgorithm import camera_rtsp_link, send_run_request, stop_camera_algorithm
 
@@ -91,7 +91,7 @@ def started_process(camera):
     """Started process algorithm MinMax"""
 
     camera_url = camera_rtsp_link(camera.id)
-    algorithm = 'min_max_control'
+    algorithm = Algorithm.objects.get(name='min_max_control')
     algorithm_items = Items.objects.filter(camera=camera)
 
     extra = []
@@ -106,7 +106,7 @@ def started_process(camera):
 
     data = {
         "camera_url": camera_url,
-        "algorithm": algorithm,
+        "algorithm": algorithm.name,
         "extra": extra
     }
 
@@ -123,5 +123,6 @@ def started_process(camera):
     except CameraAlgorithm.DoesNotExist:
         print("first algorithm not found")
         response = send_run_request(data)
+        CameraAlgorithm.objects.create(algorithm=algorithm, camera=camera, process_id=response["pid"])
 
     print("started process", camera_url)
