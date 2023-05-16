@@ -1,0 +1,14 @@
+[
+  {
+    "model": "MsSqlConnector.databaseconnection",
+    "pk": 1,
+    "fields": {
+      "database_type": "WBNet",
+      "server": "kodsql\\winkhouse",
+      "database": "whnet",
+      "username": "5s",
+      "password": "nX1!Y14p9h#a",
+      "port": 1455
+    }
+  }
+]
