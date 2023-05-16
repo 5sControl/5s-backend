@@ -110,15 +110,18 @@ def started_process(camera):
         "extra": extra
     }
 
-    camera_algorithm = CameraAlgorithm.objects.get(
-        Q(camera_id=camera) & Q(algorithm__name='min_max_control')
-    )
+    try:
+        camera_algorithm = CameraAlgorithm.objects.get(
+            Q(camera_id=camera) & Q(algorithm__name='min_max_control')
+        )
+        response = send_run_request(data)
 
-    response = send_run_request(data)
+        new_process_id = response["pid"]
 
-    new_process_id = response["pid"]
-
-    camera_algorithm.process_id = new_process_id
-    camera_algorithm.save()
+        camera_algorithm.process_id = new_process_id
+        camera_algorithm.save()
+    except CameraAlgorithm.DoesNotExist:
+        print("first algorithm not found")
+        response = send_run_request(data)
 
     print("started process", camera_url)
