@@ -22,8 +22,6 @@ def main():
     execute_from_command_line(sys.argv)
 
 
-
-
 if __name__ == "__main__":
     logger.warning("Server Configuration:")
     logger.warning(f"SERVER_URL -> {SERVER_URL}")
