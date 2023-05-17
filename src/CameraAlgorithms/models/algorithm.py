@@ -19,7 +19,7 @@ class Algorithm(models.Model):
         verbose_name = "Algorithm"
         verbose_name_plural = "Algorithms"
 
-        db_table = 'algorithm'
+        db_table = "algorithm"
 
 
 class CameraAlgorithm(models.Model):
@@ -39,7 +39,7 @@ class CameraAlgorithm(models.Model):
         verbose_name = "CameraAlgorithm"
         verbose_name_plural = "CameraAlgorithms"
 
-        db_table = 'cameraalgorithm'
+        db_table = "cameraalgorithm"
 
 
 class CameraAlgorithmLog(models.Model):
@@ -65,4 +65,4 @@ class CameraAlgorithmLog(models.Model):
         verbose_name = "CameraAlgorithmLog"
         verbose_name_plural = "CameraAlgorithmLogs"
 
-        db_table = 'cameraalgorithmslog'
+        db_table = "cameraalgorithmslog"

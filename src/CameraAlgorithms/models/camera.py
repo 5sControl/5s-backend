@@ -32,4 +32,4 @@ class Camera(models.Model):
         verbose_name = "Camera"
         verbose_name_plural = "Cameras"
 
-        db_table = 'camera'
+        db_table = "camera"
