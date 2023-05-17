@@ -25,7 +25,7 @@ def CreateCameraAlgorithms(camera_algorithm_data: Dict[str, Any]) -> None:
     create_camera_algorithms(camera, algorithms)
 
 
-def CheckConnection(camera_data: Dict[str, str]) -> bool:
+def check_connection(camera_data: Dict[str, str]) -> bool:
     try:
         response = Sender("add_camera", camera_data)
     except requests.exceptions.HTTPError as e:
@@ -73,6 +73,8 @@ def create_camera(camera: Dict[str, str]) -> None:
     ).exists()
     if is_camera_exist:
         return
+
+    check_connection({"ip": ip, "username": username, "password": password})
 
     try:
         camera_obj_to_update = Camera.objects.get(id=ip)

@@ -14,11 +14,6 @@ from .views import (
 urlpatterns = [
     path("camera/", CameraAPIView.as_view(), name="camera"),
     path(
-        "camera/check-connection/",
-        CameraCheckConnection.as_view(),
-        name="check-connection",
-    ),
-    path(
         "delete-camera/<str:pk>/", DeleteCameraAPIView.as_view(), name="camera-delete"
     ),
     path(
