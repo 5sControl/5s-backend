@@ -1,11 +1,6 @@
 #!/usr/bin/env python
 import os
 import sys
-import logging
-
-from src.Core.const import PRODUCTION, SERVER_URL
-
-logger = logging.getLogger(__name__)
 
 
 def main():
@@ -23,7 +18,4 @@ def main():
 
 
 if __name__ == "__main__":
-    logger.warning("Server Configuration:")
-    logger.warning(f"SERVER_URL -> {SERVER_URL}")
-    logger.warning(f"PRODUCTION -> {PRODUCTION}")
     main()

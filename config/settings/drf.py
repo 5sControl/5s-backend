@@ -1,6 +1,6 @@
 from datetime import timedelta
 
-from .base_settings import SECRET_KEY
+from .base import SECRET_KEY
 
 
 REST_FRAMEWORK = {
