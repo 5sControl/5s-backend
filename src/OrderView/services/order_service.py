@@ -175,19 +175,19 @@ class OrderService:
                 {
                     "indeks": data[0],
                     "data": datetime.strptime(
-                        data[1].strftime("%Y-%m-%d %H:%M:%S.%f"), "%Y-%m-%d %H:%M:%S.%f"
+                        data[1], "%Y-%m-%d %H:%M:%S.%f"
                     ).replace(tzinfo=timezone.utc)
                     if data[1] is not None
                     else None,
                     "zlecenie": data[2].strip(),
                     "klient": data[3].strip(),
                     "datawejscia": datetime.strptime(
-                        data[4].strftime("%Y-%m-%d %H:%M:%S.%f"), "%Y-%m-%d %H:%M:%S.%f"
+                        data[4], "%Y-%m-%d %H:%M:%S.%f"
                     ).replace(tzinfo=timezone.utc)
                     if data[4]
                     else None,
                     "datazakonczenia": datetime.strptime(
-                        data[5].strftime("%Y-%m-%d %H:%M:%S.%f"), "%Y-%m-%d %H:%M:%S.%f"
+                        data[5], "%Y-%m-%d %H:%M:%S.%f"
                     ).replace(tzinfo=timezone.utc)
                     if data[5]
                     else None,
