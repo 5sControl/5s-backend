@@ -1,3 +1,6 @@
+import sys
+
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
@@ -12,6 +15,9 @@ DATABASES = {
         "NAME": "test_db.sqlite3",
     },
 }
+
+if 'test' in sys.argv:
+    DATABASES['default'] = DATABASES['test']
 
 CACHES = {
     "default": {
