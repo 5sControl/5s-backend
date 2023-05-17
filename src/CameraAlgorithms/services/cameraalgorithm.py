@@ -114,7 +114,6 @@ def create_camera_algorithms(
         request: Dict[str, Any] = {
             "camera_url": rtsp_link,
             "algorithm": algorithm_obj.name,
-            "server_url": SERVER_URL,
             "extra": data,
         }
 
