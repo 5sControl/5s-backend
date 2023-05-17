@@ -10,13 +10,11 @@ from .models import Algorithm, CameraAlgorithm, CameraAlgorithmLog
 from .services.cameraalgorithm import (
     CreateCameraAlgorithms,
     DeleteCamera,
-    CheckConnection,
 )
 from .serializers import (
     AlgorithmDetailSerializer,
     CameraAlgorithmFullSerializer,
     CameraModelSerializer,
-    CameraCheckSerializer,
     CreateCameraAlgorithmSerializer,
     CameraAlgorithmLogSerializer,
 )
