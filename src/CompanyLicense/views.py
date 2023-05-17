@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from src.Core.const import SERVER_URL
 
+from django.core.exceptions import PermissionDenied
+
 from django.utils import timezone
 
 from .serializers import CompanySerializer
@@ -14,7 +16,7 @@ import requests
 
 
 class CompanyViewSet(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         serializer = CompanySerializer(data=request.data)
@@ -41,6 +43,8 @@ class CompanyInfoView(APIView):
     def get(self, request):
         try:
             company = Company.objects.last()
+            if company is None:
+                raise PermissionDenied("No active license")
         except Company.DoesNotExist:
             return Response({"error": "Company not found"}, status=404)
 
