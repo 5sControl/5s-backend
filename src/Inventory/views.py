@@ -25,6 +25,7 @@ class ItemsListAPIView(ListAPIView):
     # permission_classes = [IsAuthenticated]
     ALLOWED_STATUSES = ["Out of stock", "Low stock level", "In stock"]
 
+    @validate_license
     def get_queryset(self):
         status = self.request.query_params.get('status', None)
         if status is not None:

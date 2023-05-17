@@ -2,6 +2,7 @@ from datetime import date
 from functools import wraps
 
 from django.http import HttpResponseBadRequest
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 
 from src.CompanyLicense.models import Company
@@ -17,8 +18,11 @@ def validate_license(view_func):
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
         company = Company.objects.last()
+        if company is None:
+            raise PermissionDenied("No active license")
+
         if not company.is_active or date.today() > company.valid_until:
-            return redirect("license expired")
+            raise PermissionDenied("license expired")
         return view_func(request, *args, **kwargs)
 
     return wrapper
