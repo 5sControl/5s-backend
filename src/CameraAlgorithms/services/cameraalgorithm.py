@@ -186,6 +186,7 @@ def camera_rtsp_link(id: str) -> str:
 
 
 def send_run_request(request: Dict[str, Any]) -> Dict[str, Any]:
+    logger.warning(f"Request data for algorithm {request}")
     try:
         response = Sender("run", request)
     except requests.exceptions.HTTPError as e:
