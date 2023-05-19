@@ -47,6 +47,8 @@ class Command(BaseCommand):
                 "algorithm": algorithm_obj.name,
                 "extra": extra_params,
             }
+            
+            logger.warning(f"Request data for algorithm {request}")
 
             try:
                 result = send_run_request(request)
