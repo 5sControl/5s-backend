@@ -1,5 +1,7 @@
 #!/bin/sh
 
+python manage.py migrate
+
 celery -A config.celery worker -l info &
 celery -A config.celery beat -l info &
 
