@@ -73,7 +73,7 @@ def create_camera(camera: Dict[str, str]) -> None:
     if is_camera_exist:
         return
 
-    if check_connection({"ip": ip, "username": username, "password": password}):
+    if not check_connection({"ip": ip, "username": username, "password": password}):
         raise CameraConnectionError(ip)
 
     try:
