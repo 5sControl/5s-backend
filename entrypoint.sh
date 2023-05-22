@@ -7,6 +7,9 @@ python manage.py migrate
 python manage.py algorithm
 python manage.py createadmin
 
+# run server
+python manage.py runserver 0.0.0.0:80
+
 # setup config
 python manage.py startprocess
 
@@ -14,5 +17,3 @@ python manage.py startprocess
 celery -A config.celery worker -l info &
 celery -A config.celery beat -l info &
 
-# run server
-python manage.py runserver 0.0.0.0:80
