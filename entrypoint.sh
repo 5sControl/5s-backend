@@ -8,7 +8,7 @@ python manage.py algorithm
 python manage.py createadmin
 
 # run server
-python manage.py runserver 0.0.0.0:80
+python manage.py runserver 0.0.0.0:80 &
 
 # setup config
 python manage.py startprocess
