@@ -3,8 +3,7 @@ import logging
 
 from typing import Any, Dict, Iterable, List
 
-from src.Core.const import SERVER_URL
-from src.Core.exceptions import InvalidResponseError, SenderError
+from src.Core.exceptions import InvalidResponseError, SenderError, CameraConnectionError
 from src.Core.utils import Sender
 from src.Inventory.models import Items
 from src.OrderView.models import IndexOperations
@@ -74,7 +73,8 @@ def create_camera(camera: Dict[str, str]) -> None:
     if is_camera_exist:
         return
 
-    check_connection({"ip": ip, "username": username, "password": password})
+    if check_connection({"ip": ip, "username": username, "password": password}):
+        raise CameraConnectionError(ip)
 
     try:
         camera_obj_to_update = Camera.objects.get(id=ip)
