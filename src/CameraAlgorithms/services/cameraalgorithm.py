@@ -7,6 +7,7 @@ from src.Core.exceptions import InvalidResponseError, SenderError, CameraConnect
 from src.Core.utils import Sender
 from src.Inventory.models import Items
 from src.OrderView.models import IndexOperations
+from src.CompanyLicense.decorators import check_active_cameras, check_active_algorithms
 
 from ..models import Camera
 from ..models import Algorithm, CameraAlgorithm
@@ -15,6 +16,8 @@ from .logs_services import logs_service
 logger = logging.getLogger(__name__)
 
 
+@check_active_cameras
+@check_active_algorithms
 def CreateCameraAlgorithms(camera_algorithm_data: Dict[str, Any]) -> None:
     camera: Dict[str, str] = camera_algorithm_data["camera"]
     algorithms: List[Dict[str, Any]] = camera_algorithm_data["algorithms"]
