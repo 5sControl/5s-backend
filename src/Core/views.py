@@ -2,9 +2,12 @@ import os
 import requests
 
 from rest_framework.response import Response
-from rest_framework import status, generics
+from rest_framework import status, generics, viewsets, mixins
 
-from src.Core.const import SERVER_URL
+from .const import SERVER_URL
+from .serializers import SystemMessagesSerializer
+from .models import SystemMessage
+from .paginators import SystemMessagesPaginator
 
 
 class CheckMemoryStatus(generics.GenericAPIView):
@@ -32,3 +35,11 @@ class FindCameraAPIView(generics.GenericAPIView):
 
         response_data = {"results": cameras}
         return Response(response_data, status=status.HTTP_200_OK)
+
+
+class SystemMessagesApiView(mixins.ListModelMixin,
+                            mixins.CreateModelMixin,
+                            viewsets.GenericViewSet):
+    serializer_class = SystemMessagesSerializer
+    queryset = SystemMessage.objects.all()
+    pagination_class = SystemMessagesPaginator
