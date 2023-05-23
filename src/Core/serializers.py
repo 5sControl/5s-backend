@@ -8,5 +8,6 @@ class SystemMessagesSerializer(serializers.ModelSerializer):
         model = SystemMessage
         fields = [
             "title",
-            "content"
+            "content",
+            "created_at",
         ]
