@@ -174,11 +174,11 @@ def create_camera_algorithms(
         )
         pid: int = algorithm.process_id
 
-        if algorithm_name == "operation_control":
-            IndexOperations.objects.filter(camera=camera_obj).delete()
-
         stop_camera_algorithm(pid)
         update_status_algorithm(pid)
+
+        if algorithm_name == "operation_control":
+            IndexOperations.objects.filter(camera=camera_obj).delete()
 
         logger.warning(f"Successfully deleted -> {algorithm_name} with pid {pid}")
 

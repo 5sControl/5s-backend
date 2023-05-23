@@ -8,8 +8,6 @@ fill:
 	python manage.py createadmin
 startprocess:
 	python manage.py startprocess
-mssql-get:
-	python manage.py inspectdb --database=mssql Skany > src/Order/models.py
 all:
 	make migrate
 	make fill
