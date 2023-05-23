@@ -41,5 +41,5 @@ class SystemMessagesApiView(mixins.ListModelMixin,
                             mixins.CreateModelMixin,
                             viewsets.GenericViewSet):
     serializer_class = SystemMessagesSerializer
-    queryset = SystemMessage.objects.all()
+    queryset = SystemMessage.objects.order_by("-id")
     pagination_class = SystemMessagesPaginator
