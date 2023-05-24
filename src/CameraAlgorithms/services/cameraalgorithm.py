@@ -36,7 +36,7 @@ def check_connection(camera_data: Dict[str, str]) -> bool:
     return response["status"]
 
 
-def DeleteCamera(camera_instance):
+def DeleteCamera(camera_instance: Camera) -> Dict[str, Any]:
     query_list_cameraalgorithms: Iterable[
         CameraAlgorithm
     ] = CameraAlgorithm.objects.filter(camera=camera_instance)
