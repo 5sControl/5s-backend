@@ -78,7 +78,7 @@ def version(request):
     versions = []
     versions = versions + [{
         "name": "5S Control version",
-        "version": "0.3.6"
+        "version": "0.3.7"
     }]
 
     try:
