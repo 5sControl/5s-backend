@@ -49,6 +49,11 @@ class CompanyInfoView(APIView):
             return Response({"error": "Company not found"}, status=404)
 
         is_license_active = f"{company.valid_until - timezone.now().date()}"
+
+        count_days = int(is_license_active.split(",")[0].split(" ")[0])
+        if count_days < 0:
+            count_days = 0
+
         active_cameras_count = Camera.objects.filter(is_active=True).count()
         active_algorithms_count = (
             CameraAlgorithm.objects.values("algorithm").distinct().count()
@@ -63,7 +68,7 @@ class CompanyInfoView(APIView):
             "licence_neurons_active": company.neurons_active,
             "company_active_count_cameras": active_cameras_count,
             "company_active_count_neurons": active_algorithms_count,
-            "days_left": is_license_active.split(",")[0],
+            "days_left": f"{count_days} days",
         }
         return Response(response_data, status=200)
 

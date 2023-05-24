@@ -1,8 +1,9 @@
-from django.core.management.base import BaseCommand
+import logging
 
+from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 
-from src.Core.logger import logger
+logger = logging.getLogger(__name__)
 
 
 class Command(BaseCommand):

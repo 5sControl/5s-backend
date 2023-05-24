@@ -3,11 +3,11 @@ import logging
 
 from typing import Any, Dict, Iterable, List
 
-from src.Core.const import SERVER_URL
-from src.Core.exceptions import InvalidResponseError, SenderError
+from src.Core.exceptions import InvalidResponseError, SenderError, CameraConnectionError
 from src.Core.utils import Sender
 from src.Inventory.models import Items
 from src.OrderView.models import IndexOperations
+from src.CompanyLicense.decorators import check_active_cameras, check_active_algorithms
 
 from ..models import Camera
 from ..models import Algorithm, CameraAlgorithm
@@ -16,6 +16,8 @@ from .logs_services import logs_service
 logger = logging.getLogger(__name__)
 
 
+@check_active_cameras
+@check_active_algorithms
 def CreateCameraAlgorithms(camera_algorithm_data: Dict[str, Any]) -> None:
     camera: Dict[str, str] = camera_algorithm_data["camera"]
     algorithms: List[Dict[str, Any]] = camera_algorithm_data["algorithms"]
@@ -34,7 +36,7 @@ def check_connection(camera_data: Dict[str, str]) -> bool:
     return response["status"]
 
 
-def DeleteCamera(camera_instance):
+def DeleteCamera(camera_instance: Camera) -> Dict[str, Any]:
     query_list_cameraalgorithms: Iterable[
         CameraAlgorithm
     ] = CameraAlgorithm.objects.filter(camera=camera_instance)
@@ -42,7 +44,7 @@ def DeleteCamera(camera_instance):
     for camera_algorithm in query_list_cameraalgorithms:
         pid: int = camera_algorithm.process_id
         if camera_algorithm.algorithm.name == "operation_control":
-            IndexOperations.objects.get(camera=camera_algorithm.camera).delete()
+            IndexOperations.objects.filter(camera=camera_algorithm.camera).delete()
         stop_camera_algorithm(pid)
         update_status_algorithm(pid)
 
@@ -74,7 +76,8 @@ def create_camera(camera: Dict[str, str]) -> None:
     if is_camera_exist:
         return
 
-    check_connection({"ip": ip, "username": username, "password": password})
+    if not check_connection({"ip": ip, "username": username, "password": password}):
+        raise CameraConnectionError(ip)
 
     try:
         camera_obj_to_update = Camera.objects.get(id=ip)
@@ -171,11 +174,11 @@ def create_camera_algorithms(
         )
         pid: int = algorithm.process_id
 
-        if algorithm_name == "operation_control":
-            IndexOperations.objects.get(camera=camera_obj).delete()
-
         stop_camera_algorithm(pid)
         update_status_algorithm(pid)
+
+        if algorithm_name == "operation_control":
+            IndexOperations.objects.filter(camera=camera_obj).delete()
 
         logger.warning(f"Successfully deleted -> {algorithm_name} with pid {pid}")
 
@@ -186,6 +189,7 @@ def camera_rtsp_link(id: str) -> str:
 
 
 def send_run_request(request: Dict[str, Any]) -> Dict[str, Any]:
+    logger.warning(f"Request data for algorithm {request}")
     try:
         response = Sender("run", request)
     except requests.exceptions.HTTPError as e:

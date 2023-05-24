@@ -20,7 +20,4 @@ EXPOSE 80
 
 RUN ["chmod", "+x", "/usr/src/app/entrypoint.sh"]
 
-# run the command
-# ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
-
 CMD ./entrypoint.sh

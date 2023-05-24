@@ -7,7 +7,7 @@ LOGGING = {
         },
         "file": {
             "class": "logging.FileHandler",
-            "filename": "logs.log",
+            "filename": "log/logs.log",
         },
     },
     "loggers": {

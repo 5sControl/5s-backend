@@ -1,18 +1,19 @@
 #!/bin/sh
 
-# create tables 
 python manage.py migrate
 
-# fill algorithm table
-python manage.py algorithm
-python manage.py createadmin
-
-# setup config
-python manage.py startprocess
-
-# run celery
 celery -A config.celery worker -l info &
 celery -A config.celery beat -l info &
 
-# run server
-python manage.py runserver 0.0.0.0:80
+python manage.py runserver 0.0.0.0:80 &
+
+sleep 5
+
+python manage.py algorithm
+python manage.py createadmin
+
+python manage.py startprocess
+
+while true; do
+    sleep 1
+done
