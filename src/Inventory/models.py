@@ -10,7 +10,7 @@ class Items(models.Model):
     status = models.CharField(max_length=20, default="Out of stock")
     current_stock_level = models.IntegerField(verbose_name="Current stock level", default=0)
     low_stock_level = models.IntegerField(verbose_name="Low stock level", default=0)
-    camera = models.ForeignKey(Camera, related_name='camera_id', on_delete=models.CASCADE)
+    camera = models.ForeignKey(Camera, related_name='camera_id', on_delete=models.SET_NULL, null=True)
     date_created = models.DateTimeField(verbose_name="Date created", auto_now_add=True)
     date_updated = models.DateTimeField(verbose_name="Date updated", auto_now=True)
     coords = models.JSONField(verbose_name="Area coordinates")
