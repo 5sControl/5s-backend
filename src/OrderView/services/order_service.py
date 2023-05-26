@@ -84,7 +84,9 @@ class OrderService:
                 if not camera_obj:
                     video_data = {"status": False}
                 else:
-                    video_data = get_skany_video_info(time=time_utc.isoformat(), camera_ip=camera_obj.id)
+                    video_data = get_skany_video_info(
+                        time=time_utc.isoformat(), camera_ip=camera_obj.id
+                    )
             else:
                 video_data = {"status": False}
 

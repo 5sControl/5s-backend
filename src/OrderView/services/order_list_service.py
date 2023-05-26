@@ -69,7 +69,7 @@ class OrderListService:
         orders_dict = self._build_orders_dict(results)
         orders_list = list(orders_dict.values())
 
-        orders_list = sorted(orders_list, key=lambda x: x['datawejscia'])
+        orders_list = sorted(orders_list, key=lambda x: x["terminrealizacji"])
 
         print(orders_list)
         return orders_list
@@ -145,7 +145,7 @@ class OrderListService:
                     "zlecenie": zlecenie,
                     "status": result[2],
                     "terminrealizacji": result[3],
-                    "datawejscia": result[4]
+                    "datawejscia": result[4],
                 }
             else:
                 orders_dict[zlecenie]["indeks"] = result[0]

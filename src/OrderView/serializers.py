@@ -8,7 +8,15 @@ from src.OrderView.models import IndexOperations
 class DatabaseConnectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = DatabaseConnection
-        fields = ["id", "database_type", "server", "database", "username", "password", "port"]
+        fields = [
+            "id",
+            "database_type",
+            "server",
+            "database",
+            "username",
+            "password",
+            "port",
+        ]
 
 
 class ProductSerializer(serializers.Serializer):
