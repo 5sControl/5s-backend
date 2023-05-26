@@ -27,6 +27,7 @@ class Items(models.Model):
 
         try:
             previous_camera = Items.objects.get(id=self.pk).camera_id
+            print(type(previous_camera))
         except Exception as e:
             print(e)
 
