@@ -27,7 +27,7 @@ class Items(models.Model):
 
         try:
             previous_camera = Items.objects.get(id=self.pk).camera_id
-            print(type(previous_camera))
+            print(type(previous_camera[0]))
         except Exception as e:
             print(e)
 
@@ -46,9 +46,9 @@ class Items(models.Model):
 
             # restart process previous camera
             if camera_updated:
-                stopped_process(previous_camera)
+                stopped_process(previous_camera[0])
                 print(f"<<<<<<<<stop process previous camera {previous_camera}>>>>>>>>")
-                started_process(previous_camera)
+                started_process(previous_camera[0])
                 print(f"<<<<<<<<<start process previous camera {previous_camera}>>>>>>>>>>>>")
 
         return instance
