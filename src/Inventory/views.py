@@ -22,7 +22,7 @@ class ItemsListAPIView(ListAPIView):
     queryset = Items.objects.all()
     serializer_class = ItemsSerializer
     pagination_class = None
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     ALLOWED_STATUSES = ["Out of stock", "Low stock level", "In stock"]
 
     @validate_license
@@ -47,16 +47,17 @@ class ItemsListAPIView(ListAPIView):
         return queryset
 
 
+@validate_license
 class ItemsCreateAPIView(CreateAPIView):
     queryset = Items.objects.all()
     serializer_class = ItemsSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
 
 class ItemsRetrieveAPIView(RetrieveAPIView):
     queryset = Items.objects.all()
     serializer_class = ItemsSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     lookup_field = 'id'
 
     def get(self, request, *args, **kwargs):
@@ -84,7 +85,7 @@ class ItemsRetrieveAPIView(RetrieveAPIView):
 class ItemsHistoryViewSet(APIView):
     """History items"""
 
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     @validate_license
     def get(self, request, date, start_time, end_time, item_id=None):
