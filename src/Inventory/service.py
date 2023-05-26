@@ -93,6 +93,7 @@ def process_item_status(data):
 
 
 def stopped_process(camera):
+    print(f"#############Stopping process camera {camera.id}############")
     """Stopped process algorithm MinMax"""
     process_id = CameraAlgorithm.objects.filter(
         Q(camera_id=camera) & Q(algorithm__name='min_max_control')
