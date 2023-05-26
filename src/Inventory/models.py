@@ -43,10 +43,11 @@ class Items(models.Model):
             # started process
             started_process(self.camera)
 
-            # restart process
+            # restart process previous camera
             if camera_updated:
                 stopped_process(previous_camera)
                 started_process(previous_camera)
+                print(f"restart process previous camera {previous_camera}")
 
         return instance
 
