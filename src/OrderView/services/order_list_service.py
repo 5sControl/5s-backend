@@ -69,8 +69,6 @@ class OrderListService:
         orders_dict = self._build_orders_dict(results)
         orders_list = list(orders_dict.values())
 
-        for order in orders_list:
-            order['datawejscia'] = datetime.strptime(order['datawejscia'], '%Y-%m-%d %H:%M:%S')
         orders_list = sorted(orders_list, key=lambda x: x['datawejscia'])
 
         print(orders_list)
