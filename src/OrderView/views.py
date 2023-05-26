@@ -92,8 +92,8 @@ class CreateDatabaseConnectionAPIView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         connection = serializer.validated_data
-
-        if connector.is_stable(serializer.validated_data):
+        print(connection)
+        if connector.is_stable(connection):
             serializer.save()
             return Response(
                 {
