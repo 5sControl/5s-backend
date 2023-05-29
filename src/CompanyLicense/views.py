@@ -50,7 +50,7 @@ class CompanyInfoView(APIView):
 
         is_license_active = f"{company.valid_until - timezone.now().date()}"
 
-        count_days = int(is_license_active.split(",")[0].split(" ")[0])
+        count_days = int(is_license_active.split(",")[0].split(" ")[0]) + 1
         if count_days < 0:
             count_days = 0
 
