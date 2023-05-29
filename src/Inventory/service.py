@@ -99,7 +99,7 @@ def stopped_process(camera):
         Q(camera_id=camera) & Q(algorithm__name='min_max_control')
     ).values_list('process_id', flat=True).first()
     if process_id is not None:
-        print("Stopped process algorithm MinMax", process_id, process_id.camera)
+        print("Stopped process algorithm MinMax", process_id)
         stop_camera_algorithm(pid=process_id)
         if not Items.objects.filter(camera_id=camera.id).exists():
             update_status_algorithm(pid=process_id)
