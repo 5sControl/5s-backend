@@ -142,6 +142,7 @@ def started_process(camera):
     except CameraAlgorithm.DoesNotExist:
         print("first algorithm not found")
         response = send_run_request(data)
+        print(response)
         CameraAlgorithm.objects.create(algorithm=algorithm, camera=camera, process_id=response["pid"])
 
     print("started process", camera_url)
