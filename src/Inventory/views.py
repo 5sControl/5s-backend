@@ -106,7 +106,7 @@ class ItemsHistoryViewSet(APIView):
             queryset = queryset.filter(algorithm__name=algorithm_name)
 
         if item_id:
-            queryset = queryset.filter(extra__icontains=f'"itemId": {item_id}')
+            queryset = queryset.filter(extra__icontains=f'"itemId": {item_id},')
 
         queryset = queryset.order_by("algorithm__name", "camera__id", "id")
 
