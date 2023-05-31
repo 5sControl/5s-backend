@@ -20,11 +20,11 @@ class DatabaseConnectionSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.Serializer):
-    indeks = serializers.IntegerField()
+    id = serializers.IntegerField()
     zlecenie = serializers.CharField(max_length=255)
     status = serializers.CharField(max_length=255)
-    terminrealizacji = serializers.DateTimeField()
-    datawejscia = serializers.DateTimeField()
+    deadline = serializers.DateTimeField()
+    entryDate = serializers.DateTimeField()
 
 
 class IndexStanowiskoSerializer(serializers.ModelSerializer):
