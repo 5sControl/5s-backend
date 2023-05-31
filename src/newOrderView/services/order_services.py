@@ -1,4 +1,5 @@
 from typing import List, Any
+from datetime import datetime
 
 import pyodbc
 
@@ -54,6 +55,9 @@ class OrderServices:
             if not operations_data:
                 continue
 
+            date_object = datetime.strptime(from_date, "%Y-%m-%d")
+            formatted_date = date_object.strftime("%Y-%m-%d %H:%M:%S.%f")
+
             for i in range(len(operations_data)):
                 operation_row = operations_data[i]
                 operation = {
@@ -61,7 +65,7 @@ class OrderServices:
                     "zlecenieID": operation_row[3],
                     "zlecenie": operation_row[4].strip(),
                     "startTime": operation_row[1],
-                    "endTime": operation_row[2] if i < len(operations_data) - 1 else None,
+                    "endTime": operation_row[2] if i < len(operations_data) - 1 else formatted_date,
                 }
                 operations_list.append(operation)
 
