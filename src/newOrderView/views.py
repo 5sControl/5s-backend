@@ -9,7 +9,7 @@ from .services.order_services import services
 
 
 class GetZlecnieList(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     pagination_class = OrderViewPaginnator
 
     @connector_service.check_database_connection

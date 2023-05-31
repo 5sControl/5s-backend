@@ -10,7 +10,7 @@ class OrderServices:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
         stanowiska_query = """
-            SELECT indeks, raport
+            SELECT indeks as id, raport as orderName
             FROM Stanowiska
         """
         stanowiska_data = connector_service.executer(
