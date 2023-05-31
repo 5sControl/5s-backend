@@ -68,7 +68,7 @@ class OrderListService:
         orders_dict = self._build_orders_dict(results)
         orders_list = list(orders_dict.values())
 
-        orders_list = sorted(orders_list, key=lambda x: x["terminrealizacji"])
+        orders_list = sorted(orders_list, key=lambda x: x["deadline"])
 
         return orders_list
 
