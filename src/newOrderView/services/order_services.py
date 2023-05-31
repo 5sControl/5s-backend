@@ -27,7 +27,7 @@ class OrderServices:
         )
 
         result: List[Dict[str, Any]] = [
-            {"id": item[0], "zlecenie": item[1].strip()} for item in data
+            {"id": item[0], "order": item[1].strip()} for item in data
         ]
 
         return result
