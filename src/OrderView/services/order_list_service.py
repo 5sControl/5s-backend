@@ -1,4 +1,5 @@
 from typing import Any, Dict, List, Optional, Tuple
+import datetime
 
 import pyodbc
 
@@ -68,6 +69,9 @@ class OrderListService:
         orders_dict = self._build_orders_dict(results)
         orders_list = list(orders_dict.values())
 
+        orders_list = sorted(orders_list, key=lambda x: x["terminrealizacji"])
+
+        print(orders_list)
         return orders_list
 
     def _build_query(
@@ -141,7 +145,7 @@ class OrderListService:
                     "zlecenie": zlecenie,
                     "status": result[2],
                     "terminrealizacji": result[3],
-                    "datawejscia": result[4]
+                    "datawejscia": result[4],
                 }
             else:
                 orders_dict[zlecenie]["indeks"] = result[0]

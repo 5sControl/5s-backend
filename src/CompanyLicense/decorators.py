@@ -61,7 +61,6 @@ def check_active_algorithms(view_func):
     @wraps(view_func)
     def wrapped_view(request, *args, **kwargs):
         company = Company.objects.last()
-        print("!!!!!!")
 
         if not company.is_active:
             return HttpResponseBadRequest("Your license is inactive.")

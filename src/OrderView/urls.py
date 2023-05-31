@@ -25,7 +25,9 @@ urlpatterns = [
     path("get-operations/", OperationNameApiView.as_view(), name="get operations name"),
     # database configuration
     path(
-        "create-connection/", CreateDatabaseConnectionAPIView.as_view(), name="mssql connection"
+        "create-connection/",
+        CreateDatabaseConnectionAPIView.as_view(),
+        name="mssql connection",
     ),
     path(
         "get-connections/",

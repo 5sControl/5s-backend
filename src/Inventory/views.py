@@ -47,6 +47,7 @@ class ItemsListAPIView(ListAPIView):
         return queryset
 
 
+# @validate_license
 class ItemsCreateAPIView(CreateAPIView):
     queryset = Items.objects.all()
     serializer_class = ItemsSerializer
@@ -84,7 +85,7 @@ class ItemsRetrieveAPIView(RetrieveAPIView):
 class ItemsHistoryViewSet(APIView):
     """History items"""
 
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     @validate_license
     def get(self, request, date, start_time, end_time, item_id=None):
@@ -105,7 +106,7 @@ class ItemsHistoryViewSet(APIView):
             queryset = queryset.filter(algorithm__name=algorithm_name)
 
         if item_id:
-            queryset = queryset.filter(extra__icontains=f'"itemId": {item_id}')
+            queryset = queryset.filter(extra__icontains=f'"itemId": {item_id},')
 
         queryset = queryset.order_by("algorithm__name", "camera__id", "id")
 

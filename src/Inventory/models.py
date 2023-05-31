@@ -10,7 +10,7 @@ class Items(models.Model):
     status = models.CharField(max_length=20, default="Out of stock")
     current_stock_level = models.IntegerField(verbose_name="Current stock level", default=0)
     low_stock_level = models.IntegerField(verbose_name="Low stock level", default=0)
-    camera = models.ForeignKey(Camera, related_name='camera_id', on_delete=models.CASCADE)
+    camera = models.ForeignKey(Camera, related_name='camera_id', on_delete=models.SET_NULL, null=True)
     date_created = models.DateTimeField(verbose_name="Date created", auto_now_add=True)
     date_updated = models.DateTimeField(verbose_name="Date updated", auto_now=True)
     coords = models.JSONField(verbose_name="Area coordinates")
@@ -27,6 +27,7 @@ class Items(models.Model):
 
         try:
             previous_camera = Items.objects.get(id=self.pk).camera_id
+            print(type(previous_camera[0]))
         except Exception as e:
             print(e)
 
@@ -43,10 +44,11 @@ class Items(models.Model):
             # started process
             started_process(self.camera)
 
-            # restart process
+            # restart process previous camera
             if camera_updated:
-                stopped_process(previous_camera)
-                started_process(previous_camera)
+                previous_camera_obj = Camera.objects.filter(id=previous_camera)[0]
+                stopped_process(previous_camera_obj)
+                started_process(previous_camera_obj)
 
         return instance
 

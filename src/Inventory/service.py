@@ -29,9 +29,10 @@ def process_item_status(data):
                 item_status = "Low stock level"
                 if min_item == 0:
                     item.current_stock_level = 0
+                    item_data["count"] = 0
                 else:
                     item.current_stock_level = min_item - 1
-                item_data["count"] = min_item - 1
+                    item_data["count"] = min_item - 1
 
                 if item.prev_status == "In stock":
                     try:
@@ -94,10 +95,12 @@ def process_item_status(data):
 
 def stopped_process(camera):
     """Stopped process algorithm MinMax"""
+
     process_id = CameraAlgorithm.objects.filter(
         Q(camera_id=camera) & Q(algorithm__name='min_max_control')
     ).values_list('process_id', flat=True).first()
     if process_id is not None:
+        print("Stopped process algorithm MinMax", process_id)
         stop_camera_algorithm(pid=process_id)
         if not Items.objects.filter(camera_id=camera.id).exists():
             update_status_algorithm(pid=process_id)
@@ -139,6 +142,9 @@ def started_process(camera):
         camera_algorithm.save()
     except CameraAlgorithm.DoesNotExist:
         print("first algorithm not found")
+        if len(data.get("extra")) == 0:
+            return
+
         response = send_run_request(data)
         CameraAlgorithm.objects.create(algorithm=algorithm, camera=camera, process_id=response["pid"])
 
