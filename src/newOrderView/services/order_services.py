@@ -13,11 +13,11 @@ class OrderServices:
                 sk.data AS startTime,
                 st.indeks as workplace,
                 st.raport AS operationName,
-                z.indeks AS zlecenieIndex,
-                z.zlecenie AS zlecenie
-            FROM skany sk
+                z.indeks AS orderID,
+                z.zlecenie AS orderName
+            FROM Skany sk
             JOIN Stanowiska st ON sk.stanowisko = st.indeks
-            JOIN zlecenia z ON sk.indeks = z.indekszlecnie
+            JOIN Zlecenia z ON sk.indeks = z.indekszlecenia
             WHERE 1=1
         """
 
