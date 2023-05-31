@@ -1,4 +1,4 @@
-from typing import List, Any, Tuple, Dict
+from typing import List, Any
 
 import pyodbc
 
@@ -16,9 +16,9 @@ class OrderServices:
                 z.indeks AS orderID,
                 z.zlecenie AS orderName
             FROM Skany sk
-            JOIN Stanowiska st ON sk.stanowisko = st.indeks
+            JOIN Stanowiska st ON sk.stanowisko = workplace
             JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeks
-            JOIN zlecenia z ON sz.indeks = z.indeks
+            JOIN zlecenia z ON sz.indeks = orderID
             WHERE 1=1
         """
 
@@ -26,7 +26,7 @@ class OrderServices:
         params: List[Any] = []
 
         if from_date and to_date:
-            query += " AND sk.data >= ? AND sk.data <= ?"
+            query += " AND startTime >= ? AND startTime <= ?"
             params.extend([from_date, to_date])
 
         print(query, params)
@@ -36,6 +36,8 @@ class OrderServices:
             query=query,
             params=params,
         )
+        print(data)
+
         result_dict = {
             "operationID": None,
             "operationName": None,
