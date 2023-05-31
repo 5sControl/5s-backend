@@ -6,8 +6,7 @@ from src.MsSqlConnector.connector import connector as connector_service
 class OrderServices:
     def get_zlecenie(self, from_date: str, to_date: str):
         zlecenie_query = """
-                SELECT DISTINCT
-                    z.indeks as id, z.zlecenie
+                SELECT DISTINCT z.zlecenie, z.indeks as id
                 FROM zlecenia z
                 WHERE 1=1
             """
