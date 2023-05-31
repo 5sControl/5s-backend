@@ -4,9 +4,9 @@ from src.MsSqlConnector.connector import connector as connector_service
 
 
 class OrderServices:
-    def get_zlecenie(self, from_date: str, to_date: str):
-        zlecenie_query = """
-                SELECT DISTINCT z.zlecenie, z.indeks as id
+    def get_order(self, from_date: str, to_date: str):
+        order_query = """
+                SELECT DISTINCT z.zlecenie as order, z.indeks as id
                 FROM zlecenia z
                 WHERE 1=1
             """
@@ -16,14 +16,14 @@ class OrderServices:
 
         if from_date and to_date:
             if from_date == to_date:
-                zlecenie_query += " AND CAST(datawejscia AS DATE) = ?"
+                order_query += " AND CAST(datawejscia AS DATE) = ?"
                 params.append(from_date)
             else:
-                zlecenie_query += " AND z.datawejscia BETWEEN ? AND ?"
+                order_query += " AND z.datawejscia BETWEEN ? AND ?"
                 params.extend([from_date, to_date])
 
         data: List[Tuple[Any]] = connector_service.executer(
-            connection=connection, query=zlecenie_query, params=params
+            connection=connection, query=order_query, params=params
         )
 
         result: List[Dict[str, Any]] = [
