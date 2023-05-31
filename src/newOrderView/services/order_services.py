@@ -26,7 +26,9 @@ class OrderServices:
             connection=connection, query=zlecenie_query, params=params
         )
 
-        result: List[Dict[str, Any]] = [{item["id"]: item['zlecenie']} for item in data]
+        result: List[Dict[str, Any]] = [
+            {"id": item[0], "zlecenie": item[1]} for item in data
+        ]
 
         return result
 
