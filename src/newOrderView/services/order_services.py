@@ -55,9 +55,6 @@ class OrderServices:
             if not operations_data:
                 continue
 
-            date_object = datetime.strptime(to_date, "%Y-%m-%d")
-            formatted_date = date_object.strftime("%Y-%m-%d %H:%M:%S.%f")
-
             for i in range(len(operations_data)):
                 operation_row = operations_data[i]
                 operation = {
@@ -74,7 +71,11 @@ class OrderServices:
                     max_end_time = endTime.replace(hour=16, minute=0, second=0, microsecond=0)
                     if endTime > max_end_time and startTime < endTime:
                         operation["endTime"] = max_end_time.strftime("%Y-%m-%d %H:%M:%S.%f")
-
+                else:
+                    startTime = datetime.strptime(operation["startTime"], "%Y-%m-%d %H:%M:%S.%f")
+                    max_end_time = startTime.replace(hour=16, minute=0, second=0, microsecond=0)
+                    operation["endTime"] = max_end_time.strftime("%Y-%m-%d %H:%M:%S.%f")
+    
                 operations_list.append(operation)
 
             result = {
