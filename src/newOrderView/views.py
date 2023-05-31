@@ -17,6 +17,6 @@ class GetZlecnieList(generics.GenericAPIView):
         from_date = request.GET.get("from")
         to_date = request.GET.get("to")
 
-        result = services.get_zlecenie(from_date, to_date)
+        result = services.get_order(from_date, to_date)
 
         return Response(result, status=200)

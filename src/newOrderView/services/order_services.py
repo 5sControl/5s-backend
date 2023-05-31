@@ -31,4 +31,3 @@ class OrderServices:
 
 
 services = OrderServices()
-
