@@ -45,8 +45,9 @@ class OrderServices:
             operations_data = connector_service.executer(
                 connection=connection, query=operations_query, params=params
             )
-            
-            print(operations_data)
+
+            if not operations_data:
+                continue
 
             operations_list = []
 
