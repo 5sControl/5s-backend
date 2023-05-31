@@ -44,7 +44,7 @@ class OrderServices:
         for row in data:
             operation = {
                 "indeks": row[0],
-                "data": row[1],
+                "date": row[1],
                 "orderID": row[4],
                 "orderName": row[5],
             }
