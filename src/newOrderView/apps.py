@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class NeworderviewConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'src.newOrderView'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "src.newOrderView"

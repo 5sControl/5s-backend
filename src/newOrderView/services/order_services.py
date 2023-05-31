@@ -23,7 +23,9 @@ class OrderServices:
                 self.zlecenie_query += " AND z.datawejscia BETWEEN ? AND ?"
                 params.extend([from_date, to_date])
 
-        results = connector_service.executer(connection=connection, query=self.zlecenie_query)
+        results = connector_service.executer(
+            connection=connection, query=self.zlecenie_query, params=params
+        )
 
         print(results)
 
