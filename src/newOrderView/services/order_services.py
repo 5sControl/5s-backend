@@ -51,6 +51,9 @@ class OrderServices:
 
             operations_list = []
 
+            if not operations_list:
+                continue
+
             for i in range(len(operations_data)):
                 operation_row = operations_data[i]
                 operation = {
@@ -71,7 +74,6 @@ class OrderServices:
             result_list.append(result)
 
         return result_list
-
 
 
 services = OrderServices()
