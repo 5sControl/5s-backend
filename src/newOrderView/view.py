@@ -21,5 +21,3 @@ class OperationNameApiView(generics.GenericAPIView):
     def get(self, request):
         response = operation_service.get_operation_names()
         return Response(response, status=status.HTTP_200_OK)
-
-
