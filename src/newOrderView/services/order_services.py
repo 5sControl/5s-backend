@@ -14,8 +14,7 @@ class OrderServices:
             FROM Stanowiska
         """
         stanowiska_data = connector_service.executer(
-            connection=connection,
-            query=stanowiska_query
+            connection=connection, query=stanowiska_query
         )
 
         result_list = []
@@ -33,7 +32,7 @@ class OrderServices:
                 FROM Skany sk
                 JOIN Stanowiska st ON sk.stanowisko = st.indeks
                 JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeks
-                JOIN Zlecenia z ON sz.indekszlecenia = z.indeks
+                JOIN zlecenia z ON sz.indekszlecenia = z.indeks
                 WHERE st.indeks = ?
             """
 
@@ -44,9 +43,7 @@ class OrderServices:
                 params.extend([from_date, to_date])
 
             operations_data = connector_service.executer(
-                connection=connection,
-                query=operations_query,
-                params=params
+                connection=connection, query=operations_query, params=params
             )
 
             operations_list = []
@@ -56,14 +53,14 @@ class OrderServices:
                     "indeks": operation_row[0],
                     "zlecenieID": operation_row[4],
                     "zlecenie": operation_row[5].strip(),
-                    "data": operation_row[1]
+                    "data": operation_row[1],
                 }
                 operations_list.append(operation)
 
             result = {
                 "OperationID": operation_id,
                 "OperationName": operations_data[0][3],
-                "operations": operations_list
+                "operations": operations_list,
             }
 
             result_list.append(result)
