@@ -14,6 +14,7 @@ routes = [
     path("reports/", include("src.Reports.urls"), name="reports"),
     path("company/", include("src.CompanyLicense.urls"), name="company"),
     path("order/", include("src.OrderView.urls"), name="order"),
+    path("new-order/", include("src.newOrderView.urls"), name="new-order"),
     path("inventory/", include("src.Inventory.urls"), name="inventory"),
     path("mailer/", include("src.Mailer.urls"), name="mailer"),
     path("core/", include("src.Core.urls"), name="core"),
