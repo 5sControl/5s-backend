@@ -59,7 +59,7 @@ class OrderServices:
 
             result = {
                 "OperationID": operation_id,
-                "OperationName": operations_data[0][3],
+                "OperationName": operations_data[3],
                 "operations": operations_list,
             }
 
