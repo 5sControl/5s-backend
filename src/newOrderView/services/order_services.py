@@ -9,7 +9,6 @@ class OrderServices:
     def get_order(self, from_date: str, to_date: str):
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
-        # Получаем список всех indeks из таблицы Stanowiska
         stanowiska_query = """
             SELECT indeks
             FROM Stanowiska
@@ -34,7 +33,7 @@ class OrderServices:
                 FROM Skany sk
                 JOIN Stanowiska st ON sk.stanowisko = st.indeks
                 JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeks
-                JOIN zlecenia z ON sz.indekszlecnia = z.indeks
+                JOIN Zlecenia z ON sz.indekszlecenia = z.indeks
                 WHERE st.indeks = ?
             """
 
