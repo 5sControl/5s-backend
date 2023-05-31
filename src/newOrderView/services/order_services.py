@@ -55,7 +55,7 @@ class OrderServices:
             if not operations_data:
                 continue
 
-            date_object = datetime.strptime(from_date, "%Y-%m-%d")
+            date_object = datetime.strptime(to_date, "%Y-%m-%d")
             formatted_date = date_object.strftime("%Y-%m-%d %H:%M:%S.%f")
 
             for i in range(len(operations_data)):
