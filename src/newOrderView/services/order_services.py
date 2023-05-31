@@ -16,9 +16,9 @@ class OrderServices:
                 z.indeks AS orderID,
                 z.zlecenie AS orderName
             FROM Skany sk
-            JOIN Stanowiska st ON sk.stanowisko = workplace
+            JOIN Stanowiska st ON sk.stanowisko = st.indeks
             JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeks
-            JOIN zlecenia z ON sz.indeks = orderID
+            JOIN zlecenia z ON sz.zlecenie = z.indeks
             WHERE 1=1
         """
 
@@ -26,7 +26,7 @@ class OrderServices:
         params: List[Any] = []
 
         if from_date and to_date:
-            query += " AND startTime >= ? AND startTime <= ?"
+            query += " AND sk.data >= ? AND sk.data <= ?"
             params.extend([from_date, to_date])
 
         print(query, params)
