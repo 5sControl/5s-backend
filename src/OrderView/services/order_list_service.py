@@ -70,7 +70,6 @@ class OrderListService:
 
         orders_list = sorted(orders_list, key=lambda x: x["terminrealizacji"])
 
-        print(orders_list)
         return orders_list
 
     def _build_query(
