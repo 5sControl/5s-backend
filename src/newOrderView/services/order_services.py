@@ -45,6 +45,8 @@ class OrderServices:
             operations_data = connector_service.executer(
                 connection=connection, query=operations_query, params=params
             )
+            
+            print(operations_data)
 
             operations_list = []
 
@@ -57,11 +59,11 @@ class OrderServices:
                 }
                 operations_list.append(operation)
 
-                result = {
-                    "OperationID": operation_id,
-                    "OperationName": operations_data[3],
-                    "operations": operations_list,
-                }
+            result = {
+                "OperationID": operation_id,
+                "OperationName": operations_data[0][3],
+                "operations": operations_list,
+            }
 
             result_list.append(result)
 
