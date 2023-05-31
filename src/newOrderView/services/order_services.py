@@ -17,7 +17,8 @@ class OrderServices:
                 z.zlecenie AS orderName
             FROM Skany sk
             JOIN Stanowiska st ON sk.stanowisko = st.indeks
-            JOIN Zlecenia z ON sk.indeks = z.indekszlecenia
+            JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeks
+            JOIN zlecenia z ON sz.indeks = z.indeks
             WHERE 1=1
         """
 
