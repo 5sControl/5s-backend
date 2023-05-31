@@ -51,7 +51,7 @@ class OrderServices:
 
             operations_list = []
 
-            if not operations_list:
+            if not operations_data:
                 continue
 
             for i in range(len(operations_data)):
