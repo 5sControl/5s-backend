@@ -65,13 +65,14 @@ class OrderServices:
                     "zlecenieID": operation_row[3],
                     "zlecenie": operation_row[4].strip(),
                     "startTime": operation_row[1],
-                    "endTime": operation_row[2] if i < len(operations_data) - 1 else formatted_date,
+                    "endTime": operation_row[2] if i < len(operations_data) - 1 else None,
                 }
 
                 if operation["endTime"]:
-                    end_time = datetime.strptime(operation["endTime"], "%Y-%m-%d %H:%M:%S.%f")
-                    max_end_time = end_time.replace(hour=16, minute=0, second=0, microsecond=0)
-                    if end_time > max_end_time:
+                    endTime = datetime.strptime(operation["endTime"], "%Y-%m-%d %H:%M:%S.%f")
+                    startTime = datetime.strptime(operation["startTime"], "%Y-%m-%d %H:%M:%S.%f")
+                    max_end_time = endTime.replace(hour=16, minute=0, second=0, microsecond=0)
+                    if endTime > max_end_time and startTime < endTime:
                         operation["endTime"] = max_end_time.strftime("%Y-%m-%d %H:%M:%S.%f")
 
                 operations_list.append(operation)
