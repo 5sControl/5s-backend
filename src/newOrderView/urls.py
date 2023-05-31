@@ -1,13 +1,13 @@
 from django.urls import path
 
 from .views import (
-    GetZlecnieList,
+    GetOperationData,
 )
 
 urlpatterns = [
     path(
-        "zlecenie/",
-        GetZlecnieList.as_view(),
+        "operations/",
+        GetOperationData.as_view(),
         name="get-list-zlecnie",
     ),
 ]
