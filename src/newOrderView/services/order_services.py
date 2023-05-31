@@ -52,16 +52,16 @@ class OrderServices:
 
             for operation_row in operations_data:
                 operation = {
-                    "indeks": operation_row[0],
-                    "zlecenieID": operation_row[2],
-                    "zlecenie": operation_row[3].strip(),
-                    "data": operation_row[1],
+                    "id": operation_row[0],
+                    "orderID": operation_row[2],
+                    "orderName": operation_row[3].strip(),
+                    "date": operation_row[1],
                 }
                 operations_list.append(operation)
 
             result = {
-                "OperationID": operation_id,
-                "OperationName": operation_name,
+                "operationID": operation_id,
+                "operationName": operation_name,
                 "operations": operations_list,
             }
 
