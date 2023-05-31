@@ -105,7 +105,7 @@ class MsSqlConnector:
         connection: pyodbc.Connection,
         query: str,
         params: Optional[Iterable[Any]] = None,
-    ):
+    ) -> Any:
         with connection.cursor() as cursor:
             if params:
                 cursor.execute(query, params)

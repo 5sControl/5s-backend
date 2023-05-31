@@ -1,4 +1,4 @@
-from typing import List, Any
+from typing import List, Any, Tuple, Dict
 
 from src.MsSqlConnector.connector import connector as connector_service
 
@@ -22,11 +22,13 @@ class OrderServices:
                 zlecenie_query += " AND z.datawejscia BETWEEN ? AND ?"
                 params.extend([from_date, to_date])
 
-        results = connector_service.executer(
+        data: List[Tuple[Any]] = connector_service.executer(
             connection=connection, query=zlecenie_query, params=params
         )
 
-        print(results)
+        result: List[Dict[str, Any]] = [{item["id"]: item['zlecenie']} for item in data]
+
+        return result
 
 
 services = OrderServices()
