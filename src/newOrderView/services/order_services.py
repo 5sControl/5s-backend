@@ -57,11 +57,11 @@ class OrderServices:
                 }
                 operations_list.append(operation)
 
-            result = {
-                "OperationID": operation_id,
-                "OperationName": operations_data[3],
-                "operations": operations_list,
-            }
+                result = {
+                    "OperationID": operation_id,
+                    "OperationName": operations_data[3],
+                    "operations": operations_list,
+                }
 
             result_list.append(result)
 
