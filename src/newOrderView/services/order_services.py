@@ -67,42 +67,21 @@ class OrderServices:
                     else None,
                 }
 
-                if operation["endTime"]:
-                    endTime: datetime = datetime.strptime(
-                        operation["endTime"], "%Y-%m-%d %H:%M:%S.%f"
-                    )
-                    startTime: datetime = datetime.strptime(
-                        operation["startTime"], "%Y-%m-%d %H:%M:%S.%f"
-                    )
-                    max_end_time: datetime = endTime.replace(
-                        hour=16, minute=0, second=0, microsecond=0
-                    )
-                    if (endTime > max_end_time) and (startTime < endTime):
-                        operation["endTime"]: datetime = max_end_time.strftime(
-                            "%Y-%m-%d %H:%M:%S.%f"
-                        )
-                    else:
-                        max_end_time: datetime = endTime.replace(
-                            hour=17, minute=0, second=0, microsecond=0
-                        )
-                        operation["endTime"]: datetime = max_end_time.strftime(
-                            "%Y-%m-%d %H:%M:%S.%f"
-                        )
-                else:
+                if not operation["endTime"]:
                     startTime: datetime = datetime.strptime(
                         operation["startTime"], "%Y-%m-%d %H:%M:%S.%f"
                     )
                     max_end_time: datetime = startTime.replace(
-                        hour=16, minute=0, second=0, microsecond=0
+                        hour=0, minute=0, second=0, microsecond=0
                     )
-                    if max_end_time < startTime:
-                        max_end_time: datetime = endTime.replace(
-                            hour=17, minute=0, second=0, microsecond=0
+                    counter = 1
+                    while startTime > max_end_time:
+                        max_end_time: datetime = startTime.replace(
+                            hour=counter, minute=0, second=0, microsecond=0
                         )
-                        operation["endTime"]: datetime = max_end_time.strftime(
-                            "%Y-%m-%d %H:%M:%S.%f"
-                        )
-                    else:
+                        counter += 1
+
+                    if max_end_time > max_end_time:
                         operation["endTime"]: datetime = max_end_time.strftime(
                             "%Y-%m-%d %H:%M:%S.%f"
                         )
