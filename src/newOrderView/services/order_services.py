@@ -1,4 +1,4 @@
-from typing import List, Any
+from typing import List, Any, Tuple, Dict
 from datetime import datetime
 
 import pyodbc
@@ -7,25 +7,25 @@ from src.MsSqlConnector.connector import connector as connector_service
 
 
 class OrderServices:
-    def get_operations(self, from_date: str, to_date: str):
+    def get_operations(self, from_date: str, to_date: str) -> List[Dict[str, Any]]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
-        stanowiska_query = """
+        stanowiska_query: str = """
             SELECT indeks, raport
             FROM Stanowiska
         """
 
-        stanowiska_data = connector_service.executer(
+        stanowiska_data: List[Tuple[Any]] = connector_service.executer(
             connection=connection, query=stanowiska_query
         )
 
-        result_list = []
+        result_list: List = []
 
         for row in stanowiska_data:
-            operation_id = row[0]
-            operation_name = row[1]
+            operation_id: int = row[0]
+            operation_name: str = row[1]
 
-            operations_query = """
+            operations_query: str = """
                 SELECT
                     sk.indeks AS id,
                     sk.data AS startTime,
@@ -46,41 +46,72 @@ class OrderServices:
 
             operations_query += " ORDER BY sk.data"
 
-            operations_data = connector_service.executer(
+            operations_data: List[Tuple[Any]] = connector_service.executer(
                 connection=connection, query=operations_query, params=params
             )
 
-            operations_list = []
+            operations_list: List = []
 
             if not operations_data:
                 continue
 
             for i in range(len(operations_data)):
-                operation_row = operations_data[i]
+                operation_row: Tuple[Any] = operations_data[i]
                 operation = {
                     "indeks": operation_row[0],
-                    "zlecenieID": operation_row[3],
-                    "zlecenie": operation_row[4].strip(),
+                    "orderID": operation_row[3],
+                    "orderName": operation_row[4].strip(),
                     "startTime": operation_row[1],
-                    "endTime": operation_row[2] if i < len(operations_data) - 1 else None,
+                    "endTime": operation_row[2]
+                    if i < len(operations_data) - 1
+                    else None,
                 }
 
                 if operation["endTime"]:
-                    endTime = datetime.strptime(operation["endTime"], "%Y-%m-%d %H:%M:%S.%f")
-                    startTime = datetime.strptime(operation["startTime"], "%Y-%m-%d %H:%M:%S.%f")
-                    max_end_time = endTime.replace(hour=16, minute=0, second=0, microsecond=0)
-                    if endTime > max_end_time and startTime < endTime:
-                        operation["endTime"] = max_end_time.strftime("%Y-%m-%d %H:%M:%S.%f")
+                    endTime: datetime = datetime.strptime(
+                        operation["endTime"], "%Y-%m-%d %H:%M:%S.%f"
+                    )
+                    startTime: datetime = datetime.strptime(
+                        operation["startTime"], "%Y-%m-%d %H:%M:%S.%f"
+                    )
+                    max_end_time: datetime = endTime.replace(
+                        hour=16, minute=0, second=0, microsecond=0
+                    )
+                    if (endTime > max_end_time) and (startTime < endTime):
+                        operation["endTime"]: datetime = max_end_time.strftime(
+                            "%Y-%m-%d %H:%M:%S.%f"
+                        )
+                    else:
+                        max_end_time: datetime = endTime.replace(
+                            hour=17, minute=0, second=0, microsecond=0
+                        )
+                        operation["endTime"]: datetime = max_end_time.strftime(
+                            "%Y-%m-%d %H:%M:%S.%f"
+                        )
                 else:
-                    startTime = datetime.strptime(operation["startTime"], "%Y-%m-%d %H:%M:%S.%f")
-                    max_end_time = startTime.replace(hour=16, minute=0, second=0, microsecond=0)
-                    operation["endTime"] = max_end_time.strftime("%Y-%m-%d %H:%M:%S.%f")
-    
+                    startTime: datetime = datetime.strptime(
+                        operation["startTime"], "%Y-%m-%d %H:%M:%S.%f"
+                    )
+                    max_end_time: datetime = startTime.replace(
+                        hour=16, minute=0, second=0, microsecond=0
+                    )
+                    if max_end_time < startTime:
+                        max_end_time: datetime = endTime.replace(
+                            hour=17, minute=0, second=0, microsecond=0
+                        )
+                        operation["endTime"]: datetime = max_end_time.strftime(
+                            "%Y-%m-%d %H:%M:%S.%f"
+                        )
+                    else:
+                        operation["endTime"]: datetime = max_end_time.strftime(
+                            "%Y-%m-%d %H:%M:%S.%f"
+                        )
+
                 operations_list.append(operation)
 
             result = {
-                "OperationID": operation_id,
-                "OperationName": operation_name,
+                "operationID": operation_id,
+                "operationName": operation_name,
                 "operations": operations_list,
             }
 
