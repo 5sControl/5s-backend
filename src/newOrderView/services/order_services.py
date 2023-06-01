@@ -73,13 +73,23 @@ class OrderServices:
                 }
 
                 if operation["endTime"] is None:
-                    startTime: datetime = datetime.strptime(operation["startTime"], "%Y-%m-%d %H:%M:%S.%f")
+                    startTime: datetime = datetime.strptime(
+                        operation["startTime"], "%Y-%m-%d %H:%M:%S.%f"
+                    )
                     endTime: datetime = startTime + timedelta(hours=1)
-                    max_end_time: datetime = endTime.replace(hour=17, minute=0, second=0, microsecond=0)
-                    if endTime > max_end_time:
-                        operation["endTime"]: datetime = max_end_time.strftime("%Y-%m-%d %H:%M:%S.%f")
+
+                    if startTime.hour >= 16 or endTime.hour <= 7:
+                        max_end_time: datetime = startTime.replace(
+                            hour=16, minute=0, second=0, microsecond=0
+                        )
                     else:
-                        operation["endTime"]: datetime = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
+                        max_end_time: datetime = endTime.replace(
+                            hour=7, minute=0, second=0, microsecond=0
+                        )
+
+                    operation["endTime"]: datetime = max_end_time.strftime(
+                        "%Y-%m-%d %H:%M:%S.%f"
+                    )
 
                 operations_list.append(operation)
 
@@ -163,7 +173,9 @@ class OrderServices:
 
             camera_obj: Optional[Camera] = None
             try:
-                camera_obj = IndexOperations.objects.get(type_operation=workplaceID).camera
+                camera_obj = IndexOperations.objects.get(
+                    type_operation=workplaceID
+                ).camera
             except IndexOperations.DoesNotExist:
                 pass
 
