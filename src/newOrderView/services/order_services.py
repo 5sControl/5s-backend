@@ -136,6 +136,8 @@ class OrderServices:
             connection=connection, query=order_query, params=params
         )
 
+        print(order_data)
+
         result_list: List[Dict[str, Any]] = []
 
         for order_row in order_data:
