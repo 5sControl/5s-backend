@@ -56,6 +56,7 @@ class OrderServices:
             )
 
             operations_list: List[Dict[str, Any]] = []
+            unique_ids = set()  # Множество для отслеживания уникальных идентификаторов
 
             if not operations_data:
                 continue
@@ -71,6 +72,11 @@ class OrderServices:
                     if i < len(operations_data) - 1
                     else None,
                 }
+
+                if operation["id"] in unique_ids:
+                    continue  # Пропустить операции с уже известным идентификатором
+
+                unique_ids.add(operation["id"])
 
                 startTime: datetime = datetime.strptime(
                     operation["startTime"], "%Y-%m-%d %H:%M:%S.%f"
