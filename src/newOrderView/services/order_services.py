@@ -1,9 +1,12 @@
-from typing import List, Any, Tuple, Dict
-from datetime import datetime, timedelta
+from typing import List, Any, Tuple, Dict, Optional
+from datetime import datetime, timedelta, timezone
 
 import pyodbc
 
 from src.MsSqlConnector.connector import connector as connector_service
+from src.OrderView.models import IndexOperations
+from src.OrderView.utils import get_skany_video_info
+from src.CameraAlgorithms.models import Camera
 
 
 class OrderServices:
@@ -52,7 +55,7 @@ class OrderServices:
                 connection=connection, query=operations_query, params=params
             )
 
-            operations_list: List = []
+            operations_list: List[Dict[str, Any]] = []
 
             if not operations_data:
                 continue
@@ -90,7 +93,7 @@ class OrderServices:
 
         return result_list
 
-    def get_order(self, from_date: str, to_date: str):
+    def get_order(self, from_date: str, to_date: str) -> List[Dict[str, Any]]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
         order_query: str = """
@@ -121,7 +124,7 @@ class OrderServices:
 
         return result_list
 
-    def get_order_by_details(self, operation_id: int):
+    def get_order_by_details(self, operation_id: int) -> Dict[str, Any]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
         order_query: str = """
@@ -130,7 +133,9 @@ class OrderServices:
                 z.zlecenie AS orderName,
                 st.raport AS raport,
                 u.imie AS firstName,
-                u.nazwisko AS lastName
+                u.nazwisko AS lastName,
+                sk.data AS operationTime,
+                st.indeks AS workplaceID
             FROM Zlecenia z
                 JOIN Skany_vs_Zlecenia sz ON z.indeks = sz.indekszlecenia
                 JOIN Skany sk ON sz.indeksskanu = sk.indeks
@@ -145,24 +150,40 @@ class OrderServices:
             connection=connection, query=order_query, params=params
         )
 
-        print(order_query)
-        print(params)
-        print(order_data)
+        operationTime: str = order_data[0][4]
+        workplaceID: int = order_data[0][5]
 
-        result_list: List[Dict[str, Any]] = []
+        video_data: Optional[Dict[str, Any]] = {"status": False}
 
-        for order_row in order_data:
-            order: Dict[str, Any] = {
-                "id": order_row[0],
-                "orderName": order_row[1].strip(),
-                "operationName": order_row[2],
-                "firstName": order_row[3],
-                "lastName": order_row[4]
-            }
+        if operationTime is not None:
+            if "." not in operationTime:
+                operationTime += ".000000"
+            time = datetime.strptime(operationTime, "%Y-%m-%d %H:%M:%S.%f")
+            time_utc = time.replace(tzinfo=timezone.utc)
 
-            result_list.append(order)
+            camera_obj: Optional[Camera] = None
+            try:
+                camera_obj = IndexOperations.objects.get(type_operation=workplaceID).camera
+            except IndexOperations.DoesNotExist:
+                pass
 
-        return result_list
+            if not camera_obj:
+                video_data = {"status": False}
+            else:
+                video_data = get_skany_video_info(
+                    time=time_utc.isoformat(), camera_ip=camera_obj.id
+                )
+
+        result: Dict[str, Any] = {
+            "id": order_data[0][0],
+            "orderName": order_data[0][1].strip(),
+            "operationName": order_data[0][2],
+            "firstName": order_data[0][3],
+            "lastName": order_data[0][4],
+            "video_data": video_data,
+        }
+
+        return result
 
 
 services = OrderServices()
