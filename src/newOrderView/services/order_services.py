@@ -94,7 +94,7 @@ class OrderServices:
         order_query: str = """
             SELECT z.indeks AS id, z.zlecenie AS orderName
             FROM Zlecenia z
-            JOIN Skany_vs_Zlecenia sz ON z.indeks = sz.indkeszlecenia
+            JOIN Skany_vs_Zlecenia sz ON z.indeks = sz.indekszlecenia
             JOIN Skany sk ON sz.indeksskanu = sk.indeks
             WHERE sk.data >= ? AND sk.data <= ?
         """
