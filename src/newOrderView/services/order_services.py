@@ -72,16 +72,16 @@ class OrderServices:
                     else None,
                 }
 
-                if operation["endTime"] is None:
-                    startTime: datetime = datetime.strptime(operation["startTime"], "%Y-%m-%d %H:%M:%S.%f")
-                    endTime: datetime = startTime + timedelta(hours=1)
-                    operation["endTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
-                else:
-                    startTime: datetime = datetime.strptime(operation["startTime"], "%Y-%m-%d %H:%M:%S.%f")
-                    endTime: datetime = datetime.strptime(operation["endTime"], "%Y-%m-%d %H:%M:%S.%f")
-                    if endTime.day > startTime.day:
-                        endTime = startTime + timedelta(hours=1)
-                        operation["endTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
+                # if operation["endTime"] is None:
+                #     startTime: datetime = datetime.strptime(operation["startTime"], "%Y-%m-%d %H:%M:%S.%f")
+                #     endTime: datetime = startTime + timedelta(hours=1)
+                #     operation["endTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
+                # else:
+                #     startTime: datetime = datetime.strptime(operation["startTime"], "%Y-%m-%d %H:%M:%S.%f")
+                #     endTime: datetime = datetime.strptime(operation["endTime"], "%Y-%m-%d %H:%M:%S.%f")
+                #     if endTime.day > startTime.day:
+                #         endTime = startTime + timedelta(hours=1)
+                #         operation["endTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
 
             operations_list.append(operation)
 
