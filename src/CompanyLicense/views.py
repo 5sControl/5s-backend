@@ -2,24 +2,26 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+from rest_framework.viewsets import ModelViewSet
+
 from src.Core.const import SERVER_URL
 
 from django.core.exceptions import PermissionDenied
 
 from django.utils import timezone
 
-from .serializers import CompanySerializer
+from .serializers import LicenseSerializer, CompanySerializer
 
-from .models import License
+from .models import License, Company
 from src.CameraAlgorithms.models import CameraAlgorithm, Camera
 import requests
 
 
-class CompanyViewSet(APIView):
+class LicenseViewSet(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        serializer = CompanySerializer(data=request.data)
+        serializer = LicenseSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(
@@ -36,9 +38,9 @@ class CompanyViewSet(APIView):
             )
 
 
-class CompanyInfoView(APIView):
+class LicenseInfoView(APIView):
     http_method_names = ["get"]
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         try:
@@ -60,7 +62,6 @@ class CompanyInfoView(APIView):
         )
 
         response_data = {
-            "name_company": company.name_company,
             "date_joined": company.date_joined,
             "valid_until": company.valid_until,
             "licence_is_active": company.is_active,
@@ -94,3 +95,10 @@ def version(request):
         return Response({"error": f"Versions not found: {e}"}, status=404)
 
     return Response(versions)
+
+
+class CompanyView(ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    pagination_class = None
+    queryset = Company.objects.all().order_by('id')
+    serializer_class = CompanySerializer
