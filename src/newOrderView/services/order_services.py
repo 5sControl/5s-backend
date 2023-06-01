@@ -1,5 +1,5 @@
 from typing import List, Any, Tuple, Dict
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import pyodbc
 
@@ -67,24 +67,14 @@ class OrderServices:
                     else None,
                 }
 
-                if not operation["endTime"]:
-                    startTime: datetime = datetime.strptime(
-                        operation["startTime"], "%Y-%m-%d %H:%M:%S.%f"
-                    )
-                    max_end_time: datetime = startTime.replace(
-                        hour=0, minute=0, second=0, microsecond=0
-                    )
-                    counter = 1
-                    while startTime > max_end_time:
-                        max_end_time: datetime = startTime.replace(
-                            hour=counter, minute=0, second=0, microsecond=0
-                        )
-                        counter += 1
-
-                    if max_end_time > max_end_time:
-                        operation["endTime"]: datetime = max_end_time.strftime(
-                            "%Y-%m-%d %H:%M:%S.%f"
-                        )
+                if operation["endTime"] is None:
+                    startTime: datetime = datetime.strptime(operation["startTime"], "%Y-%m-%d %H:%M:%S.%f")
+                    endTime: datetime = startTime + timedelta(hours=1)
+                    max_end_time: datetime = endTime.replace(hour=17, minute=0, second=0, microsecond=0)
+                    if endTime > max_end_time:
+                        operation["endTime"]: datetime = max_end_time.strftime("%Y-%m-%d %H:%M:%S.%f")
+                    else:
+                        operation["endTime"]: datetime = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
 
                 operations_list.append(operation)
 
