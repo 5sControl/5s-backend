@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import Company
+from .models import License
 
 
-@admin.register(Company)
+@admin.register(License)
 class CamerasAdmin(admin.ModelAdmin):
     list_filter = ("id",)
     readonly_fields = (

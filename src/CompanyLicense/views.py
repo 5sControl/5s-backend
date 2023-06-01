@@ -10,7 +10,7 @@ from django.utils import timezone
 
 from .serializers import CompanySerializer
 
-from .models import Company
+from .models import License
 from src.CameraAlgorithms.models import CameraAlgorithm, Camera
 import requests
 
@@ -38,14 +38,14 @@ class CompanyViewSet(APIView):
 
 class CompanyInfoView(APIView):
     http_method_names = ["get"]
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request):
         try:
-            company = Company.objects.last()
+            company = License.objects.last()
             if company is None:
                 raise PermissionDenied("No active license")
-        except Company.DoesNotExist:
+        except License.DoesNotExist:
             return Response({"error": "Company not found"}, status=404)
 
         is_license_active = f"{company.valid_until - timezone.now().date()}"

@@ -2,7 +2,7 @@ from django.utils import timezone
 from django.db import models
 
 
-class Company(models.Model):
+class License(models.Model):
     """License of company"""
 
     license_key = models.TextField(verbose_name="Company license key")

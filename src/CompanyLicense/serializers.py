@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from src.CompanyLicense.models import Company
+from src.CompanyLicense.models import License
 from src.CompanyLicense.service import decrypt_string
 
 import datetime
@@ -25,7 +25,7 @@ class CompanySerializer(serializers.Serializer):
                 "valid_until": valid_date,
             }
 
-            company = Company.objects.create(**data)
+            company = License.objects.create(**data)
 
             return company
 
