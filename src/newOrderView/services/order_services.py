@@ -74,12 +74,13 @@ class OrderServices:
 
                 if operation["endTime"] is None:
                     startTime: datetime = datetime.strptime(operation["startTime"], "%Y-%m-%d %H:%M:%S.%f")
-                    endTime: datetime = startTime + timedelta(hours=1)
-                    max_end_time: datetime = startTime.replace(hour=16, minute=0, second=0, microsecond=0) + timedelta(days=1)
-                    if endTime > max_end_time:
-                        operation["endTime"]: datetime = max_end_time.strftime("%Y-%m-%d %H:%M:%S.%f")
+                    max_end_time: datetime = startTime.replace(hour=16, minute=0, second=0, microsecond=0)
+
+                    if startTime > max_end_time:
+                        endTime: datetime = startTime + timedelta(hours=1)
+                        operation["endTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
                     else:
-                        operation["endTime"]: datetime = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
+                        operation["endTime"] = max_end_time.strftime("%Y-%m-%d %H:%M:%S.%f")
 
                 operations_list.append(operation)
 
@@ -92,6 +93,7 @@ class OrderServices:
             result_list.append(result)
 
         return result_list
+
 
     def get_order(self, from_date: str, to_date: str) -> List[Dict[str, Any]]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
