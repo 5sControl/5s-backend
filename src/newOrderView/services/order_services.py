@@ -125,7 +125,7 @@ class OrderServices:
             FROM Zlecenia z
             JOIN Skany_vs_Zlecenia sz ON z.indeks = sz.indekszlecenia
             JOIN Skany sk ON sz.indeksskanu = sk.indeks
-            JOIN Skanowiska st ON sk.stanowisko = st.indeks
+            JOIN Stanowiska st ON sk.stanowisko = st.indeks
             JOIN Uzytkownicy u ON sk.uzytkownik = u.indeks
             WHERE sk.indeks = ?
         """
