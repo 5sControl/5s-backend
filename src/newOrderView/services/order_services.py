@@ -72,14 +72,22 @@ class OrderServices:
                     else None,
                 }
 
-                if operation["endTime"] is None:
+                if operation["endTime"] is not None:
+                    startTime: datetime = datetime.strptime(operation["startTime"], "%Y-%m-%d %H:%M:%S.%f")
+                    endTime: datetime = datetime.strptime(operation["endTime"], "%Y-%m-%d %H:%M:%S.%f")
+
+                    if endTime.day > startTime.day:
+                        endTime = startTime + timedelta(hours=1)
+                    elif endTime.day == startTime.day:
+                        max_end_time: datetime = startTime.replace(hour=16, minute=0, second=0, microsecond=0)
+                        if endTime > max_end_time:
+                            endTime = max_end_time + timedelta(hours=1)
+
+                    operation["endTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
+                else:
                     startTime: datetime = datetime.strptime(operation["startTime"], "%Y-%m-%d %H:%M:%S.%f")
                     endTime: datetime = startTime + timedelta(hours=1)
-                    max_end_time: datetime = endTime.replace(hour=17, minute=0, second=0, microsecond=0)
-                    if endTime > max_end_time:
-                        operation["endTime"]: datetime = max_end_time.strftime("%Y-%m-%d %H:%M:%S.%f")
-                    else:
-                        operation["endTime"]: datetime = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
+                    operation["endTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
 
                 operations_list.append(operation)
 
