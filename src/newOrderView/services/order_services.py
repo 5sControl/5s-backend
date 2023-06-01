@@ -86,7 +86,7 @@ class OrderServices:
                         operation["endTime"], "%Y-%m-%d %H:%M:%S.%f"
                     )
                     if (
-                        (endTime.day > startTime)
+                        (endTime.day > startTime.day)
                         or (endTime.month > startTime.month)
                         or (endTime.year > startTime.year)
                     ):
