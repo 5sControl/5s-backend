@@ -28,9 +28,9 @@ class Company(models.Model):
     """Models company"""
 
     name_company = models.TextField(verbose_name="Name of company")
-    address_company = models.TextField(verbose_name="Address of company")
-    contact_email = models.EmailField(verbose_name="Contact email")
-    contact_phone = models.TextField(verbose_name="Contact phone number")
+    address_company = models.TextField(verbose_name="Address of company", blank=True, null=True)
+    contact_email = models.EmailField(verbose_name="Contact email", blank=True, null=True)
+    contact_phone = models.TextField(verbose_name="Contact phone number", blank=True, null=True)
     date_joined = models.DateTimeField(verbose_name="Date joined", auto_now_add=True)
     date_edited = models.DateTimeField(verbose_name="Date edited", auto_now=True)
 
