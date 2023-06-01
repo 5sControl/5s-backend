@@ -131,7 +131,7 @@ class OrderServices:
             SELECT
                 z.indeks AS id,
                 z.zlecenie AS orderName,
-                st.raport AS raport,
+                st.raport AS operationName,
                 u.imie AS firstName,
                 u.nazwisko AS lastName,
                 sk.data AS operationTime,
@@ -150,8 +150,8 @@ class OrderServices:
             connection=connection, query=order_query, params=params
         )
 
-        operationTime: str = order_data[0][4]
-        workplaceID: int = order_data[0][5]
+        operationTime: str = order_data[0][5]
+        workplaceID: int = order_data[0][6]
 
         video_data: Optional[Dict[str, Any]] = {"status": False}
 
