@@ -92,7 +92,7 @@ class OrderServices:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
         order_query: str = """
-            SELECT z.indeks AS id, z.zlecenia AS orderName
+            SELECT z.indeks AS id, z.zlecenie AS orderName
             FROM Zlecnia z
         """
 
