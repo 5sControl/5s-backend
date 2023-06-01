@@ -7,7 +7,7 @@ from src.MsSqlConnector.connector import connector as connector_service
 from .services.order_services import services
 
 
-class GetOperationData(generics.GenericAPIView):
+class GetOperation(generics.GenericAPIView):
     @connector_service.check_database_connection
     def get(self, request):
         from_date = request.GET.get("from")
