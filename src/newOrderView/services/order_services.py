@@ -93,7 +93,7 @@ class OrderServices:
 
         order_query: str = """
             SELECT z.indeks AS id, z.zlecenie AS orderName
-            FROM Zlecnia z
+            FROM Zlecenia z
         """
 
         order_data: List[Tuple[Any]] = connector_service.executer(
