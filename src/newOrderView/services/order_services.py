@@ -94,10 +94,15 @@ class OrderServices:
         order_query: str = """
             SELECT z.indeks AS id, z.zlecenie AS orderName
             FROM Zlecenia z
+            JOIN Skany_vs_Zlecenia sz ON z.indeks = sz.indkeszlecenia
+            JOIN Skany sk ON sz.indeksskanu = sk.indeks
+            WHERE sk.data >= ? AND sk.data <= ?
         """
 
+        params = [from_date, to_date]
+
         order_data: List[Tuple[Any]] = connector_service.executer(
-            connection=connection, query=order_query
+            connection=connection, query=order_query, params=params
         )
 
         result_list: List[Dict[str, Any]] = []
