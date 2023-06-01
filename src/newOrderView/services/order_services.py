@@ -11,7 +11,9 @@ class OrderServices:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
         stanowiska_query: str = """
-            SELECT indeks, raport
+            SELECT
+                indeks AS id,
+                raport as orderName
             FROM Stanowiska
         """
 
@@ -33,8 +35,8 @@ class OrderServices:
                     sz.indekszlecenia AS orderID,
                     z.zlecenie AS orderName
                 FROM Skany sk
-                JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeksskanu
-                JOIN zlecenia z ON sz.indekszlecenia = z.indeks
+                    JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeksskanu
+                    JOIN zlecenia z ON sz.indekszlecenia = z.indeks
                 WHERE sk.stanowisko = ?
             """
 
@@ -92,10 +94,12 @@ class OrderServices:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
         order_query: str = """
-            SELECT z.indeks AS id, z.zlecenie AS orderName
+            SELECT
+                z.indeks AS id,
+                z.zlecenie AS orderName
             FROM Zlecenia z
-            JOIN Skany_vs_Zlecenia sz ON z.indeks = sz.indekszlecenia
-            JOIN Skany sk ON sz.indeksskanu = sk.indeks
+                JOIN Skany_vs_Zlecenia sz ON z.indeks = sz.indekszlecenia
+                JOIN Skany sk ON sz.indeksskanu = sk.indeks
             WHERE sk.data >= ? AND sk.data <= ?
         """
 
@@ -121,12 +125,17 @@ class OrderServices:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
         order_query: str = """
-            SELECT z.indeks AS id, z.zlecenie AS orderName, st.raport AS raport, u.imie AS firstName, u.nazwisko AS lastName
+            SELECT
+                z.indeks AS id,
+                z.zlecenie AS orderName,
+                st.raport AS raport,
+                u.imie AS firstName,
+                u.nazwisko AS lastName
             FROM Zlecenia z
-            JOIN Skany_vs_Zlecenia sz ON z.indeks = sz.indekszlecenia
-            JOIN Skany sk ON sz.indeksskanu = sk.indeks
-            JOIN Stanowiska st ON sk.stanowisko = st.indeks
-            JOIN Uzytkownicy u ON sk.uzytkownik = u.indeks
+                JOIN Skany_vs_Zlecenia sz ON z.indeks = sz.indekszlecenia
+                JOIN Skany sk ON sz.indeksskanu = sk.indeks
+                JOIN Stanowiska st ON sk.stanowisko = st.indeks
+                JOIN Uzytkownicy u ON sk.uzytkownik = u.indeks
             WHERE sk.indeks = ?
         """
 
@@ -136,6 +145,8 @@ class OrderServices:
             connection=connection, query=order_query, params=params
         )
 
+        print(order_query)
+        print(params)
         print(order_data)
 
         result_list: List[Dict[str, Any]] = []
