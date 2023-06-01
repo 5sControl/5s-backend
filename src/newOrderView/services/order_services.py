@@ -117,5 +117,39 @@ class OrderServices:
 
         return result_list
 
+    def get_order_by_details(self, operation_id: int):
+        connection: pyodbc.Connection = connector_service.get_database_connection()
+
+        order_query: str = """
+            SELECT z.indeks AS id, z.zlecenie AS orderName, st.raport AS raport, u.imie AS firstName, u.nazwisko AS lastName
+            FROM Zlecenia z
+            JOIN Skany_vs_Zlecenia sz ON z.indeks = sz.indkeszlecenia
+            JOIN Skany sk ON sz.indeksskanu = sk.indeks
+            JOIN Skanowiska st ON sk.stanowisko = st.indeks
+            JOIN Uzytkownicy u ON sk.uzytkownik = u.indeks
+            WHERE sk.indeks = ?
+        """
+
+        params = [operation_id]
+
+        order_data: List[Tuple[Any]] = connector_service.executer(
+            connection=connection, query=order_query, params=params
+        )
+
+        result_list: List[Dict[str, Any]] = []
+
+        for order_row in order_data:
+            order: Dict[str, Any] = {
+                "id": order_row[0],
+                "orderName": order_row[1].strip(),
+                "operationName": order_row[2],
+                "firstName": order_row[3],
+                "lastName": order_row[4]
+            }
+
+            result_list.append(order)
+
+        return result_list
+
 
 services = OrderServices()
