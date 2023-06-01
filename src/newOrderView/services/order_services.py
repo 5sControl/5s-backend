@@ -16,7 +16,7 @@ class OrderServices:
         stanowiska_query: str = """
             SELECT
                 indeks AS id,
-                raport as orderName
+                raport AS orderName
             FROM Stanowiska
         """
 
@@ -74,15 +74,16 @@ class OrderServices:
 
                 if operation["endTime"] is None:
                     startTime: datetime = datetime.strptime(operation["startTime"], "%Y-%m-%d %H:%M:%S.%f")
-                    max_end_time: datetime = startTime.replace(hour=16, minute=0, second=0, microsecond=0)
-
-                    if startTime > max_end_time:
-                        endTime: datetime = startTime + timedelta(hours=1)
+                    endTime: datetime = startTime + timedelta(hours=1)
+                    operation["endTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
+                else:
+                    startTime: datetime = datetime.strptime(operation["startTime"], "%Y-%m-%d %H:%M:%S.%f")
+                    endTime: datetime = datetime.strptime(operation["endTime"], "%Y-%m-%d %H:%M:%S.%f")
+                    if endTime.day > startTime.day:
+                        endTime = startTime + timedelta(hours=1)
                         operation["endTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
-                    else:
-                        operation["endTime"] = max_end_time.strftime("%Y-%m-%d %H:%M:%S.%f")
 
-                operations_list.append(operation)
+            operations_list.append(operation)
 
             result = {
                 "operationID": operation_id,
@@ -93,7 +94,6 @@ class OrderServices:
             result_list.append(result)
 
         return result_list
-
 
     def get_order(self, from_date: str, to_date: str) -> List[Dict[str, Any]]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
