@@ -19,7 +19,7 @@ class OrderServices:
             connection=connection, query=stanowiska_query
         )
 
-        result_list: List = []
+        result_list: List[Dict[str, Any]] = []
 
         for row in stanowiska_data:
             operation_id: int = row[0]
@@ -89,7 +89,28 @@ class OrderServices:
         return result_list
 
     def get_order(self, from_date: str, to_date: str):
-        ...
+        connection: pyodbc.Connection = connector_service.get_database_connection()
+
+        order_query: str = """
+            SELECT z.indeks AS id, z.zlecenia AS orderName
+            FROM Zlecnia z
+        """
+
+        order_data: List[Tuple[Any]] = connector_service.executer(
+            connection=connection, query=order_query
+        )
+
+        result_list: List[Dict[str, Any]] = []
+
+        for order_row in order_data:
+            order: Dict[str, Any] = {
+                "id": order_row[0],
+                "orderName": order_row[1],
+            }
+
+            result_list.append(order)
+
+        return result_list
 
 
 services = OrderServices()
