@@ -79,11 +79,8 @@ class OrderServices:
                     endTime: datetime = datetime.strptime(
                         operation["endTime"], "%Y-%m-%d %H:%M:%S.%f"
                     )
-                    if endTime.day > startTime.day:
+                    if endTime > startTime:
                         endTime = startTime + timedelta(hours=1)
-                    elif endTime.day == startTime.day:
-                        if startTime > endTime:
-                            endTime = startTime + timedelta(hours=1)
 
                     operation["endTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
                 else:
