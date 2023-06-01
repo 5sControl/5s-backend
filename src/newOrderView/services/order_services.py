@@ -123,7 +123,7 @@ class OrderServices:
         order_query: str = """
             SELECT z.indeks AS id, z.zlecenie AS orderName, st.raport AS raport, u.imie AS firstName, u.nazwisko AS lastName
             FROM Zlecenia z
-            JOIN Skany_vs_Zlecenia sz ON z.indeks = sz.indkeszlecenia
+            JOIN Skany_vs_Zlecenia sz ON z.indeks = sz.indekszlecenia
             JOIN Skany sk ON sz.indeksskanu = sk.indeks
             JOIN Skanowiska st ON sk.stanowisko = st.indeks
             JOIN Uzytkownicy u ON sk.uzytkownik = u.indeks
