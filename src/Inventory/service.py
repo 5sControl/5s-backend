@@ -2,6 +2,7 @@ from src.CameraAlgorithms.models import CameraAlgorithm, Algorithm
 from src.Inventory.models import Items
 from src.CameraAlgorithms.services.cameraalgorithm import camera_rtsp_link, send_run_request, stop_camera_algorithm, \
     update_status_algorithm
+from src.Mailer.message import send_email_to_suppliers
 
 from src.Mailer.service import send_email
 
@@ -35,6 +36,11 @@ def process_item_status(data):
                     item_data["count"] = min_item - 1
 
                 if item.prev_status == "In stock":
+                    try:
+                        item.prev_status = None
+                        send_email_to_suppliers(item, image_path)
+                    except Exception as e:
+                        print(f"Email notification errors: {e}")
                     try:
                         item.prev_status = None
                         send_email(item, image_path, min_item, item_status)
