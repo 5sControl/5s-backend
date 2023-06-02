@@ -65,8 +65,8 @@ class OrderServices:
                 
                 id: int = operation_row[0]
                 orderName: str = operation_row[3].strip()
-                startTime: str = operation_row[1]
-                endTime: str = operation_row[2] if i < len(operations_data) - 1 else None
+                startTime: str = str(operation_row[1])
+                endTime: str = str(operation_row[2]) if i < len(operations_data) - 1 else None
 
                 operation = {
                     "id": id,
@@ -183,7 +183,7 @@ class OrderServices:
             operationName: str = order_data[0][2]
             firstName: str = order_data[0][3]
             lastName: str = order_data[0][4]
-            startTime: str = order_data[0][5]
+            startTime: str = str(order_data[0][5])
             endTime: str = order_data[0][6]
             workplaceID: int = order_data[0][7]
             video_data: Optional[Dict[str, Any]] = {"status": False}
