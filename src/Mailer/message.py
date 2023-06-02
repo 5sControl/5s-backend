@@ -56,7 +56,6 @@ def send_email_to_suppliers(item, image_path):
             from_email=smtp_settings.username,
             to=recipient_list
         )
-        print("image_path", image_path)
         # send image
         image_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', f'{image_path}')
         with open(image_path, 'rb') as f:
