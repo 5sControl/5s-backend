@@ -5,7 +5,7 @@ from .models import Suppliers
 @admin.register(Suppliers)
 class SuppliersAdmin(admin.ModelAdmin):
     list_filter = ("id",)
-    readonly_fields = (
+    list_display = (
         'name_company',
         'city',
         'state',
