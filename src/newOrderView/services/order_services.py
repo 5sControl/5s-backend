@@ -79,6 +79,8 @@ class OrderServices:
                     startTime, "%Y-%m-%d %H:%M:%S.%f"
                 )
                 if endTime is not None:
+                    if "." not in endTime:
+                        endTime += ".000000"
                     endTime: datetime = datetime.strptime(
                         endTime, "%Y-%m-%d %H:%M:%S.%f"
                     )
@@ -93,7 +95,7 @@ class OrderServices:
                 else:
                     endTime = startTime + timedelta(hours=1)
 
-                    operation["endTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
+                    operation["endTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f"
 
                 operations_list.append(operation)
 
