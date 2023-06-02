@@ -160,7 +160,8 @@ class OrderServices:
                     WHERE sk_next.data > op.operationTime
                         AND sk_next.stanowisko = st.indeks
                 ) AS endTime,
-                st.indeks AS workplaceID
+                st.indeks AS workplaceID,
+                sk.indeks AS operationID
             FROM Zlecenia z
                 JOIN Skany_vs_Zlecenia sz ON z.indeks = sz.indekszlecenia
                 JOIN Skany sk ON sz.indeksskanu = sk.indeks
@@ -177,7 +178,7 @@ class OrderServices:
         )
 
         if order_data:
-            id: int = order_data[0][0]
+            id: int = order_data[0][8]
             orderName: str = order_data[0][1].strip()
             operationName: str = order_data[0][2]
             firstName: str = order_data[0][3]
