@@ -128,7 +128,7 @@ class OrderServices:
 
         for order_row in order_data:
             order: Dict[str, Any] = {
-                "orderName": order_row[1].strip(),
+                "orderName": order_row[0].strip(),
             }
 
             result_list.append(order)
