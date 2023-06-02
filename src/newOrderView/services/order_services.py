@@ -169,17 +169,17 @@ class OrderServices:
             WHERE sk.indeks = ?
         """
 
-        # startTime: str = order_data[0][5]
-        # workplaceID: int = order_data[0][6]
-        # video_data: Optional[Dict[str, Any]] = {"status": False}
 
-        params: Any = [operation_id]
+        params: Any = [operation_id, operation_id]
 
         order_data: List[Tuple[Any]] = connector_service.executer(
             connection=connection, query=order_query, params=params
         )
 
         print(order_data)
+        # startTime: str = order_data[0][5]
+        # workplaceID: int = order_data[0][6]
+        # video_data: Optional[Dict[str, Any]] = {"status": False}
 
         # if startTime is not None:
         #     if "." not in startTime:
