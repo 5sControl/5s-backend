@@ -7,6 +7,7 @@ from src.MsSqlConnector.connector import connector as connector_service
 from src.OrderView.models import IndexOperations
 from src.OrderView.utils import get_skany_video_info
 from src.CameraAlgorithms.models import Camera
+from src.Reports.models import SkanyReport
 
 
 class OrderServices:
@@ -207,7 +208,13 @@ class OrderServices:
                     video_data: Dict[str, Any] = get_skany_video_info(
                         time=time_utc.isoformat(), camera_ip=camera_obj.id
                     )
-            
+
+                skany_report = SkanyReport.objects.filter(skany_index=id).first()
+                if not skany_report:
+                    return None
+
+                operation_status = skany_report.report.violation_found
+
             result: Dict[str, Any] = {
                 "id": id,
                 "orderName": orderName,
@@ -216,6 +223,7 @@ class OrderServices:
                 "endTime": endTime,
                 "firstName": firstName,
                 "lastName": lastName,
+                "status": operation_status,
                 "video_data": video_data,
             }
 
