@@ -36,11 +36,11 @@ def process_item_status(data):
                     item_data["count"] = min_item - 1
 
                 if item.prev_status == "In stock":
-                    try:
-                        item.prev_status = None
-                        send_email_to_suppliers(item, image_path)
-                    except Exception as e:
-                        print(f"Email notification errors: {e}")
+                    # try:
+                    item.prev_status = None
+                    send_email_to_suppliers(item, image_path)
+                    # except Exception as e:
+                    #     print(f"Email notification errors: {e}")
                     try:
                         item.prev_status = None
                         send_email(item, image_path, min_item, item_status)

@@ -9,7 +9,7 @@ from src.Suppliers.serializers import SuppliersSerializer
 class ItemsSerializer(serializers.ModelSerializer):
     """Serializer for Items model"""
 
-    suppliers = SuppliersSerializer(many=False, required=False)
+    suppliers = SuppliersSerializer(many=False)
 
     class Meta:
         model = Items

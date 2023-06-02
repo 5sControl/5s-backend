@@ -10,3 +10,4 @@ class SuppliersSerializer(serializers.ModelSerializer):
     class Meta:
         model = Suppliers
         fields = '__all__'
+        read_only_fields = ["id", "date_joined", "date_edited"]

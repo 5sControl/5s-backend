@@ -13,18 +13,20 @@ from src.CompanyLicense.models import Company
 def send_email_to_suppliers(item, image_path):
     try:
         work_time = WorkingTime.objects.last()
-        email_list = item.suppliers.contact_email
+        if item.suppliers is None or item.suppliers.contact_email is None:
+            raise ValueError("Missing contact email")
         my_company = Company.objects.last()
         count_order = item.order_quantity
     except Exception as exc:
-        return print(f"not enough parameters to send notification: {exc}")
+        print(f"Not enough parameters to send notification: {exc}")
+        return
 
     subject = f"Urgent Reorder Request: Low Stock Level Notification - {item.name}"
     message = f"Dear {item.suppliers.name_company}!\nBy this message we notify you of our urgent need to reorder a specific item due to its low stock level.\nItem Details:\nItem Name: {item.name},\nQuantity Needed: {count_order}\n\nPlease ensure that the additional order is promptly processed and dispatched to us to avoid any disruptions to our operations. We kindly request your immediate attention to this matter.\n\nCompany Information:\nCompany Name: {my_company.name_company}\nAddress: {my_company.address_company}\nPhone: {my_company.contact_phone}\nEmail: {my_company.contact_email}\n\nPlease note that this message is automatically generated, and there is no need to reply to it. However, if you have any questions or require further information, please feel free to contact us using the provided company details.We appreciate your ongoing partnership and your commitment to providing quality products and services. Thank you for your prompt attention to this matter.\nBest regards, {my_company.name_company}\n\n{SERVER_URL}:3000/inventory\n\n"
 
     image_name = image_path.split('/')[-1]
 
-    recipient_list = [email_list]
+    recipient_list = [item.suppliers.contact_email]
 
     # email service check
     try:
@@ -54,14 +56,30 @@ def send_email_to_suppliers(item, image_path):
             from_email=smtp_settings.username,
             to=recipient_list
         )
-
+        print("image_path", image_path)
+        # send image
         image_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', f'{image_path}')
         with open(image_path, 'rb') as f:
             image_data = f.read()
         email_message.attach(filename=f'{image_name}', content=image_data, mimetype='images/jpg')
 
+        # send file
+        file_path = item.suppliers.file
+        if file_path is not None:
+            file_name = file_path.name
+            file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', f'images/{file_name}')
+            if os.path.exists(file_path):
+                with open(file_path, 'rb') as f:
+                    file_data = f.read()
+                email_message.attach(file_name, file_data,
+                                     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            else:
+                raise ValueError("File does not exist")
+        else:
+            raise ValueError("File path is not provided")
+
         # send email
         connection.send_messages([email_message])
-    #
+
     else:
         print('Working time limit, message not sent')
