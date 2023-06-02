@@ -1,18 +1,22 @@
-from typing import List
+from typing import List, Iterable
+
+import pyodbc
+
 from src.MsSqlConnector.connector import connector as connector_service
 
 
 class OperationService:
-    def get_operation_names(self) -> List[str]:
-        connection = connector_service.get_database_connection()
-        list_of_names = []
-
-        query = """
+    def __init__(self,):
+        self.query = """
             SELECT DISTINCT Raport
             FROM Stanowiska
         """
 
-        results = connector_service.executer(connection=connection, query=query)
+    def get_operation_names(self) -> List[str]:
+        connection: pyodbc.Connection = connector_service.get_database_connection()
+        list_of_names: List[str] = []
+
+        results: Iterable = connector_service.executer(connection=connection, query=self.query)
 
         for operation_names in results:
             list_of_names.append(operation_names[0])
@@ -20,4 +24,4 @@ class OperationService:
         return list_of_names
 
 
-operation_service = OperationService()
+operation_service: OperationService = OperationService()
