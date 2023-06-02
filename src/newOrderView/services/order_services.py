@@ -210,7 +210,10 @@ class OrderServices:
                     )
 
                 skany_report: Optional[SkanyReport] = SkanyReport.objects.filter(skany_index=id).first()
-                operation_status: bool = skany_report.report.violation_found
+                if skany_report:
+                    operation_status: Optional[bool] = skany_report.report.violation_found
+                else:
+                    operation_status: Optional[bool] = None
 
             result: Dict[str, Any] = {
                 "id": id,
