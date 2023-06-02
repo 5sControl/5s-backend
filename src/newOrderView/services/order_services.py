@@ -35,7 +35,6 @@ class OrderServices:
                     sk.indeks AS id,
                     sk.data AS startTime,
                     LEAD(sk.data) OVER (ORDER BY sk.data) AS endTime,
-                    sz.indekszlecenia AS orderID,
                     z.zlecenie AS orderName
                 FROM Skany sk
                     JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeksskanu
@@ -43,7 +42,7 @@ class OrderServices:
                 WHERE sk.stanowisko = ?
             """
 
-            params = [operation_id]
+            params: List[Any] = [operation_id]
 
             if from_date and to_date:
                 operations_query += " AND sk.data >= ? AND sk.data <= ?"
@@ -62,22 +61,25 @@ class OrderServices:
 
             for i in range(len(operations_data)):
                 operation_row: Tuple[Any] = operations_data[i]
+                
+                id: int = operation_row[0]
+                orderName: str = operation_row[3].strip()
+                startTime: str = operation_row[1]
+                endTime: str = operation_row[2] if i < len(operations_data) - 1 else None
+
                 operation = {
-                    "id": operation_row[0],
-                    "orderID": operation_row[3],
-                    "orderName": operation_row[4].strip(),
-                    "startTime": operation_row[1],
-                    "endTime": operation_row[2]
-                    if i < len(operations_data) - 1
-                    else None,
+                    "id": id,
+                    "orderName": orderName,
+                    "startTime": startTime,
+                    "endTime": endTime
                 }
 
                 startTime: datetime = datetime.strptime(
-                    operation["startTime"], "%Y-%m-%d %H:%M:%S.%f"
+                    startTime, "%Y-%m-%d %H:%M:%S.%f"
                 )
-                if operation["endTime"] is not None:
+                if endTime is not None:
                     endTime: datetime = datetime.strptime(
-                        operation["endTime"], "%Y-%m-%d %H:%M:%S.%f"
+                        endTime, "%Y-%m-%d %H:%M:%S.%f"
                     )
                     if (
                         (endTime.day > startTime.day)
@@ -109,15 +111,14 @@ class OrderServices:
 
         order_query: str = """
             SELECT
-                z.indeks AS id,
-                z.zlecenie AS orderName
+                DISTINCT z.zlecenie AS orderName
             FROM Zlecenia z
                 JOIN Skany_vs_Zlecenia sz ON z.indeks = sz.indekszlecenia
                 JOIN Skany sk ON sz.indeksskanu = sk.indeks
             WHERE sk.data >= ? AND sk.data <= ?
         """
 
-        params = [from_date, to_date]
+        params: List[Any] = [from_date, to_date]
 
         order_data: List[Tuple[Any]] = connector_service.executer(
             connection=connection, query=order_query, params=params
@@ -127,7 +128,6 @@ class OrderServices:
 
         for order_row in order_data:
             order: Dict[str, Any] = {
-                "id": order_row[0],
                 "orderName": order_row[1].strip(),
             }
 
@@ -169,13 +169,12 @@ class OrderServices:
             WHERE sk.indeks = ?
         """
 
-        params: Any = [operation_id, operation_id]
+        params: List[Any] = [operation_id, operation_id]
 
         order_data: List[Tuple[Any]] = connector_service.executer(
             connection=connection, query=order_query, params=params
         )
 
-        print(order_data)
         if order_data:
             id: int = order_data[0][0]
             orderName: str = order_data[0][1].strip()
@@ -192,20 +191,20 @@ class OrderServices:
 
                 if "." not in startTime:
                     startTime += ".000000"
-                time = datetime.strptime(startTime, "%Y-%m-%d %H:%M:%S.%f")
-                time_utc = time.replace(tzinfo=timezone.utc)
+                time: datetime = datetime.strptime(startTime, "%Y-%m-%d %H:%M:%S.%f")
+                time_utc: datetime = time.replace(tzinfo=timezone.utc)
 
                 try:
-                    camera_obj = IndexOperations.objects.get(
+                    camera_obj: Camera = IndexOperations.objects.get(
                         type_operation=workplaceID
                     ).camera
                 except IndexOperations.DoesNotExist:
                     pass
 
                 if not camera_obj:
-                    video_data = {"status": False}
+                    video_data: Dict[str, bool] = {"status": False}
                 else:
-                    video_data = get_skany_video_info(
+                    video_data: Dict[str, Any] = get_skany_video_info(
                         time=time_utc.isoformat(), camera_ip=camera_obj.id
                     )
             
