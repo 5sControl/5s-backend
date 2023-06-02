@@ -209,11 +209,8 @@ class OrderServices:
                         time=time_utc.isoformat(), camera_ip=camera_obj.id
                     )
 
-                skany_report = SkanyReport.objects.filter(skany_index=id).first()
-                if not skany_report:
-                    return None
-
-                operation_status = skany_report.report.violation_found
+                skany_report: Optional[SkanyReport] = SkanyReport.objects.filter(skany_index=id).first()
+                operation_status: bool = skany_report.report.violation_found
 
             result: Dict[str, Any] = {
                 "id": id,
