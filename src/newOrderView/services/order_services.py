@@ -56,7 +56,6 @@ class OrderServices:
             )
 
             operations_list: List[Dict[str, Any]] = []
-            # unique_ids = set()
 
             if not operations_data:
                 continue
@@ -72,11 +71,6 @@ class OrderServices:
                     if i < len(operations_data) - 1
                     else None,
                 }
-
-                # if operation["id"] in unique_ids:
-                #     continue
-
-                # unique_ids.add(operation["id"])
 
                 startTime: datetime = datetime.strptime(
                     operation["startTime"], "%Y-%m-%d %H:%M:%S.%f"
@@ -158,24 +152,30 @@ class OrderServices:
                 JOIN Skany sk ON sz.indeksskanu = sk.indeks
                 JOIN Stanowiska st ON sk.stanowisko = st.indeks
                 JOIN Uzytkownicy u ON sk.uzytkownik = u.indeks
-            WHERE sk.indeks = ?
+            WHERE sk.indeks = ? AND sk.data > ?
+            ORDER BY sk.data ASC
+            LIMIT 1
         """
 
-        params = [operation_id]
+        startTime: str = order_data[0][5]
+        workplaceID: int = order_data[0][6]
+        video_data: Optional[Dict[str, Any]] = {"status": False}
+
+        params: Any = [operation_id, startTime]
 
         order_data: List[Tuple[Any]] = connector_service.executer(
             connection=connection, query=order_query, params=params
         )
 
-        operationTime: str = order_data[0][5]
-        workplaceID: int = order_data[0][6]
+        print(order_data)
+        print(startTime)
+        print(workplaceID)
+        print(video_data)
 
-        video_data: Optional[Dict[str, Any]] = {"status": False}
-
-        if operationTime is not None:
-            if "." not in operationTime:
-                operationTime += ".000000"
-            time = datetime.strptime(operationTime, "%Y-%m-%d %H:%M:%S.%f")
+        if startTime is not None:
+            if "." not in startTime:
+                startTime += ".000000"
+            time = datetime.strptime(startTime, "%Y-%m-%d %H:%M:%S.%f")
             time_utc = time.replace(tzinfo=timezone.utc)
 
             camera_obj: Optional[Camera] = None
@@ -197,6 +197,7 @@ class OrderServices:
             "id": order_data[0][0],
             "orderName": order_data[0][1].strip(),
             "operationName": order_data[0][2],
+            "startTime": order_data[0][5],
             "firstName": order_data[0][3],
             "lastName": order_data[0][4],
             "video_data": video_data,
