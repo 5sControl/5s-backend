@@ -9,6 +9,8 @@ from src.OrderView.utils import get_skany_video_info
 from src.CameraAlgorithms.models import Camera
 from src.Reports.models import SkanyReport
 
+from ..utils import add_ms
+
 
 class OrderServices:
     def get_operations(self, from_date: str, to_date: str) -> List[Dict[str, Any]]:
@@ -62,28 +64,25 @@ class OrderServices:
 
             for i in range(len(operations_data)):
                 operation_row: Tuple[Any] = operations_data[i]
-                
+
                 id: int = operation_row[0]
                 orderName: str = operation_row[3].strip()
                 startTime: str = str(operation_row[1])
-                endTime: str = str(operation_row[2]) if i < len(operations_data) - 1 else None
+                endTime: str = (
+                    str(operation_row[2]) if i < len(operations_data) - 1 else None
+                )
 
                 operation = {
                     "id": id,
                     "orderName": orderName,
                     "startTime": startTime,
-                    "endTime": endTime
+                    "endTime": endTime,
                 }
 
-                startTime: datetime = datetime.strptime(
-                    startTime, "%Y-%m-%d %H:%M:%S.%f"
-                )
+                startTime: datetime = add_ms(startTime)
                 if endTime is not None:
-                    if "." not in endTime:
-                        endTime += ".000000"
-                    endTime: datetime = datetime.strptime(
-                        endTime, "%Y-%m-%d %H:%M:%S.%f"
-                    )
+                    endTime: datetime = add_ms(endTime)
+
                     if (
                         (endTime.day > startTime.day)
                         or (endTime.month > startTime.month)
@@ -193,9 +192,7 @@ class OrderServices:
             if startTime is not None:
                 camera_obj: Optional[Camera] = None
 
-                if "." not in startTime:
-                    startTime += ".000000"
-                time: datetime = datetime.strptime(startTime, "%Y-%m-%d %H:%M:%S.%f")
+                time: datetime = add_ms(time)
                 time_utc: datetime = time.replace(tzinfo=timezone.utc)
 
                 try:
@@ -212,7 +209,9 @@ class OrderServices:
                         time=time_utc.isoformat(), camera_ip=camera_obj.id
                     )
 
-                skany_report: Optional[SkanyReport] = SkanyReport.objects.filter(skany_index=id).first()
+                skany_report: Optional[SkanyReport] = SkanyReport.objects.filter(
+                    skany_index=id
+                ).first()
                 print(skany_report, id)
                 if skany_report:
                     operation_status: Optional[bool] = skany_report.violation_found
