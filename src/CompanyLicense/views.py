@@ -102,3 +102,33 @@ class CompanyView(ModelViewSet):
     pagination_class = None
     queryset = Company.objects.all().order_by('id')
     serializer_class = CompanySerializer
+
+
+class InformationView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            company = License.objects.last()
+            if company is None:
+                raise PermissionDenied("No active license")
+
+            is_license_active = f"{company.valid_until - timezone.now().date()}"
+
+            count_days = int(is_license_active.split(",")[0].split(" ")[0]) + 1
+            if count_days < 0:
+                count_days = 0
+        except:
+            count_days = None
+
+        try:
+            name_company = Company.objects.last().name_company
+        except:
+            name_company = None
+
+        response_data = {
+            "count_days": f"{count_days} days",
+            "name_company": name_company,
+        }
+
+        return Response(response_data)
