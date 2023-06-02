@@ -95,7 +95,7 @@ class OrderServices:
                 else:
                     endTime = startTime + timedelta(hours=1)
 
-                    operation["endTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f"
+                    operation["endTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
 
                 operations_list.append(operation)
 
