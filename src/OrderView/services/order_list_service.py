@@ -139,17 +139,17 @@ class OrderListService:
             zlecenie = result[1]
             if zlecenie not in orders_dict:
                 orders_dict[zlecenie] = {
-                    "id": result[0],
+                    "indeks": result[0],
                     "zlecenie": zlecenie,
                     "status": result[2],
-                    "deadline": result[3],
-                    "entryDate": result[4],
+                    "terminrealizacji": result[3],
+                    "datawejscia": result[4],
                 }
             else:
-                orders_dict[zlecenie]["id"] = result[0]
+                orders_dict[zlecenie]["indeks"] = result[0]
                 orders_dict[zlecenie]["status"] = result[2]
-                orders_dict[zlecenie]["deadline"] = result[3]
-                orders_dict[zlecenie]["entryDate"] = result[4]
+                orders_dict[zlecenie]["terminrealizacji"] = result[3]
+                orders_dict[zlecenie]["datawejscia"] = result[4]
 
         return orders_dict
 
