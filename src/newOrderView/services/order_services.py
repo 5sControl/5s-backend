@@ -139,71 +139,80 @@ class OrderServices:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
         order_query: str = """
+            WITH Operation AS (
+                SELECT
+                    sk.data AS operationTime
+                FROM Skany sk
+                    JOIN Stanowiska st ON sk.stanowisko = st.indeks
+                WHERE sk.indeks = ?
+            )
             SELECT
                 z.indeks AS id,
                 z.zlecenie AS orderName,
                 st.raport AS operationName,
                 u.imie AS firstName,
                 u.nazwisko AS lastName,
-                sk.data AS operationTime,
+                op.operationTime AS startTime,
+                (
+                    SELECT MIN(sk_next.data)
+                    FROM Skany sk_next
+                    WHERE sk_next.data > op.operationTime
+                        AND sk_next.stanowisko = st.indeks
+                ) AS endTime,
                 st.indeks AS workplaceID
             FROM Zlecenia z
                 JOIN Skany_vs_Zlecenia sz ON z.indeks = sz.indekszlecenia
                 JOIN Skany sk ON sz.indeksskanu = sk.indeks
                 JOIN Stanowiska st ON sk.stanowisko = st.indeks
                 JOIN Uzytkownicy u ON sk.uzytkownik = u.indeks
-            WHERE sk.indeks = ? AND sk.data > ?
-            ORDER BY sk.data ASC
-            LIMIT 1
+                JOIN Operation op ON op.operationTime = sk.data
+            WHERE sk.indeks = ?
         """
 
-        startTime: str = order_data[0][5]
-        workplaceID: int = order_data[0][6]
-        video_data: Optional[Dict[str, Any]] = {"status": False}
+        # startTime: str = order_data[0][5]
+        # workplaceID: int = order_data[0][6]
+        # video_data: Optional[Dict[str, Any]] = {"status": False}
 
-        params: Any = [operation_id, startTime]
+        params: Any = [operation_id]
 
         order_data: List[Tuple[Any]] = connector_service.executer(
             connection=connection, query=order_query, params=params
         )
 
         print(order_data)
-        print(startTime)
-        print(workplaceID)
-        print(video_data)
 
-        if startTime is not None:
-            if "." not in startTime:
-                startTime += ".000000"
-            time = datetime.strptime(startTime, "%Y-%m-%d %H:%M:%S.%f")
-            time_utc = time.replace(tzinfo=timezone.utc)
+        # if startTime is not None:
+        #     if "." not in startTime:
+        #         startTime += ".000000"
+        #     time = datetime.strptime(startTime, "%Y-%m-%d %H:%M:%S.%f")
+        #     time_utc = time.replace(tzinfo=timezone.utc)
 
-            camera_obj: Optional[Camera] = None
-            try:
-                camera_obj = IndexOperations.objects.get(
-                    type_operation=workplaceID
-                ).camera
-            except IndexOperations.DoesNotExist:
-                pass
+        #     camera_obj: Optional[Camera] = None
+        #     try:
+        #         camera_obj = IndexOperations.objects.get(
+        #             type_operation=workplaceID
+        #         ).camera
+        #     except IndexOperations.DoesNotExist:
+        #         pass
 
-            if not camera_obj:
-                video_data = {"status": False}
-            else:
-                video_data = get_skany_video_info(
-                    time=time_utc.isoformat(), camera_ip=camera_obj.id
-                )
+        #     if not camera_obj:
+        #         video_data = {"status": False}
+        #     else:
+        #         video_data = get_skany_video_info(
+        #             time=time_utc.isoformat(), camera_ip=camera_obj.id
+        #         )
 
-        result: Dict[str, Any] = {
-            "id": order_data[0][0],
-            "orderName": order_data[0][1].strip(),
-            "operationName": order_data[0][2],
-            "startTime": order_data[0][5],
-            "firstName": order_data[0][3],
-            "lastName": order_data[0][4],
-            "video_data": video_data,
-        }
+        # result: Dict[str, Any] = {
+        #     "id": order_data[0][0],
+        #     "orderName": order_data[0][1].strip(),
+        #     "operationName": order_data[0][2],
+        #     "startTime": order_data[0][5],
+        #     "firstName": order_data[0][3],
+        #     "lastName": order_data[0][4],
+        #     "video_data": video_data,
+        # }
 
-        return result
+        # return result
 
 
 services = OrderServices()
