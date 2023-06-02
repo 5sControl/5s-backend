@@ -192,7 +192,7 @@ class OrderServices:
             if startTime is not None:
                 camera_obj: Optional[Camera] = None
 
-                time: datetime = add_ms(time)
+                time: datetime = add_ms(startTime)
                 time_utc: datetime = time.replace(tzinfo=timezone.utc)
 
                 try:
