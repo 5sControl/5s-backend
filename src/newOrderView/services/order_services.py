@@ -193,8 +193,21 @@ class OrderServices:
             operationName: str = order_data[0][2]
             firstName: str = order_data[0][3]
             lastName: str = order_data[0][4]
-            startTime: str = datetime.strptime(str(order_data[0][5]), '%Y-%m-%d %H:%M:%S.%f').strftime('%Y-%m-%d %H:%M:%S.%f')
-            endTime: str = datetime.strptime(str(order_data[0][6]), '%Y-%m-%d %H:%M:%S.%f').strftime('%Y-%m-%d %H:%M:%S.%f')
+            startTime: str = datetime.strptime(
+                str(order_data[0][5]), "%Y-%m-%d %H:%M:%S.%f"
+            ).strftime("%Y-%m-%d %H:%M:%S.%f")
+            endTime: str = (
+                datetime.datetime.strptime(
+                    str(order_data[0][6]), "%Y-%m-%d %H:%M:%S.%f"
+                ).strftime("%Y-%m-%d %H:%M:%S.%f")
+                if order_data[0][6] is not None
+                else (
+                    datetime.datetime.strptime(
+                        str(order_data[0][5]), "%Y-%m-%d %H:%M:%S.%f"
+                    )
+                    + datetime.timedelta(hours=1)
+                ).strftime("%Y-%m-%d %H:%M:%S.%f")
+            )
             workplaceID: int = order_data[0][7]
             video_data: Optional[Dict[str, Any]] = {"status": False}
 
