@@ -18,7 +18,7 @@ class GetOperation(generics.GenericAPIView):
 
         result: List[Dict[str, Any]] = OrderServices.get_operations(from_date, to_date)
 
-        return Response(data=result, status=status.HTTP_200_OK)
+        return JsonResponse(data=result, status=status.HTTP_200_OK, safe=False)
 
 
 class GetOrders(generics.GenericAPIView):
