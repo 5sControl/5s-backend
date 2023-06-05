@@ -51,11 +51,12 @@ class OrderServices:
             if from_date and to_date:
                 operations_query += " AND sk.data >= ? AND sk.data <= ?"
 
+                from_date_dt = datetime.strptime(from_date, "%Y-%m-%d")
+                from_date_dt = from_date_dt + timedelta(microseconds=1)
+
                 to_date_dt = datetime.strptime(to_date, "%Y-%m-%d")
                 to_date_dt = to_date_dt + timedelta(days=1) - timedelta(microseconds=1)
 
-                from_date_dt = datetime.strptime(from_date, "%Y-%m-%d")
-                from_date_dt = from_date_dt + timedelta(days=1) - timedelta(microseconds=1)
                 params.extend([from_date_dt, to_date_dt])
 
             operations_query += " ORDER BY sk.data"
@@ -127,11 +128,11 @@ class OrderServices:
             WHERE sk.data >= ? AND sk.data <= ?
         """
 
+        from_date_dt = datetime.strptime(from_date, "%Y-%m-%d")
+        from_date_dt = from_date_dt + timedelta(microseconds=1)
+
         to_date_dt = datetime.strptime(to_date, "%Y-%m-%d")
         to_date_dt = to_date_dt + timedelta(days=1) - timedelta(microseconds=1)
-
-        from_date_dt = datetime.strptime(from_date, "%Y-%m-%d")
-        from_date_dt = from_date_dt + timedelta(days=1) - timedelta(microseconds=1)
 
         params: List[Any] = [from_date_dt, to_date_dt]
         print(from_date_dt, to_date_dt)
