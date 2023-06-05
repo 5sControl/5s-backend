@@ -50,10 +50,8 @@ class OrderServices:
 
             if from_date and to_date:
                 operations_query += " AND sk.data >= ? AND sk.data <= ?"
-                print(f"before conv {to_date} - {type(to_date)}")
                 to_date_dt = datetime.strptime(to_date, "%Y-%m-%d")
                 to_date_dt = to_date_dt + timedelta(days=1) - timedelta(microseconds=1)
-                print(f"after conv {to_date_dt} - {type(to_date_dt)}")
                 params.extend([from_date, to_date_dt])
 
             operations_query += " ORDER BY sk.data"
@@ -72,10 +70,8 @@ class OrderServices:
 
                 id: int = operation_row[0]
                 orderId: str = operation_row[3].strip()
-                startTime: str = str(operation_row[1])
-                endTime: str = (
-                    str(operation_row[2]) if i < len(operations_data) - 1 else None
-                )
+                startTime: datetime = operation_row[1]
+                endTime: datetime = operation_row[2] if i < len(operations_data) - 1 else None
 
                 operation: Dict[str, Any] = {
                     "id": id,
@@ -84,20 +80,17 @@ class OrderServices:
                     "endTime": endTime,
                 }
 
-                startTime: datetime = add_ms(startTime)
                 if endTime is not None:
-                    endTime: datetime = add_ms(endTime)
-
-                    if endTime and endTime.date() > startTime.date():
+                    if endTime.date() > startTime.date():
                         endTime = startTime + timedelta(hours=1)
                     else:
                         endTime = endTime or startTime + timedelta(hours=1)
 
-                    operation["endTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
+                    operation["endTime"] = endTime
+
                 else:
                     endTime = startTime + timedelta(hours=1)
-
-                    operation["endTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
+                    operation["endTime"] = endTime
 
                 operations_list.append(operation)
 
@@ -109,7 +102,6 @@ class OrderServices:
 
             result_list.append(result)
 
-        print(f"from date {from_date} - to date {to_date}")
         return result_list
 
     @staticmethod
