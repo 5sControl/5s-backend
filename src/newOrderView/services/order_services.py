@@ -56,7 +56,7 @@ class OrderServices:
 
                 from_date_dt = datetime.strptime(to_date, "%Y-%m-%d")
                 from_date_dt = from_date_dt + timedelta(days=1) - timedelta(microseconds=1)
-                print(from_date, to_date_dt)
+                print(from_date_dt, to_date_dt)
                 params.extend([from_date_dt, to_date_dt])
 
             operations_query += " ORDER BY sk.data"
