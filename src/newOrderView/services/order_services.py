@@ -60,7 +60,7 @@ class OrderServices:
             operations_data: List[Tuple[Any]] = connector_service.executer(
                 connection=connection, query=operations_query, params=params
             )
-
+            print(operations_data)
             operations_list: List[Dict[str, Any]] = []
 
             if not operations_data:
