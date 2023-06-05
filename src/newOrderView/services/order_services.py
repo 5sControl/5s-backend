@@ -13,6 +13,7 @@ from ..utils import add_ms
 
 
 class OrderServices:
+    @staticmethod
     def get_operations(self, from_date: str, to_date: str) -> List[Dict[str, Any]]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
@@ -111,6 +112,7 @@ class OrderServices:
         print(f"from date {from_date} - to date {to_date}")
         return result_list
 
+    @staticmethod
     def get_order(self, from_date: str, to_date: str) -> List[Dict[str, Any]]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
@@ -140,6 +142,7 @@ class OrderServices:
 
         return result_list
 
+    @staticmethod
     def get_order_by_details(self, operation_id: int) -> Dict[str, Any]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
@@ -157,13 +160,13 @@ class OrderServices:
                 st.raport AS operationName,
                 u.imie AS firstName,
                 u.nazwisko AS lastName,
-                op.operationTime AS startTime,
+                CONVERT(VARCHAR(23), op.operationTime, 121) AS startTime,
                 CASE
                     WHEN DATEPART(year, sk_next.data) > DATEPART(year, op.operationTime)
                         OR DATEPART(month, sk_next.data) > DATEPART(month, op.operationTime)
                         OR DATEPART(day, sk_next.data) > DATEPART(day, op.operationTime)
                         THEN DATEADD(hour, 1, op.operationTime)
-                    ELSE sk_next.data
+                    ELSE CONVERT(VARCHAR(23), sk_next.data, 121)
                 END AS endTime,
                 st.indeks AS workplaceID,
                 sk.indeks AS operationID
@@ -177,6 +180,7 @@ class OrderServices:
                                         AND sk_next.stanowisko = st.indeks
             WHERE sk.indeks = ?
         """
+
 
         params: List[Any] = [operation_id, operation_id]
 
@@ -239,6 +243,3 @@ class OrderServices:
             return result
         else:
             return {}
-
-
-services = OrderServices()
