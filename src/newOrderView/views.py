@@ -31,7 +31,7 @@ class GetOrders(generics.GenericAPIView):
 
         result: List[Dict[str, str]] = OrderServices.get_order(from_date, to_date)
 
-        return JsonResponse(result, status=status.HTTP_200_OK)
+        return JsonResponse(result, status=status.HTTP_200_OK, safe=False)
 
 
 class GetOrderByDetail(generics.GenericAPIView):
@@ -43,4 +43,4 @@ class GetOrderByDetail(generics.GenericAPIView):
 
         result: Dict[str, Any] = OrderServices.get_order_by_details(operation_id)
 
-        return JsonResponse(data=result, status=status.HTTP_200_OK, safe=False)
+        return JsonResponse(data=result, status=status.HTTP_200_OK)
