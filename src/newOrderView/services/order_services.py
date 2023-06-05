@@ -197,15 +197,15 @@ class OrderServices:
                 str(order_data[0][5]), "%Y-%m-%d %H:%M:%S.%f"
             ).strftime("%Y-%m-%d %H:%M:%S.%f")
             endTime: str = (
-                datetime.datetime.strptime(
+                datetime.strptime(
                     str(order_data[0][6]), "%Y-%m-%d %H:%M:%S.%f"
                 ).strftime("%Y-%m-%d %H:%M:%S.%f")
                 if order_data[0][6] is not None
                 else (
-                    datetime.datetime.strptime(
+                    datetime.strptime(
                         str(order_data[0][5]), "%Y-%m-%d %H:%M:%S.%f"
                     )
-                    + datetime.timedelta(hours=1)
+                    + timedelta(hours=1)
                 ).strftime("%Y-%m-%d %H:%M:%S.%f")
             )
             workplaceID: int = order_data[0][7]
