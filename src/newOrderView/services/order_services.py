@@ -143,7 +143,7 @@ class OrderServices:
     def get_order_by_details(self, operation_id: int) -> Dict[str, Any]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
-        order_query: str = """
+        order_query = """
             WITH Operation AS (
                 SELECT
                     sk.data AS operationTime
@@ -158,12 +158,13 @@ class OrderServices:
                 u.imie AS firstName,
                 u.nazwisko AS lastName,
                 op.operationTime AS startTime,
-                (
-                    SELECT MIN(sk_next.data)
-                    FROM Skany sk_next
-                    WHERE sk_next.data > op.operationTime
-                        AND sk_next.stanowisko = st.indeks
-                ) AS endTime,
+                CASE
+                    WHEN DATEPART(year, sk_next.data) > DATEPART(year, op.operationTime)
+                        OR DATEPART(month, sk_next.data) > DATEPART(month, op.operationTime)
+                        OR DATEPART(day, sk_next.data) > DATEPART(day, op.operationTime)
+                        THEN DATEADD(hour, 1, op.operationTime)
+                    ELSE sk_next.data
+                END AS endTime,
                 st.indeks AS workplaceID,
                 sk.indeks AS operationID
             FROM Zlecenia z
@@ -172,6 +173,8 @@ class OrderServices:
                 JOIN Stanowiska st ON sk.stanowisko = st.indeks
                 JOIN Uzytkownicy u ON sk.uzytkownik = u.indeks
                 JOIN Operation op ON op.operationTime = sk.data
+                LEFT JOIN Skany sk_next ON sk_next.data > op.operationTime
+                                        AND sk_next.stanowisko = st.indeks
             WHERE sk.indeks = ?
         """
 
