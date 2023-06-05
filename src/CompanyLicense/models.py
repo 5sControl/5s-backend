@@ -2,11 +2,10 @@ from django.utils import timezone
 from django.db import models
 
 
-class Company(models.Model):
+class License(models.Model):
     """License of company"""
 
     license_key = models.TextField(verbose_name="Company license key")
-    name_company = models.TextField(verbose_name="Name of company")
     date_joined = models.DateTimeField(verbose_name="Date joined", auto_now_add=True)
     date_edited = models.DateTimeField(verbose_name="Date edited", auto_now=True)
     valid_until = models.DateField(verbose_name="Date which license is active")
@@ -23,3 +22,17 @@ class Company(models.Model):
     class Meta:
         verbose_name = "License"
         verbose_name_plural = "Licenses"
+
+
+class Company(models.Model):
+    """Models company"""
+
+    name_company = models.TextField(verbose_name="Name of company")
+    address_company = models.TextField(verbose_name="Address of company", blank=True, null=True)
+    contact_email = models.EmailField(verbose_name="Contact email", blank=True, null=True)
+    contact_phone = models.TextField(verbose_name="Contact phone number", blank=True, null=True)
+    date_joined = models.DateTimeField(verbose_name="Date joined", auto_now_add=True)
+    date_edited = models.DateTimeField(verbose_name="Date edited", auto_now=True)
+
+    def __str__(self):
+        return self.name_company

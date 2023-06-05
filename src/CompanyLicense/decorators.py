@@ -5,7 +5,7 @@ from django.http import HttpResponseBadRequest
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 
-from src.CompanyLicense.models import Company
+from src.CompanyLicense.models import License
 from src.CameraAlgorithms.models import Camera
 from src.CameraAlgorithms.models import CameraAlgorithm
 
@@ -17,7 +17,7 @@ def validate_license(view_func):
 
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
-        company = Company.objects.last()
+        company = License.objects.last()
         if company is None:
             raise PermissionDenied("No active license")
 
@@ -35,7 +35,7 @@ def check_active_cameras(view_func):
 
     @wraps(view_func)
     def wrapped_view(request, *args, **kwargs):
-        company = Company.objects.last()
+        company = License.objects.last()
 
         if not company.is_active:
             return HttpResponseBadRequest("Your license is inactive.")
@@ -60,7 +60,7 @@ def check_active_algorithms(view_func):
 
     @wraps(view_func)
     def wrapped_view(request, *args, **kwargs):
-        company = Company.objects.last()
+        company = License.objects.last()
 
         if not company.is_active:
             return HttpResponseBadRequest("Your license is inactive.")

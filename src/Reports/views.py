@@ -43,7 +43,6 @@ class ActionViewSet(viewsets.ModelViewSet):
 
 class ActionsWithPhotos(APIView):
     def post(self, request):
-        print(request.data)
         algorithm = Algorithm.objects.get(name=request.data.get("algorithm"))
         try:
             camera = Camera.objects.get(id=request.data.get("camera"))
