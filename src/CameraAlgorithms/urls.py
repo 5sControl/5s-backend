@@ -1,5 +1,7 @@
 from django.urls import path
 
+from rest_framework.routers import DefaultRouter
+
 from .views import (
     CameraAPIView,
     CameraAlgorithmLogListAPIView,
@@ -7,7 +9,11 @@ from .views import (
     CreateCameraAlgorithmsApiView,
     AlgorithmDetailApiView,
     AlgorithmProcessApiView,
+    ZoneCameraListAPIView,
 )
+
+router = DefaultRouter()
+router.register(r"zone", ZoneCameraListAPIView, basename="ZoneCameraList")
 
 
 urlpatterns = [
@@ -28,3 +34,5 @@ urlpatterns = [
     path("get-process/", AlgorithmProcessApiView.as_view(), name="camera-process"),
     path("logs/", CameraAlgorithmLogListAPIView.as_view(), name="log"),
 ]
+
+urlpatterns += router.urls
