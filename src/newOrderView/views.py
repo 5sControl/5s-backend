@@ -1,7 +1,6 @@
 from typing import Dict, List, Any
 
 from rest_framework import generics, status
-from rest_framework.response import Response
 from django.http import JsonResponse
 
 from src.Core.paginators import OrderViewPaginnator
