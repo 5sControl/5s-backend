@@ -49,10 +49,10 @@ class OrderServices:
 
             if from_date and to_date:
                 operations_query += " AND sk.data >= ? AND sk.data <= ?"
-                print(to_date)
-                print(type(to_date))
+                print(f"before conv {to_date} - {type(to_date)}")
                 to_date_dt = datetime.strptime(to_date, "%Y-%m-%d")
                 to_date_dt = to_date_dt + timedelta(days=1) - timedelta(microseconds=1)
+                print(f"before conv {to_date_dt} - {type(to_date_dt)}")
                 params.extend([from_date, to_date_dt])
 
             operations_query += " ORDER BY sk.data"
@@ -108,6 +108,7 @@ class OrderServices:
 
             result_list.append(result)
 
+        print(f"from date {from_date} - to date {to_date}")
         return result_list
 
     def get_order(self, from_date: str, to_date: str) -> List[Dict[str, Any]]:
@@ -137,8 +138,6 @@ class OrderServices:
 
             result_list.append(order)
 
-        
-        print(f"From date {from_date} - to date {to_date}")
         return result_list
 
     def get_order_by_details(self, operation_id: int) -> Dict[str, Any]:
