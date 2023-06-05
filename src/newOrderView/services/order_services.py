@@ -14,7 +14,7 @@ from ..utils import add_ms
 
 class OrderServices:
     @staticmethod
-    def get_operations(self, from_date: str, to_date: str) -> List[Dict[str, Any]]:
+    def get_operations(from_date: str, to_date: str) -> List[Dict[str, Any]]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
         stanowiska_query: str = """
@@ -113,7 +113,7 @@ class OrderServices:
         return result_list
 
     @staticmethod
-    def get_order(self, from_date: str, to_date: str) -> List[Dict[str, Any]]:
+    def get_order(from_date: str, to_date: str) -> List[Dict[str, Any]]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
         order_query: str = """
@@ -143,7 +143,7 @@ class OrderServices:
         return result_list
 
     @staticmethod
-    def get_order_by_details(self, operation_id: int) -> Dict[str, Any]:
+    def get_order_by_details(operation_id: int) -> Dict[str, Any]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
         order_query = """
@@ -180,7 +180,6 @@ class OrderServices:
                                         AND sk_next.stanowisko = st.indeks
             WHERE sk.indeks = ?
         """
-
 
         params: List[Any] = [operation_id, operation_id]
 
