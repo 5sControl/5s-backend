@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models.camera import Camera
+from .models.camera import Camera, ZoneCameras
 from .models.algorithm import Algorithm, CameraAlgorithm, CameraAlgorithmLog
 
 
@@ -21,3 +21,15 @@ class CameraAlgorithmAdmin(admin.ModelAdmin):
 @admin.register(CameraAlgorithmLog)
 class CameraAlgorithmLogAdmin(admin.ModelAdmin):
     list_filter = ("id",)
+
+
+@admin.register(ZoneCameras)
+class ZoneCamerasAdmin(admin.ModelAdmin):
+    readonly_fields = ["is_active"]
+    list_display = (
+        "camera",
+        "name",
+        "coords",
+        "date_created",
+        "date_updated"
+    )
