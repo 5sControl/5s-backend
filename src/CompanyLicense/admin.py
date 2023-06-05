@@ -19,9 +19,14 @@ class LicenseAdmin(admin.ModelAdmin):
 class CompanyAdmin(admin.ModelAdmin):
     list_display = (
         "name_company",
-        "address_company",
+        "city",
+        "state",
+        "website",
         "contact_email",
         "contact_phone",
+        "contact_mobile_phone",
+        "logo",
+        "file",
         "date_joined",
-        "date_edited"
+        "date_edited",
     )
