@@ -51,6 +51,7 @@ class OrderServices:
                 operations_query += " AND sk.data >= ? AND sk.data <= ?"
                 to_date = datetime.datetime.strptime(to_date, "%Y-%m-%d") + datetime.timedelta(days=1)
                 params.extend([from_date, to_date])
+                params[1] = to_date
 
             operations_query += " ORDER BY sk.data"
 
@@ -84,12 +85,10 @@ class OrderServices:
                 if endTime is not None:
                     endTime: datetime = add_ms(endTime)
 
-                    if (
-                        (endTime.day > startTime.day)
-                        or (endTime.month > startTime.month)
-                        or (endTime.year > startTime.year)
-                    ):
+                    if endTime and endTime.date() > startTime.date():
                         endTime = startTime + timedelta(hours=1)
+                    else:
+                        endTime = endTime or startTime + timedelta(hours=1)
 
                     operation["endTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
                 else:
