@@ -1,6 +1,6 @@
 from typing import Dict, List, Any
 
-from rest_framework import generics
+from rest_framework import generics, status
 from rest_framework.response import Response
 from django.http import JsonResponse
 
@@ -18,7 +18,7 @@ class GetOperation(generics.GenericAPIView):
 
         result: List[Dict[str, Any]] = OrderServices.get_operations(from_date, to_date)
 
-        return Response(result, status=200)
+        return JsonResponse(data=result, status=status.HTTP_200_OK)
 
 
 class GetOrders(generics.GenericAPIView):
@@ -31,7 +31,7 @@ class GetOrders(generics.GenericAPIView):
 
         result: List[Dict[str, Any]] = OrderServices.get_order(from_date, to_date)
 
-        return Response(result, status=200)
+        return Response(result, status=status.HTTP_200_OK)
 
 
 class GetOrderByDetail(generics.GenericAPIView):
@@ -43,4 +43,4 @@ class GetOrderByDetail(generics.GenericAPIView):
 
         result = OrderServices.get_order_by_details(operation_id)
 
-        return JsonResponse(result, status=200)
+        return JsonResponse(data=result, status=status.HTTP_200_OK)
