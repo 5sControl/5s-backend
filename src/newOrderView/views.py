@@ -43,4 +43,4 @@ class GetOrderByDetail(generics.GenericAPIView):
 
         result: Dict[str, Any] = OrderServices.get_order_by_details(operation_id)
 
-        return JsonResponse(data=result, status=status.HTTP_200_OK)
+        return JsonResponse(data=result, status=status.HTTP_200_OK, safe=False)
