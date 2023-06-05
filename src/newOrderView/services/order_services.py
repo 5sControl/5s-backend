@@ -54,10 +54,9 @@ class OrderServices:
                 to_date_dt = datetime.strptime(to_date, "%Y-%m-%d")
                 to_date_dt = to_date_dt + timedelta(days=1) - timedelta(microseconds=1)
 
-                from_date_dt = datetime.strptime(from_date, "%Y-%m-%d")
-                from_date_dt = from_date_dt + timedelta(microseconds=1)
+                from_date_dt = datetime.strptime(to_date, "%Y-%m-%d")
+                from_date_dt = from_date_dt + timedelta(days=1) - timedelta(microseconds=1)
 
-                print(from_date_dt, ' and ', to_date_dt)
                 params.extend([from_date_dt, to_date_dt])
 
             operations_query += " ORDER BY sk.data"
@@ -65,7 +64,7 @@ class OrderServices:
             operations_data: List[Tuple[Any]] = connector_service.executer(
                 connection=connection, query=operations_query, params=params
             )
-            print(operations_data)
+
             operations_list: List[Dict[str, Any]] = []
 
             if not operations_data:
@@ -76,8 +75,10 @@ class OrderServices:
 
                 id: int = operation_row[0]
                 orderId: str = operation_row[3].strip()
-                startTime: datetime = operation_row[1]
-                endTime: datetime = operation_row[2] if i < len(operations_data) - 1 else None
+                startTime: str = str(operation_row[1])
+                endTime: str = (
+                    str(operation_row[2]) if i < len(operations_data) - 1 else None
+                )
 
                 operation: Dict[str, Any] = {
                     "id": id,
@@ -86,16 +87,20 @@ class OrderServices:
                     "endTime": endTime,
                 }
 
+                startTime: datetime = add_ms(startTime)
                 if endTime is not None:
-                    if endTime.date() > startTime.date():
+                    endTime: datetime = add_ms(endTime)
+
+                    if endTime and endTime.date() > startTime.date():
                         endTime = startTime + timedelta(hours=1)
                     else:
                         endTime = endTime or startTime + timedelta(hours=1)
 
-                    operation["endTime"] = endTime
+                    operation["endTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
                 else:
                     endTime = startTime + timedelta(hours=1)
-                    operation["endTime"] = endTime
+
+                    operation["endTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
 
                 operations_list.append(operation)
 
