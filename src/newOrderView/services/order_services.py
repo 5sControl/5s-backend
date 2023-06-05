@@ -49,7 +49,8 @@ class OrderServices:
 
             if from_date and to_date:
                 operations_query += " AND sk.data >= ? AND sk.data <= ?"
-                to_date = datetime.strptime(to_date, "%Y-%m-%d")
+                print(to_date)
+                print(type(to_date))
                 to_date = to_date + timedelta(days=1) - timedelta(microseconds=1)
                 params.extend([from_date, to_date])
                 params[1] = to_date
