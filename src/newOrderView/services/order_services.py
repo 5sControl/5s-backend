@@ -20,7 +20,7 @@ class OrderServices:
         stanowiska_query: str = """
             SELECT
                 indeks AS id,
-                raport AS orderName
+                raport AS orderId
             FROM Stanowiska
         """
 
@@ -39,7 +39,7 @@ class OrderServices:
                     sk.indeks AS id,
                     sk.data AS startTime,
                     LEAD(sk.data) OVER (ORDER BY sk.data) AS endTime,
-                    z.zlecenie AS orderName
+                    z.zlecenie AS orderId
                 FROM Skany sk
                     JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeksskanu
                     JOIN zlecenia z ON sz.indekszlecenia = z.indeks
@@ -53,7 +53,7 @@ class OrderServices:
                 print(f"before conv {to_date} - {type(to_date)}")
                 to_date_dt = datetime.strptime(to_date, "%Y-%m-%d")
                 to_date_dt = to_date_dt + timedelta(days=1) - timedelta(microseconds=1)
-                print(f"before conv {to_date_dt} - {type(to_date_dt)}")
+                print(f"after conv {to_date_dt} - {type(to_date_dt)}")
                 params.extend([from_date, to_date_dt])
 
             operations_query += " ORDER BY sk.data"
@@ -71,7 +71,7 @@ class OrderServices:
                 operation_row: Tuple[Any] = operations_data[i]
 
                 id: int = operation_row[0]
-                orderName: str = operation_row[3].strip()
+                orderId: str = operation_row[3].strip()
                 startTime: str = str(operation_row[1])
                 endTime: str = (
                     str(operation_row[2]) if i < len(operations_data) - 1 else None
@@ -79,7 +79,7 @@ class OrderServices:
 
                 operation: Dict[str, Any] = {
                     "id": id,
-                    "orderName": orderName,
+                    "orderId": orderId,
                     "startTime": startTime,
                     "endTime": endTime,
                 }
@@ -102,7 +102,7 @@ class OrderServices:
                 operations_list.append(operation)
 
             result = {
-                "operationID": operation_id,
+                "operationTypeID": operation_id,
                 "operationName": operation_name,
                 "operations": operations_list,
             }
@@ -118,7 +118,7 @@ class OrderServices:
 
         order_query: str = """
             SELECT
-                DISTINCT z.zlecenie AS orderName
+                DISTINCT z.zlecenie AS orderId
             FROM Zlecenia z
                 JOIN Skany_vs_Zlecenia sz ON z.indeks = sz.indekszlecenia
                 JOIN Skany sk ON sz.indeksskanu = sk.indeks
@@ -135,7 +135,7 @@ class OrderServices:
 
         for order_row in order_data:
             order: Dict[str, Any] = {
-                "orderName": order_row[0].strip(),
+                "orderId": order_row[0].strip(),
             }
 
             result_list.append(order)
@@ -156,7 +156,7 @@ class OrderServices:
             )
             SELECT
                 z.indeks AS id,
-                z.zlecenie AS orderName,
+                z.zlecenie AS orderId,
                 st.raport AS operationName,
                 u.imie AS firstName,
                 u.nazwisko AS lastName,
@@ -189,7 +189,7 @@ class OrderServices:
 
         if order_data:
             id: int = order_data[0][8]
-            orderName: str = order_data[0][1].strip()
+            orderId: str = order_data[0][1].strip()
             operationName: str = order_data[0][2]
             firstName: str = order_data[0][3]
             lastName: str = order_data[0][4]
@@ -242,7 +242,7 @@ class OrderServices:
 
             result: Dict[str, Any] = {
                 "id": id,
-                "orderName": orderName,
+                "orderId": orderId,
                 "operationName": operationName,
                 "startTime": startTime,
                 "endTime": endTime,
