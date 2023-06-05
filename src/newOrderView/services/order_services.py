@@ -74,7 +74,7 @@ class OrderServices:
                     str(operation_row[2]) if i < len(operations_data) - 1 else None
                 )
 
-                operation = {
+                operation: Dict[str, Any] = {
                     "id": id,
                     "orderName": orderName,
                     "startTime": startTime,
@@ -135,6 +135,8 @@ class OrderServices:
 
             result_list.append(order)
 
+        
+        print(f"From date {from_date} - to date {to_date}")
         return result_list
 
     def get_order_by_details(self, operation_id: int) -> Dict[str, Any]:
