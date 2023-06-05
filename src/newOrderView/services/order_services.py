@@ -193,20 +193,11 @@ class OrderServices:
             operationName: str = order_data[0][2]
             firstName: str = order_data[0][3]
             lastName: str = order_data[0][4]
-            startTime: str = datetime.strptime(
-                str(order_data[0][5]), "%Y-%m-%d %H:%M:%S.%f"
-            ).strftime("%Y-%m-%d %H:%M:%S.%f")
-            endTime: str = (
-                datetime.strptime(
-                    str(order_data[0][6]), "%Y-%m-%d %H:%M:%S.%f"
-                ).strftime("%Y-%m-%d %H:%M:%S.%f")
+            startTime: datetime = datetime.strptime(str(order_data[0][5]), "%Y-%m-%d %H:%M:%S.%f")
+            endTime: datetime = (
+                datetime.strptime(str(order_data[0][6]), "%Y-%m-%d %H:%M:%S.%f")
                 if order_data[0][6] is not None
-                else (
-                    datetime.strptime(
-                        str(order_data[0][5]), "%Y-%m-%d %H:%M:%S.%f"
-                    )
-                    + timedelta(hours=1)
-                ).strftime("%Y-%m-%d %H:%M:%S.%f")
+                else startTime + timedelta(hours=1)
             )
             workplaceID: int = order_data[0][7]
             video_data: Optional[Dict[str, Any]] = {"status": False}
@@ -214,8 +205,8 @@ class OrderServices:
             if startTime is not None:
                 camera_obj: Optional[Camera] = None
 
-                time: datetime = add_ms(startTime)
-                time_utc: datetime = time.replace(tzinfo=timezone.utc)
+                time: str = startTime.strftime("%Y-%m-%d %H:%M:%S.%f")
+                time_utc: datetime = add_ms(time).replace(tzinfo=timezone.utc)
 
                 try:
                     camera_obj: Camera = IndexOperations.objects.get(
