@@ -9,7 +9,7 @@ from src.OrderView.utils import get_skany_video_info
 from src.CameraAlgorithms.models import Camera
 from src.Reports.models import SkanyReport
 
-from ..utils import add_ms
+from ..utils import add_ms, format_time
 
 
 class OrderServices:
@@ -193,8 +193,8 @@ class OrderServices:
             operationName: str = order_data[0][2]
             firstName: str = order_data[0][3]
             lastName: str = order_data[0][4]
-            startTime: str = str(order_data[0][5])
-            endTime: str = order_data[0][6]
+            startTime: str = format_time(str(order_data[0][5]))
+            endTime: str = format_time(order_data[0][6])
             workplaceID: int = order_data[0][7]
             video_data: Optional[Dict[str, Any]] = {"status": False}
 
