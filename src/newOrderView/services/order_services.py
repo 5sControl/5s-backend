@@ -13,7 +13,8 @@ from ..utils import add_ms
 
 
 class OrderServices:
-    def get_operations(self, from_date: str, to_date: str) -> List[Dict[str, Any]]:
+    @staticmethod
+    def get_operations(from_date: str, to_date: str) -> List[Dict[str, Any]]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
         stanowiska_query: str = """
@@ -111,7 +112,8 @@ class OrderServices:
         print(f"from date {from_date} - to date {to_date}")
         return result_list
 
-    def get_order(self, from_date: str, to_date: str) -> List[Dict[str, Any]]:
+    @staticmethod
+    def get_order(from_date: str, to_date: str) -> List[Dict[str, Any]]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
         order_query: str = """
@@ -140,10 +142,11 @@ class OrderServices:
 
         return result_list
 
-    def get_order_by_details(self, operation_id: int) -> Dict[str, Any]:
+    @staticmethod
+    def get_order_by_details(operation_id: int) -> Dict[str, Any]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
-        order_query: str = """
+        order_query = """
             WITH Operation AS (
                 SELECT
                     sk.data AS operationTime
@@ -157,13 +160,14 @@ class OrderServices:
                 st.raport AS operationName,
                 u.imie AS firstName,
                 u.nazwisko AS lastName,
-                op.operationTime AS startTime,
-                (
-                    SELECT MIN(sk_next.data)
-                    FROM Skany sk_next
-                    WHERE sk_next.data > op.operationTime
-                        AND sk_next.stanowisko = st.indeks
-                ) AS endTime,
+                CONVERT(VARCHAR(23), op.operationTime, 121) AS startTime,
+                CASE
+                    WHEN DATEPART(year, sk_next.data) > DATEPART(year, op.operationTime)
+                        OR DATEPART(month, sk_next.data) > DATEPART(month, op.operationTime)
+                        OR DATEPART(day, sk_next.data) > DATEPART(day, op.operationTime)
+                        THEN DATEADD(hour, 1, op.operationTime)
+                    ELSE CONVERT(VARCHAR(23), sk_next.data, 121)
+                END AS endTime,
                 st.indeks AS workplaceID,
                 sk.indeks AS operationID
             FROM Zlecenia z
@@ -172,6 +176,8 @@ class OrderServices:
                 JOIN Stanowiska st ON sk.stanowisko = st.indeks
                 JOIN Uzytkownicy u ON sk.uzytkownik = u.indeks
                 JOIN Operation op ON op.operationTime = sk.data
+                LEFT JOIN Skany sk_next ON sk_next.data > op.operationTime
+                                        AND sk_next.stanowisko = st.indeks
             WHERE sk.indeks = ?
         """
 
@@ -236,6 +242,3 @@ class OrderServices:
             return result
         else:
             return {}
-
-
-services = OrderServices()
