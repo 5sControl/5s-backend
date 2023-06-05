@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.viewsets import ModelViewSet
 
+from django.db.models import Max
+
 from src.Core.const import SERVER_URL
 
 from django.core.exceptions import PermissionDenied
@@ -100,7 +102,7 @@ def version(request):
 class CompanyView(ModelViewSet):
     permission_classes = [IsAuthenticated]
     pagination_class = None
-    queryset = Company.objects.all().order_by('id')
+    queryset = Company.objects.filter(id=Company.objects.aggregate(Max('id'))['id__max'])
     serializer_class = CompanySerializer
 
 
