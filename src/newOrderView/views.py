@@ -2,6 +2,7 @@ from typing import Dict, List, Any
 
 from rest_framework import generics
 from rest_framework.response import Response
+from django.http import JsonResponse
 
 from src.Core.paginators import OrderViewPaginnator
 from src.MsSqlConnector.connector import connector as connector_service
@@ -42,4 +43,4 @@ class GetOrderByDetail(generics.GenericAPIView):
 
         result = OrderServices.get_order_by_details(operation_id)
 
-        return Response(result, status=200)
+        return JsonResponse(result, status=200)
