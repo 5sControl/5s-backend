@@ -37,11 +37,9 @@ def edit_extra(data: List[Dict], camera: Camera):
 
 
 def create_skanyreport(report: Report, report_data: List[Dict], violation_found: bool, start_tracking: datetime):
-    dt = datetime.strptime(start_tracking, '%Y-%m-%d %H:%M:%S.%f')
-    dt_utc = dt.replace(tzinfo=timezone.utc)
-    utc_string = dt_utc.strftime('%Y-%m-%d %H:%M:%S.%f UTC')
-    
-    print(utc_string)
+    utc_datetime = datetime.strptime(start_tracking, "%Y-%m-%d %H:%M:%S.%f %Z")
+    unix_timestamp = int(utc_datetime.timestamp())
+    print(unix_timestamp)
 
     skany_indeks = report_data[0].get("skany_index")
     zlecenie = report_data[0].get("zlecenie")
@@ -53,5 +51,5 @@ def create_skanyreport(report: Report, report_data: List[Dict], violation_found:
         zlecenie=zlecenie,
         execution_date=execution_date,
         violation_found=violation_found,
-        operation_time=utc_string,
+        operation_time=unix_timestamp,
     )
