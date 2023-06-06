@@ -159,10 +159,16 @@ def create_camera_algorithms(
         if algorithm_obj.name == "safety_control_reflective_jacket":
             response = send_run_request(request)
 
+        zones = request.get("config", {}).get("zonesID")
+
+        if zones is None:
+            zones = None
+
         new_record = CameraAlgorithm(
             algorithm=algorithm_obj,
             camera=camera_obj,
             process_id=response["pid"],
+            zones=zones,
         )
         new_record.save()
 
