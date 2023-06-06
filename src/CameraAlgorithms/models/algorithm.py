@@ -31,6 +31,7 @@ class CameraAlgorithm(models.Model):
     camera = models.ForeignKey(Camera, on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True)
     process_id = models.PositiveBigIntegerField(default=0)
+    zones = models.JSONField(blank=True, null=True, verbose_name="Id zones algorithm")
 
     def __str__(self):
         return f"{self.algorithm} - {self.camera}"
