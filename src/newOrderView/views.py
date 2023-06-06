@@ -19,7 +19,7 @@ class GetOperation(generics.GenericAPIView):
         from_date: str = request.GET.get("from")
         to_date: str = request.GET.get("to")
 
-        key: str = generate_hash(from_date, to_date)
+        key: str = generate_hash("get_operation", from_date, to_date)
         response = cache.get(key)
 
         if response is None:
@@ -37,8 +37,8 @@ class GetOrders(generics.GenericAPIView):
         from_date: str = request.GET.get("from")
         to_date: str = request.GET.get("to")
 
-        key: str = generate_hash(from_date, to_date)
-        response = cache.get(key)
+        key: str = generate_hash("get_order", from_date, to_date)
+        response = cache.get("get_order_" + key)
 
         if response is None:
             response: List[Dict[str, str]] = OrderServices.get_order(from_date, to_date)

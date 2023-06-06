@@ -10,7 +10,7 @@ def add_ms(time: str) -> datetime:
     return result
 
 
-def generate_hash(from_date: str, to_date: str) -> str:
-    data = from_date + to_date
+def generate_hash(prefix: str, from_date: str, to_date: str) -> str:
+    data = prefix + ":" + from_date + ":" + to_date
     hash_object = hashlib.sha256(data.encode())
     return hash_object.hexdigest()
