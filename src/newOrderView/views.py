@@ -1,12 +1,16 @@
 from typing import Dict, List, Any
 
-from rest_framework import generics, status
 from django.http import JsonResponse
+from django.core.cache import cache
+from django.views.decorators.cache import cache_page
+
+from rest_framework import generics, status
 
 from src.Core.paginators import OrderViewPaginnator
 from src.MsSqlConnector.connector import connector as connector_service
 
 from .services.order_services import OrderServices
+from .utils import generate_hash
 
 
 class GetOperation(generics.GenericAPIView):
@@ -15,9 +19,14 @@ class GetOperation(generics.GenericAPIView):
         from_date: str = request.GET.get("from")
         to_date: str = request.GET.get("to")
 
-        result: List[Dict[str, Any]] = OrderServices.get_operations(from_date, to_date)
+        key: str = generate_hash(from_date, to_date)
+        response = cache.get(key)
 
-        return JsonResponse(data=result, status=status.HTTP_200_OK, safe=False)
+        if response is None:
+            response: List[Dict[str, Any]] = OrderServices.get_operations(from_date, to_date)
+            cache.set(key, response, timeout=120)
+
+        return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
 
 
 class GetOrders(generics.GenericAPIView):
@@ -28,9 +37,14 @@ class GetOrders(generics.GenericAPIView):
         from_date: str = request.GET.get("from")
         to_date: str = request.GET.get("to")
 
-        result: List[Dict[str, str]] = OrderServices.get_order(from_date, to_date)
+        key: str = generate_hash(from_date, to_date)
+        response = cache.get(key)
 
-        return JsonResponse(result, status=status.HTTP_200_OK, safe=False)
+        if response is None:
+            response: List[Dict[str, str]] = OrderServices.get_order(from_date, to_date)
+            cache.set(key, response, timeout=120)
+
+        return JsonResponse(response, status=status.HTTP_200_OK, safe=False)
 
 
 class GetOrderByDetail(generics.GenericAPIView):
@@ -40,6 +54,11 @@ class GetOrderByDetail(generics.GenericAPIView):
     def get(self, request):
         operation_id: int = request.GET.get("operation")
 
-        result: Dict[str, Any] = OrderServices.get_order_by_details(operation_id)
+        key: int = operation_id
+        response = cache.get(key)
 
-        return JsonResponse(data=result, status=status.HTTP_200_OK)
+        if response is None:
+            response: Dict[str, Any] = OrderServices.get_order_by_details(operation_id)
+            cache.set(key, response, timeout=120)
+
+        return JsonResponse(data=response, status=status.HTTP_200_OK)
