@@ -179,3 +179,6 @@ class GetOperationVideoInfo(ListAPIView):
     queryset = SkanyReport.objects.all()
     serializer_class = OperationReportSerializer
     pagination_class = NoPagination
+
+    def get_queryset(self):
+        return SkanyReport.objects.exclude(startTime__isnull=True)
