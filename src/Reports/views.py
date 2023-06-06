@@ -3,7 +3,7 @@ from datetime import datetime
 
 from django.db.models import Q
 
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework import status, viewsets
@@ -12,11 +12,12 @@ from rest_framework.response import Response
 
 from src.CompanyLicense.decorators import validate_license
 from src.Core.const import PRODUCTION, SERVER_URL
+from src.Core.paginators import NoPagination
 from src.ImageReport.models import Image
 from src.CameraAlgorithms.models import Camera
 from src.CameraAlgorithms.models import Algorithm
-from src.Reports.models import Report
-from src.Reports.serializers import ReportSerializers
+from src.Reports.models import Report, SkanyReport
+from src.Reports.serializers import ReportSerializers, OperationReportSerializer
 from src.Inventory.service import process_item_status
 from src.Reports.service import edit_extra, create_skanyreport
 
@@ -55,7 +56,6 @@ class ActionsWithPhotos(APIView):
                 extra = process_item_status(request.data.get("extra"))
 
             elif request.data.get("algorithm") == "operation_control":
-                print(request.data.get("algorithm"))
                 if not PRODUCTION:
                     print("start creating skany")
                     if 'extra' in request.data:
@@ -89,7 +89,7 @@ class ActionsWithPhotos(APIView):
                         image=image, date=date, report_id=action
                     )
                 if request.data.get("algorithm") == "operation_control":
-                    create_skanyreport(action, extra, not violation_found)
+                    create_skanyreport(action, extra, not violation_found, start_tracking)
             else:
                 action.delete()
                 return Response(
@@ -172,3 +172,12 @@ class SearchReportListView(GenericAPIView):
         queryset = self.get_queryset()
         serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
+
+
+class GetOperationVideoInfo(ListAPIView):
+    queryset = SkanyReport.objects.all()
+    serializer_class = OperationReportSerializer
+    pagination_class = NoPagination
+
+    def get_queryset(self):
+        return SkanyReport.objects.exclude(operation_time__isnull=True)
