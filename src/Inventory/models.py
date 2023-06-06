@@ -48,9 +48,10 @@ class Items(models.Model):
 
             # restart process previous camera
             if camera_updated:
-                previous_camera_obj = Camera.objects.filter(id=previous_camera)[0]
-                stopped_process(previous_camera_obj)
-                started_process(previous_camera_obj)
+                if previous_camera != None:
+                    previous_camera_obj = Camera.objects.filter(id=previous_camera)[0]
+                    stopped_process(previous_camera_obj)
+                    started_process(previous_camera_obj)
 
         return instance
 
