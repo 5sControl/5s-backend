@@ -56,7 +56,6 @@ class ActionsWithPhotos(APIView):
                 extra = process_item_status(request.data.get("extra"))
 
             elif request.data.get("algorithm") == "operation_control":
-                print(request.data.get("algorithm"))
                 if not PRODUCTION:
                     print("start creating skany")
                     if 'extra' in request.data:
@@ -90,7 +89,7 @@ class ActionsWithPhotos(APIView):
                         image=image, date=date, report_id=action
                     )
                 if request.data.get("algorithm") == "operation_control":
-                    create_skanyreport(action, extra, not violation_found)
+                    create_skanyreport(action, extra, not violation_found, start_tracking)
             else:
                 action.delete()
                 return Response(
