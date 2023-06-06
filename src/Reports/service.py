@@ -37,7 +37,7 @@ def edit_extra(data: List[Dict], camera: Camera):
 
 
 def create_skanyreport(report: Report, report_data: List[Dict], violation_found: bool):
-    operation_time = time.time()
+    operation_time = int(time.time())
 
     skany_indeks = report_data[0].get("skany_index")
     zlecenie = report_data[0].get("zlecenie")
