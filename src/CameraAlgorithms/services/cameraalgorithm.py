@@ -133,10 +133,22 @@ def create_camera_algorithms(
 
             response = send_run_request(request)
 
-        if algorithm_obj.name == "idle_control":
-            response = send_run_request(request)
+        zones = request.get("config", {}).get("zonesID")
+
+        if zones is None:
+            zones = None
 
         if algorithm_obj.name == "machine_control":
+            zones_ids = request.get("config", {}).get("zonesID", [])
+            for zone_id in zones_ids:
+                zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
+                data.append(
+                    {"zoneId": zone_camera.id, "coords": zone_camera.coords, "zoneName": zone_camera.name}
+                )
+
+            response = send_run_request(request)
+
+        if algorithm_obj.name == "idle_control":
             response = send_run_request(request)
 
         if algorithm_obj.name == "operation_control":
@@ -158,11 +170,6 @@ def create_camera_algorithms(
 
         if algorithm_obj.name == "safety_control_reflective_jacket":
             response = send_run_request(request)
-
-        zones = request.get("config", {}).get("zonesID")
-
-        if zones is None:
-            zones = None
 
         new_record = CameraAlgorithm(
             algorithm=algorithm_obj,
