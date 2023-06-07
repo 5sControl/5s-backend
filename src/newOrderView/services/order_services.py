@@ -194,8 +194,6 @@ class OrderServices:
         order_data: List[Tuple[Any]] = connector_service.executer(
             connection=connection, query=order_query, params=params
         )
-        
-        print(order_data[0][9])
 
         if order_data:
             id: int = order_data[0][8]
@@ -210,6 +208,7 @@ class OrderServices:
                 else startTime + timedelta(hours=1)
             )
             workplaceID: int = order_data[0][7]
+            elementType = order_data[0][9]
             video_data: Optional[Dict[str, Any]] = {"status": False}
 
             if startTime is not None:
@@ -244,6 +243,7 @@ class OrderServices:
                 "id": id,
                 "orId": orderId,
                 "oprName": operationName,
+                "elType": elementType,
                 "sTime": startTime,
                 "eTime": endTime,
                 "frsName": firstName,
