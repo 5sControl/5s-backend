@@ -239,6 +239,10 @@ class OrderServices:
                 else:
                     operation_status: Optional[bool] = None
 
+            sTime = int(startTime.timestamp())
+            eTime = int(endTime.timestamp())
+            print(sTime, eTime)
+
             result: Dict[str, Any] = {
                 "id": id,
                 "orId": orderId,
