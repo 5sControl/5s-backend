@@ -176,7 +176,8 @@ class OrderServices:
                     ELSE CONVERT(VARCHAR(23), sk_next.data, 121)
                 END AS endTime,
                 st.indeks AS workplaceID,
-                sk.indeks AS operationID
+                sk.indeks AS operationID,
+                z.typ AS type
             FROM Zlecenia z
                 JOIN Skany_vs_Zlecenia sz ON z.indeks = sz.indekszlecenia
                 JOIN Skany sk ON sz.indeksskanu = sk.indeks
@@ -193,6 +194,8 @@ class OrderServices:
         order_data: List[Tuple[Any]] = connector_service.executer(
             connection=connection, query=order_query, params=params
         )
+        
+        print(order_data[0][9])
 
         if order_data:
             id: int = order_data[0][8]
@@ -232,7 +235,6 @@ class OrderServices:
                 skany_report: Optional[SkanyReport] = SkanyReport.objects.filter(
                     skany_index=id
                 ).first()
-                print(skany_report, id)
                 if skany_report:
                     operation_status: Optional[bool] = skany_report.violation_found
                 else:
