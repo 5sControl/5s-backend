@@ -17,6 +17,20 @@ def send_email_to_suppliers(item, image_path):
             raise ValueError("Missing contact email")
         my_company = Company.objects.last()
         count_order = item.order_quantity
+
+        if item.name is None:
+            raise ValueError("Missing item name")
+        if item.suppliers.name_company is None:
+            raise ValueError("Missing supplier name")
+        if my_company.name_company is None:
+            raise ValueError("Missing company name")
+        if my_company.address_company is None:
+            raise ValueError("Missing company address")
+        if my_company.contact_phone is None:
+            raise ValueError("Missing company phone")
+        if my_company.contact_email is None:
+            raise ValueError("Missing company email")
+
     except Exception as exc:
         print(f"Not enough parameters to send notification: {exc}")
         return
