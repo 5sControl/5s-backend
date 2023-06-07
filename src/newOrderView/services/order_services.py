@@ -82,9 +82,9 @@ class OrderServices:
 
                 operation: Dict[str, Any] = {
                     "id": id,
-                    "orderId": orderId,
-                    "startTime": startTime,
-                    "endTime": endTime,
+                    "orId": orderId,
+                    "sTime": startTime,
+                    "eTime": endTime,
                 }
 
                 startTime: datetime = add_ms(startTime)
@@ -96,23 +96,21 @@ class OrderServices:
                     else:
                         endTime = endTime or startTime + timedelta(hours=1)
 
-                    operation["endTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
+                    operation["eTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
                 else:
                     endTime = startTime + timedelta(hours=1)
 
-                    operation["endTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
+                    operation["eTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
 
                 operations_list.append(operation)
 
             result = {
-                "operationTypeID": operation_id,
-                "operationName": operation_name,
-                "operations": operations_list,
+                "oprTypeID": operation_id,
+                "oprName": operation_name,
+                "oprs": operations_list,
             }
 
             result_list.append(result)
-
-        print(f"from date {from_date} - to date {to_date}")
         return result_list
 
     @staticmethod
@@ -144,7 +142,7 @@ class OrderServices:
 
         for order_row in order_data:
             order: Dict[str, Any] = {
-                "orderId": order_row[0].strip(),
+                "orId": order_row[0].strip(),
             }
 
             result_list.append(order)
@@ -242,14 +240,14 @@ class OrderServices:
 
             result: Dict[str, Any] = {
                 "id": id,
-                "orderId": orderId,
-                "operationName": operationName,
-                "startTime": startTime,
-                "endTime": endTime,
-                "firstName": firstName,
-                "lastName": lastName,
+                "orId": orderId,
+                "oprName": operationName,
+                "sTime": startTime,
+                "eTime": endTime,
+                "frsName": firstName,
+                "lstName": lastName,
                 "status": operation_status,
-                "video_data": video_data,
+                "video": video_data,
             }
 
             return result
