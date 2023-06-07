@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "src.CompanyLicense.apps.CompanyLicenseConfig",
     "src.Inventory.apps.InventoryConfig",
     "src.Employees.apps.EmployeesConfig",
+    "src.Suppliers.apps.SuppliersConfig",
     # Collections reports
     "src.Reports.apps.ReportsConfig",
     "src.ImageReport.apps.ImageConfig",

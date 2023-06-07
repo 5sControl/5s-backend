@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from src.Reports.models import Report
+from src.Reports.models import Report, SkanyReport
 from src.ImageReport.serializers import PhotoSerializers
 from src.CameraAlgorithms.serializers import AlgorithmSerializer, CameraReportSerializer
 
@@ -27,3 +27,13 @@ class ReportSerializers(serializers.ModelSerializer):
             "date_updated",
             "status",
         ]
+
+
+class OperationReportSerializer(serializers.ModelSerializer):
+    operationID = serializers.IntegerField(source='skany_index')
+    camera_ip = serializers.CharField(source='report.camera')
+    startTime = serializers.IntegerField(source='operation_time')
+
+    class Meta:
+        model = SkanyReport
+        fields = ['id', 'operationID', 'camera_ip', 'startTime']

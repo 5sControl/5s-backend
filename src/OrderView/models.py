@@ -12,3 +12,9 @@ class IndexOperations(models.Model):
     camera = models.OneToOneField(
         Camera, verbose_name="operations_control camera", on_delete=models.CASCADE
     )
+
+    class Meta:
+        verbose_name = "IndexOperatio"
+        verbose_name_plural = "IndexOperations"
+
+        db_table = "index_operations"

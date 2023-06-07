@@ -9,7 +9,7 @@ from src.Inventory.models import Items
 from src.OrderView.models import IndexOperations
 from src.CompanyLicense.decorators import check_active_cameras, check_active_algorithms
 
-from ..models import Camera
+from ..models import Camera, ZoneCameras
 from ..models import Algorithm, CameraAlgorithm
 from .logs_services import logs_service
 
@@ -93,7 +93,7 @@ def create_camera(camera: Dict[str, str]) -> None:
 
 
 def create_camera_algorithms(
-    camera: Dict[str, str], algorithms: List[Dict[str, Any]]
+        camera: Dict[str, str], algorithms: List[Dict[str, Any]]
 ) -> None:
     camera_obj = Camera.objects.get(id=camera["ip"])
     new_records = [algorithm_data["name"] for algorithm_data in algorithms]
@@ -133,10 +133,22 @@ def create_camera_algorithms(
 
             response = send_run_request(request)
 
-        if algorithm_obj.name == "idle_control":
-            response = send_run_request(request)
+        zones = request.get("config", {}).get("zonesID")
+
+        if zones is None:
+            zones = None
 
         if algorithm_obj.name == "machine_control":
+            zones_ids = request.get("config", {}).get("zonesID", [])
+            for zone_id in zones_ids:
+                zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
+                data.append(
+                    {"zoneId": zone_camera.id, "coords": zone_camera.coords, "zoneName": zone_camera.name}
+                )
+
+            response = send_run_request(request)
+
+        if algorithm_obj.name == "idle_control":
             response = send_run_request(request)
 
         if algorithm_obj.name == "operation_control":
@@ -163,8 +175,12 @@ def create_camera_algorithms(
             algorithm=algorithm_obj,
             camera=camera_obj,
             process_id=response["pid"],
+            zones=zones,
         )
         new_record.save()
+
+        if zones is not None:
+            update_status_zones_true(zones)
 
         logger.warning(f"New record -> {algorithm_obj.name} on camera {camera_obj.id}")
 
@@ -227,4 +243,36 @@ def update_status_algorithm(pid: int):
             algorithm_name=camera_algorithm.algorithm.name,
             camera_ip=camera_algorithm.camera.id,
         )
+
+        if camera_algorithm.zones is not None:
+            update_status_zone_false(camera_algorithm.zones)
+
         camera_algorithm.delete()
+
+
+def update_status_zone_false(data):
+    """Update status zone in the end"""
+
+    for zone in data:
+        zone_id = zone.get("id")
+        if zone_id:
+            try:
+                zone_obj = ZoneCameras.objects.get(id=zone_id)
+                zone_obj.is_active = False
+                zone_obj.save()
+            except ZoneCameras.DoesNotExist:
+                pass
+
+
+def update_status_zones_true(zones):
+    """Update status zones on True"""
+
+    for zone in zones:
+        zone_id = zone.get("id")
+        if zone_id:
+            try:
+                zone_obj = ZoneCameras.objects.get(id=zone_id)
+                zone_obj.is_active = True
+                zone_obj.save()
+            except ZoneCameras.DoesNotExist:
+                pass

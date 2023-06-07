@@ -5,6 +5,7 @@ from src.Reports.views import (
     ReportListView,
     ActionViewSet,
     SearchReportListView,
+    GetOperationVideoInfo,
 )
 
 
@@ -20,5 +21,6 @@ urlpatterns = [
         name="report_action_list",
     ),
     path("search_params/", SearchReportListView.as_view()),
+    path("video-info/", GetOperationVideoInfo.as_view()),
     path("", include(router_report.urls)),
 ]

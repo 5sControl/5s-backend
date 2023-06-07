@@ -1,23 +1,16 @@
 from rest_framework import serializers
 
 from src.Inventory.models import Items
+from src.Suppliers.models import Suppliers
+
+from src.Suppliers.serializers import SuppliersSerializer
 
 
 class ItemsSerializer(serializers.ModelSerializer):
-    """
-    Items Serializer
-    """
+    """Serializer for Items model"""
 
     class Meta:
         model = Items
-        fields = ["id",
-                  "name",
-                  "status",
-                  "current_stock_level",
-                  "low_stock_level",
-                  "camera",
-                  "date_created",
-                  "date_updated",
-                  "coords",
-                  "multi_row"
-                  ]
+        fields = ['id', 'name', 'status', 'current_stock_level', 'low_stock_level', 'camera',
+                  'date_created', 'date_updated', 'coords', 'prev_status', 'multi_row',
+                  'order_quantity', 'suppliers']

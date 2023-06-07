@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Camera
+from .models import Camera, ZoneCameras
 from .models import Algorithm, CameraAlgorithm, CameraAlgorithmLog
 
 
@@ -88,3 +88,10 @@ class CameraAlgorithmLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = CameraAlgorithmLog
         fields = "__all__"
+
+
+class ZoneCameraSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ZoneCameras
+        fields = "__all__"
+        read_only_fields = ["is_active"]

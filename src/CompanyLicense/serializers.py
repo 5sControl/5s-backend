@@ -1,13 +1,13 @@
 from rest_framework import serializers
 
-from src.CompanyLicense.models import Company
+from src.CompanyLicense.models import License, Company
 from src.CompanyLicense.service import decrypt_string
 
 import datetime
 from django.utils import timezone
 
 
-class CompanySerializer(serializers.Serializer):
+class LicenseSerializer(serializers.Serializer):
     license_key = serializers.CharField(required=True, write_only=True)
 
     def create(self, validated_data):
@@ -18,16 +18,15 @@ class CompanySerializer(serializers.Serializer):
         if valid_date >= timezone.now().date():
             data = {
                 "license_key": validated_data["license_key"],
-                "name_company": valid_data["name_company"],
                 "count_cameras": valid_data["count_cameras"],
                 "neurons_active": valid_data["neurons_active"],
                 "is_active": True,
                 "valid_until": valid_date,
             }
 
-            company = Company.objects.create(**data)
+            license = License.objects.create(**data)
 
-            return company
+            return license
 
         raise serializers.ValidationError({"message": "You have an outdated license"})
 
@@ -37,3 +36,9 @@ class CompanySerializer(serializers.Serializer):
         except Exception as e:
             raise serializers.ValidationError({"error": str(e)})
         return data
+
+
+class CompanySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Company
+        fields = '__all__'

@@ -33,3 +33,15 @@ class Camera(models.Model):
         verbose_name_plural = "Cameras"
 
         db_table = "camera"
+
+
+class ZoneCameras(models.Model):
+    camera = models.ForeignKey(Camera, on_delete=models.SET_NULL, related_name="Zone_cameras", blank=True, null=True)
+    coords = models.JSONField(verbose_name="Zone coordinates")
+    name = models.CharField(max_length=100, blank=True, null=True)
+    is_active = models.BooleanField(default=False)
+    date_created = models.DateTimeField(verbose_name="Date created", auto_now_add=True)
+    date_updated = models.DateTimeField(verbose_name="Date updated", auto_now=True)
+
+    def __str__(self):
+        return self.name
