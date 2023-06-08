@@ -99,14 +99,14 @@ class OrderServices:
                         endTime_dt = endTime_dt or startTime_dt + timedelta(hours=1)
 
                     endTime_unix: int = int(endTime_dt.timestamp())
-                    operation["eTime"] = endTime_unix
+                    operation["eTime"] = endTime_unix * 1000
 
                 else:
                     endTime_dt = startTime_dt + timedelta(hours=1)
                     endTime_unix: int = int(endTime_dt.timestamp())
-                    operation["eTime"] = endTime_unix
+                    operation["eTime"] = endTime_unix * 1000
 
-                operation["sTime"] = startTime_unix
+                operation["sTime"] = startTime_unix * 1000
 
                 operations_list.append(operation)
 
@@ -240,8 +240,8 @@ class OrderServices:
                             time=video_time.isoformat(), camera_ip=camera_obj.camera.id
                         )
 
-            startTime_unix: int = int(startTime.timestamp())
-            endTime_unix: int = int(endTime.timestamp())
+            startTime_unix: int = int(startTime.timestamp()) * 1000
+            endTime_unix: int = int(endTime.timestamp()) * 1000
 
             result: Dict[str, Any] = {
                 "id": id,
