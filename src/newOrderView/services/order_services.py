@@ -221,7 +221,7 @@ class OrderServices:
                 ).first()
                 camera_obj: Optional[Camera] = IndexOperations.objects.filter(
                     type_operation=workplaceID
-                ).first().camera
+                ).first()
 
                 if skany_report:
                     operation_status: Optional[bool] = skany_report.violation_found
@@ -229,7 +229,7 @@ class OrderServices:
                     print(video_time)
                     if camera_obj:
                         video_data: Dict[str, Any] = get_skany_video_info(
-                            time=video_time.isoformat(), camera_ip=camera_obj.id
+                            time=video_time.isoformat(), camera_ip=camera_obj.camera.id
                         )
 
             startTime_unix: int = int(startTime.timestamp())
