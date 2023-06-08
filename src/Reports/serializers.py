@@ -30,10 +30,11 @@ class ReportSerializers(serializers.ModelSerializer):
 
 
 class OperationReportSerializer(serializers.ModelSerializer):
-    operationID = serializers.IntegerField(source='skany_index')
-    camera_ip = serializers.CharField(source='report.camera')
-    startTime = serializers.IntegerField(source='operation_time')
+    operationID = serializers.IntegerField(source="skany_index")
+    camera_ip = serializers.CharField(source="report.camera")
+    startTime = serializers.IntegerField(source="start_time")
+    endTime = serializers.IntegerField(source="end_time")
 
     class Meta:
         model = SkanyReport
-        fields = ['id', 'operationID', 'camera_ip', 'startTime']
+        fields = ["id", "operationID", "camera_ip", "startTime", "endTime"]

@@ -42,7 +42,8 @@ class SkanyReport(models.Model):
     zlecenie = models.CharField(max_length=50, blank=True, null=True)
     violation_found = models.BooleanField(blank=True, null=True)
     execution_date = models.DateTimeField(blank=True, null=True)
-    operation_time = models.BigIntegerField(blank=True, null=True)
+    start_time = models.BigIntegerField(blank=True, null=True)
+    end_time = models.BigIntegerField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.id}"
