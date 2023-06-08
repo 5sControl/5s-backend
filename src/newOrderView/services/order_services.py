@@ -87,20 +87,26 @@ class OrderServices:
                     "eTime": endTime,
                 }
 
-                startTime: datetime = add_ms(startTime)
+                startTime_dt: datetime = add_ms(startTime)
+                startTime_unix: int = int(startTime_dt.timestamp())
+
                 if endTime is not None:
-                    endTime: datetime = add_ms(endTime)
+                    endTime_dt: datetime = add_ms(endTime)
 
-                    if endTime and endTime.date() > startTime.date():
-                        endTime = startTime + timedelta(hours=1)
+                    if endTime_dt.date() > startTime_dt.date():
+                        endTime_dt = startTime_dt + timedelta(hours=1)
                     else:
-                        endTime = endTime or startTime + timedelta(hours=1)
+                        endTime_dt = endTime_dt or startTime_dt + timedelta(hours=1)
 
-                    operation["eTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
+                    endTime_unix: int = int(endTime_dt.timestamp())
+                    operation["eTime"] = endTime_unix
+
                 else:
-                    endTime = startTime + timedelta(hours=1)
+                    endTime_dt = startTime_dt + timedelta(hours=1)
+                    endTime_unix: int = int(endTime_dt.timestamp())
+                    operation["eTime"] = endTime_unix
 
-                    operation["eTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
+                operation["sTime"] = startTime_unix
 
                 operations_list.append(operation)
 
@@ -201,7 +207,9 @@ class OrderServices:
             operationName: str = order_data[0][2]
             firstName: str = order_data[0][3]
             lastName: str = order_data[0][4]
-            startTime: datetime = datetime.strptime(str(order_data[0][5]), "%Y-%m-%d %H:%M:%S.%f")
+            startTime: datetime = datetime.strptime(
+                str(order_data[0][5]), "%Y-%m-%d %H:%M:%S.%f"
+            )
             endTime: datetime = (
                 datetime.strptime(str(order_data[0][6]), "%Y-%m-%d %H:%M:%S.%f")
                 if order_data[0][6] is not None
