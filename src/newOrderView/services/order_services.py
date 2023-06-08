@@ -213,35 +213,24 @@ class OrderServices:
 
             if startTime is not None:
                 camera_obj: Optional[Camera] = None
-
-                time: str = startTime.strftime("%Y-%m-%d %H:%M:%S.%f")
-                time_utc: datetime = add_ms(time).replace(tzinfo=timezone.utc)
-
-                try:
-                    camera_obj: Camera = IndexOperations.objects.get(
-                        type_operation=workplaceID
-                    ).camera
-                except IndexOperations.DoesNotExist:
-                    pass
-
-                if not camera_obj:
-                    video_data: Dict[str, bool] = {"status": False}
-                else:
-                    video_data: Dict[str, Any] = get_skany_video_info(
-                        time=time_utc.isoformat(), camera_ip=camera_obj.id
-                    )
+                operation_status: Optional[bool] = None
+                video_data: Dict[str, bool] = {"status": False}
 
                 skany_report: Optional[SkanyReport] = SkanyReport.objects.filter(
                     skany_index=id
                 ).first()
+                camera_obj: Optional[Camera] = IndexOperations.objects.filter(
+                    type_operation=workplaceID
+                ).first().camera
+
                 if skany_report:
                     operation_status: Optional[bool] = skany_report.violation_found
-                else:
-                    operation_status: Optional[bool] = None
-
-            sTime = int(startTime.timestamp())
-            eTime = int(endTime.timestamp())
-            print(sTime, eTime)
+                    sTime: Optional[bool] = skany_report.start_time
+                    print(sTime)
+                    if camera_obj:
+                        video_data: Dict[str, Any] = get_skany_video_info(
+                            time=sTime.isoformat(), camera_ip=camera_obj.id
+                        )
 
             result: Dict[str, Any] = {
                 "id": id,
