@@ -22,7 +22,9 @@ class GetOperation(generics.GenericAPIView):
         response = cache.get(key)
 
         if response is None:
-            response: List[Dict[str, Any]] = OrderServices.get_operations(from_date, to_date)
+            response: List[Dict[str, Any]] = OrderServices.get_operations(
+                from_date, to_date
+            )
             cache.set(key, response, timeout=120)
 
         return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
