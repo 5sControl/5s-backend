@@ -213,43 +213,35 @@ class OrderServices:
 
             if startTime is not None:
                 camera_obj: Optional[Camera] = None
-
-                time: str = startTime.strftime("%Y-%m-%d %H:%M:%S.%f")
-                time_utc: datetime = add_ms(time).replace(tzinfo=timezone.utc)
-
-                try:
-                    camera_obj: Camera = IndexOperations.objects.get(
-                        type_operation=workplaceID
-                    ).camera
-                except IndexOperations.DoesNotExist:
-                    pass
-
-                if not camera_obj:
-                    video_data: Dict[str, bool] = {"status": False}
-                else:
-                    video_data: Dict[str, Any] = get_skany_video_info(
-                        time=time_utc.isoformat(), camera_ip=camera_obj.id
-                    )
+                operation_status: Optional[bool] = None
+                video_data: Dict[str, bool] = {"status": False}
 
                 skany_report: Optional[SkanyReport] = SkanyReport.objects.filter(
                     skany_index=id
                 ).first()
+                camera_obj: Optional[Camera] = IndexOperations.objects.filter(
+                    type_operation=workplaceID
+                ).first().camera
+
                 if skany_report:
                     operation_status: Optional[bool] = skany_report.violation_found
-                else:
-                    operation_status: Optional[bool] = None
+                    video_time: Optional[bool] = skany_report.start_time
+                    print(video_time)
+                    if camera_obj:
+                        video_data: Dict[str, Any] = get_skany_video_info(
+                            time=video_time.isoformat(), camera_ip=camera_obj.id
+                        )
 
-            sTime = int(startTime.timestamp())
-            eTime = int(endTime.timestamp())
-            print(sTime, eTime)
-
+            startTime_unix: int = int(startTime.timestamp())
+            endTime_unix: int = int(endTime.timestamp())
+            print(startTime_unix, endTime_unix)
             result: Dict[str, Any] = {
                 "id": id,
                 "orId": orderId,
                 "oprName": operationName,
                 "elType": elementType,
-                "sTime": startTime,
-                "eTime": endTime,
+                "sTime": startTime_unix,
+                "eTime": endTime_unix,
                 "frsName": firstName,
                 "lstName": lastName,
                 "status": operation_status,
