@@ -210,11 +210,15 @@ class OrderServices:
             startTime: datetime = datetime.strptime(
                 str(order_data[0][5]), "%Y-%m-%d %H:%M:%S.%f"
             )
-            endTime: datetime = (
-                datetime.strptime(str(order_data[0][6]), "%Y-%m-%d %H:%M:%S.%f")
-                if order_data[0][6] is not None
-                else startTime + timedelta(hours=1)
-            )
+            endTime_str = str(order_data[0][6])
+
+            if endTime_str:
+                if '.' not in endTime_str:
+                    endTime_str += '.000'
+                endTime = datetime.strptime(endTime_str, "%Y-%m-%d %H:%M:%S.%f")
+            else:
+                endTime = startTime + timedelta(hours=1)
+
             workplaceID: int = order_data[0][7]
             elementType = order_data[0][9]
             video_data: Optional[Dict[str, Any]] = {"status": False}
