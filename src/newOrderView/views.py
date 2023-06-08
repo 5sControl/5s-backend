@@ -2,7 +2,6 @@ from typing import Dict, List, Any
 
 from django.http import JsonResponse
 from django.core.cache import cache
-from django.views.decorators.cache import cache_page
 
 from rest_framework import generics, status
 
