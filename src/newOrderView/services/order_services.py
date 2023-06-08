@@ -234,7 +234,7 @@ class OrderServices:
                 if skany_report:
                     operation_status: Optional[bool] = skany_report.violation_found
                     video_time: Optional[bool] = skany_report.start_time
-                    print(video_time)
+
                     if camera_obj:
                         video_data: Dict[str, Any] = get_skany_video_info(
                             time=video_time.isoformat(), camera_ip=camera_obj.camera.id
@@ -242,7 +242,7 @@ class OrderServices:
 
             startTime_unix: int = int(startTime.timestamp())
             endTime_unix: int = int(endTime.timestamp())
-            print(startTime_unix, endTime_unix)
+
             result: Dict[str, Any] = {
                 "id": id,
                 "orId": orderId,
