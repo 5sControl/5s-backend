@@ -30,6 +30,8 @@ class ZoneCamerasAdmin(admin.ModelAdmin):
         "camera",
         "name",
         "coords",
+        "workplace",
+        "index_workplace",
         "date_created",
         "date_updated"
     )

@@ -71,7 +71,7 @@ class CameraAlgorithmLogListAPIView(generics.ListAPIView):
 
 
 class ZoneCameraListAPIView(ModelViewSet):
-    permission_classes = [IsAuthenticated, IsSuperuserPermission]
+    permission_classes = [IsAuthenticated]
     pagination_class = NoPagination
     queryset = ZoneCameras.objects.all()
     serializer_class = ZoneCameraSerializer
