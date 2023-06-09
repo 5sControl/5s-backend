@@ -48,6 +48,7 @@ class Company(models.Model):
     index = models.IntegerField(verbose_name="Postcode", blank=True, null=True)
     date_joined = models.DateTimeField(verbose_name="Date joined", auto_now_add=True)
     date_edited = models.DateTimeField(verbose_name="Date edited", auto_now=True)
+    my_company = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name_company

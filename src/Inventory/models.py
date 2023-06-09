@@ -1,7 +1,7 @@
 from django.db import models
 
 from src.CameraAlgorithms.models import Camera
-from src.Suppliers.models import Suppliers
+from src.CompanyLicense.models import Company
 
 
 class Items(models.Model):
@@ -17,7 +17,7 @@ class Items(models.Model):
     coords = models.JSONField(verbose_name="Area coordinates")
     prev_status = models.TextField(verbose_name="Previous status", default=None, max_length=30, blank=True, null=True)
     multi_row = models.BooleanField(verbose_name="Multi row", default=False)
-    suppliers = models.ForeignKey(Suppliers, related_name='Supplier', on_delete=models.SET_NULL, null=True, blank=True)
+    suppliers = models.ForeignKey(Company, related_name='Supplier', on_delete=models.SET_NULL, null=True, blank=True)
     order_quantity = models.IntegerField(verbose_name="Order quantity", blank=True, null=True)
 
     def __str__(self):

@@ -1,17 +1,18 @@
 from rest_framework import serializers
 
-from src.Suppliers.models import Suppliers
 
 from django_countries.serializer_fields import CountryField
+
+from src.CompanyLicense.models import Company
 
 
 class SuppliersSerializer(serializers.ModelSerializer):
     country = CountryField(allow_null=True)
 
     class Meta:
-        model = Suppliers
+        model = Company
         fields = '__all__'
-        read_only_fields = ["id", "date_joined", "date_edited"]
+        read_only_fields = ["my_company"]
 
 
 class CountrySerializer(serializers.Serializer):

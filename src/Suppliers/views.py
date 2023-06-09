@@ -4,15 +4,14 @@ from rest_framework.viewsets import ModelViewSet
 
 from django_countries import countries
 
-from src.Suppliers.models import Suppliers
-
+from src.CompanyLicense.models import Company
 from src.Suppliers.serializers import SuppliersSerializer, CountrySerializer
 
 
 class SuppliersView(ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     pagination_class = None
-    queryset = Suppliers.objects.all().order_by('id')
+    queryset = Company.objects.filter(my_company=False).order_by('id')
     serializer_class = SuppliersSerializer
 
 

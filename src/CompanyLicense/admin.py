@@ -17,7 +17,7 @@ class LicenseAdmin(admin.ModelAdmin):
 
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
-    list_filter = ("id", "city")
+    list_filter = ("id", "city", "my_company")
     list_display = (
         'name_company',
         'website',
