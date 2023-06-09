@@ -75,4 +75,4 @@ class GetWhnetOperation(generics.GenericAPIView):
     def get(self, request):
         response: Dict[str, Any] = OrderServices.get_whnet_operation()
 
-        return JsonResponse(data=response, status=status.HTTP_200_OK)
+        return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
