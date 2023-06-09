@@ -81,8 +81,8 @@ def version(request):
     versions = []
     versions = versions + [{
         "name": "5S Control version",
-        "version": "v0.3.9",
-        "date": "06.02.2023",
+        "version": "v0.4.0",
+        "date": "06.07.2023",
         "description": ""
     }]
 
@@ -102,8 +102,10 @@ def version(request):
 class CompanyView(ModelViewSet):
     permission_classes = [IsAuthenticated]
     pagination_class = None
-    queryset = Company.objects.filter(id=Company.objects.aggregate(Max('id'))['id__max'])
     serializer_class = CompanySerializer
+
+    def get_queryset(self):
+        return Company.objects.filter(id=Company.objects.aggregate(max_id=Max('id'))['max_id'])
 
 
 class InformationView(APIView):

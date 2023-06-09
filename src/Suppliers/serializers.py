@@ -1,11 +1,12 @@
 from rest_framework import serializers
+
 from src.Suppliers.models import Suppliers
+
+from django_countries.serializer_fields import CountryField
 
 
 class SuppliersSerializer(serializers.ModelSerializer):
-
-    name_company = serializers.CharField(allow_blank=True)
-    website = serializers.CharField(allow_blank=True)
+    country = CountryField(allow_null=True)
 
     class Meta:
         model = Suppliers

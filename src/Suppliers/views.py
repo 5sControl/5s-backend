@@ -5,7 +5,7 @@ from src.Suppliers.serializers import SuppliersSerializer
 
 
 class SuppliersView(ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     pagination_class = None
     queryset = Suppliers.objects.all().order_by('id')
     serializer_class = SuppliersSerializer

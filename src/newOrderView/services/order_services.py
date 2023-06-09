@@ -87,20 +87,26 @@ class OrderServices:
                     "eTime": endTime,
                 }
 
-                startTime: datetime = add_ms(startTime)
+                startTime_dt: datetime = add_ms(startTime)
+                startTime_unix: int = int(startTime_dt.timestamp())
+
                 if endTime is not None:
-                    endTime: datetime = add_ms(endTime)
+                    endTime_dt: datetime = add_ms(endTime)
 
-                    if endTime and endTime.date() > startTime.date():
-                        endTime = startTime + timedelta(hours=1)
+                    if endTime_dt.date() > startTime_dt.date():
+                        endTime_dt = startTime_dt + timedelta(hours=1)
                     else:
-                        endTime = endTime or startTime + timedelta(hours=1)
+                        endTime_dt = endTime_dt or startTime_dt + timedelta(hours=1)
 
-                    operation["eTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
+                    endTime_unix: int = int(endTime_dt.timestamp())
+                    operation["eTime"] = endTime_unix * 1000
+
                 else:
-                    endTime = startTime + timedelta(hours=1)
+                    endTime_dt = startTime_dt + timedelta(hours=1)
+                    endTime_unix: int = int(endTime_dt.timestamp())
+                    operation["eTime"] = endTime_unix * 1000
 
-                    operation["eTime"] = endTime.strftime("%Y-%m-%d %H:%M:%S.%f")
+                operation["sTime"] = startTime_unix * 1000
 
                 operations_list.append(operation)
 
@@ -201,12 +207,18 @@ class OrderServices:
             operationName: str = order_data[0][2]
             firstName: str = order_data[0][3]
             lastName: str = order_data[0][4]
-            startTime: datetime = datetime.strptime(str(order_data[0][5]), "%Y-%m-%d %H:%M:%S.%f")
-            endTime: datetime = (
-                datetime.strptime(str(order_data[0][6]), "%Y-%m-%d %H:%M:%S.%f")
-                if order_data[0][6] is not None
-                else startTime + timedelta(hours=1)
+            startTime: datetime = datetime.strptime(
+                str(order_data[0][5]), "%Y-%m-%d %H:%M:%S.%f"
             )
+            endTime_str = str(order_data[0][6])
+
+            if endTime_str:
+                if '.' not in endTime_str:
+                    endTime_str += '.000'
+                endTime = datetime.strptime(endTime_str, "%Y-%m-%d %H:%M:%S.%f")
+            else:
+                endTime = startTime + timedelta(hours=1)
+
             workplaceID: int = order_data[0][7]
             elementType = order_data[0][9]
             video_data: Optional[Dict[str, Any]] = {"status": False}
@@ -221,24 +233,27 @@ class OrderServices:
                 ).first()
                 camera_obj: Optional[Camera] = IndexOperations.objects.filter(
                     type_operation=workplaceID
-                ).first().camera
+                ).first()
 
                 if skany_report:
                     operation_status: Optional[bool] = skany_report.violation_found
-                    sTime: Optional[bool] = skany_report.start_time
+                    video_time: Optional[bool] = skany_report.start_time
 
                     if camera_obj:
                         video_data: Dict[str, Any] = get_skany_video_info(
-                            time=sTime.isoformat(), camera_ip=camera_obj.id
+                            time=video_time.isoformat(), camera_ip=camera_obj.camera.id
                         )
+
+            startTime_unix: int = int(startTime.timestamp()) * 1000
+            endTime_unix: int = int(endTime.timestamp()) * 1000
 
             result: Dict[str, Any] = {
                 "id": id,
                 "orId": orderId,
                 "oprName": operationName,
                 "elType": elementType,
-                "sTime": startTime,
-                "eTime": endTime,
+                "sTime": startTime_unix,
+                "eTime": endTime_unix,
                 "frsName": firstName,
                 "lstName": lastName,
                 "status": operation_status,
