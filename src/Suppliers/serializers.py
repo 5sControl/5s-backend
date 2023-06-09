@@ -12,3 +12,8 @@ class SuppliersSerializer(serializers.ModelSerializer):
         model = Suppliers
         fields = '__all__'
         read_only_fields = ["id", "date_joined", "date_edited"]
+
+
+class CountrySerializer(serializers.Serializer):
+    name = serializers.CharField()
+    code = serializers.CharField()
