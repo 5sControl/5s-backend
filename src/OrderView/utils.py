@@ -10,6 +10,8 @@ def get_skany_video_info(time: time, camera_ip: str) -> Dict[str, Any]:
         "camera_ip": camera_ip,
         "time": time,
     }
+    
+    print("request data for video: ", request_data)
 
     try:
         response: requests = requests.post(
