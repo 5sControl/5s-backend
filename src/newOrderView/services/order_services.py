@@ -239,7 +239,7 @@ class OrderServices:
                     operation_status: Optional[bool] = skany_report.violation_found
                     video_time: Optional[bool] = skany_report.start_time
 
-                    if camera_obj:
+                    if camera_obj and video_time:
                         video_data: Dict[str, Any] = get_skany_video_info(
                             time=video_time.isoformat(), camera_ip=camera_obj.camera.id
                         )
