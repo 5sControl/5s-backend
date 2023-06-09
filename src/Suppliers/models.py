@@ -1,4 +1,5 @@
 from django.db import models
+
 from django_countries.fields import CountryField
 
 
@@ -20,6 +21,7 @@ class Suppliers(models.Model):
     contact_mobile_phone = models.TextField(verbose_name="Contact mobile phone number suppliers", blank=True, null=True)
     logo = models.ImageField(verbose_name="Logo company", blank=True, null=True)
     file = models.FileField(verbose_name="File to send notification", blank=True, null=True)
+    index = models.IntegerField(verbose_name="Postcode", blank=True, null=True)
     date_joined = models.DateTimeField(verbose_name="Date joined", auto_now_add=True)
     date_edited = models.DateTimeField(verbose_name="Date edited", auto_now=True)
 
