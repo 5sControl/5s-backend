@@ -1,5 +1,5 @@
 from typing import List, Any, Tuple, Dict, Optional
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 
 import pyodbc
 
@@ -139,7 +139,7 @@ class OrderServices:
         to_date_dt = to_date_dt + timedelta(days=1) - timedelta(microseconds=1)
 
         params: List[Any] = [from_date_dt, to_date_dt]
-        print(from_date_dt, to_date_dt)
+
         order_data: List[Tuple[Any]] = connector_service.executer(
             connection=connection, query=order_query, params=params
         )
@@ -263,3 +263,29 @@ class OrderServices:
             return result
         else:
             return {}
+
+    @staticmethod
+    def get_whnet_operation() -> List[Dict[str, Any]]:
+        connection: pyodbc.Connection = connector_service.get_database_connection()
+
+        query: str = """
+            SELECT
+                indeks AS id,
+                raport AS operationName
+            FROM Stanowiska
+        """
+
+        data: List[Tuple[Any]] = connector_service.executer(
+            connection=connection, query=query
+        )
+        result_list: List[Dict[str, Any]] = []
+
+        for order_row in data:
+            order: Dict[str, Any] = {
+                "id": int(order_row[0]),
+                "operationName": str(order_row[1]).strip(),
+            }
+
+            result_list.append(order)
+
+        return result_list
