@@ -4,6 +4,7 @@ from .views import (
     GetOperation,
     GetOrders,
     GetOrderByDetail,
+    GetWhnetOperation,
 )
 
 urlpatterns = [
@@ -22,4 +23,9 @@ urlpatterns = [
         GetOrderByDetail.as_view(),
         name="get-order-detail",
     ),
+    path(
+        "whnet-operations/",
+        GetWhnetOperation.as_view(),
+        name="get-whnet-operation",
+    )
 ]
