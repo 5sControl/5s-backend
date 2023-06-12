@@ -111,7 +111,6 @@ def create_camera_algorithms(
     ]
 
     for algorithm in algorithms:
-        print("<<<<<<<<", algorithm, ">>>>>>>>>>")
         algorithm_obj = Algorithm.objects.get(name=algorithm["name"])
         rtsp_link: str = camera_rtsp_link(camera_obj.id)
         data: List[Dict[str, Any]] = []
