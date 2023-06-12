@@ -210,7 +210,7 @@ class OrderServices:
             startTime: datetime = datetime.strptime(
                 str(order_data[0][5]), "%Y-%m-%d %H:%M:%S.%f"
             )
-            endTime_str = str(order_data[0][6])
+            endTime_str = str(order_data[0][6]) if order_data[0][6] else None
 
             if endTime_str:
                 if '.' not in endTime_str:
@@ -221,12 +221,12 @@ class OrderServices:
 
             workplaceID: int = order_data[0][7]
             elementType = order_data[0][9]
-            video_data: Optional[Dict[str, Any]] = {"status": False}
+            video_data: Optional[Dict[str, Any]] = None
 
             if startTime is not None:
                 camera_obj: Optional[Camera] = None
                 operation_status: Optional[bool] = None
-                video_data: Dict[str, bool] = {"status": False}
+                video_data: Dict[str, bool] = {}
 
                 skany_report: Optional[SkanyReport] = SkanyReport.objects.filter(
                     skany_index=id
@@ -241,7 +241,7 @@ class OrderServices:
 
                     if camera_obj and video_time:
                         video_data: Dict[str, Any] = get_skany_video_info(
-                            time=video_time.isoformat(), camera_ip=camera_obj.camera.id
+                            time=(video_time * 1000), camera_ip=camera_obj.camera.id
                         )
 
             startTime_unix: int = int(startTime.timestamp()) * 1000
