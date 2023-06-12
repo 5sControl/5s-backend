@@ -144,7 +144,8 @@ def create_camera_algorithms(
             for zone_id in zones_ids:
                 zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
                 data.append(
-                    {"zoneId": zone_camera.id, "coords": zone_camera.coords, "zoneName": zone_camera.name}
+                    {"zoneId": zone_camera.id, "areas": zone_camera.coords, "zoneName": zone_camera.name}
+                    # {"zoneId": zone_camera.id, "coords": zone_camera.coords, "zoneName": zone_camera.name}
                 )
 
             request["extra"] = data
