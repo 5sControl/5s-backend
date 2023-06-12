@@ -15,7 +15,7 @@ def send_email_to_suppliers(item, image_path):
         work_time = WorkingTime.objects.last()
         if item.suppliers is None or item.suppliers.contact_email is None:
             raise ValueError("Missing contact email")
-        my_company = Company.objects.last()
+        my_company = Company.objects.filter(my_company=True).order_by('-id').first()
         count_order = item.order_quantity
 
         if item.name is None:
@@ -23,25 +23,31 @@ def send_email_to_suppliers(item, image_path):
         if item.suppliers.name_company is None:
             raise ValueError("Missing supplier name")
         if my_company.name_company is None:
-            raise ValueError("Missing company name")
-        if my_company.address_company is None:
-            raise ValueError("Missing company address")
+            raise ValueError("Missing my company name")
+        if my_company.country is None:
+            raise ValueError("Missing my company country")
+        if my_company.state is None:
+            raise ValueError("Missing my company state")
+        if my_company.city is None:
+            raise ValueError("Missing my company city")
+        if my_company.first_address is None:
+            raise ValueError("Missing my company first_address")
         if my_company.contact_phone is None:
-            raise ValueError("Missing company phone")
+            raise ValueError("Missing my company phone")
         if my_company.contact_email is None:
-            raise ValueError("Missing company email")
+            raise ValueError("Missing my company email")
 
     except Exception as exc:
         print(f"Not enough parameters to send notification: {exc}")
         return
-
+    address = f"{my_company.country} {my_company.state} {my_company.city} {my_company.first_address}"
     subject = f"Urgent Reorder Request: Low Stock Level Notification - {item.name}"
-    message = f"Dear {item.suppliers.name_company}!\nBy this message we notify you of our urgent need to reorder a specific item due to its low stock level.\nItem Details:\nItem Name: {item.name},\nQuantity Needed: {count_order}\n\nPlease ensure that the additional order is promptly processed and dispatched to us to avoid any disruptions to our operations. We kindly request your immediate attention to this matter.\n\nCompany Information:\nCompany Name: {my_company.name_company}\nAddress: {my_company.address_company}\nPhone: {my_company.contact_phone}\nEmail: {my_company.contact_email}\n\nPlease note that this message is automatically generated, and there is no need to reply to it. However, if you have any questions or require further information, please feel free to contact us using the provided company details.We appreciate your ongoing partnership and your commitment to providing quality products and services. Thank you for your prompt attention to this matter.\nBest regards, {my_company.name_company}\n\n{SERVER_URL}:3000/inventory\n\n"
+    message = f"Dear {item.suppliers.name_company}!\nBy this message we notify you of our urgent need to reorder a specific item due to its low stock level.\nItem Details:\nItem Name: {item.name},\nQuantity Needed: {count_order}\n\nPlease ensure that the additional order is promptly processed and dispatched to us to avoid any disruptions to our operations. We kindly request your immediate attention to this matter.\n\nCompany Information:\nCompany Name: {my_company.name_company}\nAddress: {address}\nPhone: {my_company.contact_phone}\nEmail: {my_company.contact_email}\n\nPlease note that this message is automatically generated, and there is no need to reply to it. However, if you have any questions or require further information, please feel free to contact us using the provided company details.We appreciate your ongoing partnership and your commitment to providing quality products and services. Thank you for your prompt attention to this matter.\nBest regards, {my_company.name_company}\n"
 
     image_name = image_path.split('/')[-1]
 
     recipient_list = [item.suppliers.contact_email]
-
+    print("все параметры ок")
     # email service check
     try:
         smtp_settings = SMTPSettings.objects.first()
