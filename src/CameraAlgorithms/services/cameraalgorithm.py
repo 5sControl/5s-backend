@@ -146,6 +146,8 @@ def create_camera_algorithms(
                     {"zoneId": zone_camera.id, "coords": zone_camera.coords, "zoneName": zone_camera.name}
                 )
 
+            request["extra"] = data
+            print("request", request)
             response = send_run_request(request)
 
         if algorithm_obj.name == "idle_control":
