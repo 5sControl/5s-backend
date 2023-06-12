@@ -57,7 +57,6 @@ class ActionsWithPhotos(APIView):
 
             elif request.data.get("algorithm") == "operation_control":
                 if not PRODUCTION:
-                    print("start creating skany")
                     if 'extra' in request.data:
                         for data in request.data['extra']:
                             if 'place' in data:
@@ -81,20 +80,21 @@ class ActionsWithPhotos(APIView):
                 stop_tracking=stop_tracking,
             )
 
+            if request.data.get("algorithm") == "operation_control":
+                create_skanyreport(
+                    action,
+                    extra,
+                    not violation_found,
+                    start_tracking,
+                    stop_tracking
+                )
+
             if photos:
                 for photo in photos:
                     image = photo.get("image")
                     date = photo.get("date")
                     photo = Image.objects.create(
                         image=image, date=date, report_id=action
-                    )
-                if request.data.get("algorithm") == "operation_control":
-                    create_skanyreport(
-                        action,
-                        extra,
-                        not violation_found,
-                        start_tracking,
-                        stop_tracking
                     )
             else:
                 action.delete()
