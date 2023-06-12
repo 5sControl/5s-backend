@@ -1,0 +1,46 @@
+[
+    {
+        "model": "CompanyLicense.company",
+        "pk": 1,
+        "fields": {
+            "name_company": "Postavka",
+            "first_address": "str1",
+            "second_address": "str2",
+            "country": "AO",
+            "state": "ssss",
+            "city": "Minsk",
+            "website": "takmmmmtil.com",
+            "contact_email": "splin.shady1@gmail.com",
+            "contact_phone": "12365",
+            "contact_mobile_phone": "+42",
+            "logo": "",
+            "file": "",
+            "index": 2222,
+            "date_joined": "2023-06-10T11:11:03.812Z",
+            "date_edited": "2023-06-12T09:20:39.183Z",
+            "my_company": false
+        }
+    },
+    {
+        "model": "CompanyLicense.company",
+        "pk": 10,
+        "fields": {
+            "name_company": "Postavka",
+            "first_address": "street 1",
+            "second_address": "street 2",
+            "country": "BY",
+            "state": "Enter state",
+            "city": "Vilnius",
+            "website": null,
+            "contact_email": "leno4kakonfeto4ka4@gmail.com",
+            "contact_phone": null,
+            "contact_mobile_phone": null,
+            "logo": "",
+            "file": "",
+            "index": 22,
+            "date_joined": "2023-06-12T11:05:04.540Z",
+            "date_edited": "2023-06-12T11:05:04.540Z",
+            "my_company": false
+        }
+    }
+]
