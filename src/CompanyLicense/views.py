@@ -125,7 +125,7 @@ class CompanyView(ModelViewSet):
 
 
 class InformationView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request):
         try:
@@ -142,7 +142,8 @@ class InformationView(APIView):
             count_days = None
 
         try:
-            name_company = Company.objects.last().name_company
+            company = Company.objects.filter(my_company=True).last()
+            name_company = company.name_company
         except:
             name_company = None
 
