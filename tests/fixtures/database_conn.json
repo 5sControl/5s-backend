@@ -1,0 +1,14 @@
+[
+  {
+    "model": "MsSqlConnector.databaseconnection",
+    "pk": 1,
+    "fields": {
+      "database_type": "WBNet",
+      "server": "192.168.1.110",
+      "database": "test",
+      "username": "sa",
+      "password": "just4Taqtile",
+      "port": 1433
+    }
+  }
+]
