@@ -221,7 +221,7 @@ class OrderServices:
 
             workplaceID: int = order_data[0][7]
             elementType = order_data[0][9]
-            video_data: Optional[Dict[str, Any]] = {"status": False}
+            video_data: Optional[Dict[str, Any]] = None
 
             if startTime is not None:
                 camera_obj: Optional[Camera] = None
