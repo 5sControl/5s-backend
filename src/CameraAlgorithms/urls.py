@@ -33,7 +33,7 @@ urlpatterns = [
     ),
     path("get-process/", AlgorithmProcessApiView.as_view(), name="camera-process"),
     path("logs/", CameraAlgorithmLogListAPIView.as_view(), name="log"),
-    path('zone/', ZoneCameraListView.as_view(), name='zone-cameras'),
+    path('zone-cameras/', ZoneCameraListView.as_view(), name='zone-cameras'),
 ]
 
 urlpatterns += router.urls
