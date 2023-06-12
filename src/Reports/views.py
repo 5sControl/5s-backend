@@ -89,7 +89,13 @@ class ActionsWithPhotos(APIView):
                         image=image, date=date, report_id=action
                     )
                 if request.data.get("algorithm") == "operation_control":
-                    create_skanyreport(action, extra, not violation_found, start_tracking)
+                    create_skanyreport(
+                        action,
+                        extra,
+                        not violation_found,
+                        start_tracking,
+                        stop_tracking
+                    )
             else:
                 action.delete()
                 return Response(
@@ -180,4 +186,4 @@ class GetOperationVideoInfo(ListAPIView):
     pagination_class = NoPagination
 
     def get_queryset(self):
-        return SkanyReport.objects.exclude(operation_time__isnull=True)
+        return SkanyReport.objects.exclude(start_time__isnull=True)

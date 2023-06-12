@@ -3,10 +3,11 @@ from typing import Dict, List, Any
 from django.http import JsonResponse
 from django.core.cache import cache
 from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 
 from rest_framework import generics, status
 
-from src.Core.paginators import OrderViewPaginnator
+from src.Core.paginators import OrderViewPaginnator, NoPagination
 from src.MsSqlConnector.connector import connector as connector_service
 
 from .services.order_services import OrderServices
@@ -23,7 +24,9 @@ class GetOperation(generics.GenericAPIView):
         response = cache.get(key)
 
         if response is None:
-            response: List[Dict[str, Any]] = OrderServices.get_operations(from_date, to_date)
+            response: List[Dict[str, Any]] = OrderServices.get_operations(
+                from_date, to_date
+            )
             cache.set(key, response, timeout=120)
 
         return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
@@ -59,6 +62,17 @@ class GetOrderByDetail(generics.GenericAPIView):
 
         if response is None:
             response: Dict[str, Any] = OrderServices.get_order_by_details(operation_id)
-            cache.set(key, response, timeout=120)
+            cache.set(key, response, timeout=10)
 
         return JsonResponse(data=response, status=status.HTTP_200_OK)
+
+
+class GetWhnetOperation(generics.GenericAPIView):
+    pagination_class = NoPagination
+
+    @method_decorator(cache_page(30))
+    @connector_service.check_database_connection
+    def get(self, request):
+        response: Dict[str, Any] = OrderServices.get_whnet_operation()
+
+        return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
