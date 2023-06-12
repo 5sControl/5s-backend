@@ -1,8 +1,12 @@
+import inspect
+
 from django.contrib.auth.models import User
 from django.test import TestCase, RequestFactory
+from django.core.management import call_command
+
 from rest_framework import status
 from rest_framework.test import force_authenticate
-from django.core.management import call_command
+
 from src.OrderView.views import CreateDatabaseConnectionAPIView
 
 
@@ -15,6 +19,9 @@ class CreateDatabaseConnectionAPIViewTestCase(TestCase):
         cls.load_fixtures()
         cls.factory = RequestFactory()
         cls.user = User.objects.create_user(username='testuser', password='testpassword')
+        current_test = inspect.currentframe().f_back.f_code.co_name
+
+        print("Running test:", current_test)
 
     @classmethod
     def load_fixtures(cls):
@@ -38,10 +45,13 @@ class CreateDatabaseConnectionAPIViewTestCase(TestCase):
         view = CreateDatabaseConnectionAPIView.as_view()
         response = view(request)
 
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(response.data["success"], True)
-        self.assertEqual(response.data["message"], "Database connection was created successfully")
+        data = response.data
 
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(data["success"], True)
+        self.assertEqual(data["message"], "Database connection was created successfully")
+
+        print(1)
 
     def test_create_invalid_connection(self):
         url = '/api/order/create-connection/'
@@ -60,5 +70,9 @@ class CreateDatabaseConnectionAPIViewTestCase(TestCase):
         view = CreateDatabaseConnectionAPIView.as_view()
         response = view(request)
 
+        data = response.data
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data["success"], False)
+        self.assertEqual(data["success"], False)
+
+        print(2)
