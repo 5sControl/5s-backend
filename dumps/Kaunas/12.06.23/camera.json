@@ -1,0 +1,42 @@
+[
+    {
+        "model": "CameraAlgorithms.camera",
+        "pk": "10.20.100.40",
+        "fields": {
+            "username": "admin",
+            "password": "just4Taqtile",
+            "name": "10.20.100.40",
+            "is_active": true
+        }
+    },
+    {
+        "model": "CameraAlgorithms.camera",
+        "pk": "10.20.100.41",
+        "fields": {
+            "username": "admin",
+            "password": "just4Taqtile",
+            "name": "Stovas1",
+            "is_active": true
+        }
+    },
+    {
+        "model": "CameraAlgorithms.camera",
+        "pk": "10.20.100.42",
+        "fields": {
+            "username": "admin",
+            "password": "just4Taqtile",
+            "name": "Stovas2",
+            "is_active": true
+        }
+    },
+    {
+        "model": "CameraAlgorithms.camera",
+        "pk": "10.20.100.43",
+        "fields": {
+            "username": "admin",
+            "password": "just4Taqtile",
+            "name": "10.20.100.43",
+            "is_active": true
+        }
+    }
+]
