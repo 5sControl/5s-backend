@@ -34,7 +34,7 @@ class CreateCameraSerializer(serializers.Serializer):
 
 
 class CreateConfigSerializer(serializers.Serializer):
-    operation_control_id = serializers.CharField()
+    operation_control_id = serializers.CharField(required=False)
 
 
 class CreateAlgorithmSerializer(serializers.Serializer):
