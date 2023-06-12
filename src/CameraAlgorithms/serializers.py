@@ -39,7 +39,7 @@ class ZoneIdSerializer(serializers.Serializer):
 
 class CreateConfigSerializer(serializers.Serializer):
     operation_control_id = serializers.CharField(required=False)
-    zone_id = ZoneIdSerializer(many=True, required=False)
+    zonesID = ZoneIdSerializer(many=True, required=False)
 
 
 class CreateAlgorithmSerializer(serializers.Serializer):
