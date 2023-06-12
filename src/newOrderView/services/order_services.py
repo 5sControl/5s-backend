@@ -226,7 +226,7 @@ class OrderServices:
             if startTime is not None:
                 camera_obj: Optional[Camera] = None
                 operation_status: Optional[bool] = None
-                video_data: Dict[str, bool] = {"status": False}
+                video_data: Dict[str, bool] = {}
 
                 skany_report: Optional[SkanyReport] = SkanyReport.objects.filter(
                     skany_index=id
