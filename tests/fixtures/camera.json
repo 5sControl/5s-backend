@@ -1,0 +1,22 @@
+[
+    {
+        "model": "CameraAlgorithms.camera",
+        "pk": "192.168.1.160",
+        "fields": {
+            "username": "admin",
+            "password": "just4Taqtile",
+            "name": "192.168.1.160",
+            "is_active": true
+        }
+    },
+    {
+        "model": "CameraAlgorithms.camera",
+        "pk": "192.168.1.161",
+        "fields": {
+            "username": "admin",
+            "password": "just4Taqtile",
+            "name": "192.168.1.161",
+            "is_active": true
+        }
+    }
+]

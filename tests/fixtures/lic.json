@@ -1,0 +1,236 @@
+[
+    {
+        "model": "CompanyLicense.license",
+        "pk": 1,
+        "fields": {
+            "license_key": "xawtQhf61E3xFbz/vWoOk5tEncYQ+hr+rqSiP8VrjX5JDH9t0EIj2zzfTO4/31TyyIAGIaKWBvVavjPWT9OL9KUF5E9Jua0I5s8VsUw0+dVQ9+D4TYlSo1K0QhQ8hBtFBzE32mdagYYSCTAuBxXr0w==",
+            "date_joined": "2023-06-09T08:36:49.397Z",
+            "date_edited": "2023-06-09T08:36:49.397Z",
+            "valid_until": "2024-05-20",
+            "is_active": true,
+            "count_cameras": 10,
+            "neurons_active": 10
+        }
+    },
+    {
+        "model": "CompanyLicense.license",
+        "pk": 2,
+        "fields": {
+            "license_key": "xawtQhf61E3xFbz/vWoOk5tEncYQ+hr+rqSiP8VrjX5JDH9t0EIj2zzfTO4/31TyyIAGIaKWBvVavjPWT9OL9KUF5E9Jua0I5s8VsUw0+dVQ9+D4TYlSo1K0QhQ8hBtFBzE32mdagYYSCTAuBxXr0w==",
+            "date_joined": "2023-06-09T13:17:31.065Z",
+            "date_edited": "2023-06-09T13:17:31.065Z",
+            "valid_until": "2024-05-20",
+            "is_active": true,
+            "count_cameras": 10,
+            "neurons_active": 10
+        }
+    },
+    {
+        "model": "CompanyLicense.license",
+        "pk": 3,
+        "fields": {
+            "license_key": "xawtQhf61E3xFbz/vWoOk5tEncYQ+hr+rqSiP8VrjX5JDH9t0EIj2zzfTO4/31TyyIAGIaKWBvVavjPWT9OL9KUF5E9Jua0I5s8VsUw0+dVQ9+D4TYlSo1K0QhQ8hBtFBzE32mdagYYSCTAuBxXr0w==",
+            "date_joined": "2023-06-09T13:17:42.872Z",
+            "date_edited": "2023-06-09T13:17:42.872Z",
+            "valid_until": "2024-05-20",
+            "is_active": true,
+            "count_cameras": 10,
+            "neurons_active": 10
+        }
+    },
+    {
+        "model": "CompanyLicense.license",
+        "pk": 4,
+        "fields": {
+            "license_key": "xawtQhf61E3xFbz/vWoOk5tEncYQ+hr+rqSiP8VrjX5JDH9t0EIj2zzfTO4/31TyyIAGIaKWBvVavjPWT9OL9KUF5E9Jua0I5s8VsUw0+dVQ9+D4TYlSo1K0QhQ8hBtFBzE32mdagYYSCTAuBxXr0w==",
+            "date_joined": "2023-06-09T13:18:13.493Z",
+            "date_edited": "2023-06-09T13:18:13.493Z",
+            "valid_until": "2024-05-20",
+            "is_active": true,
+            "count_cameras": 10,
+            "neurons_active": 10
+        }
+    },
+    {
+        "model": "CompanyLicense.license",
+        "pk": 5,
+        "fields": {
+            "license_key": "xawtQhf61E3xFbz/vWoOk5tEncYQ+hr+rqSiP8VrjX5JDH9t0EIj2zzfTO4/31TyyIAGIaKWBvVavjPWT9OL9KUF5E9Jua0I5s8VsUw0+dVQ9+D4TYlSo1K0QhQ8hBtFBzE32mdagYYSCTAuBxXr0w==",
+            "date_joined": "2023-06-09T13:18:48.741Z",
+            "date_edited": "2023-06-09T13:18:48.741Z",
+            "valid_until": "2024-05-20",
+            "is_active": true,
+            "count_cameras": 10,
+            "neurons_active": 10
+        }
+    },
+    {
+        "model": "CompanyLicense.license",
+        "pk": 6,
+        "fields": {
+            "license_key": "xawtQhf61E3xFbz/vWoOk5tEncYQ+hr+rqSiP8VrjX5JDH9t0EIj2zzfTO4/31TyyIAGIaKWBvVavjPWT9OL9KUF5E9Jua0I5s8VsUw0+dVQ9+D4TYlSo1K0QhQ8hBtFBzE32mdagYYSCTAuBxXr0w==",
+            "date_joined": "2023-06-09T13:23:49.075Z",
+            "date_edited": "2023-06-09T13:23:49.075Z",
+            "valid_until": "2024-05-20",
+            "is_active": true,
+            "count_cameras": 10,
+            "neurons_active": 10
+        }
+    },
+    {
+        "model": "CompanyLicense.license",
+        "pk": 7,
+        "fields": {
+            "license_key": "xawtQhf61E3xFbz/vWoOk5tEncYQ+hr+rqSiP8VrjX5JDH9t0EIj2zzfTO4/31TyyIAGIaKWBvVavjPWT9OL9KUF5E9Jua0I5s8VsUw0+dVQ9+D4TYlSo1K0QhQ8hBtFBzE32mdagYYSCTAuBxXr0w==",
+            "date_joined": "2023-06-09T13:24:45.521Z",
+            "date_edited": "2023-06-09T13:24:45.521Z",
+            "valid_until": "2024-05-20",
+            "is_active": true,
+            "count_cameras": 10,
+            "neurons_active": 10
+        }
+    },
+    {
+        "model": "CompanyLicense.license",
+        "pk": 8,
+        "fields": {
+            "license_key": "xawtQhf61E3xFbz/vWoOk5tEncYQ+hr+rqSiP8VrjX5JDH9t0EIj2zzfTO4/31TyyIAGIaKWBvVavjPWT9OL9KUF5E9Jua0I5s8VsUw0+dVQ9+D4TYlSo1K0QhQ8hBtFBzE32mdagYYSCTAuBxXr0w==",
+            "date_joined": "2023-06-09T13:25:29.255Z",
+            "date_edited": "2023-06-09T13:25:29.255Z",
+            "valid_until": "2024-05-20",
+            "is_active": true,
+            "count_cameras": 10,
+            "neurons_active": 10
+        }
+    },
+    {
+        "model": "CompanyLicense.license",
+        "pk": 9,
+        "fields": {
+            "license_key": "xawtQhf61E3xFbz/vWoOk5tEncYQ+hr+rqSiP8VrjX5JDH9t0EIj2zzfTO4/31TyyIAGIaKWBvVavjPWT9OL9KUF5E9Jua0I5s8VsUw0+dVQ9+D4TYlSo1K0QhQ8hBtFBzE32mdagYYSCTAuBxXr0w==",
+            "date_joined": "2023-06-09T13:29:06.231Z",
+            "date_edited": "2023-06-09T13:29:06.231Z",
+            "valid_until": "2024-05-20",
+            "is_active": true,
+            "count_cameras": 10,
+            "neurons_active": 10
+        }
+    },
+    {
+        "model": "CompanyLicense.license",
+        "pk": 10,
+        "fields": {
+            "license_key": "xawtQhf61E3xFbz/vWoOk5tEncYQ+hr+rqSiP8VrjX5JDH9t0EIj2zzfTO4/31TyyIAGIaKWBvVavjPWT9OL9KUF5E9Jua0I5s8VsUw0+dVQ9+D4TYlSo1K0QhQ8hBtFBzE32mdagYYSCTAuBxXr0w==",
+            "date_joined": "2023-06-09T13:42:40.457Z",
+            "date_edited": "2023-06-09T13:42:40.457Z",
+            "valid_until": "2024-05-20",
+            "is_active": true,
+            "count_cameras": 10,
+            "neurons_active": 10
+        }
+    },
+    {
+        "model": "CompanyLicense.license",
+        "pk": 11,
+        "fields": {
+            "license_key": "xawtQhf61E3xFbz/vWoOk5tEncYQ+hr+rqSiP8VrjX5JDH9t0EIj2zzfTO4/31TyyIAGIaKWBvVavjPWT9OL9KUF5E9Jua0I5s8VsUw0+dVQ9+D4TYlSo1K0QhQ8hBtFBzE32mdagYYSCTAuBxXr0w==",
+            "date_joined": "2023-06-09T13:43:43.667Z",
+            "date_edited": "2023-06-09T13:43:43.667Z",
+            "valid_until": "2024-05-20",
+            "is_active": true,
+            "count_cameras": 10,
+            "neurons_active": 10
+        }
+    },
+    {
+        "model": "CompanyLicense.license",
+        "pk": 12,
+        "fields": {
+            "license_key": "xawtQhf61E3xFbz/vWoOk5tEncYQ+hr+rqSiP8VrjX5JDH9t0EIj2zzfTO4/31TyyIAGIaKWBvVavjPWT9OL9KUF5E9Jua0I5s8VsUw0+dVQ9+D4TYlSo1K0QhQ8hBtFBzE32mdagYYSCTAuBxXr0w==",
+            "date_joined": "2023-06-09T13:44:11.042Z",
+            "date_edited": "2023-06-09T13:44:11.042Z",
+            "valid_until": "2024-05-20",
+            "is_active": true,
+            "count_cameras": 10,
+            "neurons_active": 10
+        }
+    },
+    {
+        "model": "CompanyLicense.license",
+        "pk": 13,
+        "fields": {
+            "license_key": "xawtQhf61E3xFbz/vWoOk5tEncYQ+hr+rqSiP8VrjX5JDH9t0EIj2zzfTO4/31TyyIAGIaKWBvVavjPWT9OL9KUF5E9Jua0I5s8VsUw0+dVQ9+D4TYlSo1K0QhQ8hBtFBzE32mdagYYSCTAuBxXr0w==",
+            "date_joined": "2023-06-09T13:44:26.999Z",
+            "date_edited": "2023-06-09T13:44:26.999Z",
+            "valid_until": "2024-05-20",
+            "is_active": true,
+            "count_cameras": 10,
+            "neurons_active": 10
+        }
+    },
+    {
+        "model": "CompanyLicense.license",
+        "pk": 14,
+        "fields": {
+            "license_key": "xawtQhf61E3xFbz/vWoOk5tEncYQ+hr+rqSiP8VrjX5JDH9t0EIj2zzfTO4/31TyyIAGIaKWBvVavjPWT9OL9KUF5E9Jua0I5s8VsUw0+dVQ9+D4TYlSo1K0QhQ8hBtFBzE32mdagYYSCTAuBxXr0w==",
+            "date_joined": "2023-06-09T13:45:17.069Z",
+            "date_edited": "2023-06-09T13:45:17.069Z",
+            "valid_until": "2024-05-20",
+            "is_active": true,
+            "count_cameras": 10,
+            "neurons_active": 10
+        }
+    },
+    {
+        "model": "CompanyLicense.license",
+        "pk": 15,
+        "fields": {
+            "license_key": "xawtQhf61E3xFbz/vWoOk5tEncYQ+hr+rqSiP8VrjX5JDH9t0EIj2zzfTO4/31TyyIAGIaKWBvVavjPWT9OL9KUF5E9Jua0I5s8VsUw0+dVQ9+D4TYlSo1K0QhQ8hBtFBzE32mdagYYSCTAuBxXr0w==",
+            "date_joined": "2023-06-09T13:45:48.662Z",
+            "date_edited": "2023-06-09T13:45:48.662Z",
+            "valid_until": "2024-05-20",
+            "is_active": true,
+            "count_cameras": 10,
+            "neurons_active": 10
+        }
+    },
+    {
+        "model": "CompanyLicense.license",
+        "pk": 16,
+        "fields": {
+            "license_key": "xawtQhf61E3xFbz/vWoOk5tEncYQ+hr+rqSiP8VrjX5JDH9t0EIj2zzfTO4/31TyyIAGIaKWBvVavjPWT9OL9KUF5E9Jua0I5s8VsUw0+dVQ9+D4TYlSo1K0QhQ8hBtFBzE32mdagYYSCTAuBxXr0w==",
+            "date_joined": "2023-06-09T13:47:58.270Z",
+            "date_edited": "2023-06-09T13:47:58.270Z",
+            "valid_until": "2024-05-20",
+            "is_active": true,
+            "count_cameras": 10,
+            "neurons_active": 10
+        }
+    },
+    {
+        "model": "CompanyLicense.license",
+        "pk": 17,
+        "fields": {
+            "license_key": "xawtQhf61E3xFbz/vWoOk5tEncYQ+hr+rqSiP8VrjX5JDH9t0EIj2zzfTO4/31TyyIAGIaKWBvVavjPWT9OL9KUF5E9Jua0I5s8VsUw0+dVQ9+D4TYlSo1K0QhQ8hBtFBzE32mdagYYSCTAuBxXr0w==",
+            "date_joined": "2023-06-09T13:48:14.535Z",
+            "date_edited": "2023-06-09T13:48:14.535Z",
+            "valid_until": "2024-05-20",
+            "is_active": true,
+            "count_cameras": 10,
+            "neurons_active": 10
+        }
+    },
+    {
+        "model": "CompanyLicense.license",
+        "pk": 18,
+        "fields": {
+            "license_key": "xawtQhf61E3xFbz/vWoOk5tEncYQ+hr+rqSiP8VrjX5JDH9t0EIj2zzfTO4/31TyyIAGIaKWBvVavjPWT9OL9KUF5E9Jua0I5s8VsUw0+dVQ9+D4TYlSo1K0QhQ8hBtFBzE32mdagYYSCTAuBxXr0w==",
+            "date_joined": "2023-06-09T13:51:39.555Z",
+            "date_edited": "2023-06-09T13:51:39.555Z",
+            "valid_until": "2024-05-20",
+            "is_active": true,
+            "count_cameras": 10,
+            "neurons_active": 10
+        }
+    }
+]

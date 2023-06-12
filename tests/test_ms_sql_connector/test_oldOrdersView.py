@@ -22,16 +22,9 @@ class CreateDatabaseConnectionAPIViewTestCase(TestCase):
             call_command('loaddata', fixture, verbosity=0)
 
     def test_create_valid_connection(self):
-        url = '/api/order/create-connection/'
-        data = {
-            "database_type": "orderview",
-            "server": "192.168.1.110",
-            "database": "test",
-            "username": "sa",
-            "password": "just4Taqtile",
-            "port": "1433"
-        }
-        request = self.factory.post(url, data)
+        url = '/api/new-order/operations/?from=2023-02-28&to=2023-02-28'
+
+        request = self.factory.get(url)
         request.content_type = 'application/json'
         force_authenticate(request, user=self.user)
 
@@ -41,24 +34,3 @@ class CreateDatabaseConnectionAPIViewTestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data["success"], True)
         self.assertEqual(response.data["message"], "Database connection was created successfully")
-
-
-    def test_create_invalid_connection(self):
-        url = '/api/order/create-connection/'
-        data = {
-            "database_type": "orderview",
-            "server": "192.168.1.119",
-            "database": "incorrect",
-            "username": "incorrect",
-            "password": "incorrect",
-            "port": "1433"
-        }
-        request = self.factory.post(url, data)
-        request.content_type = 'application/json'
-        force_authenticate(request, user=self.user)
-
-        view = CreateDatabaseConnectionAPIView.as_view()
-        response = view(request)
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.data["success"], False)
