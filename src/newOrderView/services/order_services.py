@@ -241,7 +241,7 @@ class OrderServices:
 
                     if camera_obj and video_time:
                         video_data: Dict[str, Any] = get_skany_video_info(
-                            time=video_time.isoformat(), camera_ip=camera_obj.camera.id
+                            time=video_time, camera_ip=camera_obj.camera.id
                         )
 
             startTime_unix: int = int(startTime.timestamp()) * 1000
