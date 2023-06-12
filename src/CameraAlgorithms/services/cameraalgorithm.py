@@ -139,13 +139,12 @@ def create_camera_algorithms(
             zones = None
 
         if algorithm_obj.name == "machine_control":
-            request["config"] = {"zonesID": [{"id": 5}]}
+            request["config"] = {"zonesID": [{"id": 5}]}    # delete
             zones_ids = request.get("config", {}).get("zonesID", [])
             for zone_id in zones_ids:
                 zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
                 data.append(
-                    {"zoneId": zone_camera.id, "areas": zone_camera.coords, "zoneName": zone_camera.name}
-                    # {"zoneId": zone_camera.id, "coords": zone_camera.coords, "zoneName": zone_camera.name}
+                    {"zoneId": zone_camera.id, "coords": zone_camera.coords, "zoneName": zone_camera.name}
                 )
 
             request["extra"] = data
