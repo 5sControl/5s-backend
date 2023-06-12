@@ -210,7 +210,7 @@ class OrderServices:
             startTime: datetime = datetime.strptime(
                 str(order_data[0][5]), "%Y-%m-%d %H:%M:%S.%f"
             )
-            endTime_str = str(order_data[0][6])
+            endTime_str = str(order_data[0][6]) if order_data[0][6] else None
 
             if endTime_str:
                 if '.' not in endTime_str:
