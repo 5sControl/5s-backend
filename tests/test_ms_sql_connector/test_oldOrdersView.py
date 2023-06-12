@@ -3,7 +3,7 @@ from django.test import TestCase, RequestFactory
 from rest_framework import status
 from rest_framework.test import force_authenticate
 from django.core.management import call_command
-from src.OrderView.views import CreateDatabaseConnectionAPIView
+from src.OrderView.views import GetAllProductAPIView
 
 
 class CreateDatabaseConnectionAPIViewTestCase(TestCase):
@@ -22,7 +22,7 @@ class CreateDatabaseConnectionAPIViewTestCase(TestCase):
             call_command('loaddata', fixture, verbosity=0)
 
     def test_create_valid_connection(self):
-        url = '/api/new-order/operations/?from=2023-02-28&to=2023-02-28'
+        url = '/api/order/all-orders/'
 
         request = self.factory.get(url)
         request.content_type = 'application/json'
