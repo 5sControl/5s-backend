@@ -149,7 +149,7 @@ def create_camera_algorithms(
                 )
 
             request["extra"] = data
-            print("request", request)
+
             response = send_run_request(request)
 
         if algorithm_obj.name == "idle_control":
