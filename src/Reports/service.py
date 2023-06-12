@@ -43,8 +43,8 @@ def create_skanyreport(
     start_tracking: datetime,
     end_tracking: datetime
 ) -> None:
-    sTime = int(datetime.strptime(start_tracking, "%Y-%m-%d %H:%M:%S.%f %Z").timestamp())
-    eTime = int(datetime.strptime(end_tracking, "%Y-%m-%d %H:%M:%S.%f %Z").timestamp())
+    sTime = int(start_tracking.timestamp())
+    eTime = int(end_tracking.timestamp())
 
     skany_indeks = report_data[0].get("skany_index")
     zlecenie = report_data[0].get("zlecenie")
