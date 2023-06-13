@@ -20,6 +20,7 @@ def get_skany_video_info(time: time, camera_ip: str) -> Dict[str, Any]:
         return {"status": False}
 
     result: Dict[str, Any] = response.json()
+    print("video result: ", result)
     result["camera_ip"]: str = camera_ip
 
     return result

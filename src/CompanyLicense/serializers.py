@@ -39,6 +39,9 @@ class LicenseSerializer(serializers.Serializer):
 
 
 class CompanySerializer(serializers.ModelSerializer):
+    logo = serializers.ImageField(required=False, allow_null=True)
+    file = serializers.FileField(required=False, allow_null=True)
+
     class Meta:
         model = Company
         fields = '__all__'

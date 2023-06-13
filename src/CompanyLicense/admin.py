@@ -17,16 +17,21 @@ class LicenseAdmin(admin.ModelAdmin):
 
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
+    list_filter = ("id", "city", "my_company")
     list_display = (
-        "name_company",
-        "city",
-        "state",
-        "website",
-        "contact_email",
-        "contact_phone",
-        "contact_mobile_phone",
-        "logo",
-        "file",
-        "date_joined",
-        "date_edited",
+        'name_company',
+        'website',
+        'contact_email',
+        'contact_phone',
+        'country',
+        'city',
+        'state',
+        'first_address',
+        'second_address',
+        'contact_mobile_phone',
+        'logo',
+        'file',
+        'index',
+        'date_joined',
+        'date_edited'
     )

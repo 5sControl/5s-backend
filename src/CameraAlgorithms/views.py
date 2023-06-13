@@ -1,6 +1,7 @@
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from src.Core.paginators import NoPagination
@@ -71,7 +72,17 @@ class CameraAlgorithmLogListAPIView(generics.ListAPIView):
 
 
 class ZoneCameraListAPIView(ModelViewSet):
-    permission_classes = [IsAuthenticated, IsSuperuserPermission]
+    permission_classes = [IsAuthenticated]
     pagination_class = NoPagination
     queryset = ZoneCameras.objects.all()
     serializer_class = ZoneCameraSerializer
+
+
+class ZoneCameraListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        camera_ip = request.GET.get('camera')
+        queryset = ZoneCameras.objects.filter(camera=camera_ip) if camera_ip else ZoneCameras.objects.all()
+        serializer = ZoneCameraSerializer(queryset, many=True)
+        return Response(serializer.data)

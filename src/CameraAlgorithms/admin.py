@@ -29,7 +29,10 @@ class ZoneCamerasAdmin(admin.ModelAdmin):
     list_display = (
         "camera",
         "name",
+        "id",
         "coords",
+        "workplace",
+        "index_workplace",
         "date_created",
         "date_updated"
     )

@@ -1,5 +1,8 @@
 from django.utils import timezone
+
 from django.db import models
+
+from django_countries.fields import CountryField
 
 
 class License(models.Model):
@@ -25,19 +28,27 @@ class License(models.Model):
 
 
 class Company(models.Model):
-    """Models company"""
+    """Models my company"""
 
-    name_company = models.TextField(verbose_name="Name of company")
-    city = models.CharField(max_length=50, verbose_name="City of company suppliers", blank=True, null=True)
-    state = models.CharField(max_length=50, verbose_name="State of company suppliers", blank=True, null=True)
+    name_company = models.TextField(verbose_name="Name of my company")
+
+    first_address = models.CharField(max_length=100, verbose_name="Lega address of my company", blank=True,
+                                     null=True)
+    second_address = models.CharField(max_length=100, verbose_name="Physical address of my company", blank=True,
+                                      null=True)
+    country = CountryField(verbose_name="Country of my company", blank=True, null=True)
+    state = models.CharField(max_length=50, verbose_name="State of my company", blank=True, null=True)
+    city = models.CharField(max_length=50, verbose_name="City of my company", blank=True, null=True)
     website = models.TextField(verbose_name="Website of suppliers", blank=True, null=True)
-    contact_email = models.EmailField(verbose_name="Contact email suppliers", blank=True, null=True)
+    contact_email = models.EmailField(verbose_name="Contact email suppliers")
     contact_phone = models.TextField(verbose_name="Contact phone number suppliers", blank=True, null=True)
-    contact_mobile_phone = models.TextField(verbose_name="Contact mobile phone number suppliers", blank=True, null=True)
-    logo = models.ImageField(verbose_name="Logo company", blank=True, null=True)
+    contact_mobile_phone = models.TextField(verbose_name="Contact mobile phone suppliers", blank=True, null=True)
+    logo = models.ImageField(verbose_name="Logo suppliers", blank=True, null=True)
     file = models.FileField(verbose_name="File to send notification", blank=True, null=True)
+    index = models.IntegerField(verbose_name="Postcode", blank=True, null=True)
     date_joined = models.DateTimeField(verbose_name="Date joined", auto_now_add=True)
     date_edited = models.DateTimeField(verbose_name="Date edited", auto_now=True)
+    my_company = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name_company

@@ -1,3 +1,4 @@
+from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -100,16 +101,31 @@ def version(request):
 
 
 class CompanyView(ModelViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
     pagination_class = None
     serializer_class = CompanySerializer
 
     def get_queryset(self):
-        return Company.objects.filter(id=Company.objects.aggregate(max_id=Max('id'))['max_id'])
+        queryset = Company.objects.filter(my_company=True)
+        max_id = queryset.aggregate(max_id=Max('id'))['max_id']
+        queryset = queryset.filter(id=max_id)
+
+        return queryset
+
+    def create(self, request, *args, **kwargs):
+        data = request.data.copy()
+        data['my_company'] = True
+
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class InformationView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request):
         try:
@@ -126,7 +142,8 @@ class InformationView(APIView):
             count_days = None
 
         try:
-            name_company = Company.objects.last().name_company
+            company = Company.objects.filter(my_company=True).last()
+            name_company = company.name_company
         except:
             name_company = None
 

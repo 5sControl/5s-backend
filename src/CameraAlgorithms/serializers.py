@@ -33,8 +33,13 @@ class CreateCameraSerializer(serializers.Serializer):
     password = serializers.CharField()
 
 
+class ZoneIdSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+
+
 class CreateConfigSerializer(serializers.Serializer):
-    operation_control_id = serializers.CharField()
+    operation_control_id = serializers.CharField(required=False)
+    zonesID = ZoneIdSerializer(many=True, required=False)
 
 
 class CreateAlgorithmSerializer(serializers.Serializer):

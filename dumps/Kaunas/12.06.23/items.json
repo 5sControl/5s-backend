@@ -1,0 +1,752 @@
+[
+    {
+        "model": "Inventory.items",
+        "pk": 11,
+        "fields": {
+            "name": "M103.1 176P RAL7016",
+            "status": "Low stock level",
+            "current_stock_level": 4,
+            "low_stock_level": 4,
+            "camera": "10.20.100.42",
+            "date_created": "2023-05-11T14:20:58.745Z",
+            "date_updated": "2023-06-12T08:46:18.848Z",
+            "coords": [
+                {
+                    "x1": 931.7657971014493,
+                    "x2": 1111.1327536231884,
+                    "y1": 411.57787151515157,
+                    "y2": 488.43300460606065
+                }
+            ],
+            "prev_status": "Low stock level",
+            "multi_row": false,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 12,
+        "fields": {
+            "name": "M599 654 P weib RAL 9016",
+            "status": "Low stock level",
+            "current_stock_level": 2,
+            "low_stock_level": 2,
+            "camera": "10.20.100.42",
+            "date_created": "2023-05-12T07:34:30.239Z",
+            "date_updated": "2023-06-12T08:46:18.615Z",
+            "coords": [
+                {
+                    "x1": 726.423850931677,
+                    "x2": 818.1426086956521,
+                    "y1": 325.9094109090909,
+                    "y2": 400.2813983030303
+                }
+            ],
+            "prev_status": "Low stock level",
+            "multi_row": false,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 13,
+        "fields": {
+            "name": "M599 176 P anthrazitgrau RAL 7016",
+            "status": "Low stock level",
+            "current_stock_level": 2,
+            "low_stock_level": 2,
+            "camera": "10.20.100.42",
+            "date_created": "2023-05-12T07:36:32.927Z",
+            "date_updated": "2023-06-12T08:46:18.466Z",
+            "coords": [
+                {
+                    "x1": 826.3901854493581,
+                    "x2": 922.2998002853068,
+                    "y1": 312.02558395989973,
+                    "y2": 399.3262676691729
+                }
+            ],
+            "prev_status": "Low stock level",
+            "multi_row": false,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 14,
+        "fields": {
+            "name": "M599 925P Schwarzbraun RAL8022",
+            "status": "Low stock level",
+            "current_stock_level": 4,
+            "low_stock_level": 4,
+            "camera": "10.20.100.42",
+            "date_created": "2023-05-12T07:44:06.485Z",
+            "date_updated": "2023-06-12T08:46:18.653Z",
+            "coords": [
+                {
+                    "x1": 930.3400414078675,
+                    "x2": 1015.7575155279503,
+                    "y1": 323.00675878787877,
+                    "y2": 400.35366787878786
+                }
+            ],
+            "prev_status": "Low stock level",
+            "multi_row": false,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 15,
+        "fields": {
+            "name": "M103.1 654P RAL9016",
+            "status": "Low stock level",
+            "current_stock_level": 3,
+            "low_stock_level": 4,
+            "camera": "10.20.100.42",
+            "date_created": "2023-05-12T07:45:30.830Z",
+            "date_updated": "2023-06-12T08:46:18.406Z",
+            "coords": [
+                {
+                    "x1": 728.5214078674949,
+                    "x2": 913.6351138716357,
+                    "y1": 411.8891054545455,
+                    "y2": 495.220673939394
+                }
+            ],
+            "prev_status": "Low stock level",
+            "multi_row": false,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 20,
+        "fields": {
+            "name": "Savisriegis 4.2*55",
+            "status": "Low stock level",
+            "current_stock_level": 499,
+            "low_stock_level": 500,
+            "camera": "10.20.100.41",
+            "date_created": "2023-05-12T08:42:09.379Z",
+            "date_updated": "2023-06-12T08:46:51.557Z",
+            "coords": [
+                {
+                    "x1": 764.8933333333332,
+                    "x2": 803.9107999999999,
+                    "y1": 784.2821463414635,
+                    "y2": 930.5133268292684
+                }
+            ],
+            "prev_status": "Low stock level",
+            "multi_row": true,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 21,
+        "fields": {
+            "name": "Savisriegis 4.8*120/72",
+            "status": "Low stock level",
+            "current_stock_level": 249,
+            "low_stock_level": 250,
+            "camera": "10.20.100.41",
+            "date_created": "2023-05-12T08:44:15.923Z",
+            "date_updated": "2023-06-12T08:46:51.364Z",
+            "coords": [
+                {
+                    "x1": 733.9296644295302,
+                    "x2": 764.5746398210291,
+                    "y1": 775.4805445026178,
+                    "y2": 919.7046282722513
+                }
+            ],
+            "prev_status": "Low stock level",
+            "multi_row": true,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 24,
+        "fields": {
+            "name": "Kaistis M 689",
+            "status": "Low stock level",
+            "current_stock_level": 199,
+            "low_stock_level": 200,
+            "camera": "10.20.100.41",
+            "date_created": "2023-05-12T08:57:42.162Z",
+            "date_updated": "2023-06-12T08:46:51.638Z",
+            "coords": [
+                {
+                    "x1": 1229.6419134396353,
+                    "x2": 1277.2526651480637,
+                    "y1": 635.9866426426427,
+                    "y2": 770.8387427427427
+                }
+            ],
+            "prev_status": "Low stock level",
+            "multi_row": true,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 25,
+        "fields": {
+            "name": "M687 107 P RAL 7035",
+            "status": "Low stock level",
+            "current_stock_level": 99,
+            "low_stock_level": 100,
+            "camera": "10.20.100.41",
+            "date_created": "2023-05-12T09:00:06.535Z",
+            "date_updated": "2023-06-12T08:46:51.776Z",
+            "coords": [
+                {
+                    "x1": 1278.527562642369,
+                    "x2": 1327.8070523917995,
+                    "y1": 639.3769769769771,
+                    "y2": 770.5239959959961
+                }
+            ],
+            "prev_status": "Low stock level",
+            "multi_row": true,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 26,
+        "fields": {
+            "name": "M620 107P",
+            "status": "In stock",
+            "current_stock_level": 201,
+            "low_stock_level": 200,
+            "camera": "10.20.100.41",
+            "date_created": "2023-05-12T09:07:11.310Z",
+            "date_updated": "2023-06-12T08:46:51.250Z",
+            "coords": [
+                {
+                    "x1": 944.6886800894856,
+                    "x2": 992.5864519015662,
+                    "y1": 419.7686282722513,
+                    "y2": 608.0453193717277
+                }
+            ],
+            "prev_status": "In stock",
+            "multi_row": true,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 28,
+        "fields": {
+            "name": "Kaistis M 689",
+            "status": "Low stock level",
+            "current_stock_level": 3,
+            "low_stock_level": 3,
+            "camera": "10.20.100.42",
+            "date_created": "2023-05-24T08:11:39.922Z",
+            "date_updated": "2023-06-12T08:46:18.539Z",
+            "coords": [
+                {
+                    "x1": 935.0930020703934,
+                    "x2": 1046.3973498964804,
+                    "y1": 583.6256193939395,
+                    "y2": 665.390467878788
+                }
+            ],
+            "prev_status": "Low stock level",
+            "multi_row": false,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 29,
+        "fields": {
+            "name": "M687 107 P RAL7035",
+            "status": "Out of stock",
+            "current_stock_level": 0,
+            "low_stock_level": 3,
+            "camera": "10.20.100.42",
+            "date_created": "2023-05-24T08:16:07.230Z",
+            "date_updated": "2023-06-12T08:46:18.494Z",
+            "coords": [
+                {
+                    "x1": 1047.8913552068473,
+                    "x2": 1111.6085135520684,
+                    "y1": 569.8665864661654,
+                    "y2": 666.0779629072681
+                }
+            ],
+            "prev_status": null,
+            "multi_row": false,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 30,
+        "fields": {
+            "name": "gealan S9000 anthracite RAL7016",
+            "status": "Low stock level",
+            "current_stock_level": 1,
+            "low_stock_level": 2,
+            "camera": "10.20.100.42",
+            "date_created": "2023-05-24T10:25:28.400Z",
+            "date_updated": "2023-06-12T08:46:18.804Z",
+            "coords": [
+                {
+                    "x1": 815.6548930099857,
+                    "x2": 923.0587617689015,
+                    "y1": 500.04643609022554,
+                    "y2": 575.8515408521303
+                }
+            ],
+            "prev_status": null,
+            "multi_row": false,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 32,
+        "fields": {
+            "name": "gealan stulpgrundkappe 640300 weiss",
+            "status": "Low stock level",
+            "current_stock_level": 2,
+            "low_stock_level": 2,
+            "camera": "10.20.100.42",
+            "date_created": "2023-05-24T12:36:17.074Z",
+            "date_updated": "2023-06-12T08:46:18.574Z",
+            "coords": [
+                {
+                    "x1": 821.4833898305084,
+                    "x2": 920.7776077481839,
+                    "y1": 590.5004745762712,
+                    "y2": 673.406766101695
+                }
+            ],
+            "prev_status": null,
+            "multi_row": false,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 33,
+        "fields": {
+            "name": "M103.1 925P Schwarzbraun RAL8022",
+            "status": "Low stock level",
+            "current_stock_level": 2,
+            "low_stock_level": 2,
+            "camera": "10.20.100.42",
+            "date_created": "2023-05-24T12:39:45.165Z",
+            "date_updated": "2023-06-12T08:46:18.765Z",
+            "coords": [
+                {
+                    "x1": 933.6798210290827,
+                    "x2": 979.7253154362415,
+                    "y1": 490.11267015706807,
+                    "y2": 569.863070157068
+                }
+            ],
+            "prev_status": null,
+            "multi_row": false,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 34,
+        "fields": {
+            "name": "M103.1 607 cremeweib RAL9001",
+            "status": "Low stock level",
+            "current_stock_level": 2,
+            "low_stock_level": 2,
+            "camera": "10.20.100.42",
+            "date_created": "2023-05-24T12:48:35.566Z",
+            "date_updated": "2023-06-12T08:46:18.717Z",
+            "coords": [
+                {
+                    "x1": 983.0002853067047,
+                    "x2": 1050.4722624821684,
+                    "y1": 496.41022556390976,
+                    "y2": 571.8428471177945
+                }
+            ],
+            "prev_status": null,
+            "multi_row": false,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 36,
+        "fields": {
+            "name": "Savisriegis 4.8*100",
+            "status": "Low stock level",
+            "current_stock_level": 249,
+            "low_stock_level": 250,
+            "camera": "10.20.100.41",
+            "date_created": "2023-06-06T12:50:03.953Z",
+            "date_updated": "2023-06-12T08:46:51.214Z",
+            "coords": [
+                {
+                    "x1": 705.503355704698,
+                    "x2": 734.1387024608501,
+                    "y1": 778.1279162303664,
+                    "y2": 914.8399581151832
+                }
+            ],
+            "prev_status": "Low stock level",
+            "multi_row": true,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 37,
+        "fields": {
+            "name": "Savisriegis 4.8*90/50",
+            "status": "Low stock level",
+            "current_stock_level": 249,
+            "low_stock_level": 250,
+            "camera": "10.20.100.41",
+            "date_created": "2023-06-06T12:51:01.398Z",
+            "date_updated": "2023-06-12T08:46:51.336Z",
+            "coords": [
+                {
+                    "x1": 671.1405922551253,
+                    "x2": 702.7639544419135,
+                    "y1": 780.0557037037038,
+                    "y2": 914.2793993993995
+                }
+            ],
+            "prev_status": "Low stock level",
+            "multi_row": true,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 38,
+        "fields": {
+            "name": "M645 107P (RAL 7035)",
+            "status": "In stock",
+            "current_stock_level": 201,
+            "low_stock_level": 200,
+            "camera": "10.20.100.41",
+            "date_created": "2023-06-06T13:11:01.140Z",
+            "date_updated": "2023-06-12T08:46:51.136Z",
+            "coords": [
+                {
+                    "x1": 897.3601789709173,
+                    "x2": 933.1543624161075,
+                    "y1": 414.98655497382197,
+                    "y2": 601.5415287958115
+                }
+            ],
+            "prev_status": "In stock",
+            "multi_row": true,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 39,
+        "fields": {
+            "name": "643370",
+            "status": "In stock",
+            "current_stock_level": 51,
+            "low_stock_level": 50,
+            "camera": "10.20.100.41",
+            "date_created": "2023-06-06T13:26:31.147Z",
+            "date_updated": "2023-06-12T08:46:51.712Z",
+            "coords": [
+                {
+                    "x1": 834.3624161073826,
+                    "x2": 886.1918210290828,
+                    "y1": 412.13838743455494,
+                    "y2": 604.7741989528795
+                }
+            ],
+            "prev_status": "In stock",
+            "multi_row": true,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 40,
+        "fields": {
+            "name": "М177",
+            "status": "In stock",
+            "current_stock_level": 101,
+            "low_stock_level": 100,
+            "camera": "10.20.100.41",
+            "date_created": "2023-06-06T13:27:52.207Z",
+            "date_updated": "2023-06-12T08:46:51.742Z",
+            "coords": [
+                {
+                    "x1": 775.6599552572708,
+                    "x2": 830.3838210290828,
+                    "y1": 409.290219895288,
+                    "y2": 597.6765654450262
+                }
+            ],
+            "prev_status": "In stock",
+            "multi_row": true,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 41,
+        "fields": {
+            "name": "М162",
+            "status": "In stock",
+            "current_stock_level": 126,
+            "low_stock_level": 125,
+            "camera": "10.20.100.41",
+            "date_created": "2023-06-06T13:34:14.113Z",
+            "date_updated": "2023-06-12T08:46:51.597Z",
+            "coords": [
+                {
+                    "x1": 725.5480984340045,
+                    "x2": 771.6581655480984,
+                    "y1": 402.1698010471204,
+                    "y2": 587.7236439790576
+                }
+            ],
+            "prev_status": "In stock",
+            "multi_row": true,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 42,
+        "fields": {
+            "name": "М261.2",
+            "status": "In stock",
+            "current_stock_level": 126,
+            "low_stock_level": 125,
+            "camera": "10.20.100.41",
+            "date_created": "2023-06-06T13:37:34.450Z",
+            "date_updated": "2023-06-12T08:46:51.174Z",
+            "coords": [
+                {
+                    "x1": 674.0044742729307,
+                    "x2": 721.4536733780761,
+                    "y1": 399.3216335078534,
+                    "y2": 582.0429738219896
+                }
+            ],
+            "prev_status": "In stock",
+            "multi_row": true,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 43,
+        "fields": {
+            "name": "М175.1 107Р",
+            "status": "In stock",
+            "current_stock_level": 126,
+            "low_stock_level": 125,
+            "camera": "10.20.100.41",
+            "date_created": "2023-06-06T13:40:59.530Z",
+            "date_updated": "2023-06-12T08:46:51.297Z",
+            "coords": [
+                {
+                    "x1": 622.4608501118569,
+                    "x2": 669.7091722595079,
+                    "y1": 400.7457172774869,
+                    "y2": 584.4525235602094
+                }
+            ],
+            "prev_status": "In stock",
+            "multi_row": true,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 44,
+        "fields": {
+            "name": "М104 cremeweib (607)",
+            "status": "In stock",
+            "current_stock_level": 101,
+            "low_stock_level": 100,
+            "camera": "10.20.100.41",
+            "date_created": "2023-06-06T13:43:08.845Z",
+            "date_updated": "2023-06-12T08:46:51.405Z",
+            "coords": [
+                {
+                    "x1": 575.2125279642058,
+                    "x2": 621.0290827740492,
+                    "y1": 399.3216335078534,
+                    "y2": 573.0598534031413
+                }
+            ],
+            "prev_status": "In stock",
+            "multi_row": true,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 45,
+        "fields": {
+            "name": "М104 schwarzbraun (925)",
+            "status": "In stock",
+            "current_stock_level": 101,
+            "low_stock_level": 100,
+            "camera": "10.20.100.41",
+            "date_created": "2023-06-06T13:46:14.651Z",
+            "date_updated": "2023-06-12T08:46:51.068Z",
+            "coords": [
+                {
+                    "x1": 527.9642058165548,
+                    "x2": 572.3489932885906,
+                    "y1": 396.47346596858637,
+                    "y2": 571.6357696335078
+                }
+            ],
+            "prev_status": "In stock",
+            "multi_row": true,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 46,
+        "fields": {
+            "name": "М104 anthrazitgrau (176Р)",
+            "status": "In stock",
+            "current_stock_level": 251,
+            "low_stock_level": 250,
+            "camera": "10.20.100.41",
+            "date_created": "2023-06-06T13:47:54.255Z",
+            "date_updated": "2023-06-12T08:46:51.676Z",
+            "coords": [
+                {
+                    "x1": 477.8523489932886,
+                    "x2": 523.668903803132,
+                    "y1": 397.8975497382199,
+                    "y2": 563.0912670157068
+                }
+            ],
+            "prev_status": "In stock",
+            "multi_row": true,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 47,
+        "fields": {
+            "name": "STELAG",
+            "status": "Out of stock",
+            "current_stock_level": 0,
+            "low_stock_level": 30,
+            "camera": "10.20.100.42",
+            "date_created": "2023-06-08T06:46:13.639Z",
+            "date_updated": "2023-06-08T06:46:13.639Z",
+            "coords": [
+                {
+                    "x1": 718.2688524590164,
+                    "x2": 1122.4131147540984,
+                    "y1": 303.1366274509804,
+                    "y2": 680.8621176470589
+                }
+            ],
+            "prev_status": null,
+            "multi_row": false,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 48,
+        "fields": {
+            "name": "STELAG",
+            "status": "Out of stock",
+            "current_stock_level": 0,
+            "low_stock_level": 20,
+            "camera": "10.20.100.41",
+            "date_created": "2023-06-08T07:07:30.579Z",
+            "date_updated": "2023-06-08T07:07:30.579Z",
+            "coords": [
+                {
+                    "x1": 343.0819672131148,
+                    "x2": 1447.2393442622952,
+                    "y1": 367.1366274509804,
+                    "y2": 955.6856470588235
+                }
+            ],
+            "prev_status": null,
+            "multi_row": true,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    },
+    {
+        "model": "Inventory.items",
+        "pk": 49,
+        "fields": {
+            "name": "gealan S7000/8000 frame white",
+            "status": "Low stock level",
+            "current_stock_level": 2,
+            "low_stock_level": 2,
+            "camera": "10.20.100.42",
+            "date_created": "2023-06-08T07:19:51.017Z",
+            "date_updated": "2023-06-12T08:46:18.893Z",
+            "coords": [
+                {
+                    "x1": 738.4131147540984,
+                    "x2": 802.6229508196722,
+                    "y1": 581.724862745098,
+                    "y2": 673.3327058823529
+                }
+            ],
+            "prev_status": null,
+            "multi_row": false,
+            "suppliers": null,
+            "order_quantity": null
+        }
+    }
+]

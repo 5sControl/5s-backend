@@ -1,9 +1,6 @@
 from rest_framework import serializers
 
 from src.Inventory.models import Items
-from src.Suppliers.models import Suppliers
-
-from src.Suppliers.serializers import SuppliersSerializer
 
 
 class ItemsSerializer(serializers.ModelSerializer):
