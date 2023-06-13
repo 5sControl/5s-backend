@@ -40,30 +40,29 @@ class CreateDatabaseConnectionAPIViewTestCase(APITestCase):
         url = "/api/order/by-order/PRW199234"
 
         self.client.force_authenticate(user=self.user)
-        response = self.client.get(url)
-
-        data = response.data
+        response = self.client.get(url, follow=True)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(data["count"], 1)
-        self.assertEqual(data["current_page"], 1)
-        self.assertEqual(data["records_on_page"], 50)
-        self.assertEqual(data["all_page_count"], 1)
-        self.assertEqual(len(data["results"]), 1)
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(response.data["current_page"], 1)
+        self.assertEqual(response.data["records_on_page"], 50)
+        self.assertEqual(response.data["all_page_count"], 1)
+        self.assertEqual(len(response.data["results"]), 1)
 
-        self.assertEqual(data["results"][0]["indeks"], 363992)
-        self.assertTrue(data["results"][0]["zlecenie"].startswith("PRW199234"))
-        self.assertEqual(data["results"][0]["status"], "Started")
+        self.assertEqual(response.data["results"][0]["indeks"], 363992)
+        self.assertTrue(response.data["results"][0]["zlecenie"].startswith("PRW199234"))
+        self.assertEqual(response.data["results"][0]["status"], "Started")
         self.assertEqual(
-            data["results"][0]["terminrealizacji"], "2023-03-03 00:00:00.0000000"
+            response.data["results"][0]["terminrealizacji"], "2023-03-03 00:00:00.0000000"
         )
-        self.assertEqual(data["results"][0]["datawejscia"], "23.02.2023 14:18:00")
+        self.assertEqual(response.data["results"][0]["datawejscia"], "23.02.2023 14:18:00")
+
 
     def test_get_orders_by_id_2(self):
         url = "/api/order/by-order/G59811"
 
         self.client.force_authenticate(user=self.user)
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
 
         data = response.data
 
@@ -75,7 +74,7 @@ class CreateDatabaseConnectionAPIViewTestCase(APITestCase):
             url = f"/api/order/by-order/{order}"
 
             self.client.force_authenticate(user=self.user)
-            response = self.client.get(url)
+            response = self.client.get(url, follow=True)
 
             self.assertEqual(response.status_code, 200)
 
@@ -83,7 +82,7 @@ class CreateDatabaseConnectionAPIViewTestCase(APITestCase):
         url = "/api/order/get-operations/"
 
         self.client.force_authenticate(user=self.user)
-        response = self.client.get(url)
+        response = self.client.get(url, follow=True)
 
         data = response.data
 
