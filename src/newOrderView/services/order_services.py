@@ -1,3 +1,4 @@
+import logging
 import pytz
 
 from typing import List, Any, Tuple, Dict, Optional
@@ -12,6 +13,9 @@ from src.CameraAlgorithms.models import Camera
 from src.Reports.models import SkanyReport
 
 from ..utils import add_ms
+
+logger = logging.getLogger(__name__)
+
 
 
 class OrderServices:
@@ -241,9 +245,9 @@ class OrderServices:
                 if skany_report:
                     operation_status: Optional[bool] = skany_report.violation_found
                     video_time: Optional[bool] = skany_report.start_time
-
+                    logger.warning("Skany report was founded", operation_status, video_time)
                     if camera_obj and video_time:
-                        print(video_time*1000)
+                        logger.warning(video_time*1000)
                         video_data: Dict[str, Any] = get_skany_video_info(
                             time=(video_time * 1000), camera_ip=camera_obj.camera.id
                         )
