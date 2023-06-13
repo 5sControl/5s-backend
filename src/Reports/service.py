@@ -1,5 +1,5 @@
 from typing import List, Dict
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import logging
 
 from src.CameraAlgorithms.models import Camera
@@ -44,12 +44,15 @@ def create_skanyreport(
     end_tracking: str
 ) -> None:
     start_dt = datetime.strptime(start_tracking, "%Y-%m-%d %H:%M:%S.%f")
-    # start_utc = start_dt.replace(tzinfo=timezone.utc)
-    sTime = int(start_dt.timestamp())
+    start_utc = start_dt.replace(tzinfo=timezone.utc)
+    start_gmt = start_utc.astimezone(timezone(timedelta(hours=0)))
+    sTime = int(start_gmt.timestamp())
 
     end_dt = datetime.strptime(end_tracking, "%Y-%m-%d %H:%M:%S.%f")
-    # end_utc = end_dt.replace(tzinfo=timezone.utc)
-    eTime = int(end_dt.timestamp())
+    end_utc = end_dt.replace(tzinfo=timezone.utc)
+    end_gmt = end_utc.astimezone(timezone(timedelta(hours=0)))
+    eTime = int(end_gmt.timestamp())
+
 
     skany_indeks = report_data[0].get("skany_index")
     zlecenie = report_data[0].get("zlecenie")
