@@ -152,11 +152,7 @@ def create_camera_algorithms(
 
                 data.append(new_object)
 
-                # data.append(
-                #     {"zoneId": zone_camera.id, "coords": zone_camera.coords, "zoneName": zone_camera.name}
-                # )
-
-            request["extra"] = data
+            request["extra"] = f'{data}'
 
             response = send_run_request(request)
 
