@@ -254,7 +254,8 @@ class OrderServices:
 
             startTime_unix: int = int(startTime.timestamp()) * 1000
             endTime_unix: int = int(endTime.timestamp()) * 1000
-
+            logger.warning(f"GET START TIME {startTime}")
+            logger.warning(f"MAKE UNIX {startTime_unix}")
             result: Dict[str, Any] = {
                 "id": id,
                 "orId": orderId,
