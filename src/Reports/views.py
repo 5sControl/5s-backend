@@ -1,3 +1,5 @@
+import logging
+
 import requests
 from datetime import datetime
 
@@ -20,6 +22,9 @@ from src.Reports.models import Report, SkanyReport
 from src.Reports.serializers import ReportSerializers, OperationReportSerializer
 from src.Inventory.service import process_item_status
 from src.Reports.service import edit_extra, create_skanyreport
+
+logger = logging.getLogger(__name__)
+
 
 
 class ActionViewSet(viewsets.ModelViewSet):
@@ -44,67 +49,76 @@ class ActionViewSet(viewsets.ModelViewSet):
 
 class ActionsWithPhotos(APIView):
     def post(self, request):
-        algorithm = Algorithm.objects.get(name=request.data.get("algorithm"))
+        data = request.data
         try:
-            camera = Camera.objects.get(id=request.data.get("camera"))
-            start_tracking = request.data.get("start_tracking")
-            stop_tracking = request.data.get("stop_tracking")
-            photos = request.data.get("photos")
-            violation_found = request.data.get("violation_found")
+            algorithm_name = data.get("algorithm")
+            camera_ip = data.get("camera")
+            
+            start_tracking = data.get("start_tracking")
+            stop_tracking = data.get("stop_tracking")
 
-            if request.data.get("algorithm") == "min_max_control":
-                extra = process_item_status(request.data.get("extra"))
+            photos = data.get("photos")
+            violation_found = data.get("violation_found")
 
-            elif request.data.get("algorithm") == "operation_control":
+            # FIXME: make easy this shit
+            if algorithm_name == "min_max_control":
+                extra = process_item_status(data.get("extra"))
+
+            elif algorithm_name == "operation_control":
                 if not PRODUCTION:
-                    if 'extra' in request.data:
-                        for data in request.data['extra']:
+                    if 'extra' in data:
+                        for data in data['extra']:
                             if 'place' in data:
-                                requests.post(f"{SERVER_URL}:9876/skany/create/", json=request.data['extra'][0])
+                                requests.post(f"{SERVER_URL}:9876/skany/create/", json=data['extra'][0])
                                 break
                         else:
-                            requests.post(f"{SERVER_URL}:9876/operation-control/", json=request.data)
-                extra = edit_extra(request.data.get("extra"), camera)
+                            requests.post(f"{SERVER_URL}:9876/operation-control/", json=data)
+                extra = edit_extra(data.get("extra"), camera)
             else:
-                extra = request.data.get("extra")
+                extra = data.get("extra")
 
-        except KeyError:
+        except KeyError as e:
+            logger.critical(f"Error while parsing report: {e}")
             return {"status": False, "message": "The model response is not complete"}
-        else:
-            action = Report.objects.create(
-                camera=camera,
-                extra=extra,
-                algorithm=algorithm,
-                violation_found=violation_found,
-                start_tracking=start_tracking,
-                stop_tracking=stop_tracking,
+        
+        algorithm = Algorithm.objects.get(name=algorithm_name)
+        camera = Camera.objects.get(id=camera_ip)
+
+        action = Report.objects.create(
+            camera=camera,
+            extra=extra,
+            algorithm=algorithm,
+            violation_found=violation_found,
+            start_tracking=start_tracking,
+            stop_tracking=stop_tracking,
+        )
+
+        if algorithm_name == "operation_control":
+            create_skanyreport(
+                action,
+                extra,
+                not violation_found,
+                start_tracking,
+                stop_tracking
             )
 
-            if request.data.get("algorithm") == "operation_control":
-                create_skanyreport(
-                    action,
-                    extra,
-                    not violation_found,
-                    start_tracking,
-                    stop_tracking
+        if photos:
+            for photo in photos:
+                image = photo.get("image")
+                date = photo.get("date")
+                photo = Image.objects.create(
+                    image=image, date=date, report_id=action
                 )
-
-            if photos:
-                for photo in photos:
-                    image = photo.get("image")
-                    date = photo.get("date")
-                    photo = Image.objects.create(
-                        image=image, date=date, report_id=action
-                    )
-            else:
-                action.delete()
-                return Response(
-                    {
-                        "status": False,
-                        "message": "The report was not saved due to an omission in the response from the YOLO",
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+        else:
+            logger.critical(f"Image in report {action} wasn't found")
+            action.delete()
+            return Response(
+                {
+                    "status": False,
+                    "message": "The report was not saved due to an omission in the response from the YOLO",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         return Response(
             {"status": True, "message": "Data created successfully"},
