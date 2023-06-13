@@ -243,6 +243,7 @@ class OrderServices:
                     video_time: Optional[bool] = skany_report.start_time
 
                     if camera_obj and video_time:
+                        print(video_time*1000)
                         video_data: Dict[str, Any] = get_skany_video_info(
                             time=(video_time * 1000), camera_ip=camera_obj.camera.id
                         )
