@@ -14,7 +14,7 @@ class MsSqlConnector:
 
         with connection.cursor() as cursor:
             cursor.execute(
-            """
+                """
                 SELECT
                     MAX(Skany.indeks),
                     Zlecenia.Zlecenie,
@@ -23,10 +23,9 @@ class MsSqlConnector:
                 JOIN Skany_vs_Zlecenia ON Skany.indeks = Skany_vs_Zlecenia.IndeksSkanu
                 JOIN Zlecenia ON Skany_vs_Zlecenia.IndeksZlecenia = Zlecenia.Indeks
                 WHERE Skany.stanowisko = ?
-                GROUP BY Zlecenia.Zlecenie, Zlecenia.DataWejscia, Skany.data
-                ORDER BY Skany.data
-            """, (stanowisko,)
-        )
+                GROUP BY Zlecenia.Zlecenie, Zlecenia.DataWejscia
+                """, (stanowisko,)
+            )
 
             row = cursor.fetchall()[0]
             logger.warning(f"data for operation control: {row}")
