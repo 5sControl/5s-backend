@@ -89,7 +89,7 @@ class ZoneCameraListView(APIView):
 
 
 class CameraZoneAlgorithmView(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         camera_id = request.GET.get('camera')
