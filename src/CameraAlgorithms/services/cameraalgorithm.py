@@ -128,7 +128,7 @@ def create_camera_algorithms(
         if algorithm_obj.name == "min_max_control":
             algorithm_items = Items.objects.filter(camera=camera_obj.id)
             for item in algorithm_items:
-                data[0]["areas"].append(
+                data.append(
                     {"itemId": item.id, "coords": item.coords, "itemName": item.name}
                 )
 
@@ -144,7 +144,7 @@ def create_camera_algorithms(
 
                 new_object = {"coords": coords}
 
-                data.append({"stelag": [new_object]})
+                data.append(new_object)
 
             response = send_run_request(request)
 
