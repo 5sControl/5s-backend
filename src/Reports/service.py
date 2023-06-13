@@ -50,7 +50,7 @@ def create_skanyreport(
     zlecenie = report_data[0].get("zlecenie")
     execution_date = report_data[0].get("execution_date")
 
-    logger.warning(f"Creating Skany Report start_tracking -> {sTime}, end_tracking -> {eTime}")
+    logger.warning(f"Creating Skany Report start_tracking -> {start_tracking} - {sTime}, end_tracking -> {end_tracking} - {eTime}")
 
     SkanyReport.objects.create(
         report=report,
