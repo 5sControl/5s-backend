@@ -53,6 +53,9 @@ class ActionsWithPhotos(APIView):
         try:
             algorithm_name = data.get("algorithm")
             camera_ip = data.get("camera")
+
+            algorithm = Algorithm.objects.get(name=algorithm_name)
+            camera = Camera.objects.get(id=camera_ip)
             
             start_tracking = data.get("start_tracking")
             stop_tracking = data.get("stop_tracking")
@@ -80,9 +83,6 @@ class ActionsWithPhotos(APIView):
         except KeyError as e:
             logger.critical(f"Error while parsing report: {e}")
             return {"status": False, "message": "The model response is not complete"}
-        
-        algorithm = Algorithm.objects.get(name=algorithm_name)
-        camera = Camera.objects.get(id=camera_ip)
 
         action = Report.objects.create(
             camera=camera,

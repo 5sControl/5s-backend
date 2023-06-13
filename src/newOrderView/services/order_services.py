@@ -1,3 +1,5 @@
+import pytz
+
 from typing import List, Any, Tuple, Dict, Optional
 from datetime import datetime, timedelta
 
@@ -88,25 +90,26 @@ class OrderServices:
                 }
 
                 startTime_dt: datetime = add_ms(startTime)
-                startTime_unix: int = int(startTime_dt.timestamp())
+                startTime_dt = startTime_dt.astimezone(pytz.utc)
+                startTime_unix: int = int(startTime_dt.timestamp()) * 1000
+                operation["sTime"] = startTime_unix
 
                 if endTime is not None:
                     endTime_dt: datetime = add_ms(endTime)
+                    endTime_dt = endTime_dt.astimezone(pytz.utc)
 
                     if endTime_dt.date() > startTime_dt.date():
                         endTime_dt = startTime_dt + timedelta(hours=1)
                     else:
                         endTime_dt = endTime_dt or startTime_dt + timedelta(hours=1)
 
-                    endTime_unix: int = int(endTime_dt.timestamp())
-                    operation["eTime"] = endTime_unix * 1000
+                    endTime_unix: int = int(endTime_dt.timestamp()) * 1000
+                    operation["eTime"] = endTime_unix
 
                 else:
                     endTime_dt = startTime_dt + timedelta(hours=1)
-                    endTime_unix: int = int(endTime_dt.timestamp())
-                    operation["eTime"] = endTime_unix * 1000
-
-                operation["sTime"] = startTime_unix * 1000
+                    endTime_unix: int = int(endTime_dt.timestamp()) * 1000
+                    operation["eTime"] = endTime_unix
 
                 operations_list.append(operation)
 

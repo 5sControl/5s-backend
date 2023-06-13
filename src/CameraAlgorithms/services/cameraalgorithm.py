@@ -1,7 +1,7 @@
 import requests
 import logging
 
-from typing import Any, Dict, Iterable, List
+from typing import Any, Dict, Iterable, List, Optional
 
 from src.Core.exceptions import InvalidResponseError, SenderError, CameraConnectionError
 from src.Core.utils import Sender
@@ -135,9 +135,10 @@ def create_camera_algorithms(
 
             response = send_run_request(request)
 
+        zones: List[Optional[Dict[str, Any]]] = []
         if algorithm_obj.name == "machine_control":
-            configs = algorithm.get('config')
-            zones = configs.get("zonesID", [])
+            configs = algorithm.get('config', {})
+            zones = configs.get("zonesID")
             for zone_id in zones:
                 zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
                 coords = zone_camera.coords
