@@ -137,7 +137,7 @@ def create_camera_algorithms(
 
         zones: List[Optional[Dict[str, Any]]] = []
         if algorithm_obj.name == "machine_control":
-            configs = algorithm.get('config')
+            configs = algorithm.get('config', {})
             zones = configs.get("zonesID")
             for zone_id in zones:
                 zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
