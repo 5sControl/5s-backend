@@ -132,8 +132,8 @@ def create_camera_algorithms(
             request["extra"] = data
 
             response = send_run_request(request)
-        print("REQUEST", request.get("config"))
-        zones = request.get("config", {}).get("zonesID")
+
+        zones = algorithm.get('config')["zonesID"]
 
         if zones is None:
             zones = None
