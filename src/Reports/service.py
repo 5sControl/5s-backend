@@ -32,7 +32,7 @@ def edit_extra(data: List[Dict], camera: Camera):
             }
         )
 
-    logger.warning(f"fianl data is -> {data}")
+    logger.warning(f"final operation data is -> {data}")
     return data
 
 
