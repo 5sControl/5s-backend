@@ -5,6 +5,7 @@ from typing import Any, Dict, Iterable, List
 
 from src.Core.exceptions import InvalidResponseError, SenderError, CameraConnectionError
 from src.Core.utils import Sender
+from src.Core.const import SERVER_URL
 from src.Inventory.models import Items
 from src.OrderView.models import IndexOperations
 from src.CompanyLicense.decorators import check_active_cameras, check_active_algorithms
@@ -119,6 +120,7 @@ def create_camera_algorithms(
         request: Dict[str, Any] = {
             "camera_url": rtsp_link,
             "algorithm": algorithm_obj.name,
+            "server_url": SERVER_URL,
             "extra": data,
         }
 
