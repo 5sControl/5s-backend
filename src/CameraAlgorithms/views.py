@@ -82,6 +82,16 @@ class ZoneCameraListView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
+        camera_ip = request.GET.get('camera')
+        queryset = ZoneCameras.objects.filter(camera=camera_ip) if camera_ip else ZoneCameras.objects.all()
+        serializer = ZoneCameraSerializer(queryset, many=True)
+        return Response(serializer.data)
+
+
+class CameraZoneAlgorithmView(APIView):
+    # permission_classes = [IsAuthenticated]
+
+    def get(self, request):
         camera_id = request.GET.get('camera')
         queryset = CameraAlgorithm.objects.filter(camera_id=camera_id) if camera_id else CameraAlgorithm.objects.all()
 
