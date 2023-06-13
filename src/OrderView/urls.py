@@ -19,25 +19,25 @@ urlpatterns = [
     path(
         "by-order/<str:zlecenie_id>/",
         GetOrderDataByZlecenieAPIView.as_view(),
-        name="get orders by id",
+        name="get-orders-by-id",
     ),
-    path("all-orders/", GetAllProductAPIView.as_view(), name="get all orders"),
-    path("get-operations/", OperationNameApiView.as_view(), name="get operations name"),
+    path("all-orders/", GetAllProductAPIView.as_view(), name="get-all-orders"),
+    path("get-operations/", OperationNameApiView.as_view(), name="get-operations-name"),
     # database configuration
     path(
         "create-connection/",
         CreateDatabaseConnectionAPIView.as_view(),
-        name="mssql connection",
+        name="mssql-connection",
     ),
     path(
         "get-connections/",
         GetDatabasesAPIView.as_view(),
-        name="get list of all database connections",
+        name="get-list-of-all-database-connections",
     ),
     path(
         "delete-connection/<int:id>/",
         DeleteConectionAPIView.as_view(),
-        name="delete connection from connection database",
+        name="delete-connection-from-connection-database",
     ),
     path("", include(router.urls)),
 ]
