@@ -144,7 +144,7 @@ def create_camera_algorithms(
 
                 new_object = {"coords": coords}
 
-                data.append(new_object)
+                data.append({"stelag": [new_object]})
 
             response = send_run_request(request)
 
