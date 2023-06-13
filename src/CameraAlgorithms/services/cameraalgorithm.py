@@ -135,14 +135,10 @@ def create_camera_algorithms(
 
             response = send_run_request(request)
 
-        zones = algorithm.get('config')["zonesID"]
-
-        if zones is None:
-            zones = None
-
         if algorithm_obj.name == "machine_control":
-            zones_ids = algorithm.get('config')["zonesID"]
-            for zone_id in zones_ids:
+            configs = algorithm.get('config')
+            zones = configs.get("zonesID", [])
+            for zone_id in zones:
                 zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
                 coords = zone_camera.coords
                 coords[0]["zoneId"] = zone_camera.id
