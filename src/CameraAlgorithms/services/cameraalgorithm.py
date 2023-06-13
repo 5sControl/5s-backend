@@ -152,7 +152,7 @@ def create_camera_algorithms(
 
                 data.append(new_object)
 
-            request["extra"] = f'{data}'
+            request["extra"] = data
 
             response = send_run_request(request)
 
