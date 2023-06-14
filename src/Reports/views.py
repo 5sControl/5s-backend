@@ -104,11 +104,12 @@ class ActionsWithPhotos(APIView):
 
         if photos:
             for photo in photos:
-                image = photo.get("image")
-                date = photo.get("date")
-                photo = Image.objects.create(
-                    image=image, date=date, report_id=action
-                )
+                if photo.get("image"):
+                    image = photo.get("image")
+                    date = photo.get("date")
+                    photo = Image.objects.create(
+                        image=image, date=date, report_id=action
+                    )
         else:
             logger.critical(f"Image in report {action} wasn't found")
             action.delete()
