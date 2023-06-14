@@ -38,7 +38,6 @@ class OrderServices:
         )
 
         result_list: List[Dict[str, Any]] = []
-        reports: List[Dict[str, Any]] = []
 
         for row in stanowiska_data:
             operation_id: int = row[0]
@@ -127,6 +126,8 @@ class OrderServices:
                 Q(algorithm=3) & Q(extra__has_key="zonaID") & Q(extra__zonaID__in=zone_cameras_ids)
             )
 
+            reports: List[Dict[str, Any]] = []
+
             for report in reports_with_matching_zona_id:
                 id: int = report.id
                 start_tracking: str = report.start_tracking
@@ -141,8 +142,8 @@ class OrderServices:
                 )
                 report = {
                     "id": id,
-                    "sTime": sTime,
-                    "eTime": eTime,
+                    "sTime": sTime * 1000,
+                    "eTime": eTime * 1000,
                 }
                 reports.append(report)
 
