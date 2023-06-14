@@ -56,14 +56,7 @@ class GetOrderByDetail(generics.GenericAPIView):
     @connector_service.check_database_connection
     def get(self, request):
         operation_id: int = request.GET.get("operation")
-
-        key: int = operation_id
-        response = cache.get(key)
-
-        if response is None:
-            response: Dict[str, Any] = OrderServices.get_order_by_details(operation_id)
-            cache.set(key, response, timeout=10)
-
+        response: Dict[str, Any] = OrderServices.get_order_by_details(operation_id)
         return JsonResponse(data=response, status=status.HTTP_200_OK)
 
 

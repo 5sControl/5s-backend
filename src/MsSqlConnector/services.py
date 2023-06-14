@@ -24,7 +24,6 @@ class MsSqlConnector:
                 JOIN Zlecenia ON Skany_vs_Zlecenia.IndeksZlecenia = Zlecenia.Indeks
                 WHERE Skany.stanowisko = ?
                 GROUP BY Zlecenia.Zlecenie, Zlecenia.DataWejscia
-                ORDER BY Skany.data
                 """, (stanowisko,)
             )
 
