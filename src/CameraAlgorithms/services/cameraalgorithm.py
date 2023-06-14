@@ -146,7 +146,7 @@ def create_camera_algorithms(
 
             new_data = {
                 "areas": areas,
-                "STELAG": stelag
+                "zones": stelag
             }
 
             data.append(new_data)
