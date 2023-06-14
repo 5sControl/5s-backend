@@ -132,18 +132,19 @@ class OrderServices:
 
         order_query: str = """
             SELECT
-                DISTINCT z.zlecenie AS orderId
-            FROM Zlecenia z
-                JOIN Skany_vs_Zlecenia sz ON z.indeks = sz.indekszlecenia
-                JOIN Skany sk ON sz.indeksskanu = sk.indeks
+                z.zlecenie AS orderId
+            FROM Skany sk
+                JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeksskanu
+                JOIN zlecenia z ON sz.indekszlecenia = z.indeks
             WHERE sk.data >= ? AND sk.data <= ?
         """
 
-        from_date_dt = datetime.strptime(from_date, "%Y-%m-%d")
-        from_date_dt = from_date_dt + timedelta(microseconds=1)
+        if from_date and to_date:
+            from_date_dt = datetime.strptime(from_date, "%Y-%m-%d")
+            from_date_dt = from_date_dt + timedelta(microseconds=1)
 
-        to_date_dt = datetime.strptime(to_date, "%Y-%m-%d")
-        to_date_dt = to_date_dt + timedelta(days=1) - timedelta(microseconds=1)
+            to_date_dt = datetime.strptime(to_date, "%Y-%m-%d")
+            to_date_dt = to_date_dt + timedelta(days=1) - timedelta(microseconds=1)
 
         params: List[Any] = [from_date_dt, to_date_dt]
 
