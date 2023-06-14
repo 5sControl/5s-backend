@@ -16,7 +16,7 @@ from src.OrderView.utils import get_skany_video_info
 from src.CameraAlgorithms.models import Camera
 from src.Reports.models import Report, SkanyReport
 
-from ..utils import add_ms
+from ..utils import add_ms, convert_to_gmt0, convert_to_unix
 
 logger = logging.getLogger(__name__)
 
@@ -97,8 +97,10 @@ class OrderServices:
                 }
 
                 startTime_dt: datetime = add_ms(startTime)
-                startTime_dt = startTime_dt.astimezone(pytz.utc)
-                startTime_unix: int = int(startTime_dt.timestamp()) * 1000
+                startTime_dt: datetime = convert_to_gmt0(startTime_dt)
+                startTime_unix: int = convert_to_unix(startTime_dt)
+
+                
                 operation["sTime"] = startTime_unix
 
                 if endTime is not None:
@@ -110,12 +112,16 @@ class OrderServices:
                     else:
                         endTime_dt = endTime_dt or startTime_dt + timedelta(hours=1)
 
-                    endTime_unix: int = int(endTime_dt.timestamp()) * 1000
-                    operation["eTime"] = endTime_unix
+                    endTime_dt: datetime = convert_to_gmt0(endTime_dt)
+                    endTime_unix: int = convert_to_unix(endTime_dt)
 
+                    operation["eTime"] = endTime_unix
                 else:
                     endTime_dt = startTime_dt + timedelta(hours=1)
-                    endTime_unix: int = int(endTime_dt.timestamp()) * 1000
+
+                    endTime_dt: datetime = convert_to_gmt0(endTime_dt)
+                    endTime_unix: int = convert_to_unix(endTime_dt)
+
                     operation["eTime"] = endTime_unix
 
                 operations_list.append(operation)
