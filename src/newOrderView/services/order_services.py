@@ -145,7 +145,7 @@ class OrderServices:
             for report in reports_with_matching_zona_id:
                 zona_data: Dict[int, str] = report.extra
                 machine_control_report_id: int = report.id
-                zone_id: str = zone_cameras_names[zona_data["zonaID"]]
+                zone_name: str = zone_cameras_names[zona_data["zonaID"]]
                 start_tracking: str = report.start_tracking
                 stop_tracking: str = report.stop_tracking
 
@@ -160,7 +160,7 @@ class OrderServices:
 
                 report_data: Dict[str, Any] = {
                     "id": machine_control_report_id,
-                    "orId": zone_id,
+                    "orId": zone_name,
                     "sTime": sTime * 1000,
                     "eTime": eTime * 1000,
                 }
@@ -170,7 +170,7 @@ class OrderServices:
                 # machine control reports
                 result = {
                     "oprTypeID": machine_control_report_id,
-                    "oprName": zone_cameras_names[zona_data["name"]],
+                    "oprName": zone_name,
                     "oprs": reports
                 }
 
