@@ -60,11 +60,11 @@ class OrderServices:
             if from_date and to_date:
                 operations_query += " AND sk.data >= ? AND sk.data <= ?"
 
-                from_date_dt = datetime.strptime(from_date, "%Y-%m-%d")
-                from_date_dt = from_date_dt + timedelta(microseconds=1)
+                from_date_dt: datetime = datetime.strptime(from_date, "%Y-%m-%d")
+                from_date_dt: datetime = from_date_dt + timedelta(microseconds=1)
 
-                to_date_dt = datetime.strptime(to_date, "%Y-%m-%d")
-                to_date_dt = to_date_dt + timedelta(days=1) - timedelta(microseconds=1)
+                to_date_dt: datetime = datetime.strptime(to_date, "%Y-%m-%d")
+                to_date_dt: datetime = to_date_dt + timedelta(days=1) - timedelta(microseconds=1)
 
                 params.extend([from_date_dt, to_date_dt])
 
@@ -125,6 +125,8 @@ class OrderServices:
                     operation["eTime"] = endTime_unix
 
                 operations_list.append(operation)
+                
+            # Machine Control
 
             zone_cameras_ids: Iterable[int] = ZoneCameras.objects.filter(index_workplace=operation_id).values_list('id', flat=True)
             zone_cameras_ids: List[int] = [JSONField().to_python(id) for id in zone_cameras_ids]
@@ -142,10 +144,11 @@ class OrderServices:
 
             for report in reports_with_matching_zona_id:
                 zona_data: Dict[int, str] = report.extra
-                id: int = report.id
-                orId: str = zone_cameras_names[zona_data["zonaID"]]
+                machine_control_report_id: int = report.id
+                zone_id: str = zone_cameras_names[zona_data["zonaID"]]
                 start_tracking: str = report.start_tracking
                 stop_tracking: str = report.stop_tracking
+
                 sTime: int = int(
                     datetime.strptime(
                         start_tracking, "%Y-%m-%d %H:%M:%S.%f"
@@ -154,20 +157,30 @@ class OrderServices:
                 eTime: int = int(
                     datetime.strptime(stop_tracking, "%Y-%m-%d %H:%M:%S.%f").timestamp()
                 )
+
                 report_data: Dict[str, Any] = {
-                    "id": id,
-                    "orId": orId,
+                    "id": machine_control_report_id,
+                    "orId": zone_id,
                     "sTime": sTime * 1000,
                     "eTime": eTime * 1000,
                 }
 
                 reports.append(report_data)
 
+                # machine control reports
+                result = {
+                    "oprTypeID": machine_control_report_id,
+                    "oprName": zone_cameras_names[zona_data["name"]],
+                    "oprs": reports
+                }
+
+                result_list.append(result)
+
+            # operation 
             result = {
                 "oprTypeID": operation_id,
                 "oprName": operation_name,
                 "oprs": operations_list,
-                "reports": reports,
             }
 
             result_list.append(result)
