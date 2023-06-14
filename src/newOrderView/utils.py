@@ -19,13 +19,12 @@ def generate_hash(prefix: str, from_date: str, to_date: str) -> str:
 
 
 def convert_to_gmt0(input_time: datetime) -> datetime:
-    gmt_plus3 = pytz.timezone("Etc/GMT-3")
-    dt_gmt_plus3 = gmt_plus3.localize(input_time)
-
     gmt0 = pytz.timezone("Etc/GMT")
-    dt_gmt0 = dt_gmt_plus3.astimezone(gmt0)
-
-    return dt_gmt0
+    if input_time.tzinfo != gmt0:
+        dt_gmt_plus3 = input_time.astimezone(gmt0)
+        return dt_gmt_plus3
+    else:
+        return input_time
 
 
 def convert_to_unix(input_time: datetime) -> int:
