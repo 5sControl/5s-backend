@@ -27,5 +27,5 @@ urlpatterns = [
         "whnet-operations/",
         GetWhnetOperation.as_view(),
         name="get-whnet-operation",
-    )
+    ),
 ]

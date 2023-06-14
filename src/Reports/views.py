@@ -72,9 +72,11 @@ class ActionsWithPhotos(APIView):
                     if 'extra' in data:
                         for data in data['extra']:
                             if 'place' in data:
+                                logger.warning(f"Operation control extra data is {data}")
                                 requests.post(f"{SERVER_URL}:9876/skany/create/", json=data['extra'][0])
                                 break
                         else:
+                            logger.warning(f"Operation control extra data is {data}")
                             requests.post(f"{SERVER_URL}:9876/operation-control/", json=data)
                 extra = edit_extra(data.get("extra"), camera)
             else:
@@ -104,11 +106,12 @@ class ActionsWithPhotos(APIView):
 
         if photos:
             for photo in photos:
-                image = photo.get("image")
-                date = photo.get("date")
-                photo = Image.objects.create(
-                    image=image, date=date, report_id=action
-                )
+                if photo.get("image"):
+                    image = photo.get("image")
+                    date = photo.get("date")
+                    photo = Image.objects.create(
+                        image=image, date=date, report_id=action
+                    )
         else:
             logger.critical(f"Image in report {action} wasn't found")
             action.delete()

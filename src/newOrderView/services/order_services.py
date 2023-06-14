@@ -1,21 +1,24 @@
+from typing import Iterable, List, Any, Tuple, Dict, Optional
+from datetime import datetime, timedelta
 import logging
 import pytz
 
-from typing import List, Any, Tuple, Dict, Optional
-from datetime import datetime, timedelta
-
 import pyodbc
 
+from django.db.models import Q
+from django.contrib.postgres.fields import JSONField
+from django.db.models.query import QuerySet
+
+from src.CameraAlgorithms.models.camera import ZoneCameras
 from src.MsSqlConnector.connector import connector as connector_service
 from src.OrderView.models import IndexOperations
 from src.OrderView.utils import get_skany_video_info
 from src.CameraAlgorithms.models import Camera
-from src.Reports.models import SkanyReport
+from src.Reports.models import Report, SkanyReport
 
-from ..utils import add_ms
+from ..utils import add_ms, convert_to_gmt0, convert_to_unix
 
 logger = logging.getLogger(__name__)
-
 
 
 class OrderServices:
@@ -94,8 +97,10 @@ class OrderServices:
                 }
 
                 startTime_dt: datetime = add_ms(startTime)
-                startTime_dt = startTime_dt.astimezone(pytz.utc)
-                startTime_unix: int = int(startTime_dt.timestamp()) * 1000
+                startTime_dt: datetime = convert_to_gmt0(startTime_dt)
+                startTime_unix: int = convert_to_unix(startTime_dt)
+
+                
                 operation["sTime"] = startTime_unix
 
                 if endTime is not None:
@@ -107,20 +112,62 @@ class OrderServices:
                     else:
                         endTime_dt = endTime_dt or startTime_dt + timedelta(hours=1)
 
-                    endTime_unix: int = int(endTime_dt.timestamp()) * 1000
-                    operation["eTime"] = endTime_unix
+                    endTime_dt: datetime = convert_to_gmt0(endTime_dt)
+                    endTime_unix: int = convert_to_unix(endTime_dt)
 
+                    operation["eTime"] = endTime_unix
                 else:
                     endTime_dt = startTime_dt + timedelta(hours=1)
-                    endTime_unix: int = int(endTime_dt.timestamp()) * 1000
+
+                    endTime_dt: datetime = convert_to_gmt0(endTime_dt)
+                    endTime_unix: int = convert_to_unix(endTime_dt)
+
                     operation["eTime"] = endTime_unix
 
                 operations_list.append(operation)
+
+            zone_cameras_ids: Iterable[int] = ZoneCameras.objects.filter(index_workplace=operation_id).values_list('id', flat=True)
+            zone_cameras_ids: List[int] = [JSONField().to_python(id) for id in zone_cameras_ids]
+            zone_cameras_names: Dict[int, str] = dict(
+                ZoneCameras.objects.filter(index_workplace=operation_id).values_list('id', 'name')
+            )
+
+            reports_with_matching_zona_id: Iterable[QuerySet] = Report.objects.filter(
+                Q(algorithm=3) & Q(extra__has_key="zonaID") & Q(extra__zonaID__in=zone_cameras_ids)
+            )
+
+            reports: List[Dict[str, Any]] = []
+
+            logger.warning(f"zone_cameras_names - {zone_cameras_names}, reports_with_matching_zona_id - {reports_with_matching_zona_id}")
+
+            for report in reports_with_matching_zona_id:
+                zona_data: Dict[int, str] = report.extra
+                id: int = report.id
+                orId: str = zone_cameras_names[zona_data["zonaID"]]
+                start_tracking: str = report.start_tracking
+                stop_tracking: str = report.stop_tracking
+                sTime: int = int(
+                    datetime.strptime(
+                        start_tracking, "%Y-%m-%d %H:%M:%S.%f"
+                    ).timestamp()
+                )
+                eTime: int = int(
+                    datetime.strptime(stop_tracking, "%Y-%m-%d %H:%M:%S.%f").timestamp()
+                )
+                report_data: Dict[str, Any] = {
+                    "id": id,
+                    "orId": orId,
+                    "sTime": sTime * 1000,
+                    "eTime": eTime * 1000,
+                }
+
+                reports.append(report_data)
 
             result = {
                 "oprTypeID": operation_id,
                 "oprName": operation_name,
                 "oprs": operations_list,
+                "reports": reports,
             }
 
             result_list.append(result)
@@ -221,8 +268,8 @@ class OrderServices:
             endTime_str = str(order_data[0][6]) if order_data[0][6] else None
 
             if endTime_str:
-                if '.' not in endTime_str:
-                    endTime_str += '.000'
+                if "." not in endTime_str:
+                    endTime_str += ".000"
                 endTime = datetime.strptime(endTime_str, "%Y-%m-%d %H:%M:%S.%f")
             else:
                 endTime = startTime + timedelta(hours=1)

@@ -13,7 +13,7 @@ def process_item_status(data):
     """Updates the item status and adds the status to the extra"""
 
     result = []
-
+    data = data[0].get('items')
     for item_data in data:
 
         count = item_data['count']
@@ -96,6 +96,7 @@ def process_item_status(data):
         item_data["red_line"] = red_line
 
         result.append(item_data)
+    print(result)
     return result
 
 
