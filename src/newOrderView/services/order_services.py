@@ -10,7 +10,7 @@ from src.MsSqlConnector.connector import connector as connector_service
 from src.OrderView.models import IndexOperations
 from src.OrderView.utils import get_skany_video_info
 from src.CameraAlgorithms.models import Camera
-from src.Reports.models import SkanyReport
+from src.Reports.models import Report, SkanyReport
 
 from ..utils import add_ms
 
@@ -35,6 +35,7 @@ class OrderServices:
         )
 
         result_list: List[Dict[str, Any]] = []
+        reports: List[Dict[str, Any]]= []
 
         for row in stanowiska_data:
             operation_id: int = row[0]
@@ -116,11 +117,32 @@ class OrderServices:
                     operation["eTime"] = endTime_unix
 
                 operations_list.append(operation)
+            
+            report_query = Report.objects.filter(
+                algorithm=3,
+                extra__contains={"zonaID": operation_id}
+            ).values("id", "start_tracking", "stop_tracking")
+
+            for report_data in report_query:
+                id: int = report_data["id"]
+                start_tracking: str = report_data["start_tracking"]
+                stop_tracking: str = report_data["stop_tracking"]
+                
+                sTime: int = int(datetime.strptime(start_tracking, "%Y-%m-%d %H:%M:%S.%f").timestamp())
+                eTime: int = int(datetime.strptime(stop_tracking, "%Y-%m-%d %H:%M:%S.%f").timestamp())
+
+                report = {
+                    "id": id,
+                    "sTime": sTime,
+                    "eTime": eTime,
+                }
+                reports.append(report)
 
             result = {
                 "oprTypeID": operation_id,
                 "oprName": operation_name,
                 "oprs": operations_list,
+                "reports": reports,
             }
 
             result_list.append(result)
