@@ -127,23 +127,22 @@ def create_camera_algorithms(
 
         areas = []
         stelag = []
+
         if algorithm_obj.name == "min_max_control":
             algorithm_items = Items.objects.filter(camera=camera_obj.id)
             for item in algorithm_items:
                 areas.append(
-                    {"itemId": item.id, "coords": item.coords, "itemName": item.name}
+                    {"itemId": item.id, "itemName": item.name, "coords": item.coords}
                 )
 
             configs = algorithm.get('config', {})
             zones = configs.get("zonesID")
             for zone_id in zones:
                 zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
-                coords = zone_camera.coords
-                coords[0]["zoneId"] = zone_camera.id
-                coords[0]["zoneName"] = "zone " + str(zone_camera.name)
 
-                new_object = {"coords": coords}
-                stelag.append(new_object)
+                stelag.append(
+                    {"zoneId": zone_camera.id, "zoneName": zone_camera.name, "coords": zone_camera.coords}
+                )
 
             new_data = {
                 "areas": areas,
