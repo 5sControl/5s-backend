@@ -132,7 +132,7 @@ class OrderServices:
 
         order_query: str = """
             SELECT
-                z.zlecenie AS orderId
+                DISTINCT z.zlecenie AS orderId
             FROM Skany sk
                 JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeksskanu
                 JOIN zlecenia z ON sz.indekszlecenia = z.indeks
