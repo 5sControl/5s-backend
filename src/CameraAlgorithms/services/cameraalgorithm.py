@@ -125,14 +125,14 @@ def create_camera_algorithms(
         }
         zones: List[Optional[Dict[str, Any]]] = []
 
+        areas = []
+        stelag = []
         if algorithm_obj.name == "min_max_control":
             algorithm_items = Items.objects.filter(camera=camera_obj.id)
             for item in algorithm_items:
-                data.append(
+                areas.append(
                     {"itemId": item.id, "coords": item.coords, "itemName": item.name}
                 )
-
-            request["extra"] = data
 
             configs = algorithm.get('config', {})
             zones = configs.get("zonesID")
@@ -143,8 +143,16 @@ def create_camera_algorithms(
                 coords[0]["zoneName"] = "zone " + str(zone_camera.name)
 
                 new_object = {"coords": coords}
+                stelag.append(new_object)
 
-                data.append(new_object)
+            new_data = {
+                "areas": areas,
+                "stelag": stelag
+            }
+
+            data.append(new_data)
+
+            request["extra"] = data
 
             response = send_run_request(request)
 
