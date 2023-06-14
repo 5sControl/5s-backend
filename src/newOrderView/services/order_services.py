@@ -120,8 +120,12 @@ class OrderServices:
 
                 operations_list.append(operation)
 
-            zone_cameras_ids: Iterable[QuerySet] = ZoneCameras.objects.filter(index_workplace=operation_id).values_list('id', flat=True)
-            zone_cameras_ids: List[int] = [JSONField().to_python(id) for id in zone_cameras_ids]
+            zone_cameras_ids: Iterable[int] = ZoneCameras.objects.filter(index_workplace=operation_id).values_list('id', flat=True)
+            zone_cameras_ids = [JSONField().to_python(id) for id in zone_cameras_ids]
+            zone_cameras_names: Dict[int, str] = dict(
+                ZoneCameras.objects.filter(index_workplace=operation_id).values_list('id', 'name')
+            )
+
             reports_with_matching_zona_id: Iterable[QuerySet] = Report.objects.filter(
                 Q(algorithm=3) & Q(extra__has_key="zonaID") & Q(extra__zonaID__in=zone_cameras_ids)
             )
@@ -130,6 +134,7 @@ class OrderServices:
 
             for report in reports_with_matching_zona_id:
                 id: int = report.id
+                orId: str = zone_cameras_names["id"]
                 start_tracking: str = report.start_tracking
                 stop_tracking: str = report.stop_tracking
                 sTime: int = int(
@@ -140,12 +145,14 @@ class OrderServices:
                 eTime: int = int(
                     datetime.strptime(stop_tracking, "%Y-%m-%d %H:%M:%S.%f").timestamp()
                 )
-                report = {
+                report_data: Dict[str, Any] = {
                     "id": id,
+                    "orId": orId,
                     "sTime": sTime * 1000,
                     "eTime": eTime * 1000,
                 }
-                reports.append(report)
+
+                reports.append(report_data)
 
             result = {
                 "oprTypeID": operation_id,
