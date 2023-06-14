@@ -1,11 +1,15 @@
+from typing import Iterable, List, Any, Tuple, Dict, Optional
+from datetime import datetime, timedelta
 import logging
 import pytz
 
-from typing import List, Any, Tuple, Dict, Optional
-from datetime import datetime, timedelta
-
 import pyodbc
 
+from django.db.models import Q
+from django.contrib.postgres.fields import JSONField
+from django.db.models.query import QuerySet
+
+from src.CameraAlgorithms.models.camera import ZoneCameras
 from src.MsSqlConnector.connector import connector as connector_service
 from src.OrderView.models import IndexOperations
 from src.OrderView.utils import get_skany_video_info
@@ -15,7 +19,6 @@ from src.Reports.models import Report, SkanyReport
 from ..utils import add_ms
 
 logger = logging.getLogger(__name__)
-
 
 
 class OrderServices:
@@ -35,7 +38,7 @@ class OrderServices:
         )
 
         result_list: List[Dict[str, Any]] = []
-        reports: List[Dict[str, Any]]= []
+        reports: List[Dict[str, Any]] = []
 
         for row in stanowiska_data:
             operation_id: int = row[0]
@@ -117,20 +120,25 @@ class OrderServices:
                     operation["eTime"] = endTime_unix
 
                 operations_list.append(operation)
-            
-            report_query = Report.objects.filter(
-                algorithm=3,
-                extra__contains={"zonaID": operation_id}
-            ).values("id", "start_tracking", "stop_tracking")
 
-            for report_data in report_query:
-                id: int = report_data["id"]
-                start_tracking: str = report_data["start_tracking"]
-                stop_tracking: str = report_data["stop_tracking"]
-                
-                sTime: int = int(datetime.strptime(start_tracking, "%Y-%m-%d %H:%M:%S.%f").timestamp())
-                eTime: int = int(datetime.strptime(stop_tracking, "%Y-%m-%d %H:%M:%S.%f").timestamp())
+            zone_cameras_ids: Iterable[QuerySet] = ZoneCameras.objects.filter(index_workplace=operation_id).values_list('id', flat=True)
+            zone_cameras_ids: List[int] = [JSONField().to_python(id) for id in zone_cameras_ids]
+            reports_with_matching_zona_id: Iterable[QuerySet] = Report.objects.filter(
+                Q(algorithm=3) & Q(extra__has_key="zonaID") & Q(extra__zonaID__in=zone_cameras_ids)
+            )
 
+            for report in reports_with_matching_zona_id:
+                id: int = report.id
+                start_tracking: str = report.start_tracking
+                stop_tracking: str = report.stop_tracking
+                sTime: int = int(
+                    datetime.strptime(
+                        start_tracking, "%Y-%m-%d %H:%M:%S.%f"
+                    ).timestamp()
+                )
+                eTime: int = int(
+                    datetime.strptime(stop_tracking, "%Y-%m-%d %H:%M:%S.%f").timestamp()
+                )
                 report = {
                     "id": id,
                     "sTime": sTime,
@@ -243,8 +251,8 @@ class OrderServices:
             endTime_str = str(order_data[0][6]) if order_data[0][6] else None
 
             if endTime_str:
-                if '.' not in endTime_str:
-                    endTime_str += '.000'
+                if "." not in endTime_str:
+                    endTime_str += ".000"
                 endTime = datetime.strptime(endTime_str, "%Y-%m-%d %H:%M:%S.%f")
             else:
                 endTime = startTime + timedelta(hours=1)
