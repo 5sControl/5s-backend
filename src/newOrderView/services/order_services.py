@@ -246,7 +246,7 @@ class OrderServices:
                 if skany_report:
                     operation_status: Optional[bool] = skany_report.violation_found
                     video_time: Optional[bool] = skany_report.start_time
-                    logger.warning("Skany report was founded", operation_status, video_time)
+                    logger.warning(f"Skany report was founded. Data -> {operation_status}, {video_data}",)
                     if camera_obj and video_time:
                         logger.warning(video_time*1000)
                         video_data: Dict[str, Any] = get_skany_video_info(
