@@ -121,7 +121,7 @@ class OrderServices:
                 operations_list.append(operation)
 
             zone_cameras_ids: Iterable[int] = ZoneCameras.objects.filter(index_workplace=operation_id).values_list('id', flat=True)
-            zone_cameras_ids = [JSONField().to_python(id) for id in zone_cameras_ids]
+            zone_cameras_ids: List[int] = [JSONField().to_python(id) for id in zone_cameras_ids]
             zone_cameras_names: Dict[int, str] = dict(
                 ZoneCameras.objects.filter(index_workplace=operation_id).values_list('id', 'name')
             )
@@ -132,9 +132,11 @@ class OrderServices:
 
             reports: List[Dict[str, Any]] = []
 
+            logger.warning(f"zone_cameras_names - {zone_cameras_names}, reports_with_matching_zona_id - {reports_with_matching_zona_id}")
+
             for report in reports_with_matching_zona_id:
                 id: int = report.id
-                orId: str = zone_cameras_names["id"]
+                orId: str = zone_cameras_names[report.extra["zoneID"]]
                 start_tracking: str = report.start_tracking
                 stop_tracking: str = report.stop_tracking
                 sTime: int = int(
