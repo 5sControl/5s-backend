@@ -1,5 +1,5 @@
 from typing import List, Dict
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 import logging
 
 from src.CameraAlgorithms.models import Camera
@@ -40,15 +40,25 @@ def create_skanyreport(
     report: Report,
     report_data: List[Dict],
     violation_found: bool,
-    start_tracking: datetime,
-    end_tracking: datetime
+    start_tracking: str,
+    end_tracking: str
 ) -> None:
-    sTime = int(datetime.strptime(start_tracking, "%Y-%m-%d %H:%M:%S.%f").timestamp())
-    eTime = int(datetime.strptime(end_tracking, "%Y-%m-%d %H:%M:%S.%f").timestamp())
+    start_dt = datetime.strptime(start_tracking, "%Y-%m-%d %H:%M:%S.%f")
+    start_utc = start_dt.replace(tzinfo=timezone.utc)
+    start_gmt = start_utc.astimezone(timezone(timedelta(hours=0)))
+    sTime = int(start_gmt.timestamp())
+
+    end_dt = datetime.strptime(end_tracking, "%Y-%m-%d %H:%M:%S.%f")
+    end_utc = end_dt.replace(tzinfo=timezone.utc)
+    end_gmt = end_utc.astimezone(timezone(timedelta(hours=0)))
+    eTime = int(end_gmt.timestamp())
+
 
     skany_indeks = report_data[0].get("skany_index")
     zlecenie = report_data[0].get("zlecenie")
     execution_date = report_data[0].get("execution_date")
+
+    logger.warning(f"Creating Skany Report start_tracking -> {start_tracking} - {sTime}, end_tracking -> {end_tracking} - {eTime}")
 
     SkanyReport.objects.create(
         report=report,

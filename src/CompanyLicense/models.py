@@ -26,6 +26,8 @@ class License(models.Model):
         verbose_name = "License"
         verbose_name_plural = "Licenses"
 
+        db_table = "license"
+
 
 class Company(models.Model):
     """Models my company"""
@@ -52,3 +54,6 @@ class Company(models.Model):
 
     def __str__(self):
         return self.name_company
+
+    class Meta:
+        db_table = "company"

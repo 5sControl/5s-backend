@@ -1,7 +1,7 @@
 import requests
 import logging
 
-from typing import Any, Dict, Iterable, List
+from typing import Any, Dict, Iterable, List, Optional
 
 from src.Core.exceptions import InvalidResponseError, SenderError, CameraConnectionError
 from src.Core.utils import Sender
@@ -123,26 +123,42 @@ def create_camera_algorithms(
             "server_url": SERVER_URL,
             "extra": data,
         }
+        zones: List[Optional[Dict[str, Any]]] = []
+
+        areas = []
+        stelag = []
 
         if algorithm_obj.name == "min_max_control":
             algorithm_items = Items.objects.filter(camera=camera_obj.id)
             for item in algorithm_items:
-                data.append(
-                    {"itemId": item.id, "coords": item.coords, "itemName": item.name}
+                areas.append(
+                    {"itemId": item.id, "itemName": item.name, "coords": item.coords}
                 )
+
+            configs = algorithm.get('config', {})
+            zones = configs.get("zonesID")
+            for zone_id in zones:
+                zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
+
+                stelag.append(
+                    {"zoneId": zone_camera.id, "zoneName": zone_camera.name, "coords": zone_camera.coords}
+                )
+
+            new_data = {
+                "areas": areas,
+                "zones": stelag
+            }
+
+            data.append(new_data)
 
             request["extra"] = data
 
             response = send_run_request(request)
 
-        zones = algorithm.get('config')["zonesID"]
-
-        if zones is None:
-            zones = None
-
         if algorithm_obj.name == "machine_control":
-            zones_ids = algorithm.get('config')["zonesID"]
-            for zone_id in zones_ids:
+            configs = algorithm.get('config', {})
+            zones = configs.get("zonesID")
+            for zone_id in zones:
                 zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
                 coords = zone_camera.coords
                 coords[0]["zoneId"] = zone_camera.id
