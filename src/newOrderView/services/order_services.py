@@ -135,8 +135,9 @@ class OrderServices:
             logger.warning(f"zone_cameras_names - {zone_cameras_names}, reports_with_matching_zona_id - {reports_with_matching_zona_id}")
 
             for report in reports_with_matching_zona_id:
+                zona_data: Dict[int, str] = report.extra
                 id: int = report.id
-                orId: str = zone_cameras_names[report.extra["zoneID"]]
+                orId: str = zone_cameras_names[zona_data["zoneID"]]
                 start_tracking: str = report.start_tracking
                 stop_tracking: str = report.stop_tracking
                 sTime: int = int(
