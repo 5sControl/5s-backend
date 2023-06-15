@@ -10,7 +10,7 @@ from rest_framework import generics, status
 from src.Core.paginators import OrderViewPaginnator, NoPagination
 from src.MsSqlConnector.connector import connector as connector_service
 
-from .services.order_services import OrderServices
+from .services import OperationServices, OrderServises
 from .utils import generate_hash
 
 
@@ -24,7 +24,7 @@ class GetOperation(generics.GenericAPIView):
         response = cache.get(key)
 
         if response is None:
-            response: List[Dict[str, Any]] = OrderServices.get_operations(
+            response: List[Dict[str, Any]] = OperationServices.get_operations(
                 from_date, to_date
             )
             cache.set(key, response, timeout=120)
@@ -44,7 +44,7 @@ class GetOrders(generics.GenericAPIView):
         response = cache.get("get_order_" + key)
 
         if response is None:
-            response: List[Dict[str, str]] = OrderServices.get_order(from_date, to_date)
+            response: List[Dict[str, str]] = OrderServises.get_order(from_date, to_date)
             cache.set(key, response, timeout=120)
 
         return JsonResponse(response, status=status.HTTP_200_OK, safe=False)
@@ -56,7 +56,7 @@ class GetOrderByDetail(generics.GenericAPIView):
     @connector_service.check_database_connection
     def get(self, request):
         operation_id: int = request.GET.get("operation")
-        response: Dict[str, Any] = OrderServices.get_order_by_details(operation_id)
+        response: Dict[str, Any] = OrderServises.get_order_by_details(operation_id)
         return JsonResponse(data=response, status=status.HTTP_200_OK)
 
 
@@ -66,6 +66,6 @@ class GetWhnetOperation(generics.GenericAPIView):
     @method_decorator(cache_page(30))
     @connector_service.check_database_connection
     def get(self, request):
-        response: Dict[str, Any] = OrderServices.get_whnet_operation()
+        response: Dict[str, Any] = OperationServices.get_whnet_operation()
 
         return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
