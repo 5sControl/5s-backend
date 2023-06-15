@@ -13,7 +13,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from src.CompanyLicense.decorators import validate_license
-from src.Core.const import PRODUCTION, SERVER_URL
+from src.Core.const import EMULATE_DB, SERVER_URL
 from src.Core.paginators import NoPagination
 from src.ImageReport.models import Image
 from src.CameraAlgorithms.models import Camera
@@ -71,7 +71,7 @@ class ActionsWithPhotos(APIView):
                 extra = process_item_status(data.get("extra"))
 
             elif algorithm_name == "operation_control":
-                if not PRODUCTION:
+                if not EMULATE_DB:
                     if "extra" in data:
                         for data in data["extra"]:
                             if "place" in data:
