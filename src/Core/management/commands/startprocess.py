@@ -31,6 +31,29 @@ class Command(BaseCommand):
             camera_obj: Camera = camera_algorithm.camera
             algorithm_obj: CameraAlgorithm = camera_algorithm.algorithm
             rtsp_link: str = camera_rtsp_link(camera_obj.id)
+
+            request: Dict[str, Any] = {
+                "camera_url": rtsp_link,
+                "algorithm": algorithm_obj.name,
+                "server_url": SERVER_URL,
+                "extra": extra_params,
+            }
+
+            if camera_algorithm.algorithm.name == "machine_control":
+                all_zones = camera_algorithm.zones
+                cords = []
+                for zone_id in all_zones:
+                    zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
+                    coords = zone_camera.coords
+                    coords[0]["zoneId"] = zone_camera.id
+                    coords[0]["zoneName"] = "zone " + str(zone_camera.name)
+
+                    new_object = {"coords": coords}
+
+                    cords.append(new_object)
+
+                extra_params.append({"coords": coords})
+
             if camera_algorithm.algorithm.name == "min_max_control":
                 algorithm_items = Items.objects.filter(camera=camera_obj)
                 areas = []
@@ -56,13 +79,6 @@ class Command(BaseCommand):
                 }
                 extra_params.append(new_data)
 
-            request: Dict[str, Any] = {
-                "camera_url": rtsp_link,
-                "algorithm": algorithm_obj.name,
-                "server_url": SERVER_URL,
-                "extra": extra_params,
-            }
-
             try:
                 result = send_run_request(request)
             except SenderError as e:
@@ -72,7 +88,6 @@ class Command(BaseCommand):
                     f"Yolo can't start algorithm {algorithm_obj.name} on camera {camera_obj.id}. Details: {e}"
                 )
             else:
-                pass
                 new_process_id = result["pid"]
                 camera_algorithm.process_id = new_process_id
                 camera_algorithm.save()
