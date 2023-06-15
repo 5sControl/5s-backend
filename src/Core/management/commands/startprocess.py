@@ -56,7 +56,7 @@ class Command(BaseCommand):
                     "areas": areas,
                     "zones": stelag
                 }
-
+                print("New data", new_data)
                 extra_params.append(new_data)
 
             request: Dict[str, Any] = {
