@@ -5,7 +5,7 @@ from datetime import datetime
 
 from django.db.models import Q
 
-from rest_framework.generics import GenericAPIView, ListAPIView
+from rest_framework.generics import GenericAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import MethodNotAllowed
 from rest_framework import status, viewsets
@@ -19,7 +19,7 @@ from src.ImageReport.models import Image
 from src.CameraAlgorithms.models import Camera
 from src.CameraAlgorithms.models import Algorithm
 from src.Reports.models import Report, SkanyReport
-from src.Reports.serializers import ReportSerializers, OperationReportSerializer
+from src.Reports.serializers import ReportSerializers, OperationReportSerializer, ReportByIDSerializer
 from src.Inventory.service import process_item_status
 from src.Reports.service import edit_extra, create_skanyreport
 
@@ -204,3 +204,8 @@ class GetOperationVideoInfo(ListAPIView):
 
     def get_queryset(self):
         return SkanyReport.objects.exclude(start_time__isnull=True)
+
+
+class GetReportByID(RetrieveAPIView):
+    queryset = Report.objects.all()
+    serializer_class = ReportByIDSerializer

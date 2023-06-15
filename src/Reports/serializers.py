@@ -38,3 +38,9 @@ class OperationReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = SkanyReport
         fields = ["id", "operationID", "camera_ip", "startTime", "endTime"]
+
+
+class ReportByIDSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Report
+        fields = '__all__'

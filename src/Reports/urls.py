@@ -6,6 +6,7 @@ from src.Reports.views import (
     ActionViewSet,
     SearchReportListView,
     GetOperationVideoInfo,
+    GetReportByID,
 )
 
 
@@ -15,6 +16,7 @@ router_report.register(r"all_reports", ActionViewSet, basename="reports")
 
 urlpatterns = [
     path("report-with-photos/", ActionsWithPhotos.as_view()),
+    path('reports/<int:pk>/', GetReportByID.as_view(), name='get-report-by-id'),
     path(
         "search/<str:algorithm_name>/<str:camera_ip>/<str:date>/<str:start_time>/<str:end_time>/",
         ReportListView.as_view(),
