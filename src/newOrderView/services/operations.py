@@ -61,7 +61,9 @@ class OperationServices:
                 from_date_dt: datetime = from_date_dt + timedelta(microseconds=1)
 
                 to_date_dt: datetime = datetime.strptime(to_date, "%Y-%m-%d")
-                to_date_dt: datetime = to_date_dt + timedelta(days=1) - timedelta(microseconds=1)
+                to_date_dt: datetime = (
+                    to_date_dt + timedelta(days=1) - timedelta(microseconds=1)
+                )
 
                 params.extend([from_date_dt, to_date_dt])
 
@@ -124,16 +126,24 @@ class OperationServices:
 
             # Machine Control
 
-            zone_cameras_ids: Iterable[int] = ZoneCameras.objects.filter(index_workplace=operation_id).values_list('id', flat=True)
-            zone_cameras_ids: List[int] = [JSONField().to_python(id) for id in zone_cameras_ids]
+            zone_cameras_ids: Iterable[int] = ZoneCameras.objects.filter(
+                index_workplace=operation_id
+            ).values_list("id", flat=True)
+            zone_cameras_ids: List[int] = [
+                JSONField().to_python(id) for id in zone_cameras_ids
+            ]
 
             reports_with_matching_zona_id: Iterable[QuerySet] = Report.objects.filter(
-                Q(algorithm=3) & Q(extra__has_key="zoneId") & Q(extra__zoneId__in=zone_cameras_ids)
+                Q(algorithm=3)
+                & Q(extra__has_key="zoneId")
+                & Q(extra__zoneId__in=zone_cameras_ids)
             )
 
             machine_reports: List[Dict[str, Any]] = []
 
-            logger.warning(f"reports_with_matching_zona_id - {reports_with_matching_zona_id}")
+            logger.warning(
+                f"reports_with_matching_zona_id - {reports_with_matching_zona_id}"
+            )
 
             for report in reports_with_matching_zona_id:
                 zone_data: Dict[int, str] = report.extra
@@ -144,28 +154,32 @@ class OperationServices:
                 start_tracking: str = report.start_tracking
                 stop_tracking: str = report.stop_tracking
 
-                sTime: int = int(
-                    datetime.strptime(
-                        start_tracking, "%Y-%m-%d %H:%M:%S.%f"
-                    ).timestamp()
-                )
-                eTime: int = int(
-                    datetime.strptime(stop_tracking, "%Y-%m-%d %H:%M:%S.%f").timestamp()
-                )
+                # sTime: int = int(
+                #     datetime.strptime(
+                #         start_tracking, "%Y-%m-%d %H:%M:%S.%f"
+                #     ).timestamp()
+                # )
+                # eTime: int = int(
+                #     datetime.strptime(stop_tracking, "%Y-%m-%d %H:%M:%S.%f").timestamp()
+                # )
 
                 report_data: Dict[str, Any] = {
                     "zoneId": machine_control_report_id,
                     "orId": zone_name,
-                    "sTime": sTime * 1000,
-                    "eTime": eTime * 1000,
+                    "sTime": start_tracking,
+                    "eTime": stop_tracking,
                 }
 
                 machine_reports.append(report_data)
 
+            machine_reports_inverted: List[
+                Dict[str, Any]
+            ] = OperationServices._invert_machine_control_reports(machine_reports)
+
             machine_result = {
                 "oprTypeID": zone_id,
                 "oprName": zone_name,
-                "oprs": machine_reports
+                "oprs": machine_reports_inverted,
             }
 
             result_list.append(machine_result)
@@ -204,3 +218,51 @@ class OperationServices:
             result_list.append(order)
 
         return result_list
+
+    @staticmethod
+    def _invert_machine_control_reports(
+        machine_reports: List[Dict[str, Any]]
+    ) -> List[Dict[str, Any]]:
+        result: List[Dict[str, Any]] = []
+
+        machine_reports_sorted = sorted(machine_reports, key=lambda x: x["sTime"])
+        reports_by_day: Dict[str, List[Dict[str, Any]]] = {}
+
+        for report in machine_reports_sorted:
+            date = report["sTime"].split()[0]
+            if date not in reports_by_day:
+                reports_by_day[date] = []
+            reports_by_day[date].append(report)
+
+        for reports in reports_by_day.values():
+            start_time = datetime.datetime.strptime(reports[0]["sTime"].split()[0] + " 06:00:00.000000", "%Y-%m-%d %H:%M:%S.%f")
+            end_time = datetime.datetime.strptime(reports[0]["sTime"].split()[0] + " 20:00:00.000000", "%Y-%m-%d %H:%M:%S.%f")
+
+            if start_time < datetime.datetime.strptime(reports[0]["sTime"], "%Y-%m-%d %H:%M:%S"):
+                interval = {
+                    "zoneId": reports[0]["zoneId"],
+                    "orId": reports[0]["orId"],
+                    "sTime": int(start_time.timestamp()),
+                    "eTime": int(datetime.strptime(reports[0]["sTime"], "%Y-%m-%d %H:%M:%S").timestamp()),
+                }
+                result.append(interval)
+
+            for i in range(len(reports) - 1):
+                interval = {
+                    "zoneId": reports[i]["zoneId"],
+                    "orId": reports[i]["orId"],
+                    "sTime": int(datetime.strptime(reports[i]["eTime"], "%Y-%m-%d %H:%M:%S").timestamp()),
+                    "eTime": int(datetime.strptime(reports[i + 1]["sTime"], "%Y-%m-%d %H:%M:%S").timestamp()),
+                }
+                result.append(interval)
+
+            if end_time > datetime.strptime(reports[-1]["eTime"], "%Y-%m-%d %H:%M:%S.%f"):
+                interval = {
+                    "zoneId": reports[-1]["zoneId"],
+                    "orId": reports[-1]["orId"],
+                    "sTime": int(datetime.strptime(reports[-1]["eTime"], "%Y-%m-%d %H:%M:%S").timestamp()),
+                    "eTime": int(end_time.timestamp()),
+                }
+                result.append(interval)
+        
+        return result
