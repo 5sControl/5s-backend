@@ -134,7 +134,7 @@ class OrderServices:
                 Q(algorithm=3) & Q(extra__has_key="zoneId") & Q(extra__zoneId__in=zone_cameras_ids)
             )
 
-            reports: List[Dict[str, Any]] = []
+            machine_reports: List[Dict[str, Any]] = []
 
             logger.warning(f"reports_with_matching_zona_id - {reports_with_matching_zona_id}")
 
@@ -157,18 +157,18 @@ class OrderServices:
                 )
 
                 report_data: Dict[str, Any] = {
-                    "id": machine_control_report_id,
+                    "zoneId": machine_control_report_id,
                     "orId": zone_name,
                     "sTime": sTime * 1000,
                     "eTime": eTime * 1000,
                 }
 
-                reports.append(report_data)
+                machine_reports.append(report_data)
 
             machine_result = {
                 "oprTypeID": zone_id,
                 "oprName": zone_name,
-                "oprs": reports
+                "oprs": machine_reports
             }
 
             result_list.append(machine_result)
