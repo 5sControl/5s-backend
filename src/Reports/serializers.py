@@ -40,7 +40,7 @@ class OperationReportSerializer(serializers.ModelSerializer):
         fields = ["id", "operationID", "camera_ip", "startTime", "endTime"]
 
 
-class ReportSerializer(serializers.ModelSerializer):
+class ReportByIDSerializer(serializers.ModelSerializer):
     algorithm = AlgorithmSerializer()
     camera = serializers.StringRelatedField()
 
