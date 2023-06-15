@@ -131,7 +131,7 @@ class OrderServices:
             zone_cameras_ids: List[int] = [JSONField().to_python(id) for id in zone_cameras_ids]
 
             reports_with_matching_zona_id: Iterable[QuerySet] = Report.objects.filter(
-                Q(algorithm=3) & Q(extra__has_key="zoneId") & Q(extra__zonaID__in=zone_cameras_ids)
+                Q(algorithm=3) & Q(extra__has_key="zoneId") & Q(extra__zoneId__in=zone_cameras_ids)
             )
 
             reports: List[Dict[str, Any]] = []
