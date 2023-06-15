@@ -6,11 +6,11 @@ SERVER_URL = os.environ.get("SERVER_URL")
 if not SERVER_URL:
     SERVER_URL = config("SERVER_URL")
 
-PRODUCTION = os.environ.get("PRODUCTION")
-if PRODUCTION is not None and PRODUCTION.lower() == "true":
-    PRODUCTION = True
+EMULATE_DB = os.environ.get("EMULATE_DB")
+if EMULATE_DB is not None and EMULATE_DB.lower() == "true":
+    EMULATE_DB = True
 else:
-    PRODUCTION = False
+    EMULATE_DB = False
 
 safety_control_ear_protection_description = """
 Designed to ensure that the workers in a particular area are wearing ear protection to safeguard their hearing.
