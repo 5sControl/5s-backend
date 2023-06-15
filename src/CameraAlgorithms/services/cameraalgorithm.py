@@ -126,7 +126,7 @@ def create_camera_algorithms(
         zones: List[Optional[Dict[str, Any]]] = []
 
         areas = []
-        stelag = []
+        all_zones = []
 
         if algorithm_obj.name == "min_max_control":
             algorithm_items = Items.objects.filter(camera=camera_obj.id)
@@ -140,13 +140,13 @@ def create_camera_algorithms(
             for zone_id in zones:
                 zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
 
-                stelag.append(
+                all_zones.append(
                     {"zoneId": zone_camera.id, "zoneName": zone_camera.name, "coords": zone_camera.coords}
                 )
 
             new_data = {
                 "areas": areas,
-                "zones": stelag
+                "zones": all_zones
             }
 
             data.append(new_data)
