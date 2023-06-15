@@ -100,7 +100,6 @@ class OrderServices:
                 startTime_dt: datetime = convert_to_gmt0(startTime_dt)
                 startTime_unix: int = convert_to_unix(startTime_dt)
 
-                
                 operation["sTime"] = startTime_unix
 
                 if endTime is not None:
@@ -125,28 +124,26 @@ class OrderServices:
                     operation["eTime"] = endTime_unix
 
                 operations_list.append(operation)
-                
+
             # Machine Control
 
             zone_cameras_ids: Iterable[int] = ZoneCameras.objects.filter(index_workplace=operation_id).values_list('id', flat=True)
             zone_cameras_ids: List[int] = [JSONField().to_python(id) for id in zone_cameras_ids]
-            zone_cameras_names: Dict[int, str] = dict(
-                ZoneCameras.objects.filter(index_workplace=operation_id).values_list('id', 'name')
-            )
 
             reports_with_matching_zona_id: Iterable[QuerySet] = Report.objects.filter(
-                Q(algorithm=3) & Q(extra__has_key="zonaID") & Q(extra__zonaID__in=zone_cameras_ids)
+                Q(algorithm=3) & Q(extra__has_key="zoneId") & Q(extra__zonaID__in=zone_cameras_ids)
             )
 
             reports: List[Dict[str, Any]] = []
 
-            logger.warning(f"zone_cameras_names - {zone_cameras_names}, reports_with_matching_zona_id - {reports_with_matching_zona_id}")
+            logger.warning(f"reports_with_matching_zona_id - {reports_with_matching_zona_id}")
 
             for report in reports_with_matching_zona_id:
                 zone_data: Dict[int, str] = report.extra
-                zone_id: int = zone_data["zonaID"]
+                zone_id: int = zone_data["zoneId"]
+                zone_name: str = zone_data["zoneName"]
+
                 machine_control_report_id: int = report.id
-                zone_name: str = zone_cameras_names[zone_id]
                 start_tracking: str = report.start_tracking
                 stop_tracking: str = report.stop_tracking
 
@@ -168,7 +165,7 @@ class OrderServices:
 
                 reports.append(report_data)
 
-                # machine control reports
+                # Machine control reports
                 result = {
                     "oprTypeID": zone_id,
                     "oprName": zone_name,
@@ -177,7 +174,7 @@ class OrderServices:
 
                 result_list.append(result)
 
-            # operation 
+            # operation skans
             result = {
                 "oprTypeID": operation_id,
                 "oprName": operation_name,
