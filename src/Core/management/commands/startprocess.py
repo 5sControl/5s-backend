@@ -31,10 +31,8 @@ class Command(BaseCommand):
             camera_obj: Camera = camera_algorithm.camera
             algorithm_obj: CameraAlgorithm = camera_algorithm.algorithm
             rtsp_link: str = camera_rtsp_link(camera_obj.id)
-
             if camera_algorithm.algorithm.name == "min_max_control":
                 algorithm_items = Items.objects.filter(camera=camera_obj)
-                print("algorithm_items", algorithm_items)
                 areas = []
                 stelag = []
 
@@ -43,7 +41,7 @@ class Command(BaseCommand):
                         {"itemId": item.id, "itemName": item.name, "coords": item.coords}
                     )
 
-                all_zones = camera_obj.zones
+                all_zones = camera_algorithm.zones
 
                 for zone_id in all_zones:
                     zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
@@ -56,7 +54,6 @@ class Command(BaseCommand):
                     "areas": areas,
                     "zones": stelag
                 }
-                print("New data", new_data)
                 extra_params.append(new_data)
 
             request: Dict[str, Any] = {
@@ -65,7 +62,6 @@ class Command(BaseCommand):
                 "server_url": SERVER_URL,
                 "extra": extra_params,
             }
-            print("request", request)
 
             try:
                 result = send_run_request(request)
@@ -77,6 +73,6 @@ class Command(BaseCommand):
                 )
             else:
                 new_process_id = result["pid"]
-
+                #
                 camera_algorithm.process_id = new_process_id
                 camera_algorithm.save()
