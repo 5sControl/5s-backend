@@ -3,9 +3,11 @@ from typing import Dict, Any
 
 from django.core.management.base import BaseCommand
 
+from src.Core.const import SERVER_URL
 from src.Core.exceptions import SenderError, InvalidResponseError
 from src.Inventory.models import Items
 
+from src.CameraAlgorithms.models.camera import ZoneCameras
 from src.CameraAlgorithms.models import Camera, CameraAlgorithm
 from src.CameraAlgorithms.services.cameraalgorithm import (
     camera_rtsp_link,
@@ -30,23 +32,52 @@ class Command(BaseCommand):
             algorithm_obj: CameraAlgorithm = camera_algorithm.algorithm
             rtsp_link: str = camera_rtsp_link(camera_obj.id)
 
-            if camera_algorithm.algorithm.name == "min_max_control":
-                algorithm_items = Items.objects.filter(camera=camera_obj)
-
-                for item in algorithm_items:
-                    extra_params.append(
-                        {
-                            "itemId": item.id,
-                            "coords": item.coords,
-                            "itemName": item.name,
-                        }
-                    )
-
             request: Dict[str, Any] = {
                 "camera_url": rtsp_link,
                 "algorithm": algorithm_obj.name,
+                "server_url": SERVER_URL,
                 "extra": extra_params,
             }
+
+            if camera_algorithm.algorithm.name == "machine_control":
+                all_zones = camera_algorithm.zones
+                cords = []
+                for zone_id in all_zones:
+                    zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
+                    coords = zone_camera.coords
+                    coords[0]["zoneId"] = zone_camera.id
+                    coords[0]["zoneName"] = "zone " + str(zone_camera.name)
+
+                    new_object = {"coords": coords}
+
+                    cords.append(new_object)
+
+                extra_params.append({"coords": coords})
+
+            if camera_algorithm.algorithm.name == "min_max_control":
+                algorithm_items = Items.objects.filter(camera=camera_obj)
+                areas = []
+                stelag = []
+
+                for item in algorithm_items:
+                    areas.append(
+                        {"itemId": item.id, "itemName": item.name, "coords": item.coords}
+                    )
+
+                all_zones = camera_algorithm.zones
+
+                for zone_id in all_zones:
+                    zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
+
+                    stelag.append(
+                        {"zoneId": zone_camera.id, "zoneName": zone_camera.name, "coords": zone_camera.coords}
+                    )
+
+                new_data = {
+                    "areas": areas,
+                    "zones": stelag
+                }
+                extra_params.append(new_data)
 
             try:
                 result = send_run_request(request)
@@ -58,6 +89,5 @@ class Command(BaseCommand):
                 )
             else:
                 new_process_id = result["pid"]
-
                 camera_algorithm.process_id = new_process_id
                 camera_algorithm.save()

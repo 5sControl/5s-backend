@@ -38,3 +38,21 @@ class OperationReportSerializer(serializers.ModelSerializer):
     class Meta:
         model = SkanyReport
         fields = ["id", "operationID", "camera_ip", "startTime", "endTime"]
+
+
+class ReportByIDSerializer(serializers.ModelSerializer):
+    algorithm = AlgorithmSerializer()
+    camera = serializers.StringRelatedField()
+
+    class Meta:
+        model = Report
+        fields = [
+            "id",
+            "start_tracking",
+            "stop_tracking",
+            "violation_found",
+            "extra",
+            "status",
+            "algorithm",
+            "camera",
+        ]
