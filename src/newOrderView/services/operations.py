@@ -141,10 +141,8 @@ class OperationServices:
 
             machine_reports: List[Dict[str, Any]] = []
 
-            logger.warning(
-                f"reports_with_matching_zona_id - {reports_with_matching_zona_id}"
-            )
-
+            print(f"reports_with_matching_zona_id - {reports_with_matching_zona_id}")
+            print(zone_cameras_ids)
             for report in reports_with_matching_zona_id:
                 zone_data: Dict[int, str] = report.extra
                 zone_id: int = zone_data["zoneId"]
@@ -153,15 +151,6 @@ class OperationServices:
                 machine_control_report_id: int = report.id
                 start_tracking: str = report.start_tracking
                 stop_tracking: str = report.stop_tracking
-
-                # sTime: int = int(
-                #     datetime.strptime(
-                #         start_tracking, "%Y-%m-%d %H:%M:%S.%f"
-                #     ).timestamp()
-                # )
-                # eTime: int = int(
-                #     datetime.strptime(stop_tracking, "%Y-%m-%d %H:%M:%S.%f").timestamp()
-                # )
 
                 report_data: Dict[str, Any] = {
                     "zoneId": machine_control_report_id,
