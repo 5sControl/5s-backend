@@ -179,6 +179,21 @@ class OperationServices:
                     }
                     machine_reports.append(evening_report)
 
+                # Exclude the time period covered by the report from the daily range
+                if sTime < day_end.timestamp() and eTime > day_start.timestamp():
+                    day_start = max(day_start, datetime.fromtimestamp(eTime))
+                    day_end = min(day_end, datetime.fromtimestamp(sTime))
+
+                # Check if there is still a valid time range after excluding the report
+                if day_start < day_end:
+                    daytime_report = {
+                        "zoneId": machine_control_report_id,
+                        "orId": zone_name,
+                        "sTime": int(day_start.timestamp()) * 1000,
+                        "eTime": int(day_end.timestamp()) * 1000,
+                    }
+                    machine_reports.append(daytime_report)
+
             machine_result = {
                 "oprTypeID": zone_id,
                 "oprName": zone_name,

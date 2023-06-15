@@ -71,7 +71,7 @@ class ActionsWithPhotos(APIView):
                 extra = process_item_status(data.get("extra"))
 
             elif algorithm_name == "operation_control":
-                if not EMULATE_DB:
+                if EMULATE_DB:
                     if "extra" in data:
                         for data in data["extra"]:
                             if "place" in data:
