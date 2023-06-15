@@ -34,7 +34,7 @@ class Command(BaseCommand):
 
             if camera_algorithm.algorithm.name == "min_max_control":
                 algorithm_items = Items.objects.filter(camera=camera_obj)
-
+                print("algorithm_items", algorithm_items)
                 areas = []
                 stelag = []
 
