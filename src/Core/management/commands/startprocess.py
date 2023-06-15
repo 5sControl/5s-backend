@@ -72,7 +72,7 @@ class Command(BaseCommand):
                     f"Yolo can't start algorithm {algorithm_obj.name} on camera {camera_obj.id}. Details: {e}"
                 )
             else:
+                pass
                 new_process_id = result["pid"]
-                #
                 camera_algorithm.process_id = new_process_id
                 camera_algorithm.save()
