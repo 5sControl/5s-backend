@@ -243,7 +243,7 @@ class OperationServices:
                     "zoneId": reports[0]["zoneId"],
                     "orId": reports[0]["orId"],
                     "sTime": int(start_time.timestamp()),
-                    "eTime": int(datetime.strptime(reports[0]["sTime"], "%Y-%m-%d %H:%M:%S.%f").timestamp()),
+                    "eTime": int(datetime.strptime(reports[0]["sTime"], "%Y-%m-%d %H:%M:%S.%f").timestamp()) * 1000,
                 }
                 result.append(interval)
 
@@ -251,8 +251,8 @@ class OperationServices:
                 interval = {
                     "zoneId": reports[i]["zoneId"],
                     "orId": reports[i]["orId"],
-                    "sTime": int(datetime.strptime(reports[i]["eTime"], "%Y-%m-%d %H:%M:%S.%f").timestamp()),
-                    "eTime": int(datetime.strptime(reports[i + 1]["sTime"], "%Y-%m-%d %H:%M:%S.%f").timestamp()),
+                    "sTime": int(datetime.strptime(reports[i]["eTime"], "%Y-%m-%d %H:%M:%S.%f").timestamp()) * 1000,
+                    "eTime": int(datetime.strptime(reports[i + 1]["sTime"], "%Y-%m-%d %H:%M:%S.%f").timestamp()) * 1000,
                 }
                 result.append(interval)
 
@@ -260,8 +260,8 @@ class OperationServices:
                 interval = {
                     "zoneId": reports[-1]["zoneId"],
                     "orId": reports[-1]["orId"],
-                    "sTime": int(datetime.strptime(reports[-1]["eTime"], "%Y-%m-%d %H:%M:%S.%f").timestamp()),
-                    "eTime": int(end_time.timestamp()),
+                    "sTime": int(datetime.strptime(reports[-1]["eTime"], "%Y-%m-%d %H:%M:%S.%f").timestamp()) * 1000,
+                    "eTime": int(end_time.timestamp()) * 1000,
                 }
                 result.append(interval)
         
