@@ -235,10 +235,10 @@ class OperationServices:
             reports_by_day[date].append(report)
 
         for reports in reports_by_day.values():
-            start_time = datetime.datetime.strptime(reports[0]["sTime"].split()[0] + " 06:00:00.000000", "%Y-%m-%d %H:%M:%S.%f")
-            end_time = datetime.datetime.strptime(reports[0]["sTime"].split()[0] + " 20:00:00.000000", "%Y-%m-%d %H:%M:%S.%f")
+            start_time = datetime.strptime(reports[0]["sTime"].split()[0] + " 06:00:00.000000", "%Y-%m-%d %H:%M:%S.%f")
+            end_time = datetime.strptime(reports[0]["sTime"].split()[0] + " 20:00:00.000000", "%Y-%m-%d %H:%M:%S.%f")
 
-            if start_time < datetime.datetime.strptime(reports[0]["sTime"], "%Y-%m-%d %H:%M:%S"):
+            if start_time < datetime.strptime(reports[0]["sTime"], "%Y-%m-%d %H:%M:%S"):
                 interval = {
                     "zoneId": reports[0]["zoneId"],
                     "orId": reports[0]["orId"],
