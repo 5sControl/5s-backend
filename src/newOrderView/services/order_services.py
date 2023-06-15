@@ -165,23 +165,21 @@ class OrderServices:
 
                 reports.append(report_data)
 
-                # Machine control reports
-                result = {
-                    "oprTypeID": zone_id,
-                    "oprName": zone_name,
-                    "oprs": reports
-                }
+            machine_result = {
+                "oprTypeID": zone_id,
+                "oprName": zone_name,
+                "oprs": reports
+            }
 
-                result_list.append(result)
+            result_list.append(machine_result)
 
-            # operation skans
-            result = {
+            operation_result = {
                 "oprTypeID": operation_id,
                 "oprName": operation_name,
                 "oprs": operations_list,
             }
 
-            result_list.append(result)
+            result_list.append(operation_result)
         return result_list
 
     @staticmethod
