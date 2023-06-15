@@ -242,7 +242,7 @@ class OperationServices:
                 interval = {
                     "zoneId": reports[0]["zoneId"],
                     "orId": reports[0]["orId"],
-                    "sTime": int(start_time.timestamp()),
+                    "sTime": int(start_time.timestamp()) * 1000,
                     "eTime": int(datetime.strptime(reports[0]["sTime"], "%Y-%m-%d %H:%M:%S.%f").timestamp()) * 1000,
                 }
                 result.append(interval)
