@@ -153,46 +153,14 @@ class OperationServices:
                     datetime.strptime(stop_tracking, "%Y-%m-%d %H:%M:%S.%f").timestamp()
                 )
 
-                day_start = datetime.strptime(start_tracking, "%Y-%m-%d %H:%M:%S.%f")
-                day_start = day_start.replace(hour=6, minute=0, second=0, microsecond=0)
+                report_data: Dict[str, Any] = {
+                    "zoneId": machine_control_report_id,
+                    "orId": zone_name,
+                    "sTime": sTime * 1000,
+                    "eTime": eTime * 1000,
+                }
 
-                day_end = datetime.strptime(stop_tracking, "%Y-%m-%d %H:%M:%S.%f")
-                day_end = day_end.replace(hour=20, minute=0, second=0, microsecond=0)
-
-                # Check if sTime is after the day start, and if so, add a report for the period between day start and sTime
-                if sTime > day_start.timestamp():
-                    morning_report = {
-                        "zoneId": machine_control_report_id,
-                        "orId": zone_name,
-                        "sTime": int(day_start.timestamp()) * 1000,
-                        "eTime": sTime * 1000,
-                    }
-                    machine_reports.append(morning_report)
-
-                # Check if eTime is before the day end, and if so, add a report for the period between eTime and day end
-                if eTime < day_end.timestamp():
-                    evening_report = {
-                        "zoneId": machine_control_report_id,
-                        "orId": zone_name,
-                        "sTime": eTime * 1000,
-                        "eTime": int(day_end.timestamp()) * 1000,
-                    }
-                    machine_reports.append(evening_report)
-
-                # Exclude the time period covered by the report from the daily range
-                if sTime < day_end.timestamp() and eTime > day_start.timestamp():
-                    day_start = max(day_start, datetime.fromtimestamp(eTime))
-                    day_end = min(day_end, datetime.fromtimestamp(sTime))
-
-                # Check if there is still a valid time range after excluding the report
-                if day_start < day_end:
-                    daytime_report = {
-                        "zoneId": machine_control_report_id,
-                        "orId": zone_name,
-                        "sTime": int(day_start.timestamp()) * 1000,
-                        "eTime": int(day_end.timestamp()) * 1000,
-                    }
-                    machine_reports.append(daytime_report)
+                machine_reports.append(report_data)
 
             machine_result = {
                 "oprTypeID": zone_id,
