@@ -19,12 +19,15 @@ from src.ImageReport.models import Image
 from src.CameraAlgorithms.models import Camera
 from src.CameraAlgorithms.models import Algorithm
 from src.Reports.models import Report, SkanyReport
-from src.Reports.serializers import ReportSerializers, OperationReportSerializer, ReportByIDSerializer
+from src.Reports.serializers import (
+    ReportSerializers,
+    OperationReportSerializer,
+    ReportByIDSerializer,
+)
 from src.Inventory.service import process_item_status
 from src.Reports.service import edit_extra, create_skanyreport
 
 logger = logging.getLogger(__name__)
-
 
 
 class ActionViewSet(viewsets.ModelViewSet):
@@ -56,7 +59,7 @@ class ActionsWithPhotos(APIView):
 
             algorithm = Algorithm.objects.get(name=algorithm_name)
             camera = Camera.objects.get(id=camera_ip)
-            
+
             start_tracking = data.get("start_tracking")
             stop_tracking = data.get("stop_tracking")
 
@@ -69,15 +72,22 @@ class ActionsWithPhotos(APIView):
 
             elif algorithm_name == "operation_control":
                 if not PRODUCTION:
-                    if 'extra' in data:
-                        for data in data['extra']:
-                            if 'place' in data:
-                                logger.warning(f"Operation control extra data is {data}")
-                                requests.post(f"{SERVER_URL}:9876/skany/create/", json=data['extra'][0])
+                    if "extra" in data:
+                        for data in data["extra"]:
+                            if "place" in data:
+                                logger.warning(
+                                    f"Operation control extra data is {data}"
+                                )
+                                requests.post(
+                                    f"{SERVER_URL}:9876/skany/create/",
+                                    json=data["extra"][0],
+                                )
                                 break
                         else:
                             logger.warning(f"Operation control extra data is {data}")
-                            requests.post(f"{SERVER_URL}:9876/operation-control/", json=data)
+                            requests.post(
+                                f"{SERVER_URL}:9876/operation-control/", json=data
+                            )
                 extra = edit_extra(data.get("extra"), camera)
             else:
                 extra = data.get("extra")
@@ -97,11 +107,7 @@ class ActionsWithPhotos(APIView):
 
         if algorithm_name == "operation_control":
             create_skanyreport(
-                action,
-                extra,
-                not violation_found,
-                start_tracking,
-                stop_tracking
+                action, extra, not violation_found, start_tracking, stop_tracking
             )
 
         if photos:
@@ -148,7 +154,9 @@ class ReportListView(APIView):
         if camera_ip:
             queryset = queryset.filter(camera__id=camera_ip)
         if algorithm_name:
-            queryset = queryset.exclude(algorithm__name='min_max_control').filter(algorithm__name=algorithm_name)
+            queryset = queryset.exclude(algorithm__name="min_max_control").filter(
+                algorithm__name=algorithm_name
+            )
 
         queryset = queryset.order_by("algorithm__name", "camera__id", "id")
 
@@ -185,7 +193,7 @@ class SearchReportListView(GenericAPIView):
                 algorithm_filters |= Q(algorithm__name=algorithm_name)
             queryset = queryset.filter(algorithm_filters)
 
-        queryset = queryset.exclude(algorithm__name='min_max_control')
+        queryset = queryset.exclude(algorithm__name="min_max_control")
 
         queryset = queryset.order_by("-id")
 

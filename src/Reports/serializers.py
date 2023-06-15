@@ -40,7 +40,19 @@ class OperationReportSerializer(serializers.ModelSerializer):
         fields = ["id", "operationID", "camera_ip", "startTime", "endTime"]
 
 
-class ReportByIDSerializer(serializers.ModelSerializer):
+class ReportSerializer(serializers.ModelSerializer):
+    algorithm = AlgorithmSerializer()
+    camera = serializers.StringRelatedField()
+
     class Meta:
         model = Report
-        fields = '__all__'
+        fields = [
+            "id",
+            "start_tracking",
+            "stop_tracking",
+            "violation_found",
+            "extra",
+            "status",
+            "algorithm",
+            "camera",
+        ]
