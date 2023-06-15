@@ -21,7 +21,7 @@ def process_item_status(data):
         data_item = Items.objects.filter(id=item_data['itemId']).values('current_stock_level', 'low_stock_level',
                                                                         'status', 'multi_row')
         min_item = data_item[0]['low_stock_level']
-        image_path = item_data['image']
+        image_path = item_data['image_item']
         level_previous_status = data_item[0]['status']
         item = Items.objects.filter(id=item_data['itemId']).first()
         if data_item[0]['multi_row']:
