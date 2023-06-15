@@ -123,6 +123,8 @@ class OperationServices:
                     operation["eTime"] = endTime_unix
 
                 operations_list.append(operation)
+                
+            print("machine control")
 
             # Machine Control
 
@@ -143,6 +145,7 @@ class OperationServices:
 
             print(f"reports_with_matching_zona_id - {reports_with_matching_zona_id}")
             print(zone_cameras_ids)
+
             for report in reports_with_matching_zona_id:
                 zone_data: Dict[int, str] = report.extra
                 zone_id: int = zone_data["zoneId"]
@@ -170,6 +173,8 @@ class OperationServices:
                 "oprName": zone_name,
                 "oprs": machine_reports_inverted,
             }
+            
+            print(machine_result)
 
             result_list.append(machine_result)
 
