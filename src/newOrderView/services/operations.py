@@ -166,46 +166,51 @@ class OperationServices:
             from_date_obj = datetime.strptime(from_date, "%Y-%m-%d")
             to_date_obj = datetime.strptime(to_date, "%Y-%m-%d")
 
-            reports_with_matching_zona_id: Iterable[QuerySet] = Report.objects.filter(
-                Q(algorithm=3)
-                & Q(extra__has_key="zoneId")
-                & Q(extra__zoneId__in=zone_cameras_ids)
-                & Q(start_tracking__gte=from_date_obj)
-                & Q(stop_tracking__lte=to_date_obj)
+            reports_with_matching_zona_id: Iterable[QuerySet[Report]] = Report.objects.filter(
+                Q(algorithm=3) & Q(extra__has_key="zoneId")
             )
-
-            if not reports_with_matching_zona_id:
-                continue
             print(reports_with_matching_zona_id)
 
-            macnine_control_reports: List[Dict[str, Any]] = []
+            for zone_camera_id in zone_cameras_ids:
+                zone_reports: Iterable[QuerySet[Report]] = reports_with_matching_zona_id.filter(
+                    Q(extra__zoneId__exact=zone_camera_id)
+                    & Q(start_tracking__gte=from_date_obj)
+                    & Q(stop_tracking__lte=to_date_obj)
+                )
+                print(zone_camera_id)
+                print(zone_reports)
+                if not reports_with_matching_zona_id:
+                    continue
+                reports: List[Dict[str, Any]] = []
 
-            for report in reports_with_matching_zona_id:
-                zone_data: Dict[int, str] = report.extra
-                machine_control_report_id: int = report.id
-                camera_ip: str = report.camera.id
+                for report in zone_reports:
+                    zone_data: Dict[str, Any] = report.extra
+                    camera_ip: str = report.camera.id
 
-                zone_id: int = zone_data["zoneId"]
-                zone_name: str = zone_data["zoneName"]
+                    # zone_id: int = zone_data["zoneId"]
+                    zone_name: str = zone_data["zoneName"]
 
-                sTime: str = convert_to_unix(datetime.strptime(report.start_tracking, "%Y-%m-%d %H:%M:%S.%f"))
-                eTime: str = convert_to_unix(datetime.strptime(report.stop_tracking, "%Y-%m-%d %H:%M:%S.%f"))
+                    machine_control_report_id: int = report.id
 
-                report_data: Dict[str, Any] = {
-                    "zoneId": machine_control_report_id,  # Machine control report from dashboard
-                    "orId": zone_name,  # Zone name
-                    "camera": camera_ip,
-                    "sTime": sTime,
-                    "eTime": eTime,
-                }
+                    sTime: str = convert_to_unix(datetime.strptime(report.start_tracking, "%Y-%m-%d %H:%M:%S.%f"))
+                    eTime: str = convert_to_unix(datetime.strptime(report.stop_tracking, "%Y-%m-%d %H:%M:%S.%f"))
 
-                result_list.append(report_data)
+                    report_data: Dict[str, Any] = {
+                        "zoneId": machine_control_report_id,  # Machine control report from dashboard
+                        "orId": zone_name,  # Zone name
+                        "camera": camera_ip,
+                        "sTime": sTime,
+                        "eTime": eTime,
+                    }
+
+                    print(report_data)
+                reports.append(report_data)
 
             machine_result: Dict[str, Any] = {
                 "oprTypeID": operation_id,  # Operation id (stanowisko)
                 "inverse": True,
                 "oprName": zone_name,  # Zone name
-                "oprs": macnine_control_reports,
+                "oprs": reports,
             }
 
             result_list.append(machine_result)
