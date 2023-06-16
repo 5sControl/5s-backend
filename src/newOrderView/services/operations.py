@@ -8,6 +8,7 @@ import pyodbc
 from django.db.models import F, Q, ExpressionWrapper, TimeField
 from django.contrib.postgres.fields import JSONField
 from django.db.models.query import QuerySet
+from django.db.models.functions import Extract
 
 from src.CameraAlgorithms.models.camera import ZoneCameras
 from src.MsSqlConnector.connector import connector as connector_service
@@ -185,12 +186,8 @@ class OperationServices:
                     Q(extra__zoneId__exact=zone_camera_id)
                     & Q(start_tracking__gte=from_date_dt)
                     & Q(stop_tracking__lte=to_date_dt)
-                ).annotate(
-                    start_time=ExpressionWrapper(F('start_tracking'), output_field=TimeField()),
-                    stop_time=ExpressionWrapper(F('stop_tracking'), output_field=TimeField()),
-                ).filter(
-                    start_time__gte=time(hour=6),
-                    stop_time__lte=time(hour=20),
+                    & Extract('start_tracking', 'hour__gte') == 6  # Фильтр: не раньше 6 часов
+                    & Extract('stop_tracking', 'hour__lte') == 20  # Фильтр: не после 20 часов
                 )
 
                 if not zone_reports:
