@@ -45,9 +45,9 @@ def create_skanyreport(
     end_gmt = end_utc.astimezone(timezone(timedelta(hours=0)))
     eTime = int(end_gmt.timestamp())
 
-    skany_indeks = report_data[0].get("skany_index")
-    zlecenie = report_data[0].get("zlecenie")
-    execution_date = report_data[0].get("execution_date")
+    skany_indeks = report_data.get("skany_index")
+    zlecenie = report_data.get("zlecenie")
+    execution_date = report_data.get("execution_date")
 
     logger.warning(
         f"Creating Skany Report start_tracking -> {start_tracking} - {sTime}, end_tracking -> {end_tracking} - {eTime}"
