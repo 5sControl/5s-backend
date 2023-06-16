@@ -5,10 +5,10 @@ import pytz
 
 import pyodbc
 
-from django.db.models import F, Q, ExpressionWrapper
-from django.contrib.postgres.fields import JSONField 
+from django.db.models import F, Q
+from django.contrib.postgres.fields import JSONField
 from django.db.models.query import QuerySet
-from django.db.models.functions import Extract, Func, Cast
+from django.db.models.functions import Cast
 from django.db.models.fields import TimeField, IntegerField
 
 
