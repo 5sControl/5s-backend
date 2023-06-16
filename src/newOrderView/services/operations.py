@@ -1,5 +1,5 @@
 from typing import Iterable, List, Any, Optional, Tuple, Dict
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 import logging
 import pytz
 
@@ -185,9 +185,9 @@ class OperationServices:
                     Q(extra__zoneId__exact=zone_camera_id)
                     & Q(start_tracking__gte=from_date_dt)
                     & Q(stop_tracking__lte=to_date_dt)
+                    & Q(start_tracking__time__gte=time(hour=6))
+                    & Q(stop_tracking__time__lte=time(hour=20))
                 )
-                print(f"Zone camera ids {zone_camera_id}")
-                print(f"Zone report {zone_reports}")
 
                 if not zone_reports:
                     continue
@@ -199,7 +199,6 @@ class OperationServices:
                     zone_data: Dict[str, Any] = report.extra
                     camera_ip: str = report.camera.id
 
-                    # zone_id: int = zone_data["zoneId"]
                     zone_name: str = zone_data["zoneName"]
 
                     machine_control_report_id: int = report.id
