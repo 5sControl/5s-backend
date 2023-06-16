@@ -76,7 +76,7 @@ class ActionsWithPhotos(APIView):
                     requests.post(
                         f"{SERVER_URL}:9876/operation-control/", json=data
                     )
-                extra = edit_extra(data.get("extra"), camera)
+                extra = edit_extra(camera)
             else:
                 extra = data.get("extra")
 
