@@ -164,8 +164,6 @@ class OperationServices:
                 continue
 
             if from_date and to_date:
-                operations_query += " AND sk.data >= ? AND sk.data <= ?"
-
                 from_date_dt: datetime = datetime.strptime(from_date, "%Y-%m-%d")
                 from_date_dt: datetime = from_date_dt + timedelta(microseconds=1)
 
