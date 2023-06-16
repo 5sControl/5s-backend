@@ -21,7 +21,7 @@ import requests
 
 
 class LicenseViewSet(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def post(self, request):
         serializer = LicenseSerializer(data=request.data)
@@ -43,7 +43,7 @@ class LicenseViewSet(APIView):
 
 class LicenseInfoView(APIView):
     http_method_names = ["get"]
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request):
         try:
