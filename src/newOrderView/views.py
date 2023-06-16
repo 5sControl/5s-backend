@@ -32,6 +32,24 @@ class GetOperation(generics.GenericAPIView):
         return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
 
 
+class GetMachine(generics.GenericAPIView):
+    @connector_service.check_database_connection
+    def get(self, request):
+        from_date: str = request.GET.get("from")
+        to_date: str = request.GET.get("to")
+
+        key: str = generate_hash("get_machine", from_date, to_date)
+        response = cache.get(key)
+
+        if response is None:
+            response: List[Dict[str, Any]] = OperationServices.get_machine(
+                from_date, to_date
+            )
+            cache.set(key, response, timeout=120)
+
+        return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
+
+
 class GetOrders(generics.GenericAPIView):
     pagination_class = OrderViewPaginnator
 

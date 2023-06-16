@@ -5,6 +5,7 @@ from .views import (
     GetOrders,
     GetOrderByDetail,
     GetWhnetOperation,
+    GetMachine,
 )
 
 urlpatterns = [
@@ -12,6 +13,11 @@ urlpatterns = [
         "operations/",
         GetOperation.as_view(),
         name="get-list-operations",
+    ),
+    path(
+        "machine/",
+        GetMachine.as_view(),
+        name="get-list-machine",
     ),
     path(
         "orders/",
