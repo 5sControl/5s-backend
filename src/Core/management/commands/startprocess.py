@@ -65,13 +65,15 @@ class Command(BaseCommand):
                     )
 
                 all_zones = camera_algorithm.zones
+                try:
+                    for zone_id in all_zones:
+                        zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
 
-                for zone_id in all_zones:
-                    zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
-
-                    zones.append(
-                        {"zoneId": zone_camera.id, "zoneName": zone_camera.name, "coords": zone_camera.coords}
-                    )
+                        zones.append(
+                            {"zoneId": zone_camera.id, "zoneName": zone_camera.name, "coords": zone_camera.coords}
+                        )
+                except Exception as e:
+                    print(e)
 
                 new_data = {
                     "areas": areas,
