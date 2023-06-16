@@ -1,4 +1,4 @@
-from typing import Iterable, List, Any, Tuple, Dict
+from typing import Iterable, List, Any, Optional, Tuple, Dict
 from datetime import datetime, timedelta
 import logging
 import pytz
@@ -174,6 +174,8 @@ class OperationServices:
             if not reports_with_matching_zona_id:
                 continue
 
+            zone_name: Optional[str] = None
+
             for zone_camera_id in zone_cameras_ids:
                 zone_reports: Iterable[QuerySet[Report]] = reports_with_matching_zona_id.filter(
                     Q(extra__zoneId__exact=zone_camera_id)
@@ -214,7 +216,7 @@ class OperationServices:
             machine_result: Dict[str, Any] = {
                 "oprTypeID": operation_id,  # Operation id (stanowisko)
                 "inverse": True,
-                "oprName": zone_name if zone_name else None,  # Zone name
+                "oprName": zone_name,  # Zone name
                 "oprs": reports,
             }
 
