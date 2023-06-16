@@ -61,7 +61,9 @@ class OperationServices:
                 from_date_dt: datetime = from_date_dt + timedelta(microseconds=1)
 
                 to_date_dt: datetime = datetime.strptime(to_date, "%Y-%m-%d")
-                to_date_dt: datetime = to_date_dt + timedelta(days=1) - timedelta(microseconds=1)
+                to_date_dt: datetime = (
+                    to_date_dt + timedelta(days=1) - timedelta(microseconds=1)
+                )
 
                 params.extend([from_date_dt, to_date_dt])
 
@@ -124,16 +126,24 @@ class OperationServices:
 
             # Machine Control
 
-            zone_cameras_ids: Iterable[int] = ZoneCameras.objects.filter(index_workplace=operation_id).values_list('id', flat=True)
-            zone_cameras_ids: List[int] = [JSONField().to_python(id) for id in zone_cameras_ids]
+            zone_cameras_ids: Iterable[int] = ZoneCameras.objects.filter(
+                index_workplace=operation_id
+            ).values_list("id", flat=True)
+            zone_cameras_ids: List[int] = [
+                JSONField().to_python(id) for id in zone_cameras_ids
+            ]
 
             reports_with_matching_zona_id: Iterable[QuerySet] = Report.objects.filter(
-                Q(algorithm=3) & Q(extra__has_key="zoneId") & Q(extra__zoneId__in=zone_cameras_ids)
+                Q(algorithm=3)
+                & Q(extra__has_key="zoneId")
+                & Q(extra__zoneId__in=zone_cameras_ids)
             )
 
-            machine_reports: List[Dict[str, Any]] = []
+            reports: List[Dict[str, Any]] = []
 
-            logger.warning(f"reports_with_matching_zona_id - {reports_with_matching_zona_id}")
+            logger.warning(
+                f"reports_with_matching_zona_id - {reports_with_matching_zona_id}"
+            )
 
             for report in reports_with_matching_zona_id:
                 zone_data: Dict[int, str] = report.extra
@@ -160,12 +170,12 @@ class OperationServices:
                     "eTime": eTime * 1000,
                 }
 
-                machine_reports.append(report_data)
+                reports.append(report_data)
 
             machine_result = {
                 "oprTypeID": zone_id,
                 "oprName": zone_name,
-                "oprs": machine_reports
+                "oprs": reports,
             }
 
             result_list.append(machine_result)

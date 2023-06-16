@@ -41,7 +41,7 @@ class Command(BaseCommand):
 
             if camera_algorithm.algorithm.name == "machine_control":
                 all_zones = camera_algorithm.zones
-                cords = []
+                all_cords = []
                 for zone_id in all_zones:
                     zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
                     coords = zone_camera.coords
@@ -50,9 +50,9 @@ class Command(BaseCommand):
 
                     new_object = {"coords": coords}
 
-                    cords.append(new_object)
+                    all_cords.append(new_object)
 
-                extra_params.append({"coords": coords})
+                extra_params.append({"coords": all_cords})
 
             if camera_algorithm.algorithm.name == "min_max_control":
                 algorithm_items = Items.objects.filter(camera=camera_obj)
