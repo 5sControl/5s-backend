@@ -187,8 +187,8 @@ class OperationServices:
                     & Q(stop_tracking__lte=to_date_dt)
                 ).extra(
                     where=[
-                        "TIME(start_tracking) >= %s",
-                        "TIME(stop_tracking) <= %s",
+                        "CAST(start_tracking AS time) >= %s",
+                        "CAST(stop_tracking AS time) <= %s",
                     ],
                     params=[
                         time(hour=6).strftime("%H:%M:%S"),
