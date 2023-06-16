@@ -72,6 +72,7 @@ class ActionsWithPhotos(APIView):
 
             elif algorithm_name == "operation_control":
                 if EMULATE_DB:
+                    print(f"Operation control data is {data}")
                     if "extra" in data:
                         for data in data["extra"]:
                             if "place" in data:
