@@ -165,31 +165,27 @@ class OperationServices:
                 continue
 
             if from_date and to_date:
-                from_date_dt: datetime = datetime.strptime(from_date, "%Y-%m-%d")
-                from_date_dt: datetime = from_date_dt + timedelta(microseconds=1)
+                from_date_dt = datetime.strptime(from_date, "%Y-%m-%d").date()
+                to_date_dt = datetime.strptime(to_date, "%Y-%m-%d").date()
 
-                to_date_dt: datetime = datetime.strptime(to_date, "%Y-%m-%d")
-                to_date_dt: datetime = (
-                    to_date_dt + timedelta(days=1) - timedelta(microseconds=1)
+                start_time_min = datetime.combine(from_date_dt, time(6, 0))
+                start_time_max = datetime.combine(from_date_dt, time(20, 0))
+                stop_time_min = datetime.combine(to_date_dt, time(6, 0))
+                stop_time_max = datetime.combine(to_date_dt, time(20, 0))
+
+                reports_with_matching_zona_id = Report.objects.filter(
+                    Q(algorithm=3) & Q(extra__has_key="zoneId")
                 )
 
-            reports_with_matching_zona_id: Iterable[QuerySet[Report]] = Report.objects.filter(
-                Q(algorithm=3) & Q(extra__has_key="zoneId")
-            )
+                if not reports_with_matching_zona_id:
+                    continue
 
-            if not reports_with_matching_zona_id:
-                continue
-
-            for zone_camera_id in zone_cameras_ids:
-                zone_reports = reports_with_matching_zona_id.filter(
-                    Q(extra__zoneId__exact=zone_camera_id)
-                    & Q(start_tracking__gte=from_date_dt)
-                    & Q(stop_tracking__lte=to_date_dt)
-                    & Q(start_tracking__hour__gte=6)
-                    & Q(start_tracking__hour__lte=20)
-                    & Q(stop_tracking__hour__gte=6)
-                    & Q(stop_tracking__hour__lte=20)
-                )
+                for zone_camera_id in zone_cameras_ids:
+                    zone_reports = reports_with_matching_zona_id.filter(
+                        Q(extra__zoneId__exact=zone_camera_id)
+                        & Q(start_tracking__gte=start_time_min, start_tracking__lte=start_time_max)
+                        & Q(stop_tracking__gte=stop_time_min, stop_tracking__lte=stop_time_max)
+                    )
 
                 if not zone_reports:
                     continue
