@@ -123,31 +123,34 @@ def started_process(camera):
     algorithm_items = Items.objects.filter(camera=camera)
     data = []
     areas = []
-    stelag = []
+    zones = []
     for item in algorithm_items:
         areas.append(
             {"itemId": item.id, "itemName": item.name, "coords": item.coords}
         )
-
-    camera_algorithm = CameraAlgorithm.objects.get(
-        Q(camera_id=camera) & Q(algorithm__name='min_max_control')
-    )
-
-    for zone_id in camera_algorithm.zones:
-        zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera)
-
-        stelag.append(
-            {"zoneId": zone_camera.id, "zoneName": zone_camera.name, "coords": zone_camera.coords}
+    try:
+        camera_algorithm = CameraAlgorithm.objects.get(
+            Q(camera_id=camera) & Q(algorithm__name='min_max_control')
         )
+
+        for zone_id in camera_algorithm.zones:
+            zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera)
+
+            zones.append(
+                {"zoneId": zone_camera.id, "zoneName": zone_camera.name, "coords": zone_camera.coords}
+            )
+    except:
+        print("NO ZONE")
+
 
     data.append({
         "areas": areas,
-        "zones": stelag
+        "zones": zones
     })
 
     new_data = {
         "camera_url": camera_url,
-        "algorithm": algorithm,
+        "algorithm": algorithm.name,
         "server_url": SERVER_URL,
         "extra": data
     }
