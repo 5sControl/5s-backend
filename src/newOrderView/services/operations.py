@@ -171,16 +171,21 @@ class OperationServices:
             )
             print(reports_with_matching_zona_id)
 
+            if not reports_with_matching_zona_id:
+                continue
+
             for zone_camera_id in zone_cameras_ids:
                 zone_reports: Iterable[QuerySet[Report]] = reports_with_matching_zona_id.filter(
                     Q(extra__zoneId__exact=zone_camera_id)
                     & Q(start_tracking__gte=from_date_obj)
                     & Q(stop_tracking__lte=to_date_obj)
                 )
-                print(zone_camera_id)
-                print(zone_reports)
-                if not reports_with_matching_zona_id:
+                print(f"Zone camera ids {zone_camera_id}")
+                print(f"Zone report {zone_reports}")
+
+                if not zone_reports:
                     continue
+
                 reports: List[Dict[str, Any]] = []
 
                 for report in zone_reports:
@@ -203,13 +208,13 @@ class OperationServices:
                         "eTime": eTime,
                     }
 
-                    print(report_data)
+                    print(f"Report data is {report_data}")
                     reports.append(report_data)
 
             machine_result: Dict[str, Any] = {
                 "oprTypeID": operation_id,  # Operation id (stanowisko)
                 "inverse": True,
-                "oprName": zone_name,  # Zone name
+                "oprName": zone_name if zone_name else None,  # Zone name
                 "oprs": reports,
             }
 
