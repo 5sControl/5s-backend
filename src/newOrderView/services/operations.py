@@ -173,7 +173,6 @@ class OperationServices:
                     report_data: Dict[str, Any] = {
                         "zoneId": machine_control_report_id,
                         "orId": zone_name,
-                        "camera": camera_ip,
                         "sTime": sTime * 1000,
                         "eTime": eTime * 1000,
                     }
@@ -183,6 +182,7 @@ class OperationServices:
                 machine_result: Dict[str, Any] = {
                     "oprTypeID": zone_id,
                     "inverse": True,
+                    "camera": camera_ip,
                     "oprName": zone_name,
                     "oprs": reports,
                 }
