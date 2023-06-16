@@ -163,10 +163,15 @@ class OperationServices:
             if not zone_cameras_ids:
                 continue
 
+            from_date_obj = datetime.strptime(from_date, "%Y-%m-%d")
+            to_date_obj = datetime.strptime(to_date, "%Y-%m-%d")
+
             reports_with_matching_zona_id: Iterable[QuerySet] = Report.objects.filter(
                 Q(algorithm=3)
                 & Q(extra__has_key="zoneId")
                 & Q(extra__zoneId__in=zone_cameras_ids)
+                & Q(start_tracking__gte=from_date_obj)
+                & Q(stop_tracking__lte=to_date_obj)
             )
 
             if not reports_with_matching_zona_id:
