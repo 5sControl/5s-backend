@@ -8,7 +8,7 @@ import pyodbc
 from django.db.models import F, Q, ExpressionWrapper, TimeField
 from django.contrib.postgres.fields import JSONField
 from django.db.models.query import QuerySet
-from django.db.models.functions import Extract
+from django.db.models.functions import Extract, Cast
 
 from src.CameraAlgorithms.models.camera import ZoneCameras
 from src.MsSqlConnector.connector import connector as connector_service
@@ -176,7 +176,6 @@ class OperationServices:
             reports_with_matching_zona_id: Iterable[QuerySet[Report]] = Report.objects.filter(
                 Q(algorithm=3) & Q(extra__has_key="zoneId")
             )
-            print(reports_with_matching_zona_id)
 
             if not reports_with_matching_zona_id:
                 continue
@@ -186,8 +185,8 @@ class OperationServices:
                     Q(extra__zoneId__exact=zone_camera_id)
                     & Q(start_tracking__gte=from_date_dt)
                     & Q(stop_tracking__lte=to_date_dt)
-                    & Extract('start_tracking', 'hour__gte') == 6  # Фильтр: не раньше 6 часов
-                    & Extract('stop_tracking', 'hour__lte') == 20  # Фильтр: не после 20 часов
+                    & Cast(F('start_tracking'), output_field=TimeField()) >= time(hour=6)
+                    & Cast(F('stop_tracking'), output_field=TimeField()) <= time(hour=20)
                 )
 
                 if not zone_reports:
@@ -214,8 +213,6 @@ class OperationServices:
                         "sTime": sTime,
                         "eTime": eTime,
                     }
-
-                    print(f"Report data is {report_data}")
                     reports.append(report_data)
 
                 machine_result: Dict[str, Any] = {
