@@ -10,6 +10,7 @@ from django.contrib.postgres.fields import JSONField
 from django.db.models.query import QuerySet
 from django.db.models.functions import Cast
 from django.db.models.fields import TimeField, IntegerField
+from django.db.models.functions import Func
 
 
 from src.CameraAlgorithms.models.camera import ZoneCameras
