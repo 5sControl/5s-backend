@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.contrib.postgres.fields import JSONField
 from django.db.models.query import QuerySet
 
-from src.CameraAlgorithms.models.camera import ZoneCameras
+from src.CameraAlgorithms.models.camera import Camera, ZoneCameras
 from src.MsSqlConnector.connector import connector as connector_service
 from src.Reports.models import Report
 
@@ -133,60 +133,71 @@ class OperationServices:
                 JSONField().to_python(id) for id in zone_cameras_ids
             ]
 
-            reports_with_matching_zona_id: Iterable[QuerySet] = Report.objects.filter(
-                Q(algorithm=3)
-                & Q(extra__has_key="zoneId")
-                & Q(extra__zoneId__in=zone_cameras_ids)
+            reports_with_matching_zona_id: Iterable[QuerySet[Report]] = Report.objects.filter(
+                Q(algorithm=3) & Q(extra__has_key="zoneId")
             )
 
-            reports: List[Dict[str, Any]] = []
+            print(reports_with_matching_zona_id)
 
-            logger.warning(
-                f"reports_with_matching_zona_id - {reports_with_matching_zona_id}"
-            )
-
-            for report in reports_with_matching_zona_id:
-                zone_data: Dict[int, str] = report.extra
-                zone_id: int = zone_data["zoneId"]
-                zone_name: str = zone_data["zoneName"]
-
-                machine_control_report_id: int = report.id
-                start_tracking: str = report.start_tracking
-                stop_tracking: str = report.stop_tracking
-
-                sTime: int = int(
-                    datetime.strptime(
-                        start_tracking, "%Y-%m-%d %H:%M:%S.%f"
-                    ).timestamp()
-                )
-                eTime: int = int(
-                    datetime.strptime(stop_tracking, "%Y-%m-%d %H:%M:%S.%f").timestamp()
+            for zone_camera_id in zone_cameras_ids:
+                zone_reports: Iterable[QuerySet[Report]] = reports_with_matching_zona_id.filter(
+                    Q(extra__zoneId__exact=zone_camera_id)
                 )
 
-                report_data: Dict[str, Any] = {
-                    "zoneId": machine_control_report_id,
-                    "orId": zone_name,
-                    "sTime": sTime * 1000,
-                    "eTime": eTime * 1000,
+                print(zone_camera_id)
+                print(zone_reports)
+
+                reports: List[Dict[str, Any]] = []
+
+                for report in zone_reports:
+                    zone_data: Dict[str, Any] = report.extra
+                    camera_ip: str = report.camera.id
+
+                    zone_id: int = zone_data["zoneId"]
+                    zone_name: str = zone_data["zoneName"]
+
+                    machine_control_report_id: int = report.id
+
+                    start_tracking: str = report.start_tracking
+                    stop_tracking: str = report.stop_tracking
+
+                    sTime: int = int(
+                        datetime.strptime(
+                            start_tracking, "%Y-%m-%d %H:%M:%S.%f"
+                        ).timestamp()
+                    )
+                    eTime: int = int(
+                        datetime.strptime(stop_tracking, "%Y-%m-%d %H:%M:%S.%f").timestamp()
+                    )
+
+                    report_data: Dict[str, Any] = {
+                        "zoneId": machine_control_report_id,
+                        "orId": zone_name,
+                        "camera": camera_ip,
+                        "sTime": sTime * 1000,
+                        "eTime": eTime * 1000,
+                    }
+
+                    reports.append(report_data)
+
+                machine_result: Dict[str, Any] = {
+                    "oprTypeID": zone_id,
+                    "inverse": True,
+                    "oprName": zone_name,
+                    "oprs": reports,
                 }
 
-                reports.append(report_data)
-
-            machine_result = {
-                "oprTypeID": zone_id,
-                "oprName": zone_name,
-                "oprs": reports,
-            }
-
-            result_list.append(machine_result)
+                result_list.append(machine_result)
 
             operation_result = {
                 "oprTypeID": operation_id,
+                "inverse": False,
                 "oprName": operation_name,
                 "oprs": operations_list,
             }
 
             result_list.append(operation_result)
+
         return result_list
 
     @staticmethod
