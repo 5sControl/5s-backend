@@ -5,7 +5,7 @@ import pytz
 
 import pyodbc
 
-from django.db.models import Q
+from django.db.models import F, Q, ExpressionWrapper, TimeField
 from django.contrib.postgres.fields import JSONField
 from django.db.models.query import QuerySet
 
@@ -185,15 +185,12 @@ class OperationServices:
                     Q(extra__zoneId__exact=zone_camera_id)
                     & Q(start_tracking__gte=from_date_dt)
                     & Q(stop_tracking__lte=to_date_dt)
-                ).extra(
-                    where=[
-                        "CAST(start_tracking AS time) >= %s",
-                        "CAST(stop_tracking AS time) <= %s",
-                    ],
-                    params=[
-                        time(hour=6).strftime("%H:%M:%S"),
-                        time(hour=19).strftime("%H:%M:%S"),
-                    ]
+                ).annotate(
+                    start_time=ExpressionWrapper(F('start_tracking'), output_field=TimeField()),
+                    stop_time=ExpressionWrapper(F('stop_tracking'), output_field=TimeField()),
+                ).filter(
+                    start_time__gte=time(hour=6),
+                    stop_time__lte=time(hour=20),
                 )
 
                 if not zone_reports:
