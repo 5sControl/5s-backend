@@ -57,7 +57,7 @@ class Command(BaseCommand):
             if camera_algorithm.algorithm.name == "min_max_control":
                 algorithm_items = Items.objects.filter(camera=camera_obj)
                 areas = []
-                stelag = []
+                zones = []
 
                 for item in algorithm_items:
                     areas.append(
@@ -69,13 +69,13 @@ class Command(BaseCommand):
                 for zone_id in all_zones:
                     zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
 
-                    stelag.append(
+                    zones.append(
                         {"zoneId": zone_camera.id, "zoneName": zone_camera.name, "coords": zone_camera.coords}
                     )
 
                 new_data = {
                     "areas": areas,
-                    "zones": stelag
+                    "zones": zones
                 }
                 extra_params.append(new_data)
 
