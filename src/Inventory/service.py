@@ -1,4 +1,5 @@
 from src.CameraAlgorithms.models import CameraAlgorithm, Algorithm, ZoneCameras
+from src.Core.const import SERVER_URL
 from src.Inventory.models import Items
 from src.CameraAlgorithms.services.cameraalgorithm import camera_rtsp_link, send_run_request, stop_camera_algorithm, \
     update_status_algorithm
@@ -139,9 +140,16 @@ def started_process(camera):
             {"zoneId": zone_camera.id, "zoneName": zone_camera.name, "coords": zone_camera.coords}
         )
 
-    new_data = {
+    data.append({
         "areas": areas,
         "zones": stelag
+    })
+
+    new_data = {
+        "camera_url": camera_url,
+        "algorithm": algorithm,
+        "server_url": SERVER_URL,
+        "extra": data
     }
 
     try:
