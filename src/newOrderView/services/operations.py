@@ -1,15 +1,16 @@
-from typing import Iterable, List, Any, Tuple, Dict
-from datetime import datetime, timedelta
+from typing import Iterable, List, Any, Optional, Tuple, Dict
+from datetime import datetime, time, timedelta
 import logging
 import pytz
 
 import pyodbc
 
-from django.db.models import Q
+from django.db.models import Q, Func
 from django.contrib.postgres.fields import JSONField
 from django.db.models.query import QuerySet
+from django.db.models.expressions import RawSQL
 
-from src.CameraAlgorithms.models.camera import Camera, ZoneCameras
+from src.CameraAlgorithms.models.camera import ZoneCameras
 from src.MsSqlConnector.connector import connector as connector_service
 from src.Reports.models import Report
 
@@ -124,7 +125,34 @@ class OperationServices:
 
                 operations_list.append(operation)
 
-            # Machine Control
+            result = {
+                "oprTypeID": operation_id,
+                "oprName": operation_name,
+                "oprs": operations_list,
+            }
+
+            result_list.append(result)
+        return result_list
+
+    @staticmethod
+    def get_machine(from_date: str, to_date: str) -> List[Dict[str, Any]]:
+        connection: pyodbc.Connection = connector_service.get_database_connection()
+
+        stanowiska_query: str = """
+            SELECT
+                indeks AS id,
+                raport AS orderId
+            FROM Stanowiska
+        """
+
+        stanowiska_data: List[Tuple[Any]] = connector_service.executer(
+            connection=connection, query=stanowiska_query
+        )
+
+        result_list: List[Dict[str, Any]] = []
+
+        for row in stanowiska_data:
+            operation_id: int = row[0]
 
             zone_cameras_ids: Iterable[int] = ZoneCameras.objects.filter(
                 index_workplace=operation_id
@@ -133,70 +161,65 @@ class OperationServices:
                 JSONField().to_python(id) for id in zone_cameras_ids
             ]
 
-            reports_with_matching_zona_id: Iterable[QuerySet[Report]] = Report.objects.filter(
-                Q(algorithm=3) & Q(extra__has_key="zoneId")
-            )
+            if not zone_cameras_ids:
+                continue
 
-            print(reports_with_matching_zona_id)
+            if from_date and to_date:
+                from_date_dt = datetime.strptime(from_date, "%Y-%m-%d").date()
+                to_date_dt = datetime.strptime(to_date, "%Y-%m-%d").date()
 
-            for zone_camera_id in zone_cameras_ids:
-                zone_reports: Iterable[QuerySet[Report]] = reports_with_matching_zona_id.filter(
-                    Q(extra__zoneId__exact=zone_camera_id)
+                start_time_min = datetime.combine(from_date_dt, time(6, 0))
+                start_time_max = datetime.combine(from_date_dt, time(20, 0))
+                stop_time_min = datetime.combine(to_date_dt, time(6, 0))
+                stop_time_max = datetime.combine(to_date_dt, time(20, 0))
+
+                reports_with_matching_zona_id = Report.objects.filter(
+                    Q(algorithm=3) & Q(extra__has_key="zoneId")
                 )
 
-                print(zone_camera_id)
-                print(zone_reports)
+                if not reports_with_matching_zona_id:
+                    continue
+
+                for zone_camera_id in zone_cameras_ids:
+                    zone_reports = reports_with_matching_zona_id.filter(
+                        Q(extra__zoneId__exact=zone_camera_id)
+                        & Q(start_tracking__gte=start_time_min, start_tracking__lte=start_time_max)
+                        & Q(stop_tracking__gte=stop_time_min, stop_tracking__lte=stop_time_max)
+                    )
+
+                if not zone_reports:
+                    continue
 
                 reports: List[Dict[str, Any]] = []
+                zone_name: Optional[str] = None
 
                 for report in zone_reports:
                     zone_data: Dict[str, Any] = report.extra
                     camera_ip: str = report.camera.id
 
-                    zone_id: int = zone_data["zoneId"]
                     zone_name: str = zone_data["zoneName"]
 
                     machine_control_report_id: int = report.id
 
-                    start_tracking: str = report.start_tracking
-                    stop_tracking: str = report.stop_tracking
-
-                    sTime: int = int(
-                        datetime.strptime(
-                            start_tracking, "%Y-%m-%d %H:%M:%S.%f"
-                        ).timestamp()
-                    )
-                    eTime: int = int(
-                        datetime.strptime(stop_tracking, "%Y-%m-%d %H:%M:%S.%f").timestamp()
-                    )
+                    sTime: str = convert_to_unix(datetime.strptime(report.start_tracking, "%Y-%m-%d %H:%M:%S.%f"))
+                    eTime: str = convert_to_unix(datetime.strptime(report.stop_tracking, "%Y-%m-%d %H:%M:%S.%f"))
 
                     report_data: Dict[str, Any] = {
-                        "zoneId": machine_control_report_id,
-                        "orId": zone_name,
+                        "zoneId": machine_control_report_id,  # Machine control report from dashboard
+                        "orId": zone_name,  # Zone name
                         "camera": camera_ip,
-                        "sTime": sTime * 1000,
-                        "eTime": eTime * 1000,
+                        "sTime": sTime,
+                        "eTime": eTime,
                     }
-
                     reports.append(report_data)
 
                 machine_result: Dict[str, Any] = {
-                    "oprTypeID": zone_id,
+                    "oprTypeID": operation_id,  # Operation id (stanowisko)
                     "inverse": True,
-                    "oprName": zone_name,
+                    "oprName": zone_name,  # Zone name
                     "oprs": reports,
                 }
-
                 result_list.append(machine_result)
-
-            operation_result = {
-                "oprTypeID": operation_id,
-                "inverse": False,
-                "oprName": operation_name,
-                "oprs": operations_list,
-            }
-
-            result_list.append(operation_result)
 
         return result_list
 

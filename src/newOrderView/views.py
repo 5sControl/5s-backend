@@ -6,6 +6,7 @@ from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 
 from rest_framework import generics, status
+from rest_framework.response import Response
 
 from src.Core.paginators import OrderViewPaginnator, NoPagination
 from src.MsSqlConnector.connector import connector as connector_service
@@ -29,7 +30,29 @@ class GetOperation(generics.GenericAPIView):
             )
             cache.set(key, response, timeout=120)
 
-        return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
+        if response:
+            return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class GetMachine(generics.GenericAPIView):
+    @connector_service.check_database_connection
+    def get(self, request):
+        from_date: str = request.GET.get("from")
+        to_date: str = request.GET.get("to")
+
+        key: str = generate_hash("get_machine", from_date, to_date)
+        response = cache.get(key)
+
+        if response is None:
+            response: List[Dict[str, Any]] = OperationServices.get_machine(
+                from_date, to_date
+            )
+            cache.set(key, response, timeout=10)
+
+        if response:
+            return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class GetOrders(generics.GenericAPIView):
