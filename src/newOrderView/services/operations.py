@@ -1,5 +1,5 @@
 from typing import Iterable, List, Any, Optional, Tuple, Dict
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 import logging
 import pytz
 
@@ -181,13 +181,16 @@ class OperationServices:
                 continue
 
             for zone_camera_id in zone_cameras_ids:
-                zone_reports: Iterable[QuerySet[Report]] = reports_with_matching_zona_id.filter(
+                zone_reports: Iterable[QuerySet[Report]] = reports_with_matching_zona_id.annotate(
+                    start_time=RawSQL("TIME(start_tracking)", ())
+                ).annotate(
+                    stop_time=RawSQL("TIME(stop_tracking)", ())
+                ).filter(
                     Q(extra__zoneId__exact=zone_camera_id)
-                    & Q(start_tracking__gte=from_date_dt)
-                    & Q(stop_tracking__lte=to_date_dt)
-                    & Q(start_tracking__extra__gte=RawSQL("TIME('06:00:00')", ()))
-                    & Q(stop_tracking__extra__lte=RawSQL("TIME('20:00:00')", ()))
+                    & Q(start_time__gte=time(6, 0))
+                    & Q(stop_time__lte=time(20, 0))
                 )
+
                 if not zone_reports:
                     continue
 
