@@ -204,7 +204,7 @@ class OperationServices:
                     }
 
                     print(report_data)
-                reports.append(report_data)
+                    reports.append(report_data)
 
             machine_result: Dict[str, Any] = {
                 "oprTypeID": operation_id,  # Operation id (stanowisko)
