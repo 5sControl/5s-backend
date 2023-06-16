@@ -139,18 +139,20 @@ class OperationServices:
                 & Q(extra__zoneId__in=zone_cameras_ids)
             )
 
-            reports: List[Dict[str, Any]] = []
-
             logger.warning(
                 f"reports_with_matching_zona_id - {reports_with_matching_zona_id}"
             )
 
+            reports: List[Dict[str, Any]] = []
+
             for report in reports_with_matching_zona_id:
-                zone_data: Dict[int, str] = report.extra
+                zone_data: Dict[str, Any] = report.extra
+
                 zone_id: int = zone_data["zoneId"]
                 zone_name: str = zone_data["zoneName"]
 
                 machine_control_report_id: int = report.id
+
                 start_tracking: str = report.start_tracking
                 stop_tracking: str = report.stop_tracking
 
@@ -172,13 +174,13 @@ class OperationServices:
 
                 reports.append(report_data)
 
-            machine_result = {
-                "oprTypeID": zone_id,
-                "oprName": zone_name,
-                "oprs": reports,
-            }
+                machine_result = {
+                    "oprTypeID": zone_id,
+                    "oprName": zone_name,
+                    "oprs": reports,
+                }
 
-            result_list.append(machine_result)
+                result_list.append(machine_result)
 
             operation_result = {
                 "oprTypeID": operation_id,
