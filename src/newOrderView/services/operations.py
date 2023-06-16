@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.contrib.postgres.fields import JSONField
 from django.db.models.query import QuerySet
 
-from src.CameraAlgorithms.models.camera import ZoneCameras
+from src.CameraAlgorithms.models.camera import Camera, ZoneCameras
 from src.MsSqlConnector.connector import connector as connector_service
 from src.Reports.models import Report
 
@@ -151,7 +151,7 @@ class OperationServices:
 
                 for report in zone_reports:
                     zone_data: Dict[str, Any] = report.extra
-                    camera_ip: Report = report.camera
+                    camera_ip: str = report.camera.id
 
                     zone_id: int = zone_data["zoneId"]
                     zone_name: str = zone_data["zoneName"]
