@@ -5,7 +5,7 @@ import pytz
 
 import pyodbc
 
-from django.db.models import Q
+from django.db.models import Q, Func
 from django.contrib.postgres.fields import JSONField
 from django.db.models.query import QuerySet
 from django.db.models.expressions import RawSQL
@@ -181,14 +181,14 @@ class OperationServices:
                 continue
 
             for zone_camera_id in zone_cameras_ids:
-                zone_reports: Iterable[QuerySet[Report]] = reports_with_matching_zona_id.annotate(
-                    start_time=RawSQL("TIME(start_tracking)", ())
-                ).annotate(
-                    stop_time=RawSQL("TIME(stop_tracking)", ())
-                ).filter(
+                zone_reports = reports_with_matching_zona_id.filter(
                     Q(extra__zoneId__exact=zone_camera_id)
-                    & Q(start_time__gte=time(6, 0))
-                    & Q(stop_time__lte=time(20, 0))
+                    & Q(start_tracking__gte=from_date_dt)
+                    & Q(stop_tracking__lte=to_date_dt)
+                    & Q(start_tracking__hour__gte=6)
+                    & Q(start_tracking__hour__lte=20)
+                    & Q(stop_tracking__hour__gte=6)
+                    & Q(stop_tracking__hour__lte=20)
                 )
 
                 if not zone_reports:
