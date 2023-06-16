@@ -1,4 +1,5 @@
-from src.CameraAlgorithms.models import CameraAlgorithm, Algorithm
+from src.CameraAlgorithms.models import CameraAlgorithm, Algorithm, ZoneCameras
+from src.Core.const import SERVER_URL
 from src.Inventory.models import Items
 from src.CameraAlgorithms.services.cameraalgorithm import camera_rtsp_link, send_run_request, stop_camera_algorithm, \
     update_status_algorithm
@@ -120,28 +121,42 @@ def started_process(camera):
     camera_url = camera_rtsp_link(camera.id)
     algorithm = Algorithm.objects.get(name='min_max_control')
     algorithm_items = Items.objects.filter(camera=camera)
-
-    extra = []
+    data = []
+    areas = []
+    zones = []
     for item in algorithm_items:
-        extra.append(
-            {
-                "itemId": item.id,
-                "coords": item.coords,
-                "itemName": item.name,
-            }
+        areas.append(
+            {"itemId": item.id, "itemName": item.name, "coords": item.coords}
         )
-
-    data = {
-        "camera_url": camera_url,
-        "algorithm": algorithm.name,
-        "extra": extra
-    }
-
     try:
         camera_algorithm = CameraAlgorithm.objects.get(
             Q(camera_id=camera) & Q(algorithm__name='min_max_control')
         )
-        response = send_run_request(data)
+
+        for zone_id in camera_algorithm.zones:
+            zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera)
+
+            zones.append(
+                {"zoneId": zone_camera.id, "zoneName": zone_camera.name, "coords": zone_camera.coords}
+            )
+    except:
+        print("NO ZONE")
+
+
+    data.append({
+        "areas": areas,
+        "zones": zones
+    })
+
+    new_data = {
+        "camera_url": camera_url,
+        "algorithm": algorithm.name,
+        "server_url": SERVER_URL,
+        "extra": data
+    }
+
+    try:
+        response = send_run_request(new_data)
 
         new_process_id = response["pid"]
 

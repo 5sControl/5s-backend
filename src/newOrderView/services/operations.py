@@ -124,7 +124,34 @@ class OperationServices:
 
                 operations_list.append(operation)
 
-            # Machine Control
+            result = {
+                "oprTypeID": operation_id,
+                "oprName": operation_name,
+                "oprs": operations_list,
+            }
+
+            result_list.append(result)
+        return result_list
+
+    @staticmethod
+    def get_machine(from_date: str, to_date: str) -> List[Dict[str, Any]]:
+        connection: pyodbc.Connection = connector_service.get_database_connection()
+
+        stanowiska_query: str = """
+            SELECT
+                indeks AS id,
+                raport AS orderId
+            FROM Stanowiska
+        """
+
+        stanowiska_data: List[Tuple[Any]] = connector_service.executer(
+            connection=connection, query=stanowiska_query
+        )
+
+        result_list: List[Dict[str, Any]] = []
+
+        for row in stanowiska_data:
+            operation_id: int = row[0]
 
             zone_cameras_ids: Iterable[int] = ZoneCameras.objects.filter(
                 index_workplace=operation_id
@@ -133,61 +160,50 @@ class OperationServices:
                 JSONField().to_python(id) for id in zone_cameras_ids
             ]
 
+            if not zone_cameras_ids:
+                continue
+
             reports_with_matching_zona_id: Iterable[QuerySet] = Report.objects.filter(
                 Q(algorithm=3)
                 & Q(extra__has_key="zoneId")
                 & Q(extra__zoneId__in=zone_cameras_ids)
             )
 
-            reports: List[Dict[str, Any]] = []
+            if not reports_with_matching_zona_id:
+                continue
+            print(reports_with_matching_zona_id)
 
-            logger.warning(
-                f"reports_with_matching_zona_id - {reports_with_matching_zona_id}"
-            )
+            macnine_control_reports: List[Dict[str, Any]] = []
 
             for report in reports_with_matching_zona_id:
                 zone_data: Dict[int, str] = report.extra
+                machine_control_report_id: int = report.id
+                camera_ip: str = report.camera.id
+
                 zone_id: int = zone_data["zoneId"]
                 zone_name: str = zone_data["zoneName"]
 
-                machine_control_report_id: int = report.id
-                start_tracking: str = report.start_tracking
-                stop_tracking: str = report.stop_tracking
-
-                sTime: int = int(
-                    datetime.strptime(
-                        start_tracking, "%Y-%m-%d %H:%M:%S.%f"
-                    ).timestamp()
-                )
-                eTime: int = int(
-                    datetime.strptime(stop_tracking, "%Y-%m-%d %H:%M:%S.%f").timestamp()
-                )
+                sTime: str = convert_to_unix(datetime.strptime(report.start_tracking, "%Y-%m-%d %H:%M:%S.%f"))
+                eTime: str = convert_to_unix(datetime.strptime(report.stop_tracking, "%Y-%m-%d %H:%M:%S.%f"))
 
                 report_data: Dict[str, Any] = {
-                    "zoneId": machine_control_report_id,
-                    "orId": zone_name,
-                    "sTime": sTime * 1000,
-                    "eTime": eTime * 1000,
+                    "zoneId": machine_control_report_id,  # Machine control report from dashboard
+                    "orId": zone_name,  # Zone name
+                    "camera": camera_ip,
+                    "sTime": sTime,
+                    "eTime": eTime,
                 }
 
-                reports.append(report_data)
+                result_list.append(report_data)
 
-            machine_result = {
-                "oprTypeID": zone_id,
-                "oprName": zone_name,
-                "oprs": reports,
+            machine_result: Dict[str, Any] = {
+                "oprTypeID": operation_id,  # Operation id (stanowisko)
+                "inverse": True,
+                "oprName": zone_name,  # Zone name
+                "oprs": macnine_control_reports,
             }
 
             result_list.append(machine_result)
-
-            operation_result = {
-                "oprTypeID": operation_id,
-                "oprName": operation_name,
-                "oprs": operations_list,
-            }
-
-            result_list.append(operation_result)
-        return result_list
 
     @staticmethod
     def get_whnet_operation() -> List[Dict[str, Any]]:

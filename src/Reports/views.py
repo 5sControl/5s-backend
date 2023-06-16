@@ -72,22 +72,10 @@ class ActionsWithPhotos(APIView):
 
             elif algorithm_name == "operation_control":
                 if EMULATE_DB:
-                    if "extra" in data:
-                        for data in data["extra"]:
-                            if "place" in data:
-                                logger.warning(
-                                    f"Operation control extra data is {data}"
-                                )
-                                requests.post(
-                                    f"{SERVER_URL}:9876/skany/create/",
-                                    json=data["extra"][0],
-                                )
-                                break
-                        else:
-                            logger.warning(f"Operation control extra data is {data}")
-                            requests.post(
-                                f"{SERVER_URL}:9876/operation-control/", json=data
-                            )
+                    logger.warning(f"Operation control extra data is {data}")
+                    requests.post(
+                        f"{SERVER_URL}:9876/operation-control/", json=data
+                    )
                 extra = edit_extra(data.get("extra"), camera)
             else:
                 extra = data.get("extra")
