@@ -6,9 +6,9 @@ import pytz
 import pyodbc
 
 from django.db.models import F, Q, ExpressionWrapper, TimeField
-from django.contrib.postgres.fields import JSONField
+from django.contrib.postgres.fields import JSONField, IntegerField
 from django.db.models.query import QuerySet
-from django.db.models.functions import Extract, Cast
+from django.db.models.functions import Extract, Func, Cast
 
 from src.CameraAlgorithms.models.camera import ZoneCameras
 from src.MsSqlConnector.connector import connector as connector_service
@@ -185,10 +185,9 @@ class OperationServices:
                     Q(extra__zoneId__exact=zone_camera_id)
                     & Q(start_tracking__gte=from_date_dt)
                     & Q(stop_tracking__lte=to_date_dt)
-                    & Cast(F('start_tracking'), output_field=TimeField()) >= time(hour=6)
-                    & Cast(F('stop_tracking'), output_field=TimeField()) <= time(hour=20)
+                    & Func(Cast(F('start_tracking'), output_field=TimeField()), function='EXTRACT', template='hour', output_field=IntegerField()) >= 6
+                    & Func(Cast(F('stop_tracking'), output_field=TimeField()), function='EXTRACT', template='hour', output_field=IntegerField()) <= 20
                 )
-
                 if not zone_reports:
                     continue
 
