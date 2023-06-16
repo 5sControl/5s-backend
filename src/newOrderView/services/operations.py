@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.contrib.postgres.fields import JSONField
 from django.db.models.query import QuerySet
 
-from src.CameraAlgorithms.models.camera import Camera, ZoneCameras
+from src.CameraAlgorithms.models.camera import ZoneCameras
 from src.MsSqlConnector.connector import connector as connector_service
 from src.Reports.models import Report
 
@@ -124,15 +124,13 @@ class OperationServices:
 
                 operations_list.append(operation)
 
-            operation_result = {
+            result = {
                 "oprTypeID": operation_id,
-                "inverse": False,
                 "oprName": operation_name,
                 "oprs": operations_list,
             }
 
-            result_list.append(operation_result)
-
+            result_list.append(result)
         return result_list
 
     @staticmethod
@@ -173,6 +171,7 @@ class OperationServices:
 
             if not reports_with_matching_zona_id:
                 continue
+            print(reports_with_matching_zona_id)
 
             macnine_control_reports: List[Dict[str, Any]] = []
 
