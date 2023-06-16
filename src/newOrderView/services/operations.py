@@ -192,7 +192,7 @@ class OperationServices:
                     ],
                     params=[
                         time(hour=6).strftime("%H:%M:%S"),
-                        time(hour=20).strftime("%H:%M:%S"),
+                        time(hour=19).strftime("%H:%M:%S"),
                     ]
                 )
 
