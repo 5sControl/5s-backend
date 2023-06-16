@@ -185,8 +185,15 @@ class OperationServices:
                     Q(extra__zoneId__exact=zone_camera_id)
                     & Q(start_tracking__gte=from_date_dt)
                     & Q(stop_tracking__lte=to_date_dt)
-                    & Q(start_tracking__time__gte=time(hour=6))
-                    & Q(stop_tracking__time__lte=time(hour=20))
+                ).extra(
+                    where=[
+                        "TIME(start_tracking) >= %s",
+                        "TIME(stop_tracking) <= %s",
+                    ],
+                    params=[
+                        time(hour=6).strftime("%H:%M:%S"),
+                        time(hour=20).strftime("%H:%M:%S"),
+                    ]
                 )
 
                 if not zone_reports:
