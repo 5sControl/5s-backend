@@ -133,14 +133,14 @@ class OperationServices:
                 JSONField().to_python(id) for id in zone_cameras_ids
             ]
 
-            reports_with_matching_zona_id: Iterable[QuerySet] = Report.objects.filter(
+            reports_with_matching_zona_id: Iterable[QuerySet[Report]] = Report.objects.filter(
                 Q(algorithm=3) & Q(extra__has_key="zoneId")
             )
 
             print(reports_with_matching_zona_id)
 
             for zone_camera_id in zone_cameras_ids:
-                zone_reports = reports_with_matching_zona_id.filter(
+                zone_reports: Iterable[QuerySet[Report]] = reports_with_matching_zona_id.filter(
                     Q(extra__zoneId__exact=zone_camera_id)
                 )
 
@@ -151,6 +151,7 @@ class OperationServices:
 
                 for report in zone_reports:
                     zone_data: Dict[str, Any] = report.extra
+                    camera_ip: Report = report.camera
 
                     zone_id: int = zone_data["zoneId"]
                     zone_name: str = zone_data["zoneName"]
@@ -172,14 +173,16 @@ class OperationServices:
                     report_data: Dict[str, Any] = {
                         "zoneId": machine_control_report_id,
                         "orId": zone_name,
+                        "camera": camera_ip,
                         "sTime": sTime * 1000,
                         "eTime": eTime * 1000,
                     }
 
                     reports.append(report_data)
 
-                machine_result = {
+                machine_result: Dict[str, Any] = {
                     "oprTypeID": zone_id,
+                    "inverse": True,
                     "oprName": zone_name,
                     "oprs": reports,
                 }
