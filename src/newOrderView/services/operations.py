@@ -1,17 +1,14 @@
 from typing import Iterable, List, Any, Optional, Tuple, Dict
-from datetime import datetime, timedelta, time
+from datetime import datetime, timedelta
 import logging
 import pytz
 
 import pyodbc
 
-from django.db.models import F, Q
+from django.db.models import Q
 from django.contrib.postgres.fields import JSONField
 from django.db.models.query import QuerySet
-from django.db.models.functions import Cast
-from django.db.models.fields import TimeField, IntegerField
-# from django.db.models.functions import Func
-
+from django.db.models.expressions import RawSQL
 
 from src.CameraAlgorithms.models.camera import ZoneCameras
 from src.MsSqlConnector.connector import connector as connector_service
@@ -184,22 +181,13 @@ class OperationServices:
                 continue
 
             for zone_camera_id in zone_cameras_ids:
-                # zone_reports: Iterable[QuerySet[Report]] = reports_with_matching_zona_id.filter(
-                #     Q(extra__zoneId__exact=zone_camera_id)
-                #     & Q(start_tracking__gte=from_date_dt)
-                #     & Q(stop_tracking__lte=to_date_dt)
-                #     & Func(Cast(F('start_tracking'), output_field=TimeField()), function='EXTRACT', template='hour', output_field=IntegerField()) >= 6
-                #     & Func(Cast(F('stop_tracking'), output_field=TimeField()), function='EXTRACT', template='hour', output_field=IntegerField()) <= 20
-                # )
-
                 zone_reports: Iterable[QuerySet[Report]] = reports_with_matching_zona_id.filter(
                     Q(extra__zoneId__exact=zone_camera_id)
                     & Q(start_tracking__gte=from_date_dt)
                     & Q(stop_tracking__lte=to_date_dt)
-                    & Q(start_tracking__time__gte=time(6))  # Исключение репортов до 6 утра
-                    & Q(stop_tracking__time__lte=time(20))  # Исключение репортов после 20 вечера
+                    & Q(start_tracking__extra__gte=RawSQL("TIME('06:00:00')", ()))
+                    & Q(stop_tracking__extra__lte=RawSQL("TIME('20:00:00')", ()))
                 )
-
                 if not zone_reports:
                     continue
 
