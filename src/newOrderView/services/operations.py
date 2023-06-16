@@ -174,7 +174,6 @@ class OperationServices:
             if not reports_with_matching_zona_id:
                 continue
 
-            zone_name: Optional[str] = None
 
             for zone_camera_id in zone_cameras_ids:
                 zone_reports: Iterable[QuerySet[Report]] = reports_with_matching_zona_id.filter(
@@ -189,6 +188,7 @@ class OperationServices:
                     continue
 
                 reports: List[Dict[str, Any]] = []
+                zone_name: Optional[str] = None
 
                 for report in zone_reports:
                     zone_data: Dict[str, Any] = report.extra
@@ -213,12 +213,12 @@ class OperationServices:
                     print(f"Report data is {report_data}")
                     reports.append(report_data)
 
-            machine_result: Dict[str, Any] = {
-                "oprTypeID": operation_id,  # Operation id (stanowisko)
-                "inverse": True,
-                "oprName": zone_name,  # Zone name
-                "oprs": reports,
-            }
+                machine_result: Dict[str, Any] = {
+                    "oprTypeID": operation_id,  # Operation id (stanowisko)
+                    "inverse": True,
+                    "oprName": zone_name,  # Zone name
+                    "oprs": reports,
+                }
 
             result_list.append(machine_result)
 
