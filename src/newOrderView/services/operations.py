@@ -174,7 +174,6 @@ class OperationServices:
             if not reports_with_matching_zona_id:
                 continue
 
-
             for zone_camera_id in zone_cameras_ids:
                 zone_reports: Iterable[QuerySet[Report]] = reports_with_matching_zona_id.filter(
                     Q(extra__zoneId__exact=zone_camera_id)
@@ -219,8 +218,9 @@ class OperationServices:
                     "oprName": zone_name,  # Zone name
                     "oprs": reports,
                 }
+                result_list.append(machine_result)
 
-            result_list.append(machine_result)
+        return result_list
 
     @staticmethod
     def get_whnet_operation() -> List[Dict[str, Any]]:
