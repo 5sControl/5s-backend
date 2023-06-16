@@ -163,8 +163,16 @@ class OperationServices:
             if not zone_cameras_ids:
                 continue
 
-            from_date_obj = datetime.strptime(from_date, "%Y-%m-%d")
-            to_date_obj = datetime.strptime(to_date, "%Y-%m-%d")
+            if from_date and to_date:
+                operations_query += " AND sk.data >= ? AND sk.data <= ?"
+
+                from_date_dt: datetime = datetime.strptime(from_date, "%Y-%m-%d")
+                from_date_dt: datetime = from_date_dt + timedelta(microseconds=1)
+
+                to_date_dt: datetime = datetime.strptime(to_date, "%Y-%m-%d")
+                to_date_dt: datetime = (
+                    to_date_dt + timedelta(days=1) - timedelta(microseconds=1)
+                )
 
             reports_with_matching_zona_id: Iterable[QuerySet[Report]] = Report.objects.filter(
                 Q(algorithm=3) & Q(extra__has_key="zoneId")
@@ -177,8 +185,8 @@ class OperationServices:
             for zone_camera_id in zone_cameras_ids:
                 zone_reports: Iterable[QuerySet[Report]] = reports_with_matching_zona_id.filter(
                     Q(extra__zoneId__exact=zone_camera_id)
-                    & Q(start_tracking__gte=from_date_obj)
-                    & Q(stop_tracking__lte=to_date_obj)
+                    & Q(start_tracking__gte=from_date_dt)
+                    & Q(stop_tracking__lte=to_date_dt)
                 )
                 print(f"Zone camera ids {zone_camera_id}")
                 print(f"Zone report {zone_reports}")
