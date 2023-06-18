@@ -1,14 +1,13 @@
 from typing import Iterable, List, Any, Optional, Tuple, Dict
-from datetime import datetime, time, timedelta
+from datetime import datetime, timedelta, time
 import logging
 import pytz
 
 import pyodbc
 
-from django.db.models import Q, Func
+from django.db.models import Q
 from django.contrib.postgres.fields import JSONField
 from django.db.models.query import QuerySet
-from django.db.models.expressions import RawSQL
 
 from src.CameraAlgorithms.models.camera import ZoneCameras
 from src.MsSqlConnector.connector import connector as connector_service
@@ -164,36 +163,41 @@ class OperationServices:
             if not zone_cameras_ids:
                 continue
 
-            if from_date and to_date:
-                from_date_dt = datetime.strptime(from_date, "%Y-%m-%d").date()
-                to_date_dt = datetime.strptime(to_date, "%Y-%m-%d").date()
+            from_date_dt: datetime = datetime.strptime(from_date, "%Y-%m-%d")
+            from_date_dt: datetime = from_date_dt + timedelta(microseconds=1)
 
-                start_time_min = datetime.combine(from_date_dt, time(6, 0))
-                start_time_max = datetime.combine(from_date_dt, time(20, 0))
-                stop_time_min = datetime.combine(to_date_dt, time(6, 0))
-                stop_time_max = datetime.combine(to_date_dt, time(20, 0))
+            to_date_dt: datetime = datetime.strptime(to_date, "%Y-%m-%d")
+            to_date_dt: datetime = (
+                to_date_dt + timedelta(days=1) - timedelta(microseconds=1)
+            )
 
-                reports_with_matching_zona_id = Report.objects.filter(
-                    Q(algorithm=3) & Q(extra__has_key="zoneId")
+            reports_with_matching_zona_id: Iterable[QuerySet[Report]] = Report.objects.filter(
+                Q(algorithm=3) & Q(extra__has_key="zoneId")
+            )
+
+            if not reports_with_matching_zona_id:
+                continue
+
+            for zone_camera_id in zone_cameras_ids:
+                zone_reports: Iterable[QuerySet[Report]] = reports_with_matching_zona_id.filter(
+                    Q(extra__zoneId__exact=zone_camera_id)
+                    & Q(start_tracking__gte=from_date_dt)
+                    & Q(stop_tracking__lte=to_date_dt)
                 )
-
-                if not reports_with_matching_zona_id:
-                    continue
-
-                for zone_camera_id in zone_cameras_ids:
-                    zone_reports = reports_with_matching_zona_id.filter(
-                        Q(extra__zoneId__exact=zone_camera_id)
-                        & Q(start_tracking__gte=start_time_min, start_tracking__lte=start_time_max)
-                        & Q(stop_tracking__gte=stop_time_min, stop_tracking__lte=stop_time_max)
-                    )
 
                 if not zone_reports:
                     continue
 
+                filtered_reports = [
+                    report for report in zone_reports
+                    if time(6) <= datetime.strptime(report.start_tracking, "%Y-%m-%d %H:%M:%S.%f").time() <= time(20)
+                    and time(6) <= datetime.strptime(report.stop_tracking, "%Y-%m-%d %H:%M:%S.%f").time() <= time(20)
+                ]
+
                 reports: List[Dict[str, Any]] = []
                 zone_name: Optional[str] = None
 
-                for report in zone_reports:
+                for report in filtered_reports:
                     zone_data: Dict[str, Any] = report.extra
                     camera_ip: str = report.camera.id
 
@@ -211,6 +215,7 @@ class OperationServices:
                         "sTime": sTime,
                         "eTime": eTime,
                     }
+
                     reports.append(report_data)
 
                 machine_result: Dict[str, Any] = {
