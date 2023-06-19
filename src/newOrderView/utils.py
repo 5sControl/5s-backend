@@ -17,6 +17,8 @@ def generate_hash(prefix: str, from_date: str, to_date: str) -> str:
 
 
 def convert_to_gmt0(input_time: datetime) -> datetime:
+    print(f"BEFORE {input_time}")
+    print(f"AFTER {input_time - timedelta(hours=3)}")
     return input_time - timedelta(hours=3)
 
 
