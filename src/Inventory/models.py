@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 
 from src.CameraAlgorithms.models import Camera
 from src.CompanyLicense.models import Company
@@ -19,6 +20,9 @@ class Items(models.Model):
     multi_row = models.BooleanField(verbose_name="Multi row", default=False)
     suppliers = models.ForeignKey(Company, related_name='Supplier', on_delete=models.SET_NULL, null=True, blank=True)
     order_quantity = models.IntegerField(verbose_name="Order quantity", blank=True, null=True)
+    to_emails = ArrayField(models.EmailField(), verbose_name="To_emails", blank=True, null=True)
+    copy_emails = ArrayField(models.EmailField(), verbose_name="Copy_emails", blank=True, null=True)
+    subject = models.CharField(verbose_name="Subject message", max_length=60, blank=True, null=True)
 
     def __str__(self):
         return self.name
