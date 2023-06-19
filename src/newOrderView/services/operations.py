@@ -13,7 +13,7 @@ from src.CameraAlgorithms.models.camera import ZoneCameras
 from src.MsSqlConnector.connector import connector as connector_service
 from src.Reports.models import Report
 
-from ..utils import add_ms, convert_to_gmt0, convert_to_unix
+from ..utils import add_ms, convert_to_timezone, convert_to_unix
 
 logger = logging.getLogger(__name__)
 
@@ -96,30 +96,27 @@ class OperationServices:
                 }
 
                 startTime_dt: datetime = add_ms(startTime)
-                startTime_dt: datetime = convert_to_gmt0(startTime_dt)
-                startTime_unix: int = convert_to_unix(startTime_dt)
+                startTime_dt: datetime = convert_to_timezone(startTime_dt, "Etc/GMT+3")
+                startTime_dt: datetime = convert_to_timezone(startTime_dt, "Etc/GMT")
 
+                startTime_unix: int = convert_to_unix(startTime_dt)
                 operation["sTime"] = startTime_unix
 
                 if endTime is not None:
                     endTime_dt: datetime = add_ms(endTime)
-                    endTime_dt = endTime_dt.astimezone(pytz.utc)
+                    endTime_dt: datetime = convert_to_timezone(endTime_dt, "Etc/GMT+3")
+                    endTime_dt: datetime = convert_to_timezone(endTime_dt, "Etc/GMT")
 
                     if endTime_dt.date() > startTime_dt.date():
                         endTime_dt = startTime_dt + timedelta(hours=1)
                     else:
                         endTime_dt = endTime_dt or startTime_dt + timedelta(hours=1)
 
-                    endTime_dt: datetime = convert_to_gmt0(endTime_dt)
                     endTime_unix: int = convert_to_unix(endTime_dt)
-
                     operation["eTime"] = endTime_unix
                 else:
                     endTime_dt = startTime_dt + timedelta(hours=1)
-
-                    endTime_dt: datetime = convert_to_gmt0(endTime_dt)
                     endTime_unix: int = convert_to_unix(endTime_dt)
-
                     operation["eTime"] = endTime_unix
 
                 operations_list.append(operation)

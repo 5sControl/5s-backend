@@ -18,11 +18,11 @@ def generate_hash(prefix: str, from_date: str, to_date: str) -> str:
     return hash_object.hexdigest()
 
 
-def convert_to_gmt0(input_time: datetime) -> datetime:
-    gmt0 = pytz.timezone("Etc/GMT")
-    if input_time.tzinfo != gmt0:
-        dt_gmt_plus3 = input_time.astimezone(gmt0)
-        return dt_gmt_plus3
+def convert_to_timezone(input_time: datetime, timezone: str) -> datetime:
+    target_timezone = pytz.timezone(timezone)
+    if input_time.tzinfo != target_timezone:
+        converted_time = input_time.astimezone(target_timezone)
+        return converted_time
     else:
         return input_time
 
