@@ -9,6 +9,7 @@ from src.OrderView.models import IndexOperations
 from src.OrderView.utils import get_skany_video_info
 from src.CameraAlgorithms.models import Camera
 from src.Reports.models import SkanyReport
+from src.newOrderView.utils import convert_to_gmt0, convert_to_unix
 
 logger = logging.getLogger(__name__)
 
@@ -134,19 +135,19 @@ class OrderServises:
                 if skany_report:
                     operation_status: Optional[bool] = skany_report.violation_found
                     video_time: Optional[bool] = skany_report.start_time
-                    logger.warning(
-                        f"Skany report was founded. Data -> {operation_status}, {video_data}",
-                    )
+                    video_time_unix = convert_to_unix(video_time)
+
                     if camera_obj and video_time:
-                        logger.warning(video_time * 1000)
                         video_data: Dict[str, Any] = get_skany_video_info(
-                            time=(video_time * 1000), camera_ip=camera_obj.camera.id
+                            time=(video_time_unix), camera_ip=camera_obj.camera.id
                         )
 
-            startTime_unix: int = int(startTime.timestamp()) * 1000
-            endTime_unix: int = int(endTime.timestamp()) * 1000
-            logger.warning(f"GET START TIME {startTime}")
-            logger.warning(f"MAKE UNIX {startTime_unix}")
+            startTime: datetime = convert_to_gmt0(startTime)
+            endTime: datetime = convert_to_gmt0(endTime)
+
+            startTime_unix: int = convert_to_unix(startTime)
+            endTime_unix: int = convert_to_unix(endTime)
+
             result: Dict[str, Any] = {
                 "id": id,
                 "orId": orderId,
