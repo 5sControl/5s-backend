@@ -19,16 +19,8 @@ def generate_hash(prefix: str, from_date: str, to_date: str) -> str:
 
 
 def convert_to_gmt0(input_time: datetime) -> datetime:
-    gmt_plus3 = pytz.FixedOffset(-180)
-
-    print(f"Before conversion to gmt0: {input_time}")
-
-    input_time = gmt_plus3.localize(input_time)
-
-    converted_time = input_time.astimezone(pytz.UTC)
-
-    print(f"After conversion to gmt0: {converted_time}")
-
+    gmt0 = pytz.timezone("Etc/GMT")
+    converted_time = input_time.astimezone(gmt0)
     return converted_time
 
 
