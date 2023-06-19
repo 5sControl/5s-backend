@@ -183,6 +183,8 @@ class OperationServices:
                     Q(extra__zoneId__exact=zone_camera_id)
                     & Q(start_tracking__gte=from_date_dt)
                     & Q(stop_tracking__lte=to_date_dt)
+                    & Q(start_tracking__lte=to_date)
+                    & Q(stop_tracking__gte=from_date)
                 )
 
                 if not zone_reports:
