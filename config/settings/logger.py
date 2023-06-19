@@ -1,30 +1,23 @@
 import logging
+from django.utils.log import DEFAULT_LOGGING
 
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "standard": {
-            "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-        },
-    },
-    "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "formatter": "standard",
-        },
-        "file": {
-            "class": "logging.FileHandler",
-            "filename": "log/logs.log",
-            "formatter": "standard",
-        },
-    },
-    "loggers": {
-        "django": {
-            "handlers": ["console", "file"],
-            "level": "INFO",
-        },
-    },
+# Получение конфигурации логгера по умолчанию
+LOGGING = DEFAULT_LOGGING
+
+# Обновление форматирования логов
+LOGGING["formatters"]["verbose"] = {
+    "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s",
 }
 
+# Добавление обработчика "file"
+LOGGING["handlers"]["file"] = {
+    "class": "logging.FileHandler",
+    "filename": "log/logs.log",
+    "formatter": "verbose",
+}
+
+# Добавление обработчика "console" (если требуется)
+LOGGING["handlers"]["console"]["formatter"] = "verbose"
+
+# Применение настроек логгера
 logging.config.dictConfig(LOGGING)
