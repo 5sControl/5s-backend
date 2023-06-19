@@ -105,7 +105,9 @@ class OperationServices:
                 if endTime is not None:
                     endTime_dt: datetime = add_ms(endTime)
                     endTime_dt: datetime = convert_to_timezone(endTime_dt, "Etc/GMT+3")
+                    print(endTime_dt)
                     endTime_dt: datetime = convert_to_timezone(endTime_dt, "Etc/GMT")
+                    print(endTime_dt)
 
                     if endTime_dt.date() > startTime_dt.date():
                         endTime_dt = startTime_dt + timedelta(hours=1)
