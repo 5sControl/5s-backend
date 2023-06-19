@@ -38,11 +38,15 @@ def process_item_status(data):
                     item_data["count"] = min_item - 1
 
                 if item.prev_status == "In stock":
+
+                    # send_notification
                     try:
                         item.prev_status = None
                         send_notification_email(item, count, image_path, item_status)
                     except Exception as e:
                         print(f"Email notification errors: {e}")
+
+                    # send_notification suppliers
                     try:
                         item.prev_status = None
                         send_email_to_suppliers(item, image_path)
@@ -62,7 +66,7 @@ def process_item_status(data):
                 if item.prev_status == "Low stock level":
                     try:
                         item.prev_status = None
-                        send_notification_email(item, count, image_path, item_status)
+                        # send_notification_email(item, count, image_path, item_status)
                     except Exception as e:
                         print(f"Email notification errors: {e}")
                 else:
@@ -73,9 +77,17 @@ def process_item_status(data):
                 item_status = "Low stock level"
                 if level_previous_status == "In stock":
                     previous_status = "Low stock level"
+
+                    # send_notification suppliers
                     try:
                         send_email_to_suppliers(item, image_path)
-                        # send_notification_email(item, count, image_path, item_status)
+                    except Exception as e:
+                        print(f"Email notification errors: {e}")
+
+                    # send_notification
+                    try:
+                        item.prev_status = None
+                        send_notification_email(item, count, image_path, item_status)
                     except Exception as e:
                         print(f"Email notification errors: {e}")
                 elif item.prev_status != None:
@@ -99,7 +111,6 @@ def process_item_status(data):
         item_data["red_line"] = red_line
 
         result.append(item_data)
-    print(result)
     return result
 
 
