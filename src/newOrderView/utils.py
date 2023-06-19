@@ -22,9 +22,15 @@ def convert_to_gmt0(input_time: datetime) -> datetime:
     gmt_plus3 = pytz.timezone("Etc/GMT+3")
     gmt0 = pytz.timezone("Etc/GMT")
 
+    print(f"Before conversion to gmt0: {input_time}")
+
     input_time = gmt_plus3.localize(input_time)
 
-    converted_time = input_time.astimezone(gmt0) - timedelta(hours=3)
+    converted_time = input_time - timedelta(hours=3)
+    converted_time = converted_time.astimezone(gmt0)
+    
+    print(f"After conversion to gmt0: {converted_time}")
+    
     return converted_time
 
 
