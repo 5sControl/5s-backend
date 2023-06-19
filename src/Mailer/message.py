@@ -1,6 +1,7 @@
 import os
 import smtplib
 from datetime import datetime
+from datetime import time
 
 from email.message import EmailMessage
 
@@ -9,8 +10,8 @@ from src.Mailer.models import SMTPSettings, WorkingTime
 
 
 def send_email_to_suppliers(item, image_path):
+    """Send email to supplier"""
     try:
-        work_time = WorkingTime.objects.last()
         if item.suppliers is None or item.suppliers.contact_email is None:
             raise ValueError("Missing contact email")
         my_company = Company.objects.filter(my_company=True).order_by('-id').first()
@@ -51,10 +52,16 @@ def send_email_to_suppliers(item, image_path):
     except SMTPSettings.DoesNotExist:
         raise Exception('SMTP configuration is not defined')
 
-    # Check if a message was already
+    # Check if work time
+    work_time = WorkingTime.objects.last()
+    if work_time is None:
+        start_time = time(0, 0)
+        end_time = time(23, 59)
+    else:
+        start_time = work_time.time_start
+        end_time = work_time.time_end
+
     today = datetime.now().time()
-    start_time = work_time.time_start
-    end_time = work_time.time_end
     if start_time < today < end_time:
         # sending email
 
