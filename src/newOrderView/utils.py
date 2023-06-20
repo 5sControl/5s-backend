@@ -22,3 +22,8 @@ def convert_to_gmt0(input_time: datetime) -> datetime:
 
 def convert_to_unix(input_time: datetime) -> int:
     return int(input_time.timestamp()) * 1000
+
+
+def calculate_duration(start_time: datetime, end_time: datetime) -> int:
+    result = int((end_time - start_time).total_seconds() * 1000)
+    return result

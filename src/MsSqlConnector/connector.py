@@ -3,6 +3,7 @@ import pyodbc
 
 from rest_framework.response import Response
 from rest_framework import status
+from src.Core.types import Query
 
 from src.MsSqlConnector.models import DatabaseConnection
 
@@ -103,7 +104,7 @@ class MsSqlConnector:
     def executer(
         self,
         connection: pyodbc.Connection,
-        query: str,
+        query: Query,
         params: Optional[Iterable[Any]] = None,
     ) -> Any:
         with connection.cursor() as cursor:
