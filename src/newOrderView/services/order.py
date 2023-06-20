@@ -24,13 +24,13 @@ class OrderServices:
 
         order_query: Query = """
             SELECT
-                sk.indeks AS id,
                 z.zlecenie AS orderId,
                 sk.data AS startTime,
-                LEAD(sk.data) OVER (ORDER BY sk.data) AS endTime
+                sk_next.data AS endTime
             FROM Skany sk
                 JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeksskanu
                 JOIN zlecenia z ON sz.indekszlecenia = z.indeks
+                LEFT JOIN Skany sk_next ON sk_next.indeks > sk.indeks
             WHERE sk.data >= ? AND sk.data <= ?
         """
 
@@ -52,9 +52,9 @@ class OrderServices:
         result_dict: Dict[str, int] = defaultdict(int)
 
         for order_row in order_data:
-            order_id: str = order_row[1].strip()
-            startTime: datetime = order_row[2]
-            endTime: Optional[datetime] = order_row[3]
+            order_id: str = order_row[0].strip()
+            startTime: datetime = order_row[1]
+            endTime: Optional[datetime] = order_row[2]
 
             if endTime is not None:
                 if endTime.date() > startTime.date():
