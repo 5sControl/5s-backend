@@ -53,7 +53,7 @@ class OrderServises:
         for order_row in order_data:
             order_id: str = order_row[0].strip()
             startTime: str = str(order_row[1])
-            endTime: Optional[str] = order_row[2] if isinstance(order_row[2], None) else str(order_row[2]) 
+            endTime: Optional[str] = str(order_row[2]) if order_row[2] is not None else None
 
             startTime_dt: datetime = add_ms(startTime)
 
