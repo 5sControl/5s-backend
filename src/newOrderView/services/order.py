@@ -81,7 +81,7 @@ class OrderServises:
     def get_order_by_details(operation_id: int) -> Dict[str, Any]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
-        order_query = """
+        order_query: Query = """
             WITH Operation AS (
                 SELECT
                     sk.data AS operationTime
@@ -132,7 +132,7 @@ class OrderServises:
             startTime: datetime = datetime.strptime(
                 str(order_data[0][5]), "%Y-%m-%d %H:%M:%S.%f"
             )
-            endTime_str = str(order_data[0][6]) if order_data[0][6] else None
+            endTime_str: Optional[str] = str(order_data[0][6]) if order_data[0][6] else None
 
             if endTime_str:
                 if "." not in endTime_str:
@@ -142,7 +142,7 @@ class OrderServises:
                 endTime = startTime + timedelta(hours=1)
 
             workplaceID: int = order_data[0][7]
-            elementType = order_data[0][9]
+            elementType: str = order_data[0][9]
             video_data: Optional[Dict[str, Any]] = None
 
             if startTime is not None:
@@ -160,7 +160,7 @@ class OrderServises:
                 if skany_report:
                     operation_status: Optional[bool] = skany_report.violation_found
                     video_time: Optional[bool] = skany_report.start_time
-                    video_time_unix = convert_to_unix(video_time)
+                    video_time_unix: int = convert_to_unix(video_time)
 
                     if camera_obj and video_time:
                         video_data: Dict[str, Any] = get_skany_video_info(
@@ -189,4 +189,3 @@ class OrderServises:
             return result
         else:
             return {}
-

@@ -9,6 +9,7 @@ from django.contrib.postgres.fields import JSONField
 from django.db.models.query import QuerySet
 
 from src.CameraAlgorithms.models.camera import ZoneCameras
+from src.Core.types import Query
 from src.MsSqlConnector.connector import connector as connector_service
 from src.Reports.models import Report
 
@@ -22,7 +23,7 @@ class OperationServices:
     def get_operations(from_date: str, to_date: str) -> List[Dict[str, Any]]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
-        stanowiska_query: str = """
+        stanowiska_query: Query = """
             SELECT
                 indeks AS id,
                 raport AS orderId
@@ -39,7 +40,7 @@ class OperationServices:
             operation_id: int = row[0]
             operation_name: str = row[1]
 
-            operations_query: str = """
+            operations_query: Query = """
                 SELECT
                     sk.indeks AS id,
                     sk.data AS startTime,
@@ -97,23 +98,23 @@ class OperationServices:
                 startTime_dt: datetime = add_ms(startTime)
                 startTime_dt: datetime = convert_to_gmt0(startTime_dt)
                 startTime_unix: int = convert_to_unix(startTime_dt)
-                operation["sTime"] = startTime_unix
+                operation["sTime"]: int = startTime_unix
 
                 if endTime is not None:
                     endTime_dt: datetime = add_ms(endTime)
                     endTime_dt: datetime = convert_to_gmt0(endTime_dt)
 
                     if endTime_dt.date() > startTime_dt.date():
-                        endTime_dt = startTime_dt + timedelta(hours=1)
+                        endTime_dt: datetime = startTime_dt + timedelta(hours=1)
                     else:
-                        endTime_dt = endTime_dt or startTime_dt + timedelta(hours=1)
+                        endTime_dt: datetime = endTime_dt or startTime_dt + timedelta(hours=1)
 
                     endTime_unix: int = convert_to_unix(endTime_dt)
-                    operation["eTime"] = endTime_unix
+                    operation["eTime"]: int = endTime_unix
                 else:
                     endTime_dt = startTime_dt + timedelta(hours=1)
                     endTime_unix: int = convert_to_unix(endTime_dt)
-                    operation["eTime"] = endTime_unix
+                    operation["eTime"]: int = endTime_unix
 
                 operations_list.append(operation)
 
@@ -183,7 +184,7 @@ class OperationServices:
                 if not zone_reports:
                     continue
 
-                filtered_reports = [
+                filtered_reports: List[QuerySet] = [
                     report for report in zone_reports
                     if time(6) <= datetime.strptime(report.start_tracking, "%Y-%m-%d %H:%M:%S.%f").time() <= time(20)
                     and time(6) <= datetime.strptime(report.stop_tracking, "%Y-%m-%d %H:%M:%S.%f").time() <= time(20)
@@ -227,7 +228,7 @@ class OperationServices:
     def get_whnet_operation() -> List[Dict[str, Any]]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
-        query: str = """
+        query: Query = """
             SELECT
                 indeks AS id,
                 raport AS operationName
