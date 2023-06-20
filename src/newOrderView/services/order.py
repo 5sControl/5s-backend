@@ -31,7 +31,6 @@ class OrderServices:
                 JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeksskanu
                 JOIN zlecenia z ON sz.indekszlecenia = z.indeks
             WHERE sk.data >= ? AND sk.data <= ?
-            ORDER BY startTime
         """
 
         if from_date and to_date:
