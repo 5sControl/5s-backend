@@ -1,16 +1,14 @@
 from typing import Iterable, List, Any, Optional, Tuple, Dict
-from datetime import datetime, time, timedelta
+from datetime import datetime, timedelta, time
 import logging
-import pytz
 
 import pyodbc
 
 from django.db.models import Q
-from django.db.models.query import QuerySet
 from django.contrib.postgres.fields import JSONField
+from django.db.models.query import QuerySet
 
 from src.CameraAlgorithms.models.camera import ZoneCameras
-from src.Core.types import Query
 from src.MsSqlConnector.connector import connector as connector_service
 from src.Reports.models import Report
 
@@ -24,7 +22,7 @@ class OperationServices:
     def get_operations(from_date: str, to_date: str) -> List[Dict[str, Any]]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
-        stanowiska_query: Query = """
+        stanowiska_query: str = """
             SELECT
                 indeks AS id,
                 raport AS orderId
@@ -41,7 +39,7 @@ class OperationServices:
             operation_id: int = row[0]
             operation_name: str = row[1]
 
-            operations_query: Query = """
+            operations_query: str = """
                 SELECT
                     sk.indeks AS id,
                     sk.data AS startTime,
@@ -99,49 +97,40 @@ class OperationServices:
                 startTime_dt: datetime = add_ms(startTime)
                 startTime_dt: datetime = convert_to_gmt0(startTime_dt)
                 startTime_unix: int = convert_to_unix(startTime_dt)
-
                 operation["sTime"] = startTime_unix
 
                 if endTime is not None:
                     endTime_dt: datetime = add_ms(endTime)
-                    endTime_dt: datetime = endTime_dt.astimezone(pytz.utc)
+                    endTime_dt: datetime = convert_to_gmt0(endTime_dt)
 
                     if endTime_dt.date() > startTime_dt.date():
-                        endTime_dt: datetime = startTime_dt + timedelta(hours=1)
+                        endTime_dt = startTime_dt + timedelta(hours=1)
                     else:
-                        endTime_dt: datetime = endTime_dt or startTime_dt + timedelta(
-                            hours=1
-                        )
+                        endTime_dt = endTime_dt or startTime_dt + timedelta(hours=1)
 
-                    endTime_dt: datetime = convert_to_gmt0(endTime_dt)
                     endTime_unix: int = convert_to_unix(endTime_dt)
-
                     operation["eTime"] = endTime_unix
                 else:
-                    endTime_dt: datetime = startTime_dt + timedelta(hours=1)
-
-                    endTime_dt: datetime = convert_to_gmt0(endTime_dt)
+                    endTime_dt = startTime_dt + timedelta(hours=1)
                     endTime_unix: int = convert_to_unix(endTime_dt)
-
                     operation["eTime"] = endTime_unix
 
                 operations_list.append(operation)
 
-            result: Dict[str, Any] = {
+            result = {
                 "oprTypeID": operation_id,
                 "oprName": operation_name,
                 "oprs": operations_list,
             }
 
             result_list.append(result)
-
         return result_list
 
     @staticmethod
     def get_machine(from_date: str, to_date: str) -> List[Dict[str, Any]]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
-        stanowiska_query: Query = """
+        stanowiska_query: str = """
             SELECT
                 indeks AS id,
                 raport AS orderId
@@ -167,45 +156,43 @@ class OperationServices:
             if not zone_cameras_ids:
                 continue
 
-            if from_date and to_date:
-                from_date_dt: datetime = datetime.strptime(from_date, "%Y-%m-%d").date()
-                to_date_dt: datetime = datetime.strptime(to_date, "%Y-%m-%d").date()
+            from_date_dt: datetime = datetime.strptime(from_date, "%Y-%m-%d")
+            from_date_dt: datetime = from_date_dt + timedelta(microseconds=1)
 
-                start_time_min: datetime = datetime.combine(from_date_dt, time(6, 0))
-                start_time_max: datetime = datetime.combine(from_date_dt, time(20, 0))
+            to_date_dt: datetime = datetime.strptime(to_date, "%Y-%m-%d")
+            to_date_dt: datetime = (
+                to_date_dt + timedelta(days=1) - timedelta(microseconds=1)
+            )
 
-                stop_time_min: datetime = datetime.combine(to_date_dt, time(6, 0))
-                stop_time_max: datetime = datetime.combine(to_date_dt, time(20, 0))
+            reports_with_matching_zona_id: Iterable[QuerySet[Report]] = Report.objects.filter(
+                Q(algorithm=3) & Q(extra__has_key="zoneId")
+            )
 
-                reports_with_matching_zona_id: Iterable[
-                    QuerySet
-                ] = Report.objects.filter(Q(algorithm=3) & Q(extra__has_key="zoneId"))
+            if not reports_with_matching_zona_id:
+                continue
 
-                if not reports_with_matching_zona_id:
-                    continue
-
-                for zone_camera_id in zone_cameras_ids:
-                    zone_reports: Iterable[
-                        QuerySet
-                    ] = reports_with_matching_zona_id.filter(
-                        Q(extra__zoneId__exact=zone_camera_id)
-                        & Q(
-                            start_tracking__gte=start_time_min,
-                            start_tracking__lte=start_time_max,
-                        )
-                        & Q(
-                            stop_tracking__gte=stop_time_min,
-                            stop_tracking__lte=stop_time_max,
-                        )
-                    )
+            for zone_camera_id in zone_cameras_ids:
+                zone_reports: Iterable[QuerySet[Report]] = reports_with_matching_zona_id.filter(
+                    Q(extra__zoneId__exact=zone_camera_id)
+                    & Q(start_tracking__gte=from_date_dt)
+                    & Q(stop_tracking__lte=to_date_dt)
+                    & Q(start_tracking__lte=to_date)
+                    & Q(stop_tracking__gte=from_date)
+                )
 
                 if not zone_reports:
                     continue
 
+                filtered_reports = [
+                    report for report in zone_reports
+                    if time(6) <= datetime.strptime(report.start_tracking, "%Y-%m-%d %H:%M:%S.%f").time() <= time(20)
+                    and time(6) <= datetime.strptime(report.stop_tracking, "%Y-%m-%d %H:%M:%S.%f").time() <= time(20)
+                ]
+
                 reports: List[Dict[str, Any]] = []
                 zone_name: Optional[str] = None
 
-                for report in zone_reports:
+                for report in filtered_reports:
                     zone_data: Dict[str, Any] = report.extra
                     camera_ip: str = report.camera.id
 
@@ -213,12 +200,8 @@ class OperationServices:
 
                     machine_control_report_id: int = report.id
 
-                    sTime: str = convert_to_unix(
-                        datetime.strptime(report.start_tracking, "%Y-%m-%d %H:%M:%S.%f")
-                    )
-                    eTime: str = convert_to_unix(
-                        datetime.strptime(report.stop_tracking, "%Y-%m-%d %H:%M:%S.%f")
-                    )
+                    sTime: str = convert_to_unix(datetime.strptime(report.start_tracking, "%Y-%m-%d %H:%M:%S.%f"))
+                    eTime: str = convert_to_unix(datetime.strptime(report.stop_tracking, "%Y-%m-%d %H:%M:%S.%f"))
 
                     report_data: Dict[str, Any] = {
                         "zoneId": machine_control_report_id,  # Machine control report from dashboard
@@ -227,6 +210,7 @@ class OperationServices:
                         "sTime": sTime,
                         "eTime": eTime,
                     }
+
                     reports.append(report_data)
 
                 machine_result: Dict[str, Any] = {
@@ -243,7 +227,7 @@ class OperationServices:
     def get_whnet_operation() -> List[Dict[str, Any]]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
-        query: Query = """
+        query: str = """
             SELECT
                 indeks AS id,
                 raport AS operationName

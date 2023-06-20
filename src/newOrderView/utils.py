@@ -1,7 +1,5 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import hashlib
-
-import pytz
 
 
 def add_ms(time: str) -> datetime:
@@ -19,12 +17,7 @@ def generate_hash(prefix: str, from_date: str, to_date: str) -> str:
 
 
 def convert_to_gmt0(input_time: datetime) -> datetime:
-    gmt0 = pytz.timezone("Etc/GMT")
-    if input_time.tzinfo != gmt0:
-        dt_gmt_plus3 = input_time.astimezone(gmt0)
-        return dt_gmt_plus3
-    else:
-        return input_time
+    return input_time - timedelta(hours=3)
 
 
 def convert_to_unix(input_time: datetime) -> int:

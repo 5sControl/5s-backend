@@ -11,6 +11,7 @@ from src.Reports.models import SkanyReport
 from src.OrderView.models import IndexOperations
 from src.OrderView.utils import get_skany_video_info
 from src.newOrderView.utils import add_ms, calculate_duration
+from src.newOrderView.utils import convert_to_gmt0, convert_to_unix
 
 logger = logging.getLogger(__name__)
 
@@ -80,7 +81,7 @@ class OrderServises:
     def get_order_by_details(operation_id: int) -> Dict[str, Any]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
-        order_query: Query = """
+        order_query = """
             WITH Operation AS (
                 SELECT
                     sk.data AS operationTime
@@ -131,21 +132,17 @@ class OrderServises:
             startTime: datetime = datetime.strptime(
                 str(order_data[0][5]), "%Y-%m-%d %H:%M:%S.%f"
             )
-            endTime_str: Optional[str] = (
-                str(order_data[0][6]) if order_data[0][6] else None
-            )
+            endTime_str = str(order_data[0][6]) if order_data[0][6] else None
 
             if endTime_str:
                 if "." not in endTime_str:
                     endTime_str += ".000"
-                endTime: datetime = datetime.strptime(
-                    endTime_str, "%Y-%m-%d %H:%M:%S.%f"
-                )
+                endTime = datetime.strptime(endTime_str, "%Y-%m-%d %H:%M:%S.%f")
             else:
-                endTime: datetime = startTime + timedelta(hours=1)
+                endTime = startTime + timedelta(hours=1)
 
             workplaceID: int = order_data[0][7]
-            elementType: str = order_data[0][9]
+            elementType = order_data[0][9]
             video_data: Optional[Dict[str, Any]] = None
 
             if startTime is not None:
@@ -163,17 +160,18 @@ class OrderServises:
                 if skany_report:
                     operation_status: Optional[bool] = skany_report.violation_found
                     video_time: Optional[bool] = skany_report.start_time
-                    logger.warning(
-                        f"Skany report was founded. Data -> {operation_status}, {video_data}",
-                    )
+                    video_time_unix = convert_to_unix(video_time)
+
                     if camera_obj and video_time:
-                        logger.warning(video_time * 1000)
                         video_data: Dict[str, Any] = get_skany_video_info(
-                            time=(video_time * 1000), camera_ip=camera_obj.camera.id
+                            time=(video_time_unix), camera_ip=camera_obj.camera.id
                         )
 
-            startTime_unix: int = int(startTime.timestamp()) * 1000
-            endTime_unix: int = int(endTime.timestamp()) * 1000
+            startTime: datetime = convert_to_gmt0(startTime)
+            endTime: datetime = convert_to_gmt0(endTime)
+
+            startTime_unix: int = convert_to_unix(startTime)
+            endTime_unix: int = convert_to_unix(endTime)
 
             result: Dict[str, Any] = {
                 "id": id,
@@ -191,3 +189,4 @@ class OrderServises:
             return result
         else:
             return {}
+

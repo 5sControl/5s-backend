@@ -10,4 +10,4 @@ class ItemsSerializer(serializers.ModelSerializer):
         model = Items
         fields = ['id', 'name', 'status', 'current_stock_level', 'low_stock_level', 'camera',
                   'date_created', 'date_updated', 'coords', 'prev_status', 'multi_row',
-                  'order_quantity', 'suppliers']
+                  'order_quantity', 'suppliers', 'to_emails', 'copy_emails', 'subject']

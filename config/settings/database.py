@@ -16,8 +16,8 @@ DATABASES = {
     },
 }
 
-if 'test' in sys.argv:
-    DATABASES['default'] = DATABASES['test']
+if "test" in sys.argv:
+    DATABASES["default"] = DATABASES["test"]
 
 CACHES = {
     "default": {

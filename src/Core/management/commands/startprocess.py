@@ -73,7 +73,7 @@ class Command(BaseCommand):
                             {"zoneId": zone_camera.id, "zoneName": zone_camera.name, "coords": zone_camera.coords}
                         )
                 except Exception as e:
-                    print(e)
+                    logger.critical(f"Error while collecting zone: {e}")
 
                 new_data = {
                     "areas": areas,
@@ -85,10 +85,12 @@ class Command(BaseCommand):
                 result = send_run_request(request)
             except SenderError as e:
                 logger.critical(f"Yolo server is not available. Details: {e}")
+                CameraAlgorithm.objects.get(algorithm=algorithm_obj, camera=camera_obj).delete()
             except InvalidResponseError as e:
                 logger.critical(
                     f"Yolo can't start algorithm {algorithm_obj.name} on camera {camera_obj.id}. Details: {e}"
                 )
+                CameraAlgorithm.objects.get(algorithm=algorithm_obj, camera=camera_obj).delete()
             else:
                 new_process_id = result["pid"]
                 camera_algorithm.process_id = new_process_id
