@@ -1,17 +1,17 @@
 from typing import List, Any, Tuple, Dict, Optional
 from datetime import datetime, timedelta
 import logging
+import time
 
 import pyodbc
-from src.Core.types import Query
 
+from src.Core.types import Query
 from src.MsSqlConnector.connector import connector as connector_service
 from src.CameraAlgorithms.models import Camera
 from src.Reports.models import SkanyReport
 from src.OrderView.models import IndexOperations
 from src.OrderView.utils import get_skany_video_info
-from src.newOrderView.utils import add_ms, calculate_duration
-from src.newOrderView.utils import convert_to_gmt0, convert_to_unix
+from src.newOrderView.utils import convert_to_gmt0, convert_to_unix, calculate_duration
 
 logger = logging.getLogger(__name__)
 
@@ -19,11 +19,13 @@ logger = logging.getLogger(__name__)
 class OrderServices:
     @staticmethod
     def get_order(from_date: str, to_date: str) -> List[Dict[str, Any]]:
+        start_time = time.time()
+
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
         order_query: Query = """
             SELECT
-                DISTINCT z.zlecenie AS orderId,
+                z.zlecenie AS orderId,
                 sk.data AS startTime,
                 LEAD(sk.data) OVER (ORDER BY sk.data) AS endTime
             FROM Skany sk
@@ -52,25 +54,21 @@ class OrderServices:
 
         for order_row in order_data:
             order_id: str = order_row[0].strip()
-            startTime: str = str(order_row[1])
-            endTime: Optional[str] = str(order_row[2]) if order_row[2] is not None else None
-
-            startTime_dt: datetime = add_ms(startTime)
+            startTime: datetime = order_row[1]
+            endTime: Optional[datetime] = order_row[2]
 
             if endTime is not None:
-                endTime_dt: datetime = add_ms(endTime)
-
-                if endTime_dt.date() > startTime_dt.date():
-                    endTime_dt: datetime = startTime_dt + timedelta(hours=1)
+                if endTime.date() > startTime.date():
+                    endTime: datetime = startTime + timedelta(hours=1)
                 else:
-                    endTime_dt: datetime = endTime_dt or startTime_dt + timedelta(
+                    endTime: datetime = endTime or startTime + timedelta(
                         hours=1
                     )
 
             else:
-                endTime_dt: datetime = startTime_dt + timedelta(hours=1)
+                endTime: datetime = startTime + timedelta(hours=1)
 
-            duration: int = calculate_duration(startTime_dt, endTime_dt)
+            duration: int = calculate_duration(startTime, endTime)
 
             if order_id in result_dict:
                 result_dict[order_id] += duration
@@ -81,6 +79,10 @@ class OrderServices:
             {"orId": order_id, "duration": duration}
             for order_id, duration in result_dict.items()
         ]
+
+        end_time = time.time()
+        execution_time = end_time - start_time
+        print(execution_time)
 
         return result_list
 
