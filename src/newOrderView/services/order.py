@@ -24,6 +24,7 @@ class OrderServices:
 
         order_query: Query = """
             SELECT
+                sk.indeks AS id,
                 z.zlecenie AS orderId,
                 sk.data AS startTime,
                 LEAD(sk.data) OVER (ORDER BY sk.data) AS endTime
@@ -51,9 +52,9 @@ class OrderServices:
         result_dict: Dict[str, int] = defaultdict(int)
 
         for order_row in order_data:
-            order_id: str = order_row[0].strip()
-            startTime: datetime = order_row[1]
-            endTime: Optional[datetime] = order_row[2]
+            order_id: str = order_row[1].strip()
+            startTime: datetime = order_row[2]
+            endTime: Optional[datetime] = order_row[3]
 
             if endTime is not None:
                 if endTime.date() > startTime.date():
