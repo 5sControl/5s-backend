@@ -8,7 +8,7 @@ from django.utils.decorators import method_decorator
 from rest_framework import generics, status
 from rest_framework.response import Response
 
-from src.Core.paginators import OrderViewPaginnator, NoPagination
+from src.Core.paginators import NoPagination
 from src.MsSqlConnector.connector import connector as connector_service
 
 from .services import OperationServices, OrderServices
@@ -16,6 +16,8 @@ from .utils import generate_hash
 
 
 class GetOperation(generics.GenericAPIView):
+    pagination_class = NoPagination
+
     @connector_service.check_database_connection
     def get(self, request):
         from_date: str = request.GET.get("from")
@@ -36,6 +38,8 @@ class GetOperation(generics.GenericAPIView):
 
 
 class GetMachine(generics.GenericAPIView):
+    pagination_class = NoPagination
+
     @connector_service.check_database_connection
     def get(self, request):
         from_date: str = request.GET.get("from")
@@ -56,7 +60,7 @@ class GetMachine(generics.GenericAPIView):
 
 
 class GetOrders(generics.GenericAPIView):
-    pagination_class = OrderViewPaginnator
+    pagination_class = NoPagination
 
     @connector_service.check_database_connection
     def get(self, request):
@@ -64,7 +68,7 @@ class GetOrders(generics.GenericAPIView):
         to_date: str = request.GET.get("to")
 
         key: str = generate_hash("get_order", from_date, to_date)
-        response = cache.get("get_order_" + key)
+        response = cache.get(key)
 
         if response is None:
             response: List[Dict[str, str]] = OrderServices.get_order(from_date, to_date)
@@ -74,7 +78,7 @@ class GetOrders(generics.GenericAPIView):
 
 
 class GetOrderByDetail(generics.GenericAPIView):
-    pagination_class = OrderViewPaginnator
+    pagination_class = NoPagination
 
     @connector_service.check_database_connection
     def get(self, request):
