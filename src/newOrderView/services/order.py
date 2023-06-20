@@ -16,7 +16,7 @@ from src.newOrderView.utils import convert_to_gmt0, convert_to_unix
 logger = logging.getLogger(__name__)
 
 
-class OrderServises:
+class OrderServices:
     @staticmethod
     def get_order(from_date: str, to_date: str) -> List[Dict[str, Any]]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
@@ -48,7 +48,7 @@ class OrderServises:
             connection=connection, query=order_query, params=params
         )
 
-        result_list: List[Dict[str, Any]] = []
+        result_dict: Dict[str, int] = {}
 
         for order_row in order_data:
             order_id: str = order_row[0].strip()
@@ -72,8 +72,15 @@ class OrderServises:
 
             duration: int = calculate_duration(startTime_dt, endTime_dt)
 
-            order: Dict[str, Any] = {"orId": order_id, "duration": duration}
-            result_list.append(order)
+            if order_id in result_dict:
+                result_dict[order_id] += duration
+            else:
+                result_dict[order_id] = duration
+
+        result_list: List[Dict[str, Any]] = [
+            {"orId": order_id, "duration": duration}
+            for order_id, duration in result_dict.items()
+        ]
 
         return result_list
 
