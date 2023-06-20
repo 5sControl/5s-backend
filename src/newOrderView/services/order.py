@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import List, Any, Tuple, Dict, Optional
 from datetime import datetime, timedelta
 import logging
@@ -19,8 +20,6 @@ logger = logging.getLogger(__name__)
 class OrderServices:
     @staticmethod
     def get_order(from_date: str, to_date: str) -> List[Dict[str, Any]]:
-        start_time = time.time()
-
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
         order_query: Query = """
@@ -50,7 +49,7 @@ class OrderServices:
             connection=connection, query=order_query, params=params
         )
 
-        result_dict: Dict[str, int] = {}
+        result_dict: Dict[str, int] = defaultdict(int)
 
         for order_row in order_data:
             order_id: str = order_row[0].strip()
@@ -61,28 +60,19 @@ class OrderServices:
                 if endTime.date() > startTime.date():
                     endTime: datetime = startTime + timedelta(hours=1)
                 else:
-                    endTime: datetime = endTime or startTime + timedelta(
-                        hours=1
-                    )
+                    endTime: datetime = endTime or startTime + timedelta(hours=1)
 
             else:
                 endTime: datetime = startTime + timedelta(hours=1)
 
             duration: int = calculate_duration(startTime, endTime)
 
-            if order_id in result_dict:
-                result_dict[order_id] += duration
-            else:
-                result_dict[order_id] = duration
+            result_dict[order_id] += duration
 
         result_list: List[Dict[str, Any]] = [
             {"orId": order_id, "duration": duration}
             for order_id, duration in result_dict.items()
         ]
-
-        end_time = time.time()
-        execution_time = end_time - start_time
-        print(execution_time)
 
         return result_list
 
