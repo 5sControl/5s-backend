@@ -1,4 +1,6 @@
-from django.urls import path
+from django.urls import path, include
+
+from rest_framework.routers import DefaultRouter
 
 from .views import (
     GetOperation,
@@ -8,6 +10,9 @@ from .views import (
     GetMachine,
     GetFiltrationsData,
 )
+
+router = DefaultRouter()
+router.register(r"filtration-data", GetFiltrationsData, basename="filtration-data")
 
 urlpatterns = [
     path(
@@ -35,9 +40,5 @@ urlpatterns = [
         GetWhnetOperation.as_view(),
         name="get-whnet-operation",
     ),
-    path(
-        "filtration-data/",
-        GetFiltrationsData.as_view(),
-        name="filtration-data",
-    )
+    path("", include(router.urls)),
 ]
