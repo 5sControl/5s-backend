@@ -35,7 +35,7 @@ class OrderServices:
         """
 
         if operation_type_ids:
-            order_query += " AND indeks IN ({})""".format(",".join(str(id) for id in operation_type_ids))
+            order_query += " AND sk.indeks IN ({})""".format(",".join(str(id) for id in operation_type_ids))
 
         if from_date and to_date:
             from_date_dt: datetime = datetime.strptime(from_date, "%Y-%m-%d")
