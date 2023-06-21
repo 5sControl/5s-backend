@@ -31,6 +31,6 @@ class Command(BaseCommand):
         )
 
         for id in stanowiska_data:
-            oprtID: int = id[0]
-            if FiltrationOperationsTypeID.objects.exists(operation_type_id=oprtID):
+            oprtID = id[0]
+            if not FiltrationOperationsTypeID.objects.filter(operation_type_id=oprtID).exists():
                 FiltrationOperationsTypeID.objects.create(operation_type_id=oprtID)
