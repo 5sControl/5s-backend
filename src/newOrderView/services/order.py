@@ -162,11 +162,10 @@ class OrderServices:
                 if skany_report:
                     operation_status: Optional[bool] = skany_report.violation_found
                     video_time: Optional[bool] = skany_report.start_time
-                    video_time_unix: int = convert_to_unix(video_time)
 
                     if camera_obj and video_time:
                         video_data: Dict[str, Any] = get_skany_video_info(
-                            time=(video_time_unix), camera_ip=camera_obj.camera.id
+                            time=(video_time), camera_ip=camera_obj.camera.id
                         )
 
             startTime: datetime = convert_to_gmt0(startTime)
