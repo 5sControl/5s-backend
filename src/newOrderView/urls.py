@@ -6,6 +6,7 @@ from .views import (
     GetOrderByDetail,
     GetWhnetOperation,
     GetMachine,
+    GetFiltrationsData,
 )
 
 urlpatterns = [
@@ -34,4 +35,9 @@ urlpatterns = [
         GetWhnetOperation.as_view(),
         name="get-whnet-operation",
     ),
+    path(
+        "filtration-data/",
+        GetFiltrationsData.as_view(),
+        name="filtration-data",
+    )
 ]
