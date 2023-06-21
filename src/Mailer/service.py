@@ -6,27 +6,30 @@ from email.message import EmailMessage
 from datetime import datetime
 from datetime import time
 
+from celery import shared_task
+
 from src.Mailer.models import SMTPSettings, WorkingTime
 
 
+@shared_task
 def send_notification_email(item, count, image_path, item_status):
     """Send notification email"""
-
-    if item.subject is None:
+    print(item)
+    if item['subject'] is None:
         raise ValueError("Missing item subject")
 
-    to_emails = item.to_emails
-    copy_emails = item.copy_emails
+    to_emails = item['to_emails']
+    copy_emails = item['copy_emails']
     recipient_list = list(set(to_emails + copy_emails))
 
-    if item.multi_row == True:
+    if item['multi_row'] == True:
         used_algorithm = "multi row"
     else:
         used_algorithm = "single row"
 
-    subject = f'{item.subject}'
+    subject = f"{item['subject']}"
     if item_status == 'Low stock level':
-        message = f'Current stock of {item.name}: {count} {used_algorithm}. Low stock level of {item.name}: {item.low_stock_level}. The inventory level of {item.name} in your stock has fallen to a low level. This means that there are only a limited number of units left in stock and that the item may soon become unavailable. To avoid any inconvenience, we recommend that you take action to replenish your stock of {item.name} as soon as possible. You are receiving this email because your email account was entered in 5S Control system to receive notifications regarding low stock levels of inventory.'
+        message = f"Current stock of {item['name']}: {count} {used_algorithm}. Low stock level of {item['name']}: {item['low_stock_level']}. The inventory level of {item['name']} in your stock has fallen to a low level. This means that there are only a limited number of units left in stock and that the item may soon become unavailable. To avoid any inconvenience, we recommend that you take action to replenish your stock of {item['name']} as soon as possible. You are receiving this email because your email account was entered in 5S Control system to receive notifications regarding low stock levels of inventory."
 
     image_name = image_path.split('/')[-1]
 

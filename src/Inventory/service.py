@@ -1,8 +1,11 @@
 from src.CameraAlgorithms.models import CameraAlgorithm, Algorithm, ZoneCameras
-from src.Core.const import SERVER_URL
 from src.Inventory.models import Items
+
+from src.Core.const import SERVER_URL
+
 from src.CameraAlgorithms.services.cameraalgorithm import camera_rtsp_link, send_run_request, stop_camera_algorithm, \
     update_status_algorithm
+from src.Inventory.serializers import ItemsSerializer
 
 from src.Mailer.message import send_email_to_suppliers
 
@@ -82,14 +85,19 @@ def process_item_status(data):
                     try:
                         send_email_to_suppliers(item, image_path)
                     except Exception as e:
-                        print(f"Email notification errors: {e}")
+                        print(f"Email suppliers notification errors: {e}")
 
                     # send_notification
-                    try:
-                        item.prev_status = None
-                        send_notification_email(item, count, image_path, item_status)
-                    except Exception as e:
-                        print(f"Email notification errors: {e}")
+                    # try:
+                    item.prev_status = None
+
+                    item_serializer = ItemsSerializer(item)
+                    serialized_item = item_serializer.data
+
+                    send_notification_email.apply_async(args=[serialized_item, count, image_path, item_status],
+                                                        countdown=0)
+                    # except Exception as e:
+                    #     print(f"Email notification errors: {e}")
                 elif item.prev_status != None:
                     item.prev_status = item.status
 
@@ -102,8 +110,9 @@ def process_item_status(data):
             item.current_stock_level = count
             item_data["low_stock_level"] = min_item
 
-        print(f"item_id=={item.id}, item_status {item_status}, "
-              f"red_line == {red_line}, multi_row == {data_item[0]['multi_row']}")
+        print(
+            f"item_id=={item.id}, item_id=={item.name}, item_status {item_status}, "
+            f"red_line == {red_line}, multi_row == {data_item[0]['multi_row']}")
         item.status = item_status
         item.save()
 
@@ -154,7 +163,6 @@ def started_process(camera):
             )
     except:
         print("NO ZONE")
-
 
     data.append({
         "areas": areas,
