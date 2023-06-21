@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 class OperationServices:
     @staticmethod
-    def get_operations(from_date: str, to_date: str) -> List[Dict[str, Any]]:
+    def get_operations(from_date: str, to_date: str, operations_type_id: List[int]) -> List[Dict[str, Any]]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
         stanowiska_query: Query = """
@@ -28,7 +28,7 @@ class OperationServices:
                 indeks AS id,
                 raport AS orderId
             FROM Stanowiska
-        """
+            WHERE indeks IN ({})""".format(",".join(str(id) for id in operations_type_id))
 
         stanowiska_data: List[Tuple[Any]] = connector_service.executer(
             connection=connection, query=stanowiska_query
