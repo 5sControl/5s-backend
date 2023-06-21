@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 class OrderServices:
     @staticmethod
-    def get_order(from_date: str, to_date: str) -> List[Dict[str, Any]]:
+    def get_order(from_date: str, to_date: str, operation_type_ids: List[int]) -> List[Dict[str, Any]]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
         order_query: Query = """
@@ -30,8 +30,12 @@ class OrderServices:
             FROM Skany sk
                 JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeksskanu
                 JOIN zlecenia z ON sz.indekszlecenia = z.indeks
+                JOIN Stanowiska st ON sk.stanowisko = st.indeks
             WHERE sk.data >= ? AND sk.data <= ?
         """
+
+        if operation_type_ids:
+            order_query += " AND indeks IN ({})""".format(",".join(str(id) for id in operation_type_ids))
 
         if from_date and to_date:
             from_date_dt: datetime = datetime.strptime(from_date, "%Y-%m-%d")

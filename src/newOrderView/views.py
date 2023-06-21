@@ -7,7 +7,6 @@ from django.utils.decorators import method_decorator
 
 from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 
 from src.Core.paginators import NoPagination
 from src.MsSqlConnector.connector import connector as connector_service
@@ -20,22 +19,21 @@ from .utils import generate_hash
 
 class GetOperation(generics.GenericAPIView):
     pagination_class = NoPagination
-    permission_classes = [IsAuthenticated]
 
     @connector_service.check_database_connection
     def get(self, request):
         from_date: str = request.GET.get("from")
         to_date: str = request.GET.get("to")
-        operations_type_id = request.GET.getlist("typeID")
 
-        print(f"TYPE ID IS {operations_type_id}")
+        operation_type_ids = FiltrationOperationsTypeID.objects.filter(is_active=True).values_list('operation_type_id', flat=True)
+        operation_type_ids = list(operation_type_ids)
 
-        key: str = generate_hash("get_operation", from_date, to_date)
+        key: str = generate_hash("get_operation", from_date, to_date) + ":" + ":".join(str(id) for id in operation_type_ids)
         response = cache.get(key)
 
         if response is None:
             response: List[Dict[str, Any]] = OperationServices.get_operations(
-                from_date, to_date, operations_type_id
+                from_date, to_date, operation_type_ids
             )
             cache.set(key, response, timeout=120)
 
@@ -46,19 +44,21 @@ class GetOperation(generics.GenericAPIView):
 
 class GetMachine(generics.GenericAPIView):
     pagination_class = NoPagination
-    permission_classes = [IsAuthenticated]
 
     @connector_service.check_database_connection
     def get(self, request):
         from_date: str = request.GET.get("from")
         to_date: str = request.GET.get("to")
 
-        key: str = generate_hash("get_machine", from_date, to_date)
+        operation_type_ids = FiltrationOperationsTypeID.objects.filter(is_active=True).values_list('operation_type_id', flat=True)
+        operation_type_ids = list(operation_type_ids)
+
+        key: str = generate_hash("get_machine", from_date, to_date) + ":" + ":".join(str(id) for id in operation_type_ids)
         response = cache.get(key)
 
         if response is None:
             response: List[Dict[str, Any]] = OperationServices.get_machine(
-                from_date, to_date
+                from_date, to_date, operation_type_ids
             )
             cache.set(key, response, timeout=60)
 
@@ -69,18 +69,20 @@ class GetMachine(generics.GenericAPIView):
 
 class GetOrders(generics.GenericAPIView):
     pagination_class = NoPagination
-    permission_classes = [IsAuthenticated]
 
     @connector_service.check_database_connection
     def get(self, request):
         from_date: str = request.GET.get("from")
         to_date: str = request.GET.get("to")
 
-        key: str = generate_hash("get_order", from_date, to_date)
+        operation_type_ids = FiltrationOperationsTypeID.objects.filter(is_active=True).values_list('operation_type_id', flat=True)
+        operation_type_ids = list(operation_type_ids)
+
+        key: str = generate_hash("get_order", from_date, to_date) + ":" + ":".join(str(id) for id in operation_type_ids)
         response = cache.get(key)
 
         if response is None:
-            response: List[Dict[str, str]] = OrderServices.get_order(from_date, to_date)
+            response: List[Dict[str, str]] = OrderServices.get_order(from_date, to_date, operation_type_ids)
             cache.set(key, response, timeout=120)
 
         return JsonResponse(response, status=status.HTTP_200_OK, safe=False)
@@ -88,7 +90,6 @@ class GetOrders(generics.GenericAPIView):
 
 class GetOrderByDetail(generics.GenericAPIView):
     pagination_class = NoPagination
-    permission_classes = [IsAuthenticated]
 
     @connector_service.check_database_connection
     def get(self, request):
@@ -99,7 +100,6 @@ class GetOrderByDetail(generics.GenericAPIView):
 
 class GetWhnetOperation(generics.GenericAPIView):
     pagination_class = NoPagination
-    permission_classes = [IsAuthenticated]
 
     @method_decorator(cache_page(30))
     @connector_service.check_database_connection
@@ -112,5 +112,4 @@ class GetWhnetOperation(generics.GenericAPIView):
 class GetFiltrationsData(viewsets.ModelViewSet):
     pagination_class = NoPagination
     serializer_class = FilterOperationsTypeIDSerializer
-    permission_classes = [IsAuthenticated]
     queryset = FiltrationOperationsTypeID.objects.all()
