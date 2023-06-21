@@ -20,13 +20,14 @@ class GetOperation(generics.GenericAPIView):
     def get(self, request):
         from_date: str = request.GET.get("from")
         to_date: str = request.GET.get("to")
+        operations_type_id = request.GET.getlist("typeID")
 
         key: str = generate_hash("get_operation", from_date, to_date)
         response = cache.get(key)
 
         if response is None:
             response: List[Dict[str, Any]] = OperationServices.get_operations(
-                from_date, to_date
+                from_date, to_date, operations_type_id
             )
             cache.set(key, response, timeout=120)
 
