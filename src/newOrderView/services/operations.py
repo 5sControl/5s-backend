@@ -28,7 +28,11 @@ class OperationServices:
                 indeks AS id,
                 raport AS orderId
             FROM Stanowiska
-            WHERE indeks IN ({})""".format(",".join(str(id) for id in operations_type_id))
+            WHERE 1=1
+        """
+
+        if operations_type_id:
+            stanowiska_query += "AND indeks IN ({})""".format(",".join(str(id) for id in operations_type_id))
 
         stanowiska_data: List[Tuple[Any]] = connector_service.executer(
             connection=connection, query=stanowiska_query
