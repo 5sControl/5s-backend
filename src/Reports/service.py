@@ -36,14 +36,10 @@ def create_skanyreport(
     end_tracking: str,
 ) -> None:
     start_dt = datetime.strptime(start_tracking, "%Y-%m-%d %H:%M:%S.%f")
-    start_utc = start_dt.replace(tzinfo=timezone.utc)
-    start_gmt = start_utc.astimezone(timezone(timedelta(hours=0)))
-    sTime = int(start_gmt.timestamp())
+    sTime = int(start_dt.timestamp())
 
     end_dt = datetime.strptime(end_tracking, "%Y-%m-%d %H:%M:%S.%f")
-    end_utc = end_dt.replace(tzinfo=timezone.utc)
-    end_gmt = end_utc.astimezone(timezone(timedelta(hours=0)))
-    eTime = int(end_gmt.timestamp())
+    eTime = int(end_dt.timestamp())
 
     skany_indeks = report_data.get("skany_index")
     zlecenie = report_data.get("zlecenie")
