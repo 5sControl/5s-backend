@@ -5,11 +5,13 @@ from django.core.cache import cache
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 
-from rest_framework import generics, status
+from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
 
 from src.Core.paginators import NoPagination
 from src.MsSqlConnector.connector import connector as connector_service
+from src.newOrderView.models import FiltrationOperationsTypeID
+from src.newOrderView.serializers import FilterOperationsTypeIDSerializer
 
 from .services import OperationServices, OrderServices
 from .utils import generate_hash
@@ -23,12 +25,15 @@ class GetOperation(generics.GenericAPIView):
         from_date: str = request.GET.get("from")
         to_date: str = request.GET.get("to")
 
-        key: str = generate_hash("get_operation", from_date, to_date)
+        operation_type_ids = FiltrationOperationsTypeID.objects.filter(is_active=True).values_list('operation_type_id', flat=True)
+        operation_type_ids = list(operation_type_ids)
+
+        key: str = generate_hash("get_operation", from_date, to_date) + ":" + ":".join(str(id) for id in operation_type_ids)
         response = cache.get(key)
 
         if response is None:
             response: List[Dict[str, Any]] = OperationServices.get_operations(
-                from_date, to_date
+                from_date, to_date, operation_type_ids
             )
             cache.set(key, response, timeout=120)
 
@@ -45,14 +50,17 @@ class GetMachine(generics.GenericAPIView):
         from_date: str = request.GET.get("from")
         to_date: str = request.GET.get("to")
 
-        key: str = generate_hash("get_machine", from_date, to_date)
+        operation_type_ids = FiltrationOperationsTypeID.objects.filter(is_active=True).values_list('operation_type_id', flat=True)
+        operation_type_ids = list(operation_type_ids)
+
+        key: str = generate_hash("get_machine", from_date, to_date) + ":" + ":".join(str(id) for id in operation_type_ids)
         response = cache.get(key)
 
         if response is None:
             response: List[Dict[str, Any]] = OperationServices.get_machine(
-                from_date, to_date
+                from_date, to_date, operation_type_ids
             )
-            cache.set(key, response, timeout=10)
+            cache.set(key, response, timeout=60)
 
         if response:
             return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
@@ -67,11 +75,14 @@ class GetOrders(generics.GenericAPIView):
         from_date: str = request.GET.get("from")
         to_date: str = request.GET.get("to")
 
-        key: str = generate_hash("get_order", from_date, to_date)
+        operation_type_ids = FiltrationOperationsTypeID.objects.filter(is_active=True).values_list('operation_type_id', flat=True)
+        operation_type_ids = list(operation_type_ids)
+
+        key: str = generate_hash("get_order", from_date, to_date) + ":" + ":".join(str(id) for id in operation_type_ids)
         response = cache.get(key)
 
         if response is None:
-            response: List[Dict[str, str]] = OrderServices.get_order(from_date, to_date)
+            response: List[Dict[str, str]] = OrderServices.get_order(from_date, to_date, operation_type_ids)
             cache.set(key, response, timeout=120)
 
         return JsonResponse(response, status=status.HTTP_200_OK, safe=False)
@@ -96,3 +107,9 @@ class GetWhnetOperation(generics.GenericAPIView):
         response: Dict[str, Any] = OperationServices.get_whnet_operation()
 
         return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
+
+
+class GetFiltrationsData(viewsets.ModelViewSet):
+    pagination_class = NoPagination
+    serializer_class = FilterOperationsTypeIDSerializer
+    queryset = FiltrationOperationsTypeID.objects.all()
