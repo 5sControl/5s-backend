@@ -11,6 +11,7 @@ sleep 5
 
 python manage.py algorithm
 python manage.py createadmin
+python manage.py stanowisko
 
 python manage.py startprocess
 
