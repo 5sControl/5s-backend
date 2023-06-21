@@ -2,7 +2,6 @@ from collections import defaultdict
 from typing import List, Any, Tuple, Dict, Optional
 from datetime import datetime, timedelta
 import logging
-import time
 
 import pyodbc
 
@@ -20,61 +19,34 @@ logger = logging.getLogger(__name__)
 class OrderServices:
     @staticmethod
     def get_order(from_date: str, to_date: str) -> List[Dict[str, Any]]:
-        connection: pyodbc.Connection = connector_service.get_database_connection()
+        connection = connector_service.get_database_connection()
 
         order_query: Query = """
             SELECT
                 z.zlecenie AS orderId,
-                sk.data AS startTime,
-                sk_next.data AS endTime
+                SUM(DATEDIFF(minute, sk.data, COALESCE(LEAD(sk.data) OVER (ORDER BY sk.data), sk.data + INTERVAL 1 HOUR))) AS duration
             FROM Skany sk
                 JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeksskanu
                 JOIN zlecenia z ON sz.indekszlecenia = z.indeks
-                LEFT JOIN Skany sk_next ON sk_next.indeks > sk.indeks
-            WHERE sk.data >= ? AND sk.data <= ?
+            WHERE sk.data BETWEEN ? AND ?
+            GROUP BY z.zlecenie
         """
 
-        if from_date and to_date:
-            from_date_dt: datetime = datetime.strptime(from_date, "%Y-%m-%d")
-            from_date_dt: datetime = from_date_dt + timedelta(microseconds=1)
+        from_date_dt = datetime.strptime(from_date, "%Y-%m-%d")
+        from_date_dt += timedelta(microseconds=1)
+        to_date_dt = datetime.strptime(to_date, "%Y-%m-%d")
+        to_date_dt = to_date_dt + timedelta(days=1) - timedelta(microseconds=1)
 
-            to_date_dt: datetime = datetime.strptime(to_date, "%Y-%m-%d")
-            to_date_dt: datetime = (
-                to_date_dt + timedelta(days=1) - timedelta(microseconds=1)
-            )
+        params = [from_date_dt, to_date_dt]
 
-        params: List[Any] = [from_date_dt, to_date_dt]
+        order_data = connector_service.executer(connection=connection, query=order_query, params=params)
 
-        order_data: List[Tuple[Any]] = connector_service.executer(
-            connection=connection, query=order_query, params=params
-        )
-
-        result_dict: Dict[str, int] = defaultdict(int)
-
-        for order_row in order_data:
-            order_id: str = order_row[0].strip()
-            startTime: datetime = order_row[1]
-            endTime: Optional[datetime] = order_row[2]
-
-            if endTime is not None:
-                if endTime.date() > startTime.date():
-                    endTime: datetime = startTime + timedelta(hours=1)
-                else:
-                    endTime: datetime = endTime or startTime + timedelta(hours=1)
-
-            else:
-                endTime: datetime = startTime + timedelta(hours=1)
-
-            duration: int = calculate_duration(startTime, endTime)
-
-            result_dict[order_id] += duration
-
-        result_list: List[Dict[str, Any]] = [
-            {"orId": order_id, "duration": duration}
-            for order_id, duration in result_dict.items()
+        result_list = [
+            (order_row[0].strip(), order_row[1])
+            for order_row in order_data
         ]
 
-        return result_list
+        return [{"orId": order_id, "duration": duration} for order_id, duration in result_list]
 
     @staticmethod
     def get_order_by_details(operation_id: int) -> Dict[str, Any]:
