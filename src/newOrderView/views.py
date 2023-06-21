@@ -52,7 +52,7 @@ class GetMachine(generics.GenericAPIView):
             response: List[Dict[str, Any]] = OperationServices.get_machine(
                 from_date, to_date
             )
-            cache.set(key, response, timeout=10)
+            cache.set(key, response, timeout=60)
 
         if response:
             return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
