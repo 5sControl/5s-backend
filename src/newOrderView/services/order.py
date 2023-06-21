@@ -1,38 +1,50 @@
+from collections import defaultdict
 from typing import List, Any, Tuple, Dict, Optional
 from datetime import datetime, timedelta
 import logging
 
 import pyodbc
 
+from src.Core.types import Query
 from src.MsSqlConnector.connector import connector as connector_service
-from src.OrderView.models import IndexOperations
-from src.OrderView.utils import get_skany_video_info
 from src.CameraAlgorithms.models import Camera
 from src.Reports.models import SkanyReport
+from src.OrderView.models import IndexOperations
+from src.OrderView.utils import get_skany_video_info
+from src.newOrderView.utils import convert_to_gmt0, convert_to_unix, calculate_duration
 
 logger = logging.getLogger(__name__)
 
 
-class OrderServises:
+class OrderServices:
     @staticmethod
-    def get_order(from_date: str, to_date: str) -> List[Dict[str, Any]]:
+    def get_order(from_date: str, to_date: str, operation_type_ids: List[int]) -> List[Dict[str, Any]]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
-        order_query: str = """
+        order_query: Query = """
             SELECT
-                DISTINCT z.zlecenie AS orderId
+                sk.indeks AS id,
+                z.zlecenie AS orderId,
+                sk.data AS startTime,
+                LEAD(sk.data) OVER (ORDER BY sk.data) AS endTime
             FROM Skany sk
                 JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeksskanu
                 JOIN zlecenia z ON sz.indekszlecenia = z.indeks
+                JOIN Stanowiska st ON sk.stanowisko = st.indeks
             WHERE sk.data >= ? AND sk.data <= ?
         """
 
-        if from_date and to_date:
-            from_date_dt = datetime.strptime(from_date, "%Y-%m-%d")
-            from_date_dt = from_date_dt + timedelta(microseconds=1)
+        if operation_type_ids:
+            order_query += " AND st.indeks IN ({})""".format(",".join(str(id) for id in operation_type_ids))
 
-            to_date_dt = datetime.strptime(to_date, "%Y-%m-%d")
-            to_date_dt = to_date_dt + timedelta(days=1) - timedelta(microseconds=1)
+        if from_date and to_date:
+            from_date_dt: datetime = datetime.strptime(from_date, "%Y-%m-%d")
+            from_date_dt: datetime = from_date_dt + timedelta(microseconds=1)
+
+            to_date_dt: datetime = datetime.strptime(to_date, "%Y-%m-%d")
+            to_date_dt: datetime = (
+                to_date_dt + timedelta(days=1) - timedelta(microseconds=1)
+            )
 
         params: List[Any] = [from_date_dt, to_date_dt]
 
@@ -40,14 +52,30 @@ class OrderServises:
             connection=connection, query=order_query, params=params
         )
 
-        result_list: List[Dict[str, Any]] = []
+        result_dict: Dict[str, int] = defaultdict(int)
 
         for order_row in order_data:
-            order: Dict[str, Any] = {
-                "orId": order_row[0].strip(),
-            }
+            order_id: str = order_row[1].strip()
+            startTime: datetime = order_row[2]
+            endTime: Optional[datetime] = order_row[3]
 
-            result_list.append(order)
+            if endTime is not None:
+                if endTime.date() > startTime.date():
+                    endTime: datetime = startTime + timedelta(hours=1)
+                else:
+                    endTime: datetime = endTime or startTime + timedelta(hours=1)
+
+            else:
+                endTime: datetime = startTime + timedelta(hours=1)
+
+            duration: int = calculate_duration(startTime, endTime)
+
+            result_dict[order_id] += duration
+
+        result_list: List[Dict[str, Any]] = [
+            {"orId": order_id, "duration": duration}
+            for order_id, duration in result_dict.items()
+        ]
 
         return result_list
 
@@ -55,7 +83,7 @@ class OrderServises:
     def get_order_by_details(operation_id: int) -> Dict[str, Any]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
-        order_query = """
+        order_query: Query = """
             WITH Operation AS (
                 SELECT
                     sk.data AS operationTime
@@ -106,7 +134,7 @@ class OrderServises:
             startTime: datetime = datetime.strptime(
                 str(order_data[0][5]), "%Y-%m-%d %H:%M:%S.%f"
             )
-            endTime_str = str(order_data[0][6]) if order_data[0][6] else None
+            endTime_str: Optional[str] = str(order_data[0][6]) if order_data[0][6] else None
 
             if endTime_str:
                 if "." not in endTime_str:
@@ -116,7 +144,7 @@ class OrderServises:
                 endTime = startTime + timedelta(hours=1)
 
             workplaceID: int = order_data[0][7]
-            elementType = order_data[0][9]
+            elementType: str = order_data[0][9]
             video_data: Optional[Dict[str, Any]] = None
 
             if startTime is not None:
@@ -134,19 +162,18 @@ class OrderServises:
                 if skany_report:
                     operation_status: Optional[bool] = skany_report.violation_found
                     video_time: Optional[bool] = skany_report.start_time
-                    logger.warning(
-                        f"Skany report was founded. Data -> {operation_status}, {video_data}",
-                    )
+
                     if camera_obj and video_time:
-                        logger.warning(video_time * 1000)
                         video_data: Dict[str, Any] = get_skany_video_info(
-                            time=(video_time * 1000), camera_ip=camera_obj.camera.id
+                            time=(video_time), camera_ip=camera_obj.camera.id
                         )
 
-            startTime_unix: int = int(startTime.timestamp()) * 1000
-            endTime_unix: int = int(endTime.timestamp()) * 1000
-            logger.warning(f"GET START TIME {startTime}")
-            logger.warning(f"MAKE UNIX {startTime_unix}")
+            startTime: datetime = convert_to_gmt0(startTime)
+            endTime: datetime = convert_to_gmt0(endTime)
+
+            startTime_unix: int = convert_to_unix(startTime)
+            endTime_unix: int = convert_to_unix(endTime)
+
             result: Dict[str, Any] = {
                 "id": id,
                 "orId": orderId,

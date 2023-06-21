@@ -1,18 +1,17 @@
 import os
-
-from django.core.mail import EmailMessage
-from django.core.mail.backends.smtp import EmailBackend
-
+import smtplib
 from datetime import datetime
-from src.Core.const import SERVER_URL
+from datetime import time
 
-from src.Mailer.models import SMTPSettings, WorkingTime
+from email.message import EmailMessage
+
 from src.CompanyLicense.models import Company
+from src.Mailer.models import SMTPSettings, WorkingTime
 
 
 def send_email_to_suppliers(item, image_path):
+    """Send email to supplier"""
     try:
-        work_time = WorkingTime.objects.last()
         if item.suppliers is None or item.suppliers.contact_email is None:
             raise ValueError("Missing contact email")
         my_company = Company.objects.filter(my_company=True).order_by('-id').first()
@@ -47,58 +46,55 @@ def send_email_to_suppliers(item, image_path):
     image_name = image_path.split('/')[-1]
 
     recipient_list = [item.suppliers.contact_email]
-    print("все параметры ок")
     # email service check
     try:
         smtp_settings = SMTPSettings.objects.first()
     except SMTPSettings.DoesNotExist:
         raise Exception('SMTP configuration is not defined')
 
-    # Check if a message was already
+    # Check if work time
+    work_time = WorkingTime.objects.last()
+    if work_time is None:
+        start_time = time(0, 0)
+        end_time = time(23, 59)
+    else:
+        start_time = work_time.time_start
+        end_time = work_time.time_end
+
     today = datetime.now().time()
-    start_time = work_time.time_start
-    end_time = work_time.time_end
     if start_time < today < end_time:
         # sending email
 
-        connection = EmailBackend(
-            host=smtp_settings.server,
-            port=smtp_settings.port,
-            username=smtp_settings.username,
-            password=smtp_settings.password,
-            use_tls=smtp_settings.email_use_tls,
-            use_ssl=smtp_settings.email_use_ssl,
-        )
-        # create email message
-        email_message = EmailMessage(
-            subject=subject,
-            body=message,
-            from_email=smtp_settings.username,
-            to=recipient_list
-        )
-        # send image
-        image_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', f'{image_path}')
-        with open(image_path, 'rb') as f:
-            image_data = f.read()
-        email_message.attach(filename=f'{image_name}', content=image_data, mimetype='images/jpg')
+        with smtplib.SMTP_SSL(smtp_settings.server, smtp_settings.port) as smtp:
+            smtp.login(smtp_settings.username, smtp_settings.password)
 
-        # send file
-        file_path = item.suppliers.file
-        if file_path is not None:
-            file_name = file_path.name
-            file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', f'images/{file_name}')
-            if os.path.exists(file_path):
-                with open(file_path, 'rb') as f:
-                    file_data = f.read()
-                email_message.attach(file_name, file_data,
-                                     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            email_message = EmailMessage()
+            email_message['Subject'] = subject
+            email_message['From'] = smtp_settings.username
+            email_message['To'] = recipient_list
+            email_message.set_content(message)
+
+            image_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', f'{image_path}')
+            with open(image_path, 'rb') as f:
+                image_data = f.read()
+            email_message.add_attachment(image_data, maintype='image', subtype='jpg', filename=image_name)
+
+            file_path = item.suppliers.file
+            if file_path and len(file_path) > 5:
+                file_name = file_path.name
+                file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', f'images/{file_name}')
+                if os.path.exists(file_path):
+                    with open(file_path, 'rb') as f:
+                        file_data = f.read()
+                    email_message.add_attachment(file_data, maintype='application',
+                                                 subtype='vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                                                 filename=file_name)
+                else:
+                    print("File does not exist:", file_path)
             else:
-                raise ValueError("File does not exist")
-        else:
-            raise ValueError("File path is not provided")
+                print("File path is not provided")
 
-        # send email
-        connection.send_messages([email_message])
+            smtp.send_message(email_message)
 
     else:
         print('Working time limit, message not sent')
