@@ -24,6 +24,8 @@ class GetOperation(generics.GenericAPIView):
         to_date: str = request.GET.get("to")
         operations_type_id = request.GET.getlist("typeID")
 
+        print(f"TYPE ID IS {operations_type_id}")
+
         key: str = generate_hash("get_operation", from_date, to_date)
         response = cache.get(key)
 

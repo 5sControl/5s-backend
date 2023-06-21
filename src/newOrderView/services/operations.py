@@ -38,6 +38,8 @@ class OperationServices:
             connection=connection, query=stanowiska_query
         )
 
+        print(stanowiska_data)
+
         result_list: List[Dict[str, Any]] = []
 
         for row in stanowiska_data:
