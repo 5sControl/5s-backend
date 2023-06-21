@@ -113,4 +113,4 @@ class GetFiltrationsData(viewsets.ModelViewSet):
     pagination_class = NoPagination
     serializer_class = FilterOperationsTypeIDSerializer
     permission_classes = [IsAuthenticated]
-    queryset = FiltrationOperationsTypeID
+    queryset = FiltrationOperationsTypeID.objects.all()
