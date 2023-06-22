@@ -113,6 +113,7 @@ class GetWhnetOperation(generics.GenericAPIView):
 
 class FiltrationsDataView(generics.ListAPIView):
     serializer_class = FilterOperationsTypeIDSerializer
+    pagination_class = NoPagination
     queryset = FiltrationOperationsTypeID.objects.all()
 
     def put(self, request, *args, **kwargs):
