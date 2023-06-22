@@ -34,5 +34,5 @@ class ZoneCamerasAdmin(admin.ModelAdmin):
         "workplace",
         "index_workplace",
         "date_created",
-        "date_updated"
+        "date_updated",
     )

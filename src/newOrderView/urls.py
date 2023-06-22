@@ -40,5 +40,5 @@ urlpatterns = [
         "filtration-data",
         FiltrationsDataView.as_view(),
         name="filtrations-data",
-    )
+    ),
 ]

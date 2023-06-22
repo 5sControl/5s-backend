@@ -94,7 +94,7 @@ def create_camera(camera: Dict[str, str]) -> None:
 
 
 def create_camera_algorithms(
-        camera: Dict[str, str], algorithms: List[Dict[str, Any]]
+    camera: Dict[str, str], algorithms: List[Dict[str, Any]]
 ) -> None:
     camera_obj = Camera.objects.get(id=camera["ip"])
     new_records = [algorithm_data["name"] for algorithm_data in algorithms]
@@ -135,19 +135,22 @@ def create_camera_algorithms(
                     {"itemId": item.id, "itemName": item.name, "coords": item.coords}
                 )
 
-            configs = algorithm.get('config', {})
+            configs = algorithm.get("config", {})
             zones = configs.get("zonesID")
             for zone_id in zones:
-                zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
-
-                stelag.append(
-                    {"zoneId": zone_camera.id, "zoneName": zone_camera.name, "coords": zone_camera.coords}
+                zone_camera = ZoneCameras.objects.get(
+                    id=zone_id["id"], camera=camera_obj
                 )
 
-            new_data = {
-                "areas": areas,
-                "zones": stelag
-            }
+                stelag.append(
+                    {
+                        "zoneId": zone_camera.id,
+                        "zoneName": zone_camera.name,
+                        "coords": zone_camera.coords,
+                    }
+                )
+
+            new_data = {"areas": areas, "zones": stelag}
 
             data.append(new_data)
 
@@ -156,10 +159,12 @@ def create_camera_algorithms(
             response = send_run_request(request)
 
         if algorithm_obj.name == "machine_control":
-            configs = algorithm.get('config', {})
+            configs = algorithm.get("config", {})
             zones = configs.get("zonesID")
             for zone_id in zones:
-                zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
+                zone_camera = ZoneCameras.objects.get(
+                    id=zone_id["id"], camera=camera_obj
+                )
                 coords = zone_camera.coords
                 coords[0]["zoneId"] = zone_camera.id
                 coords[0]["zoneName"] = "zone " + str(zone_camera.name)

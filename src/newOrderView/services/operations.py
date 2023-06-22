@@ -20,7 +20,9 @@ logger = logging.getLogger(__name__)
 
 class OperationServices:
     @staticmethod
-    def get_operations(from_date: str, to_date: str, operation_type_ids: List[int]) -> List[Dict[str, Any]]:
+    def get_operations(
+        from_date: str, to_date: str, operation_type_ids: List[int]
+    ) -> List[Dict[str, Any]]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
         stanowiska_query: Query = """
@@ -32,7 +34,9 @@ class OperationServices:
         """
 
         if operation_type_ids:
-            stanowiska_query += " AND indeks IN ({})""".format(",".join(str(id) for id in operation_type_ids))
+            stanowiska_query += " AND indeks IN ({})" "".format(
+                ",".join(str(id) for id in operation_type_ids)
+            )
 
         stanowiska_data: List[Tuple[Any]] = connector_service.executer(
             connection=connection, query=stanowiska_query
@@ -87,7 +91,9 @@ class OperationServices:
 
                 id: int = operation_row[0]
                 orderId: str = operation_row[3].strip()
-                startTime: str = str(operation_row[1])  #FIXME -> whithout transform datetime to str
+                startTime: str = str(
+                    operation_row[1]
+                )  # FIXME -> whithout transform datetime to str
                 endTime: str = (
                     str(operation_row[2]) if i < len(operations_data) - 1 else None
                 )
@@ -111,7 +117,9 @@ class OperationServices:
                     if endTime_dt.date() > startTime_dt.date():
                         endTime_dt: datetime = startTime_dt + timedelta(hours=1)
                     else:
-                        endTime_dt: datetime = endTime_dt or startTime_dt + timedelta(hours=1)
+                        endTime_dt: datetime = endTime_dt or startTime_dt + timedelta(
+                            hours=1
+                        )
 
                     endTime_unix: int = convert_to_unix(endTime_dt)
                     operation["eTime"]: int = endTime_unix
@@ -132,7 +140,9 @@ class OperationServices:
         return result_list
 
     @staticmethod
-    def get_machine(from_date: str, to_date: str, operation_type_ids: List[int]) -> List[Dict[str, Any]]:
+    def get_machine(
+        from_date: str, to_date: str, operation_type_ids: List[int]
+    ) -> List[Dict[str, Any]]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
         stanowiska_query: Query = """
@@ -144,7 +154,9 @@ class OperationServices:
         """
 
         if operation_type_ids:
-            stanowiska_query += " AND indeks IN ({})""".format(",".join(str(id) for id in operation_type_ids))
+            stanowiska_query += " AND indeks IN ({})" "".format(
+                ",".join(str(id) for id in operation_type_ids)
+            )
 
         stanowiska_data: List[Tuple[Any]] = connector_service.executer(
             connection=connection, query=stanowiska_query
@@ -173,15 +185,17 @@ class OperationServices:
                 to_date_dt + timedelta(days=1) - timedelta(microseconds=1)
             )
 
-            reports_with_matching_zona_id: Iterable[QuerySet[Report]] = Report.objects.filter(
-                Q(algorithm=3) & Q(extra__has_key="zoneId")
-            )
+            reports_with_matching_zona_id: Iterable[
+                QuerySet[Report]
+            ] = Report.objects.filter(Q(algorithm=3) & Q(extra__has_key="zoneId"))
 
             if not reports_with_matching_zona_id:
                 continue
 
             for zone_camera_id in zone_cameras_ids:
-                zone_reports: Iterable[QuerySet[Report]] = reports_with_matching_zona_id.filter(
+                zone_reports: Iterable[
+                    QuerySet[Report]
+                ] = reports_with_matching_zona_id.filter(
                     Q(extra__zoneId__exact=zone_camera_id)
                     & Q(start_tracking__gte=from_date_dt)
                     & Q(stop_tracking__lte=to_date_dt)
@@ -193,9 +207,18 @@ class OperationServices:
                     continue
 
                 filtered_reports: List[QuerySet] = [
-                    report for report in zone_reports
-                    if time(6) <= datetime.strptime(report.start_tracking, "%Y-%m-%d %H:%M:%S.%f").time() <= time(20)
-                    and time(6) <= datetime.strptime(report.stop_tracking, "%Y-%m-%d %H:%M:%S.%f").time() <= time(20)
+                    report
+                    for report in zone_reports
+                    if time(6)
+                    <= datetime.strptime(
+                        report.start_tracking, "%Y-%m-%d %H:%M:%S.%f"
+                    ).time()
+                    <= time(20)
+                    and time(6)
+                    <= datetime.strptime(
+                        report.stop_tracking, "%Y-%m-%d %H:%M:%S.%f"
+                    ).time()
+                    <= time(20)
                 ]
 
                 reports: List[Dict[str, Any]] = []
@@ -209,8 +232,12 @@ class OperationServices:
 
                     machine_control_report_id: int = report.id
 
-                    sTime: str = convert_to_unix(datetime.strptime(report.start_tracking, "%Y-%m-%d %H:%M:%S.%f"))
-                    eTime: str = convert_to_unix(datetime.strptime(report.stop_tracking, "%Y-%m-%d %H:%M:%S.%f"))
+                    sTime: str = convert_to_unix(
+                        datetime.strptime(report.start_tracking, "%Y-%m-%d %H:%M:%S.%f")
+                    )
+                    eTime: str = convert_to_unix(
+                        datetime.strptime(report.stop_tracking, "%Y-%m-%d %H:%M:%S.%f")
+                    )
 
                     report_data: Dict[str, Any] = {
                         "zoneId": machine_control_report_id,  # Machine control report from dashboard
