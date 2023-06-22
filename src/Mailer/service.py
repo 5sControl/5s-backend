@@ -11,7 +11,7 @@ from celery import shared_task
 from src.Mailer.models import SMTPSettings, WorkingTime
 
 
-# @shared_task
+@shared_task
 def send_notification_email(item, count, image_path, item_status):
     """Send notification email"""
 

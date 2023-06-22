@@ -93,9 +93,9 @@ def process_item_status(data):
 
                         item_serializer = ItemsSerializer(item)
                         serialized_item = item_serializer.data
-                        send_notification_email(serialized_item, count, image_path, item_status)
-                        # send_notification_email.apply_async(args=[serialized_item, count, image_path, item_status],
-                        #                                 countdown=0)
+                        # send_notification_email(serialized_item, count, image_path, item_status)
+                        send_notification_email.apply_async(args=[serialized_item, count, image_path, item_status],
+                                                        countdown=0)
                     except Exception as e:
                         print(f"Email notification errors: {e}")
                 elif item.prev_status != None:
