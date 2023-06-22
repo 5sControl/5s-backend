@@ -119,10 +119,8 @@ class OrderServices:
 
         if order_data:
             id: int = order_data[0][0]
-            startTime: str = str(
-                order_data[0][1]
-            )  # FIXME -> whithout transform datetime to str
-            endTime: str = str(order_data[0][2]) if order_data is not None else None
+            startTime: datetime = order_data[0][1]  # FIXME -> whithout transform datetime to str
+            endTime: Optional[datetime] = order_data[0][2]
             orderId: str = str(order_data[0][3]).strip()
             elementType: str = order_data[0][4]
             operationName: str = order_data[0][5]
@@ -132,12 +130,12 @@ class OrderServices:
 
             video_data: Optional[Dict[str, Any]] = None
 
-            startTime_dt: datetime = add_ms(startTime)
+            startTime_dt: datetime = add_ms(str(startTime))
             startTime_dt: datetime = convert_to_gmt0(startTime_dt)
             startTime_unix: int = convert_to_unix(startTime_dt)
 
             if endTime is not None:
-                endTime_dt: datetime = add_ms(endTime)
+                endTime_dt: datetime = add_ms(str(endTime))
                 endTime_dt: datetime = convert_to_gmt0(endTime_dt)
 
                 if endTime_dt.date() > startTime_dt.date():
