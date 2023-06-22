@@ -111,12 +111,11 @@ class GetWhnetOperation(generics.GenericAPIView):
         return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
 
 
-class FiltrationsDataView(generics.ListCreateAPIView):
-    pagination_class = NoPagination
+class FiltrationsDataView(generics.ListAPIView):
     serializer_class = FilterOperationsTypeIDSerializer
     queryset = FiltrationOperationsTypeID.objects.all()
 
-    def update(self, request, *args, **kwargs):
+    def put(self, request, *args, **kwargs):
         data = request.data
         try:
             for item in data:
