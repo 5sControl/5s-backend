@@ -7,6 +7,8 @@ from django.utils.decorators import method_decorator
 
 from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
+from rest_framework.decorators import action
+
 
 from src.Core.paginators import NoPagination
 from src.MsSqlConnector.connector import connector as connector_service
@@ -113,3 +115,17 @@ class GetFiltrationsData(viewsets.ModelViewSet):
     pagination_class = NoPagination
     serializer_class = FilterOperationsTypeIDSerializer
     queryset = FiltrationOperationsTypeID.objects.all()
+
+    http_method_names = ['get', 'put']
+
+    @action(detail=True, methods=['put'])
+    def change_status(self, request, pk=None):
+        data = request.data
+        try:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
