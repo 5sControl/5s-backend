@@ -120,9 +120,9 @@ class OrderServices:
         if order_data:
             id: int = order_data[0][0]
             startTime: str = str(
-                order_data[1]
+                order_data[0][1]
             )  # FIXME -> whithout transform datetime to str
-            endTime: str = str(order_data[2]) if order_data is not None else None
+            endTime: str = str(order_data[0][2]) if order_data is not None else None
             orderId: str = str(order_data[0][3]).strip()
             elementType: str = order_data[0][4]
             operationName: str = order_data[0][5]
