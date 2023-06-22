@@ -87,7 +87,7 @@ class OrderServices:
             SELECT
                 sk.indeks AS id,
                 sk.data AS startTime,
-                LEAD(sk.data) OVER (ORDER BY sk.data) AS endTime
+                LEAD(sk.data) OVER (ORDER BY sk.data) AS endTime,
                 z.zlecenie AS orderId,
                 z.typ AS type,
                 st.raport AS operationName,
