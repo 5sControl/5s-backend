@@ -93,7 +93,7 @@ class OrderServices:
                 st.raport AS operationName,
                 st.indeks AS workplaceID,
                 u.imie AS firstName,
-                u.nazwisko AS lastName,
+                u.nazwisko AS lastName
             FROM Skany sk
                 JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeksskanu
                 JOIN zlecenia z ON sz.indekszlecenia = z.indeks
