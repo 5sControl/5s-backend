@@ -87,7 +87,7 @@ class OperationServices:
 
                 id: int = operation_row[0]
                 orderId: str = operation_row[3].strip()
-                startTime: str = str(operation_row[1])
+                startTime: str = str(operation_row[1])  #FIXME -> whithout transform datetime to str
                 endTime: str = (
                     str(operation_row[2]) if i < len(operations_data) - 1 else None
                 )

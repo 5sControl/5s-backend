@@ -11,14 +11,21 @@ from src.CameraAlgorithms.models import Camera
 from src.Reports.models import SkanyReport
 from src.OrderView.models import IndexOperations
 from src.OrderView.utils import get_skany_video_info
-from src.newOrderView.utils import convert_to_gmt0, convert_to_unix, calculate_duration
+from src.newOrderView.utils import (
+    add_ms,
+    convert_to_gmt0,
+    convert_to_unix,
+    calculate_duration,
+)
 
 logger = logging.getLogger(__name__)
 
 
 class OrderServices:
     @staticmethod
-    def get_order(from_date: str, to_date: str, operation_type_ids: List[int]) -> List[Dict[str, Any]]:
+    def get_order(
+        from_date: str, to_date: str, operation_type_ids: List[int]
+    ) -> List[Dict[str, Any]]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
         order_query: Query = """
@@ -35,7 +42,9 @@ class OrderServices:
         """
 
         if operation_type_ids:
-            order_query += " AND st.indeks IN ({})""".format(",".join(str(id) for id in operation_type_ids))
+            order_query += " AND st.indeks IN ({})" "".format(
+                ",".join(str(id) for id in operation_type_ids)
+            )
 
         if from_date and to_date:
             from_date_dt: datetime = datetime.strptime(from_date, "%Y-%m-%d")
@@ -110,8 +119,10 @@ class OrderServices:
 
         if order_data:
             id: int = order_data[0][0]
-            startTime: datetime = order_data[0][1]
-            endTime: Optional[datetime] = order_data[0][2]
+            startTime: str = str(
+                order_data[1]
+            )  # FIXME -> whithout transform datetime to str
+            endTime: str = str(order_data[2]) if order_data is not None else None
             orderId: str = str(order_data[0][3]).strip()
             elementType: str = order_data[0][4]
             operationName: str = order_data[0][5]
@@ -121,40 +132,45 @@ class OrderServices:
 
             video_data: Optional[Dict[str, Any]] = None
 
+            startTime_dt: datetime = add_ms(startTime)
+            startTime_dt: datetime = convert_to_gmt0(startTime_dt)
+            startTime_unix: int = convert_to_unix(startTime_dt)
+
             if endTime is not None:
-                if endTime.date() > startTime.date():
-                    endTime: datetime = startTime + timedelta(hours=1)
+                endTime_dt: datetime = add_ms(endTime)
+                endTime_dt: datetime = convert_to_gmt0(endTime_dt)
+
+                if endTime_dt.date() > startTime_dt.date():
+                    endTime_dt: datetime = startTime_dt + timedelta(hours=1)
                 else:
-                    endTime: datetime = endTime or startTime + timedelta(hours=1)
+                    endTime_dt: datetime = endTime_dt or startTime_dt + timedelta(
+                        hours=1
+                    )
+
+                endTime_unix: int = convert_to_unix(endTime_dt)
             else:
-                endTime: datetime = startTime + timedelta(hours=1)
+                endTime_dt = startTime_dt + timedelta(hours=1)
+                endTime_unix: int = convert_to_unix(endTime_dt)
 
-            if startTime is not None:
-                camera_obj: Optional[Camera] = None
-                operation_status: Optional[bool] = None
-                video_data: Dict[str, bool] = {}
+            camera_obj: Optional[Camera] = None
+            operation_status: Optional[bool] = None
+            video_data: Dict[str, bool] = {}
 
-                skany_report: Optional[SkanyReport] = SkanyReport.objects.filter(
-                    skany_index=id
-                ).first()
-                camera_obj: Optional[Camera] = IndexOperations.objects.filter(
-                    type_operation=workplaceID
-                ).first()
+            skany_report: Optional[SkanyReport] = SkanyReport.objects.filter(
+                skany_index=id
+            ).first()
+            camera_obj: Optional[Camera] = IndexOperations.objects.filter(
+                type_operation=workplaceID
+            ).first()
 
-                if skany_report:
-                    operation_status: Optional[bool] = skany_report.violation_found
-                    video_time: Optional[bool] = skany_report.start_time
+            if skany_report:
+                operation_status: Optional[bool] = skany_report.violation_found
+                video_time: Optional[bool] = skany_report.start_time
 
-                    if camera_obj and video_time:
-                        video_data: Dict[str, Any] = get_skany_video_info(
-                            time=(video_time), camera_ip=camera_obj.camera.id
-                        )
-
-            startTime: datetime = convert_to_gmt0(startTime)
-            endTime: datetime = convert_to_gmt0(endTime)
-
-            startTime_unix: int = convert_to_unix(startTime)
-            endTime_unix: int = convert_to_unix(endTime)
+                if camera_obj and video_time:
+                    video_data: Dict[str, Any] = get_skany_video_info(
+                        time=(video_time), camera_ip=camera_obj.camera.id
+                    )
 
             result: Dict[str, Any] = {
                 "id": id,
