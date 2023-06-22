@@ -102,7 +102,7 @@ class OrderServices:
             WHERE sk.indeks = ?
         """
 
-        params: List[Any] = [operation_id, operation_id]
+        params: List[Any] = [operation_id]
 
         order_data: List[Tuple[Any]] = connector_service.executer(
             connection=connection, query=order_detail_query, params=params
