@@ -83,69 +83,51 @@ class OrderServices:
     def get_order_by_details(operation_id: int) -> Dict[str, Any]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
-        order_query: Query = """
-            WITH Operation AS (
-                SELECT
-                    sk.data AS operationTime
-                FROM Skany sk
-                    JOIN Stanowiska st ON sk.stanowisko = st.indeks
-                WHERE sk.indeks = ?
-            )
+        order_detail_query: Query = """
             SELECT
-                z.indeks AS id,
+                sk.indeks AS id,
+                sk.data AS startTime,
+                LEAD(sk.data) OVER (ORDER BY sk.data) AS endTime
                 z.zlecenie AS orderId,
+                z.typ AS type,
                 st.raport AS operationName,
+                st.indeks AS workplaceID,
                 u.imie AS firstName,
                 u.nazwisko AS lastName,
-                CONVERT(VARCHAR(23), op.operationTime, 121) AS startTime,
-                CASE
-                    WHEN DATEPART(year, sk_next.data) > DATEPART(year, op.operationTime)
-                        OR DATEPART(month, sk_next.data) > DATEPART(month, op.operationTime)
-                        OR DATEPART(day, sk_next.data) > DATEPART(day, op.operationTime)
-                        THEN DATEADD(hour, 1, op.operationTime)
-                    ELSE CONVERT(VARCHAR(23), sk_next.data, 121)
-                END AS endTime,
-                st.indeks AS workplaceID,
-                sk.indeks AS operationID,
-                z.typ AS type
-            FROM Zlecenia z
-                JOIN Skany_vs_Zlecenia sz ON z.indeks = sz.indekszlecenia
-                JOIN Skany sk ON sz.indeksskanu = sk.indeks
+            FROM Skany sk
+                JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeksskanu
+                JOIN zlecenia z ON sz.indekszlecenia = z.indeks
                 JOIN Stanowiska st ON sk.stanowisko = st.indeks
                 JOIN Uzytkownicy u ON sk.uzytkownik = u.indeks
-                JOIN Operation op ON op.operationTime = sk.data
-                LEFT JOIN Skany sk_next ON sk_next.data > op.operationTime
-                                        AND sk_next.stanowisko = st.indeks
             WHERE sk.indeks = ?
         """
 
         params: List[Any] = [operation_id, operation_id]
 
         order_data: List[Tuple[Any]] = connector_service.executer(
-            connection=connection, query=order_query, params=params
+            connection=connection, query=order_detail_query, params=params
         )
 
         if order_data:
-            id: int = order_data[0][8]
-            orderId: str = order_data[0][1].strip()
-            operationName: str = order_data[0][2]
-            firstName: str = order_data[0][3]
-            lastName: str = order_data[0][4]
-            startTime: datetime = datetime.strptime(
-                str(order_data[0][5]), "%Y-%m-%d %H:%M:%S.%f"
-            )
-            endTime_str: Optional[str] = str(order_data[0][6]) if order_data[0][6] else None
+            id: int = order_data[0][0]
+            startTime: datetime = order_data[0][1]
+            endTime: Optional[datetime] = order_data[0][2]
+            orderId: str = str(order_data[0][3]).strip()
+            elementType: str = order_data[0][4]
+            operationName: str = order_data[0][5]
+            workplaceID: int = order_data[0][6]
+            firstName: str = order_data[0][7]
+            lastName: str = order_data[0][8]
 
-            if endTime_str:
-                if "." not in endTime_str:
-                    endTime_str += ".000"
-                endTime = datetime.strptime(endTime_str, "%Y-%m-%d %H:%M:%S.%f")
-            else:
-                endTime = startTime + timedelta(hours=1)
-
-            workplaceID: int = order_data[0][7]
-            elementType: str = order_data[0][9]
             video_data: Optional[Dict[str, Any]] = None
+
+            if endTime is not None:
+                if endTime.date() > startTime.date():
+                    endTime: datetime = startTime + timedelta(hours=1)
+                else:
+                    endTime: datetime = endTime or startTime + timedelta(hours=1)
+            else:
+                endTime: datetime = startTime + timedelta(hours=1)
 
             if startTime is not None:
                 camera_obj: Optional[Camera] = None
