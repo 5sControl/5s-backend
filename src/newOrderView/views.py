@@ -111,21 +111,27 @@ class GetWhnetOperation(generics.GenericAPIView):
         return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
 
 
-class GetFiltrationsData(viewsets.ModelViewSet):
+class FiltrationsDataView(generics.ListCreateAPIView):
     pagination_class = NoPagination
     serializer_class = FilterOperationsTypeIDSerializer
     queryset = FiltrationOperationsTypeID.objects.all()
 
-    http_method_names = ['get', 'put']
-
-    @action(detail=True, methods=['put'])
-    def change_status(self, request, pk=None):
+    def update(self, request, *args, **kwargs):
         data = request.data
         try:
-            instance = self.get_object()
-            serializer = self.get_serializer(instance, data=data, partial=True)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data)
+            for item in data:
+                instance = FiltrationOperationsTypeID.objects.get(pk=item['id'])
+                serializer = self.get_serializer(instance, data=item, partial=True)
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+            return self.get_response(message='Status updated successfully.')
         except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return self.get_response(error=str(e), status=400)
+
+    def get_response(self, message=None, error=None, status=200):
+        response_data = {}
+        if message:
+            response_data['message'] = message
+        if error:
+            response_data['error'] = error
+        return Response(response_data, status=status)
