@@ -7,6 +7,8 @@ from django.utils.decorators import method_decorator
 
 from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
+from rest_framework.decorators import action
+
 
 from src.Core.paginators import NoPagination
 from src.MsSqlConnector.connector import connector as connector_service
@@ -25,10 +27,16 @@ class GetOperation(generics.GenericAPIView):
         from_date: str = request.GET.get("from")
         to_date: str = request.GET.get("to")
 
-        operation_type_ids = FiltrationOperationsTypeID.objects.filter(is_active=True).values_list('operation_type_id', flat=True)
+        operation_type_ids = FiltrationOperationsTypeID.objects.filter(
+            is_active=True
+        ).values_list("operation_type_id", flat=True)
         operation_type_ids = list(operation_type_ids)
 
-        key: str = generate_hash("get_operation", from_date, to_date) + ":" + ":".join(str(id) for id in operation_type_ids)
+        key: str = (
+            generate_hash("get_operation", from_date, to_date)
+            + ":"
+            + ":".join(str(id) for id in operation_type_ids)
+        )
         response = cache.get(key)
 
         if response is None:
@@ -50,10 +58,16 @@ class GetMachine(generics.GenericAPIView):
         from_date: str = request.GET.get("from")
         to_date: str = request.GET.get("to")
 
-        operation_type_ids = FiltrationOperationsTypeID.objects.filter(is_active=True).values_list('operation_type_id', flat=True)
+        operation_type_ids = FiltrationOperationsTypeID.objects.filter(
+            is_active=True
+        ).values_list("operation_type_id", flat=True)
         operation_type_ids = list(operation_type_ids)
 
-        key: str = generate_hash("get_machine", from_date, to_date) + ":" + ":".join(str(id) for id in operation_type_ids)
+        key: str = (
+            generate_hash("get_machine", from_date, to_date)
+            + ":"
+            + ":".join(str(id) for id in operation_type_ids)
+        )
         response = cache.get(key)
 
         if response is None:
@@ -75,14 +89,22 @@ class GetOrders(generics.GenericAPIView):
         from_date: str = request.GET.get("from")
         to_date: str = request.GET.get("to")
 
-        operation_type_ids = FiltrationOperationsTypeID.objects.filter(is_active=True).values_list('operation_type_id', flat=True)
+        operation_type_ids = FiltrationOperationsTypeID.objects.filter(
+            is_active=True
+        ).values_list("operation_type_id", flat=True)
         operation_type_ids = list(operation_type_ids)
 
-        key: str = generate_hash("get_order", from_date, to_date) + ":" + ":".join(str(id) for id in operation_type_ids)
+        key: str = (
+            generate_hash("get_order", from_date, to_date)
+            + ":"
+            + ":".join(str(id) for id in operation_type_ids)
+        )
         response = cache.get(key)
 
         if response is None:
-            response: List[Dict[str, str]] = OrderServices.get_order(from_date, to_date, operation_type_ids)
+            response: List[Dict[str, str]] = OrderServices.get_order(
+                from_date, to_date, operation_type_ids
+            )
             cache.set(key, response, timeout=120)
 
         return JsonResponse(response, status=status.HTTP_200_OK, safe=False)
@@ -109,7 +131,27 @@ class GetWhnetOperation(generics.GenericAPIView):
         return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
 
 
-class GetFiltrationsData(viewsets.ModelViewSet):
-    pagination_class = NoPagination
+class FiltrationsDataView(generics.ListAPIView):
     serializer_class = FilterOperationsTypeIDSerializer
+    pagination_class = NoPagination
     queryset = FiltrationOperationsTypeID.objects.all()
+
+    def put(self, request, *args, **kwargs):
+        data = request.data
+        try:
+            for item in data:
+                instance = FiltrationOperationsTypeID.objects.get(pk=item["id"])
+                serializer = self.get_serializer(instance, data=item, partial=True)
+                serializer.is_valid(raise_exception=True)
+                serializer.save()
+            return self.get_response(message="Status updated successfully.")
+        except Exception as e:
+            return self.get_response(error=str(e), status=400)
+
+    def get_response(self, message=None, error=None, status=200):
+        response_data = {}
+        if message:
+            response_data["message"] = message
+        if error:
+            response_data["error"] = error
+        return Response(response_data, status=status)
