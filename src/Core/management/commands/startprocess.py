@@ -85,12 +85,10 @@ class Command(BaseCommand):
                 result = send_run_request(request)
             except SenderError as e:
                 logger.critical(f"Yolo server is not available. Details: {e}")
-                CameraAlgorithm.objects.get(algorithm=algorithm_obj, camera=camera_obj).delete()
             except InvalidResponseError as e:
                 logger.critical(
                     f"Yolo can't start algorithm {algorithm_obj.name} on camera {camera_obj.id}. Details: {e}"
                 )
-                CameraAlgorithm.objects.get(algorithm=algorithm_obj, camera=camera_obj).delete()
             else:
                 new_process_id = result["pid"]
                 camera_algorithm.process_id = new_process_id
