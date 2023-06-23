@@ -135,7 +135,7 @@ class OrderServices:
         if order_data:
             id: int = order_data[0][0]
             startTime: datetime = order_data[0][1]  # FIXME -> whithout transform datetime to str
-            orderId: str = str(order_data[0][2]]).strip()
+            orderId: str = str(order_data[0][2]).strip()
             elementType: str = order_data[0][3]
             operationName: str = order_data[0][4]
             workplaceID: int = order_data[0][5]
