@@ -119,7 +119,7 @@ class OrderServices:
         print(order_data)
 
         next_operation_query: Query = """
-            SELECT
+            SELECT TOP 1
                 sk.data AS endTime
             FROM Skany sk
                 JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeksskanu
@@ -127,10 +127,7 @@ class OrderServices:
                 JOIN Stanowiska st ON sk.stanowisko = st.indeks
             WHERE sk.indeks > ? AND sk.data > ? AND st.indeks = ?
             ORDER BY sk.data
-            FETCH FIRST 1 ROW ONLY
         """
-
-
 
         if order_data:
             id: int = order_data[0][0]
