@@ -146,12 +146,11 @@ class OrderServices:
             endTime_query_result: List[Tuple[Any]] = connector_service.executer(
                 connection=connection, query=next_operation_query, params=next_params
             )
-            print(endTime_query_result)
 
             if endTime_query_result:
-                endTime: Any = endTime_query_result[0][0]
-                endTime: Optional[str] = str(endTime) if endTime else None
-                print(endTime)
+                endTime: Optional[str] = str(endTime_query_result[0][0])
+            else:
+                endTime: Optional[str] = None
 
             startTime_dt: datetime = add_ms(str(startTime))
             startTime_dt: datetime = convert_to_gmt0(startTime_dt)
