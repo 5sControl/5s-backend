@@ -119,7 +119,7 @@ class OrderServices:
         print(order_data)
 
         next_operation_query: Query = """
-            SELECT
+            SELECT TOP 1
                 sk.data AS endTime
             FROM Skany sk
                 JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeksskanu
@@ -127,10 +127,7 @@ class OrderServices:
                 JOIN Stanowiska st ON sk.stanowisko = st.indeks
             WHERE sk.indeks > ? AND sk.data > ? AND st.indeks = ?
             ORDER BY sk.data
-            FETCH FIRST 1 ROW ONLY
         """
-
-
 
         if order_data:
             id: int = order_data[0][0]
@@ -149,12 +146,11 @@ class OrderServices:
             endTime_query_result: List[Tuple[Any]] = connector_service.executer(
                 connection=connection, query=next_operation_query, params=next_params
             )
-            print(endTime_query_result)
 
             if endTime_query_result:
-                endTime: Any = endTime_query_result[0][0]
-                endTime: Optional[str] = str(endTime) if endTime else None
-                print(endTime)
+                endTime: Optional[str] = str(endTime_query_result[0][0])
+            else:
+                endTime: Optional[str] = None
 
             startTime_dt: datetime = add_ms(str(startTime))
             startTime_dt: datetime = convert_to_gmt0(startTime_dt)
