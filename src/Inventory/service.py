@@ -81,7 +81,7 @@ def process_item_status(data):
                     if item.prev_status != None:
                         item.prev_status = item.status
 
-            elif (count > 0 and count <= min_item) or red_line == True and data_item[0]['multi_row']:
+            elif (count > 0 and count <= min_item):
                 item_status = "Low stock level"
                 if level_previous_status == "In stock":
                     previous_status = "Low stock level"
@@ -96,7 +96,7 @@ def process_item_status(data):
                     try:
                         item.prev_status = None
                         send_notification_email.apply_async(args=[serialized_item, count, image_path, item_status],
-                                                        countdown=0)
+                                                            countdown=0)
                     except Exception as e:
                         print(f"Email notification errors: {e}")
                 elif item.prev_status != None:
@@ -114,6 +114,7 @@ def process_item_status(data):
         print(
             f"item_id=={item.id}, item_name=={item.name}, item_status {item_status}, "
             f"red_line == {red_line}, multi_row == {data_item[0]['multi_row']}")
+
         item.status = item_status
         item.save()
 
