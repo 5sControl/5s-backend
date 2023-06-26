@@ -112,7 +112,7 @@ def process_item_status(data):
             item_data["low_stock_level"] = min_item
 
         print(
-            f"item_id=={item.id}, item_id=={item.name}, item_status {item_status}, "
+            f"item_id=={item.id}, item_name=={item.name}, item_status {item_status}, "
             f"red_line == {red_line}, multi_row == {data_item[0]['multi_row']}")
         item.status = item_status
         item.save()
