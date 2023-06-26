@@ -1,6 +1,7 @@
 from celery import shared_task
-from django.core.mail import send_mail
-from django.core.mail.backends.smtp import EmailBackend
+
+import smtplib
+from email.message import EmailMessage
 
 from django.db.models import Q
 
@@ -40,27 +41,20 @@ def send_low_stock_notification():
                 message += f"{item.name} : {item.current_stock_level} (low stock level: {item.low_stock_level})\n"
 
             message += f"\n{SERVER_URL}:3000/inventory\n\nYou are receiving this email because your email account was entered in 5S Control system to receive notifications regarding low stock levels of inventory."
+
             # Send email to all users
-            connection = EmailBackend(
-                host=smtp_settings.server,
-                port=smtp_settings.port,
-                username=smtp_settings.username,
-                password=smtp_settings.password,
-                use_tls=smtp_settings.email_use_tls,
-                use_ssl=smtp_settings.email_use_ssl,
-            )
-            try:
-                send_mail(
-                    subject,
-                    message,
-                    smtp_settings.username,
-                    recipient_list,
-                    fail_silently=False,
-                    connection=connection,
-                )
+            with smtplib.SMTP_SSL(smtp_settings.server, smtp_settings.port) as smtp:
+                smtp.login(smtp_settings.username, smtp_settings.password)
+
+                email_message = EmailMessage()
+                email_message['Subject'] = subject
+                email_message['From'] = smtp_settings.username
+                email_message['To'] = recipient_list
+                email_message.set_content(message)
+
+                smtp.send_message(email_message)
+
                 logger.warning(f"Email sent to {recipient_list}")
-            except Exception as e:
-                logger.error(f"Email sending failed with error: {e}")
         else:
             logger.warning(f'There is no critical stock level')
 
