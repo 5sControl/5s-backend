@@ -8,7 +8,7 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_TIMEZONE = "UTC"
 CELERY_BEAT_SCHEDULE = {
     "send_low_stock_notification": {
-        "task": " src.Mailer.tasks.send_low_stock_notification",
+        "task": "src.Mailer.tasks.send_low_stock_notification",
         "schedule": crontab(hour=9, minute=0),
     },
 }
