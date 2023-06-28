@@ -149,7 +149,7 @@ def create_camera_algorithms(
             data.append(new_data)
 
             request["extra"] = data
-            response = send_run_request(request)
+            response: Dict[str, Any] = send_run_request(request)
 
         if algorithm_name == "machine_control":
             if compare_zones(algorithm_obj, camera_obj, zones):
@@ -173,32 +173,41 @@ def create_camera_algorithms(
 
             request["extra"] = data
 
-            response = send_run_request(request)
+            response: Dict[str, Any] = send_run_request(request)
 
         if algorithm_name == "idle_control":
-            response = send_run_request(request)
+            response: Dict[str, Any] = send_run_request(request)
 
         if algorithm_name == "operation_control":
-            indx_operation = IndexOperations(
-                type_operation=algorithm["config"]["operation_control_id"],
+            operation_control_id: int = algorithm["config"]["operation_control_id"]
+            index_operations_obj: IndexOperations = IndexOperations.objects.filter(type_operation=operation_control_id, camera=camera_obj)
+
+            if index_operations_obj.exists():
+                continue
+            else:
+                index_operations_obj.delete()
+            
+            index_operation: IndexOperations = IndexOperations(
+                type_operation=operation_control_id,
                 camera=camera_obj,
             )
-            indx_operation.save()
-            response = send_run_request(request)
+            index_operation.save()
+
+            response: Dict[str, Any] = send_run_request(request)
 
         if algorithm_name == "safety_control_ear_protection":
-            response = send_run_request(request)
+            response: Dict[str, Any] = send_run_request(request)
 
         if algorithm_name == "safety_control_head_protection":
-            response = send_run_request(request)
+            response: Dict[str, Any] = send_run_request(request)
 
         if algorithm_name == "safety_control_hand_protection":
-            response = send_run_request(request)
+            response: Dict[str, Any] = send_run_request(request)
 
         if algorithm_name == "safety_control_reflective_jacket":
-            response = send_run_request(request)
+            response: Dict[str, Any] = send_run_request(request)
 
-        new_record = CameraAlgorithm(
+        new_record: CameraAlgorithm = CameraAlgorithm(
             algorithm=algorithm_obj,
             camera=camera_obj,
             process_id=response["pid"],
