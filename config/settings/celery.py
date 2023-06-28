@@ -9,6 +9,6 @@ CELERY_TIMEZONE = None
 CELERY_BEAT_SCHEDULE = {
     "send_low_stock_notification": {
         "task": "src.Mailer.tasks.send_low_stock_notification",
-        "schedule": crontab(hour=9, minute=0),
+        "schedule": crontab(hour=6, minute=0),
     },
 }
