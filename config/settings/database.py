@@ -21,7 +21,7 @@ DATABASES = {
 }
 
 if "test" in sys.argv:
-    DATABASES["default"] = DATABASES["test"]
+    DATABASES["default"] = DATABASES["database_for_test"]
 
 CACHES = {
     "default": {
