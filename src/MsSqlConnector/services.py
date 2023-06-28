@@ -29,7 +29,7 @@ class MsSqlConnector:
 
             row = cursor.fetchall()[0]
             logger.warning(f"data for operation control: {row}")
-        
+
         result = {
             "skany_index": row[0],
             "zlecenie": row[1],

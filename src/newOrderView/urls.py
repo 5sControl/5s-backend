@@ -5,13 +5,21 @@ from .views import (
     GetOrders,
     GetOrderByDetail,
     GetWhnetOperation,
+    GetMachine,
+    FiltrationsDataView,
 )
+
 
 urlpatterns = [
     path(
         "operations/",
         GetOperation.as_view(),
         name="get-list-operations",
+    ),
+    path(
+        "machine/",
+        GetMachine.as_view(),
+        name="get-list-machine",
     ),
     path(
         "orders/",
@@ -27,5 +35,10 @@ urlpatterns = [
         "whnet-operations/",
         GetWhnetOperation.as_view(),
         name="get-whnet-operation",
+    ),
+    path(
+        "filtration-data",
+        FiltrationsDataView.as_view(),
+        name="filtrations-data",
     ),
 ]

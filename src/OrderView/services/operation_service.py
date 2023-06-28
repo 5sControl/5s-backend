@@ -6,7 +6,9 @@ from src.MsSqlConnector.connector import connector as connector_service
 
 
 class OperationService:
-    def __init__(self,):
+    def __init__(
+        self,
+    ):
         self.query = """
             SELECT DISTINCT Raport
             FROM Stanowiska
@@ -16,7 +18,9 @@ class OperationService:
         connection: pyodbc.Connection = connector_service.get_database_connection()
         list_of_names: List[str] = []
 
-        results: Iterable = connector_service.executer(connection=connection, query=self.query)
+        results: Iterable = connector_service.executer(
+            connection=connection, query=self.query
+        )
 
         for operation_names in results:
             list_of_names.append(operation_names[0])

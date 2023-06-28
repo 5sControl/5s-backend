@@ -11,26 +11,18 @@ from src.OrderView.models import IndexOperations
 logger = logging.getLogger(__name__)
 
 
-def edit_extra(data: List[Dict], camera: Camera):
+def edit_extra(camera: Camera):
     operation_index = (
         IndexOperations.objects.filter(camera=camera.id)
         .values("type_operation")
         .last()["type_operation"]
     )
     extra_data = create_records.operation_control_data(operation_index)
+    data = {}
 
-    if len(data) >= 1:
-        data[0]["skany_index"] = int(extra_data["skany_index"])
-        data[0]["zlecenie"] = str(extra_data["zlecenie"])
-        data[0]["execution_date"] = str(extra_data["execution_date"])
-    else:
-        data.append(
-            {
-                "skany_index": int(extra_data["skany_index"]),
-                "zlecenie": str(extra_data["zlecenie"]),
-                "execution_date": str(extra_data["execution_date"]),
-            }
-        )
+    data["skany_index"] = int(extra_data["skany_index"])
+    data["zlecenie"] = str(extra_data["zlecenie"])
+    data["execution_date"] = str(extra_data["execution_date"])
 
     logger.warning(f"final operation data is -> {data}")
     return data
@@ -44,18 +36,14 @@ def create_skanyreport(
     end_tracking: str,
 ) -> None:
     start_dt = datetime.strptime(start_tracking, "%Y-%m-%d %H:%M:%S.%f")
-    start_utc = start_dt.replace(tzinfo=timezone.utc)
-    start_gmt = start_utc.astimezone(timezone(timedelta(hours=0)))
-    sTime = int(start_gmt.timestamp())
+    sTime = int(start_dt.timestamp())
 
     end_dt = datetime.strptime(end_tracking, "%Y-%m-%d %H:%M:%S.%f")
-    end_utc = end_dt.replace(tzinfo=timezone.utc)
-    end_gmt = end_utc.astimezone(timezone(timedelta(hours=0)))
-    eTime = int(end_gmt.timestamp())
+    eTime = int(end_dt.timestamp())
 
-    skany_indeks = report_data[0].get("skany_index")
-    zlecenie = report_data[0].get("zlecenie")
-    execution_date = report_data[0].get("execution_date")
+    skany_indeks = report_data.get("skany_index")
+    zlecenie = report_data.get("zlecenie")
+    execution_date = report_data.get("execution_date")
 
     logger.warning(
         f"Creating Skany Report start_tracking -> {start_tracking} - {sTime}, end_tracking -> {end_tracking} - {eTime}"
