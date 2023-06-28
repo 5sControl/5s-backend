@@ -173,7 +173,7 @@ def create_camera_algorithms(
             response: Dict[str, Any] = send_run_request(request)
 
         if algorithm_name == "machine_control":
-            if compare_zones(algorithm_obj, camera_obj, zones):
+            if not compare_zones(algorithm_obj, camera_obj, zones):
                 pid: int = CameraAlgorithm.objects.get(
                     algorithm=algorithm_obj, camera=camera_obj
                 ).process_id
