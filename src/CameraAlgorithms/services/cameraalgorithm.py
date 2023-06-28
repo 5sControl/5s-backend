@@ -229,6 +229,7 @@ def create_camera_algorithms(
                 type_operation=operation_control_id,
                 camera=camera_obj,
             )
+            IndexOperations.objects.filter(camera=camera_obj).delete()
             index_operation.save()
 
             response: Dict[str, Any] = send_run_request(request)
