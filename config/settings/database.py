@@ -10,14 +10,14 @@ DATABASES = {
         "HOST": "localhost",
         "PORT": "5432",
     },
-    "test": {
+    "database_for_test": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": "test_db.sqlite3",
     },
 }
 
 if "test" in sys.argv:
-    DATABASES["default"] = DATABASES["test"]
+    DATABASES["default"] = DATABASES["database_for_test"]
 
 CACHES = {
     "default": {
