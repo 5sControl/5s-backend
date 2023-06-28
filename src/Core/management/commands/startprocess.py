@@ -50,7 +50,7 @@ class Command(BaseCommand):
 
                     all_cords.append(coords[0])
 
-                request["extra"] = {"coords": all_cords}
+                request["extra"] = [{"coords": all_cords}]
 
             if camera_algorithm.algorithm.name == "min_max_control":
                 algorithm_items = Items.objects.filter(camera=camera_obj)
