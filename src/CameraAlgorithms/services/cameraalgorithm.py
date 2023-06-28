@@ -95,7 +95,7 @@ def create_camera_algorithms(
 ) -> None:
     camera_obj: Camera = Camera.objects.get(id=camera["ip"])
     algo_ids_to_delete: List[int] = get_algorithm_ids_to_delete(camera_obj, algorithms)
-    print(algo_ids_to_delete)
+    print(f"Algo ids: {algo_ids_to_delete}")
 
     for camera_algo_id in algo_ids_to_delete:
         pid: int = CameraAlgorithm.objects.get(id=camera_algo_id).process_id
@@ -105,7 +105,7 @@ def create_camera_algorithms(
     for algorithm in algorithms:
         algorithm_obj: Algorithm = Algorithm.objects.get(name=algorithm["name"])
         algorithm_name: str = algorithm["name"]
-        print(algorithm_name)
+        print(f"Algorithm name is {algorithm_name}")
 
         rtsp_link: str = camera_rtsp_link(camera_obj.id)
 
