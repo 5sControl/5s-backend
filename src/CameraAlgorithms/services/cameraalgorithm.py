@@ -256,11 +256,16 @@ def camera_rtsp_link(id: str) -> str:
 
 
 def get_algorithm_ids_to_delete(camera_obj: Camera, algorithms: List[Dict[str, Any]]) -> List[int]:
-    algorithm_names: List[str] = [algo["name"] for algo in algorithms]
-    existing_algorithms: Iterable[CameraAlgorithm] = CameraAlgorithm.objects.filter(camera=camera_obj, algorithm__name__in=algorithm_names)
-    existing_algorithm_ids: Set[int] = set(algorithm.id for algorithm in existing_algorithms)
-    algorithms_to_delete: List[int] = [id for id in existing_algorithm_ids if id not in algorithm_names]
-    return algorithms_to_delete
+    existing_algorithms = CameraAlgorithm.objects.filter(camera=camera_obj)
+    existing_algorithm_ids = set(algorithm.id for algorithm in existing_algorithms)
+    
+    if not algorithms:
+        algorithm_ids_to_delete = list(existing_algorithm_ids)
+    else:
+        algorithm_names = [algo["name"] for algo in algorithms]
+        algorithm_ids_to_delete = [id for id in existing_algorithm_ids if id not in algorithm_names]
+    
+    return algorithm_ids_to_delete
 
 
 def send_run_request(request: Dict[str, Any]) -> Dict[str, Any]:
