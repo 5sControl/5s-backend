@@ -119,7 +119,7 @@ def create_camera_algorithms(
         if algorithm_name == "min_max_control":
 
             if compare_zones(algorithm_obj, camera_obj, zones):
-                pid: int = CameraAlgorithm.objects.get(algorithm=algorithm_obj, camera=camera_obj)
+                pid: int = CameraAlgorithm.objects.get(algorithm=algorithm_obj, camera=camera_obj).process_id
                 stop_and_update_algorithm(pid)
                 logger.warning(f"Successfully deleted -> {algorithm_name} with pid {pid}")
 
@@ -153,7 +153,7 @@ def create_camera_algorithms(
 
         if algorithm_name == "machine_control":
             if compare_zones(algorithm_obj, camera_obj, zones):
-                pid: int = CameraAlgorithm.objects.get(algorithm=algorithm_obj, camera=camera_obj)
+                pid: int = CameraAlgorithm.objects.get(algorithm=algorithm_obj, camera=camera_obj).process_id
                 stop_and_update_algorithm(pid)
                 logger.warning(f"Successfully deleted -> {algorithm_name} with pid {pid}")
 
