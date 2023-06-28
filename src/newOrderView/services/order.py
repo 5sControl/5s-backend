@@ -92,11 +92,10 @@ class OrderServices:
     def get_order_by_details(operation_id: int) -> Dict[str, Any]:
         connection: pyodbc.Connection = connector_service.get_database_connection()
 
-        order_detail_query: Query = """
+        operation_detail_query: Query = """
             SELECT
                 sk.indeks AS id,
                 sk.data AS startTime,
-                LEAD(sk.data) OVER (ORDER BY sk.data) AS endTime,
                 z.zlecenie AS orderId,
                 z.typ AS type,
                 st.raport AS operationName,
@@ -114,21 +113,44 @@ class OrderServices:
         params: List[Any] = [operation_id]
 
         order_data: List[Tuple[Any]] = connector_service.executer(
-            connection=connection, query=order_detail_query, params=params
+            connection=connection, query=operation_detail_query, params=params
         )
+
+        print(order_data)
+
+        next_operation_query: Query = """
+            SELECT TOP 1
+                sk.data AS endTime
+            FROM Skany sk
+                JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeksskanu
+                JOIN zlecenia z ON sz.indekszlecenia = z.indeks
+                JOIN Stanowiska st ON sk.stanowisko = st.indeks
+            WHERE sk.indeks > ? AND sk.data > ? AND st.indeks = ?
+            ORDER BY sk.data
+        """
 
         if order_data:
             id: int = order_data[0][0]
             startTime: datetime = order_data[0][1]  # FIXME -> whithout transform datetime to str
-            endTime: Optional[datetime] = order_data[0][2]
-            orderId: str = str(order_data[0][3]).strip()
-            elementType: str = order_data[0][4]
-            operationName: str = order_data[0][5]
-            workplaceID: int = order_data[0][6]
-            firstName: str = order_data[0][7]
-            lastName: str = order_data[0][8]
+            orderId: str = str(order_data[0][2]).strip()
+            elementType: str = order_data[0][3]
+            operationName: str = order_data[0][4]
+            workplaceID: int = order_data[0][5]
+            firstName: str = order_data[0][6]
+            lastName: str = order_data[0][7]
 
             video_data: Optional[Dict[str, Any]] = None
+            
+            next_params: List[Any] = [operation_id, startTime, workplaceID]
+
+            endTime_query_result: List[Tuple[Any]] = connector_service.executer(
+                connection=connection, query=next_operation_query, params=next_params
+            )
+
+            if endTime_query_result:
+                endTime: Optional[str] = str(endTime_query_result[0][0])
+            else:
+                endTime: Optional[str] = None
 
             startTime_dt: datetime = add_ms(str(startTime))
             startTime_dt: datetime = convert_to_gmt0(startTime_dt)

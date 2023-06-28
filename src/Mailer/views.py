@@ -1,6 +1,9 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from django.http import HttpResponse
+
+from rest_framework.response import Response
+
 import json
 
 
@@ -12,8 +15,15 @@ from rest_framework import generics
 class SMTPSettingsListCreateView(generics.ListCreateAPIView):
     # permission_classes = [IsAuthenticated]
     pagination_class = None
-    queryset = SMTPSettings.objects.all().order_by('id')
     serializer_class = SMTPSettingsSerializer
+
+    def get_queryset(self):
+        return SMTPSettings.objects.latest('id')
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset)
+        return Response(serializer.data)
 
 
 class SMTPSettingsRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):

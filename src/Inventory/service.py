@@ -57,9 +57,10 @@ def process_item_status(data):
                     # send_notification suppliers
                     try:
                         item.prev_status = None
-                        send_email_to_suppliers(item, image_path)
+                        send_email_to_suppliers.apply_async(args=[serialized_item, image_path])
                     except Exception as e:
                         print(f"Email notification errors: {e}")
+
                 item.prev_status = "Low stock level"
 
             else:
@@ -72,31 +73,29 @@ def process_item_status(data):
             if count == 0:
                 item_status = "Out of stock"
                 if item.prev_status == "Low stock level":
-                    try:
-                        item.prev_status = None
-                        # send_notification_email(item, count, image_path, item_status)
-                    except Exception as e:
-                        print(f"Email notification errors: {e}")
+                    item.prev_status = None
+
                 else:
                     if item.prev_status != None:
                         item.prev_status = item.status
 
-            elif (count > 0 and count <= min_item) or red_line == True and data_item[0]['multi_row']:
+            elif (count > 0 and count <= min_item):
                 item_status = "Low stock level"
                 if level_previous_status == "In stock":
-                    previous_status = "Low stock level"
+                    item.prev_status = "Low stock level"
 
                     # send_notification suppliers
                     try:
-                        send_email_to_suppliers(item, image_path)
+                        item.prev_status = None
+                        send_email_to_suppliers.apply_async(args=[serialized_item, image_path])
                     except Exception as e:
-                        print(f"Email suppliers notification errors: {e}")
+                        print(f"Email notification errors: {e}")
 
                     # send_notification
                     try:
                         item.prev_status = None
                         send_notification_email.apply_async(args=[serialized_item, count, image_path, item_status],
-                                                        countdown=0)
+                                                            countdown=0)
                     except Exception as e:
                         print(f"Email notification errors: {e}")
                 elif item.prev_status != None:
@@ -112,8 +111,9 @@ def process_item_status(data):
             item_data["low_stock_level"] = min_item
 
         print(
-            f"item_id=={item.id}, item_id=={item.name}, item_status {item_status}, "
+            f"item_id=={item.id}, item_name=={item.name}, item_status {item_status}, "
             f"red_line == {red_line}, multi_row == {data_item[0]['multi_row']}")
+
         item.status = item_status
         item.save()
 
@@ -181,9 +181,9 @@ def started_process(camera):
         response = send_run_request(new_data)
 
         new_process_id = response["pid"]
+        print('new_process_id = response["pid"]', new_process_id)
+        CameraAlgorithm.objects.create(camera=camera, algorithm=algorithm, process_id=new_process_id)
 
-        camera_algorithm.process_id = new_process_id
-        camera_algorithm.save()
     except CameraAlgorithm.DoesNotExist:
         print("first algorithm not found")
         if len(data.get("extra")) == 0:
