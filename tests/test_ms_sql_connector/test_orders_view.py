@@ -53,10 +53,12 @@ class CreateDatabaseConnectionAPIViewTestCase(APITestCase):
         self.assertTrue(response.data["results"][0]["zlecenie"].startswith("PRW199234"))
         self.assertEqual(response.data["results"][0]["status"], "Started")
         self.assertEqual(
-            response.data["results"][0]["terminrealizacji"], "2023-03-03 00:00:00.0000000"
+            response.data["results"][0]["terminrealizacji"],
+            "2023-03-03 00:00:00.0000000",
         )
-        self.assertEqual(response.data["results"][0]["datawejscia"], "23.02.2023 14:18:00")
-
+        self.assertEqual(
+            response.data["results"][0]["datawejscia"], "23.02.2023 14:18:00"
+        )
 
     def test_get_orders_by_id_1(self):
         url = "/api/order/by-order/G59811"
@@ -71,8 +73,6 @@ class CreateDatabaseConnectionAPIViewTestCase(APITestCase):
         self.assertEqual(data[0]["status"], G59811[0]["status"])
         self.assertEqual(data[0]["indeks"], G59811[0]["indeks"])
         self.assertEqual(data[0]["klient"], G59811[0]["klient"])
-
-
 
     def test_get_orders_by_id_4(self):
         for order in ORDERS:

@@ -11,8 +11,12 @@ DATABASES = {
         "PORT": "5432",
     },
     "test": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": "test_db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "test_database",
+        "USER": "admin",
+        "PASSWORD": "just4Taqtile",
+        "HOST": "localhost",
+        "PORT": "5433",
     },
 }
 
