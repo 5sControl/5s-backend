@@ -46,13 +46,11 @@ class Command(BaseCommand):
                     zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
                     coords = zone_camera.coords
                     coords[0]["zoneId"] = zone_camera.id
-                    coords[0]["zoneName"] = "zone " + str(zone_camera.name)
+                    coords[0]["zoneName"] = zone_camera.name
 
-                    new_object = {"coords": coords}
+                    all_cords.append(coords)
 
-                    all_cords.append(new_object)
-
-                request["extra"] = all_cords
+                request["extra"] = {"coords": all_cords}
 
             if camera_algorithm.algorithm.name == "min_max_control":
                 algorithm_items = Items.objects.filter(camera=camera_obj)
