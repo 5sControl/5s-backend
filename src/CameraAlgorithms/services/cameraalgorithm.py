@@ -94,18 +94,19 @@ def create_camera_algorithms(
     camera: Dict[str, str], algorithms: List[Dict[str, Any]]
 ) -> None:
     camera_obj: Camera = Camera.objects.get(id=camera["ip"])
-    algo_ids_to_delete: List[int] = get_algorithm_ids_to_delete(camera_obj, algorithms)
-    print(f"Algo ids: {algo_ids_to_delete}")
+    algo_to_delete: List[str] = get_algorithms_to_delete(camera_obj, algorithms)
+    print(f"Algo ids: {algo_to_delete}")
 
-    for camera_algo_id in algo_ids_to_delete:
-        pid: int = CameraAlgorithm.objects.get(id=camera_algo_id).process_id
+    for algo in algo_to_delete:
+        pid: int = CameraAlgorithm.objects.get(camera=camera_obj, algorithms__name=algo).process_id
         stop_and_update_algorithm(pid)
         logger.warning(f"Successfully deleted pid {pid}")
+    
+    print(f"All Algorithms {algorithms}")
 
     for algorithm in algorithms:
         algorithm_obj: Algorithm = Algorithm.objects.get(name=algorithm["name"])
         algorithm_name: str = algorithm["name"]
-        print(f"Algorithm name is {algorithm_name}")
 
         rtsp_link: str = camera_rtsp_link(camera_obj.id)
 
@@ -303,21 +304,17 @@ def camera_rtsp_link(id: str) -> str:
     return f"rtsp://{cameras_data.username}:{cameras_data.password}@{cameras_data.id}/h264_stream"
 
 
-def get_algorithm_ids_to_delete(
-    camera_obj: Camera, algorithms: List[Dict[str, Any]]
-) -> List[int]:
-    existing_algorithms = CameraAlgorithm.objects.filter(camera=camera_obj)
-    existing_algorithm_ids = set(algorithm.id for algorithm in existing_algorithms)
+def get_algorithms_to_delete(camera_obj: Camera, algorithms: List[Dict[str, Any]]) -> List[str]:
+    algorithm_names = [algo["name"] for algo in algorithms]
+    existing_algorithms = CameraAlgorithm.objects.filter(camera=camera_obj, algorithm__name__in=algorithm_names)
+    existing_algorithm_names = set(algorithm.algorithm.name for algorithm in existing_algorithms)
 
-    if not algorithms:
-        algorithm_ids_to_delete = list(existing_algorithm_ids)
-    else:
-        algorithm_names = [algo["name"] for algo in algorithms]
-        algorithm_ids_to_delete = [
-            id for id in existing_algorithm_ids if id not in algorithm_names
-        ]
+    if algorithm_names:
+        return existing_algorithm_names
 
-    return algorithm_ids_to_delete
+    algorithms_to_delete = [name for name in existing_algorithm_names if name not in algorithm_names]
+
+    return algorithms_to_delete
 
 
 def send_run_request(request: Dict[str, Any]) -> Dict[str, Any]:
