@@ -23,6 +23,8 @@ def CreateCameraAlgorithms(camera_algorithm_data: Dict[str, Any]) -> None:
     camera: Dict[str, str] = camera_algorithm_data["camera"]
     algorithms: List[Dict[str, Any]] = camera_algorithm_data["algorithms"]
 
+    print(f"ALGORITHM DATA {algorithms}")
+
     create_camera(camera)
     logger.warning(f"Camera [{camera['ip']}] created successfully")
     create_camera_algorithms(camera, algorithms)
