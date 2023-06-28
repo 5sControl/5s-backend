@@ -1,7 +1,7 @@
 import requests
 import logging
 
-from typing import Any, Dict, Iterable, List, Optional
+from typing import Any, Dict, Iterable, List, Optional, Set
 
 from src.Core.exceptions import InvalidResponseError, SenderError, CameraConnectionError
 from src.Core.utils import Sender
@@ -94,6 +94,13 @@ def create_camera_algorithms(
     camera: Dict[str, str], algorithms: List[Dict[str, Any]]
 ) -> None:
     camera_obj: Camera = Camera.objects.get(id=camera["ip"])
+
+    algo_ids_to_delete: List[int] = get_algorithm_ids_to_delete(camera_obj, algorithms)
+    
+    for camera_algo_id in algo_ids_to_delete:
+        pid: int = CameraAlgorithm.objects.get(id=camera_algo_id).process_id
+        stop_and_update_algorithm(pid)
+        logger.warning(f"Successfully deleted pid {pid}")
 
     for algorithm in algorithms:
         algorithm_obj: Algorithm = Algorithm.objects.get(name=algorithm["name"])
@@ -246,6 +253,14 @@ def create_camera_algorithms(
 def camera_rtsp_link(id: str) -> str:
     cameras_data = Camera.objects.get(id=id)
     return f"rtsp://{cameras_data.username}:{cameras_data.password}@{cameras_data.id}/h264_stream"
+
+
+def get_algorithm_ids_to_delete(camera_obj: Camera, algorithms: List[Dict[str, Any]]) -> List[int]:
+    algorithm_names: List[str] = [algo["name"] for algo in algorithms]
+    existing_algorithms: Iterable[CameraAlgorithm] = CameraAlgorithm.objects.filter(camera=camera_obj, algorithm__name__in=algorithm_names)
+    existing_algorithm_ids: Set[int] = set(algorithm.id for algorithm in existing_algorithms)
+    algorithms_to_delete: List[int] = [id for id in existing_algorithm_ids if id not in algorithm_names]
+    return algorithms_to_delete
 
 
 def send_run_request(request: Dict[str, Any]) -> Dict[str, Any]:
