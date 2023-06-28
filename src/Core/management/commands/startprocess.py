@@ -48,7 +48,7 @@ class Command(BaseCommand):
                     coords[0]["zoneId"] = zone_camera.id
                     coords[0]["zoneName"] = zone_camera.name
 
-                    all_cords.append(coords)
+                    all_cords.append(coords[0])
 
                 request["extra"] = {"coords": all_cords}
 
