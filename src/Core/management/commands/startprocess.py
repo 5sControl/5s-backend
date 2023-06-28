@@ -52,7 +52,7 @@ class Command(BaseCommand):
 
                     all_cords.append(new_object)
 
-                extra_params.append(all_cords)
+                extra_params.append(all_cords[0])
 
             if camera_algorithm.algorithm.name == "min_max_control":
                 algorithm_items = Items.objects.filter(camera=camera_obj)
