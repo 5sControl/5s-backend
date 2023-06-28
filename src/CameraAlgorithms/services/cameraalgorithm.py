@@ -10,8 +10,7 @@ from src.Inventory.models import Items
 from src.OrderView.models import IndexOperations
 from src.CompanyLicense.decorators import check_active_cameras, check_active_algorithms
 
-from ..models import Camera, ZoneCameras
-from ..models import Algorithm, CameraAlgorithm
+from src.CameraAlgorithms.models import Camera, ZoneCameras, Algorithm, CameraAlgorithm
 from .logs_services import logs_service
 
 logger = logging.getLogger(__name__)
@@ -102,7 +101,7 @@ def create_camera_algorithms(
 
     for algo in algo_to_delete:
         pid: int = CameraAlgorithm.objects.get(
-            camera=camera_obj, algorithms__name=algo
+            camera=camera_obj, algorithm__name=algo
         ).process_id
         stop_and_update_algorithm(pid)
         logger.warning(f"Successfully deleted pid {pid}")
