@@ -23,10 +23,10 @@ def CreateCameraAlgorithms(camera_algorithm_data: Dict[str, Any]) -> None:
     camera: Dict[str, str] = camera_algorithm_data["camera"]
     algorithms: List[Dict[str, Any]] = camera_algorithm_data["algorithms"]
 
-    print(f"ALGORITHM DATA {algorithms}")
-
     create_camera(camera)
+
     logger.warning(f"Camera [{camera['ip']}] created successfully")
+
     create_camera_algorithms(camera, algorithms)
 
 
@@ -96,15 +96,16 @@ def create_camera_algorithms(
     camera: Dict[str, str], algorithms: List[Dict[str, Any]]
 ) -> None:
     camera_obj: Camera = Camera.objects.get(id=camera["ip"])
-    algo_to_delete: List[str] = get_algorithms_to_delete(camera_obj, algorithms)
-    print(f"Algo ids: {algo_to_delete}")
+
+    algorithm_names: Set[str] = {algo["name"] for algo in algorithms}
+    algo_to_delete: List[str] = get_algorithms_to_delete(camera_obj, algorithm_names)
 
     for algo in algo_to_delete:
-        pid: int = CameraAlgorithm.objects.get(camera=camera_obj, algorithms__name=algo).process_id
+        pid: int = CameraAlgorithm.objects.get(
+            camera=camera_obj, algorithms__name=algo
+        ).process_id
         stop_and_update_algorithm(pid)
         logger.warning(f"Successfully deleted pid {pid}")
-    
-    print(f"All Algorithms {algorithms}")
 
     for algorithm in algorithms:
         algorithm_obj: Algorithm = Algorithm.objects.get(name=algorithm["name"])
@@ -306,15 +307,16 @@ def camera_rtsp_link(id: str) -> str:
     return f"rtsp://{cameras_data.username}:{cameras_data.password}@{cameras_data.id}/h264_stream"
 
 
-def get_algorithms_to_delete(camera_obj: Camera, algorithms: List[Dict[str, Any]]) -> List[str]:
-    algorithm_names = [algo["name"] for algo in algorithms]
-    existing_algorithms = CameraAlgorithm.objects.filter(camera=camera_obj, algorithm__name__in=algorithm_names)
-    existing_algorithm_names = set(algorithm.algorithm.name for algorithm in existing_algorithms)
+def get_algorithms_to_delete(camera_obj: Camera, algorithms: Set[str]) -> List[str]:
+    existing_algorithms = CameraAlgorithm.objects.filter(camera=camera_obj)
+    existing_algorithm_names = set(
+        algorithm.algorithm.name for algorithm in existing_algorithms
+    )
 
-    if algorithm_names:
+    if not algorithms:
         return existing_algorithm_names
 
-    algorithms_to_delete = [name for name in existing_algorithm_names if name not in algorithm_names]
+    algorithms_to_delete = existing_algorithm_names - algorithms
 
     return algorithms_to_delete
 
