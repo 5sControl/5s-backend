@@ -172,7 +172,7 @@ def create_camera_algorithms(
 
                 all_cords.append(coords[0])
 
-            request["extra"] = {"coords": all_cords}
+            request["extra"] = [{"coords": all_cords}]
 
             response = send_run_request(request)
 
