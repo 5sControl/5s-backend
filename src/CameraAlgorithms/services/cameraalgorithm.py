@@ -167,7 +167,7 @@ def create_camera_algorithms(
                 )
                 coords = zone_camera.coords
                 coords[0]["zoneId"] = zone_camera.id
-                coords[0]["zoneName"] = "zone " + str(zone_camera.name)
+                coords[0]["zoneName"] = zone_camera.name
 
                 new_object = {"coords": coords}
 
