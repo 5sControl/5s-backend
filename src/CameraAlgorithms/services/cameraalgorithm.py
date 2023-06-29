@@ -173,14 +173,6 @@ def create_camera_algorithms(
             data.append(new_data)
             request["extra"] = data
 
-            response: Dict[str, Any] = send_run_request(request)
-            save_data(
-                algorithm_obj=algorithm_obj,
-                camera_obj=camera_obj,
-                pid=response["pid"],
-                zones=zones,
-            )
-
         if algorithm_name == "machine_control":
             if camera_algo_obj.exists():
                 if compare_zones(algorithm_obj, camera_obj, zones):
@@ -206,14 +198,6 @@ def create_camera_algorithms(
 
             request["extra"] = data
 
-            response: Dict[str, Any] = send_run_request(request)
-            save_data(
-                algorithm_obj=algorithm_obj,
-                camera_obj=camera_obj,
-                pid=response["pid"],
-                zones=zones,
-            )
-
         if algorithm_name == "idle_control":
             if camera_algo_obj.exists():
                 if compare_zones(algorithm_obj, camera_obj, zones):
@@ -227,14 +211,6 @@ def create_camera_algorithms(
                         f"Successfully deleted -> {algorithm_name} with pid {pid}"
                     )
 
-            response: Dict[str, Any] = send_run_request(request)
-            save_data(
-                algorithm_obj=algorithm_obj,
-                camera_obj=camera_obj,
-                pid=response["pid"],
-                zones=zones,
-            )
-
         if algorithm_name == "operation_control":
             operation_control_id: int = algorithm["config"]["operation_control_id"]
 
@@ -245,7 +221,9 @@ def create_camera_algorithms(
                 if compare_zones(algorithm_obj, camera_obj, zones):
                     continue
                 elif index_operations_obj.type_operation != operation_control_id:
-                    index_operations_obj.update(type_operation=operation_control_id)
+                    print("diff")
+                    index_operations_obj.type_operation = operation_control_id
+                    index_operations_obj.save()
                 else:
                     pid: int = camera_algo_obj.get(
                         algorithm=algorithm_obj, camera=camera_obj
@@ -263,14 +241,6 @@ def create_camera_algorithms(
             IndexOperations.objects.filter(camera=camera_obj).delete()
             index_operation.save()
 
-            response: Dict[str, Any] = send_run_request(request)
-            save_data(
-                algorithm_obj=algorithm_obj,
-                camera_obj=camera_obj,
-                pid=response["pid"],
-                zones=zones,
-            )
-
         if algorithm_name == "safety_control_ear_protection":
             if camera_algo_obj.exists():
                 if compare_zones(algorithm_obj, camera_obj, zones):
@@ -283,14 +253,6 @@ def create_camera_algorithms(
                     logger.warning(
                         f"Successfully deleted -> {algorithm_name} with pid {pid}"
                     )
-
-            response: Dict[str, Any] = send_run_request(request)
-            save_data(
-                algorithm_obj=algorithm_obj,
-                camera_obj=camera_obj,
-                pid=response["pid"],
-                zones=zones,
-            )
 
         if algorithm_name == "safety_control_head_protection":
             if camera_algo_obj.exists():
@@ -305,14 +267,6 @@ def create_camera_algorithms(
                         f"Successfully deleted -> {algorithm_name} with pid {pid}"
                     )
 
-            response: Dict[str, Any] = send_run_request(request)
-            save_data(
-                algorithm_obj=algorithm_obj,
-                camera_obj=camera_obj,
-                pid=response["pid"],
-                zones=zones,
-            )
-
         if algorithm_name == "safety_control_hand_protection":
             if camera_algo_obj.exists():
                 if compare_zones(algorithm_obj, camera_obj, zones):
@@ -325,14 +279,6 @@ def create_camera_algorithms(
                     logger.warning(
                         f"Successfully deleted -> {algorithm_name} with pid {pid}"
                     )
-
-            response: Dict[str, Any] = send_run_request(request)
-            save_data(
-                algorithm_obj=algorithm_obj,
-                camera_obj=camera_obj,
-                pid=response["pid"],
-                zones=zones,
-            )
 
         if algorithm_name == "safety_control_reflective_jacket":
             if camera_algo_obj.exists():
@@ -347,15 +293,13 @@ def create_camera_algorithms(
                         f"Successfully deleted -> {algorithm_name} with pid {pid}"
                     )
 
-            response: Dict[str, Any] = send_run_request(request)
-            save_data(
-                algorithm_obj=algorithm_obj,
-                camera_obj=camera_obj,
-                pid=response["pid"],
-                zones=zones,
-            )
-
-        return
+        response: Dict[str, Any] = send_run_request(request)
+        save_data(
+            algorithm_obj=algorithm_obj,
+            camera_obj=camera_obj,
+            pid=response["pid"],
+            zones=zones,
+        )
 
 
 def save_data(
@@ -376,7 +320,6 @@ def save_data(
         update_status_zones_true(zones)
 
     logger.warning(f"New record -> {algorithm_obj.name} on camera {camera_obj.id}")
-    return
 
 
 def camera_rtsp_link(id: str) -> str:
