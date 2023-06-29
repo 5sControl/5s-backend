@@ -244,8 +244,8 @@ def create_camera_algorithms(
                 )
                 if compare_zones(algorithm_obj, camera_obj, zones):
                     continue
-                elif index_operations_obj.type_operation == operation_control_id:
-                    continue
+                elif index_operations_obj.type_operation != operation_control_id:
+                    index_operations_obj.update(type_operation=operation_control_id)
                 else:
                     pid: int = camera_algo_obj.get(
                         algorithm=algorithm_obj, camera=camera_obj
