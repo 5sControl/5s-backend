@@ -248,9 +248,9 @@ def create_camera_algorithms(
                 )
 
             operation_control_id: int = algorithm["config"]["operation_control_id"]
-            index_operations_obj: IndexOperations = IndexOperations.objects.get(camera=camera_obj)
+            index_operations_obj: IndexOperations = IndexOperations.objects.filter(camera=camera_obj)
 
-            if index_operations_obj.type_operation == operation_control_id:
+            if index_operations_obj.exists() and index_operations_obj.first().type_operation == operation_control_id:
                 continue
 
             pid: int = camera_algo_obj.process_id
