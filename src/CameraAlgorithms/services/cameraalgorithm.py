@@ -141,8 +141,7 @@ def create_camera_algorithms(
                 algorithm_obj, camera_obj, zones
             ):
                 continue
-
-            if camera_algo_obj.exists():
+            else:
                 pid: int = camera_algo_obj.get(
                     algorithm=algorithm_obj, camera=camera_obj
                 ).process_id
@@ -191,8 +190,7 @@ def create_camera_algorithms(
                 algorithm_obj, camera_obj, zones
             ):
                 continue
-
-            if camera_algo_obj.exists():
+            else:
                 pid: int = camera_algo_obj.get(
                     algorithm=algorithm_obj, camera=camera_obj
                 ).process_id
@@ -220,8 +218,7 @@ def create_camera_algorithms(
                 algorithm_obj, camera_obj, zones
             ):
                 continue
-
-            if camera_algo_obj.exists():
+            else:
                 pid: int = camera_algo_obj.get(
                     algorithm=algorithm_obj, camera=camera_obj
                 ).process_id
@@ -233,33 +230,34 @@ def create_camera_algorithms(
             response: Dict[str, Any] = send_run_request(request)
 
         if algorithm_name == "operation_control":
-            if camera_algo_obj.exists() and compare_zones(
-                algorithm_obj, camera_obj, zones
-            ):
-                continue
+            operation_control_id: int = algorithm["config"]["operation_control_id"]
+            index_operations_obj: IndexOperations = IndexOperations.objects.get(camera=camera_obj)
 
             if camera_algo_obj.exists():
-                pid: int = camera_algo_obj.get(
-                    algorithm=algorithm_obj, camera=camera_obj
-                ).process_id
-                stop_and_update_algorithm(pid)
-                logger.warning(
-                    f"Successfully deleted -> {algorithm_name} with pid {pid}"
+                if compare_zones(
+                    algorithm_obj, camera_obj, zones
+                ):
+                    continue
+                elif index_operations_obj.type_operation == operation_control_id:
+                    continue
+                else:
+                    pid: int = camera_algo_obj.get(
+                        algorithm=algorithm_obj, camera=camera_obj
+                    ).process_id
+
+                    stop_and_update_algorithm(pid)
+
+                    logger.warning(
+                        f"Successfully deleted -> {algorithm_name} with pid {pid}"
+                    )
+
+                index_operation: IndexOperations = IndexOperations(
+                    type_operation=operation_control_id, camera=camera_obj
                 )
+                IndexOperations.objects.filter(camera=camera_obj).delete()
+                index_operation.save()
 
-            operation_control_id: int = algorithm["config"]["operation_control_id"]
-            index_operations_obj: IndexOperations = IndexOperations.objects.filter(camera=camera_obj)
-
-            if index_operations_obj.exists() and index_operations_obj.first().type_operation == operation_control_id:
-                continue
-
-            index_operation: IndexOperations = IndexOperations(
-                type_operation=operation_control_id, camera=camera_obj
-            )
-            IndexOperations.objects.filter(camera=camera_obj).delete()
-            index_operation.save()
-
-            response: Dict[str, Any] = send_run_request(request)
+                response: Dict[str, Any] = send_run_request(request)
 
             if algorithm_name == "safety_control_ear_protection":
                 camera_algo_obj = CameraAlgorithm.objects.filter(
@@ -270,8 +268,7 @@ def create_camera_algorithms(
                     algorithm_obj, camera_obj, zones
                 ):
                     continue
-
-                if camera_algo_obj.exists():
+                else:
                     pid: int = camera_algo_obj.get(
                         algorithm=algorithm_obj, camera=camera_obj
                     ).process_id
@@ -287,8 +284,7 @@ def create_camera_algorithms(
                 algorithm_obj, camera_obj, zones
             ):
                 continue
-
-            if camera_algo_obj.exists():
+            else:
                 pid: int = camera_algo_obj.get(
                     algorithm=algorithm_obj, camera=camera_obj
                 ).process_id
@@ -304,8 +300,7 @@ def create_camera_algorithms(
                 algorithm_obj, camera_obj, zones
             ):
                 continue
-
-            if camera_algo_obj.exists():
+            else:
                 pid: int = camera_algo_obj.get(
                     algorithm=algorithm_obj, camera=camera_obj
                 ).process_id
@@ -321,8 +316,7 @@ def create_camera_algorithms(
                 algorithm_obj, camera_obj, zones
             ):
                 continue
-
-            if camera_algo_obj.exists():
+            else:
                 pid: int = camera_algo_obj.get(
                     algorithm=algorithm_obj, camera=camera_obj
                 ).process_id
