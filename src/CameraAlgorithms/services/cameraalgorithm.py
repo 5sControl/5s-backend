@@ -174,16 +174,12 @@ def create_camera_algorithms(
 
         if algorithm_name == "machine_control":
             if not compare_zones(algorithm_obj, camera_obj, zones):
-                try:
-                    pid: int = CameraAlgorithm.objects.get(
-                        algorithm=algorithm_obj, camera=camera_obj
-                    ).process_id
-                except CameraAlgorithm.DoesNotExist:
-                    pass
-                else:
-                    stop_and_update_algorithm(pid)
-                    logger.warning(f"Successfully deleted -> {algorithm_name} with pid {pid}")
-                    continue
+                pid: int = CameraAlgorithm.objects.get(
+                    algorithm=algorithm_obj, camera=camera_obj
+                ).process_id
+                stop_and_update_algorithm(pid)
+                logger.warning(f"Successfully deleted -> {algorithm_name} with pid {pid}")
+                continue
 
             for zone_id in zones:
                 zone_camera = ZoneCameras.objects.get(
