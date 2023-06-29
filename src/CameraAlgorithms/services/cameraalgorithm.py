@@ -231,9 +231,9 @@ def create_camera_algorithms(
 
         if algorithm_name == "operation_control":
             operation_control_id: int = algorithm["config"]["operation_control_id"]
-            index_operations_obj: IndexOperations = IndexOperations.objects.get(camera=camera_obj)
 
             if camera_algo_obj.exists():
+                index_operations_obj: IndexOperations = IndexOperations.objects.get(camera=camera_obj)
                 if compare_zones(
                     algorithm_obj, camera_obj, zones
                 ):
