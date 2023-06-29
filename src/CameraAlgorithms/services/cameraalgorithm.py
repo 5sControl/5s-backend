@@ -133,21 +133,19 @@ def create_camera_algorithms(
             camera_algo_obj: CameraAlgorithm = CameraAlgorithm.objects.filter(
                 algorithm=algorithm_obj, camera=camera_obj
             )
-            if (
-                not compare_zones(algorithm_obj, camera_obj, zones)
-                and camera_algo_obj.exists()
-            ):
-                pid: int = CameraAlgorithm.objects.get(
-                    algorithm=algorithm_obj, camera=camera_obj
-                ).process_id
 
-                stop_and_update_algorithm(pid)
+            if camera_algo_obj.exists():
+                if compare_zones(algorithm_obj, camera_obj, zones):
+                    continue
+                else:
+                    pid: int = CameraAlgorithm.objects.get(
+                        algorithm=algorithm_obj, camera=camera_obj
+                    ).process_id
+                    stop_and_update_algorithm(pid)
+                    logger.warning(
+                        f"Successfully deleted -> {algorithm_name} with pid {pid}"
+                    )
 
-                logger.warning(
-                    f"Successfully deleted -> {algorithm_name} with pid {pid}"
-                )
-
-                continue
 
             algorithm_items: Items = Items.objects.filter(camera=camera_obj.id)
             for item in algorithm_items:
