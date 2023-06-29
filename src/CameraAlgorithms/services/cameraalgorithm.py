@@ -218,12 +218,7 @@ def create_camera_algorithms(
                 index_operations_obj: IndexOperations = IndexOperations.objects.get(
                     camera=camera_obj
                 )
-                if index_operations_obj.type_operation != operation_control_id:
-                    index_operations_obj.type_operation = operation_control_id
-                    index_operations_obj.save()
-
-                    continue
-                elif not compare_zones(algorithm_obj, camera_obj, zones):
+                if not compare_zones(algorithm_obj, camera_obj, zones):
                     pid: int = camera_algo_obj.get(
                         algorithm=algorithm_obj, camera=camera_obj
                     ).process_id
@@ -233,6 +228,11 @@ def create_camera_algorithms(
                     logger.warning(
                         f"Successfully deleted -> {algorithm_name} with pid {pid}"
                     )
+                elif index_operations_obj.type_operation != operation_control_id:
+                    index_operations_obj.type_operation = operation_control_id
+                    index_operations_obj.save()
+
+                    continue
 
             index_operation: IndexOperations = IndexOperations(
                 type_operation=operation_control_id, camera=camera_obj
