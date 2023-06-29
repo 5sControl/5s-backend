@@ -130,7 +130,13 @@ def create_camera_algorithms(
         )
 
         if algorithm_name == "min_max_control":
-            if compare_zones(algorithm_obj, camera_obj, zones):
+            camera_algo_obj: CameraAlgorithm = CameraAlgorithm.objects.filter(
+                algorithm=algorithm_obj, camera=camera_obj
+            )
+            if (
+                not compare_zones(algorithm_obj, camera_obj, zones)
+                and camera_algo_obj.exists()
+            ):
                 pid: int = CameraAlgorithm.objects.get(
                     algorithm=algorithm_obj, camera=camera_obj
                 ).process_id
@@ -173,12 +179,20 @@ def create_camera_algorithms(
             response: Dict[str, Any] = send_run_request(request)
 
         if algorithm_name == "machine_control":
-            if not compare_zones(algorithm_obj, camera_obj, zones):
+            camera_algo_obj: CameraAlgorithm = CameraAlgorithm.objects.filter(
+                algorithm=algorithm_obj, camera=camera_obj
+            )
+            if (
+                not compare_zones(algorithm_obj, camera_obj, zones)
+                and camera_algo_obj.exists()
+            ):
                 pid: int = CameraAlgorithm.objects.get(
                     algorithm=algorithm_obj, camera=camera_obj
                 ).process_id
                 stop_and_update_algorithm(pid)
-                logger.warning(f"Successfully deleted -> {algorithm_name} with pid {pid}")
+                logger.warning(
+                    f"Successfully deleted -> {algorithm_name} with pid {pid}"
+                )
                 continue
 
             for zone_id in zones:
