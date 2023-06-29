@@ -257,11 +257,11 @@ def create_camera_algorithms(
                         f"Successfully deleted -> {algorithm_name} with pid {pid}"
                     )
 
-                index_operation: IndexOperations = IndexOperations(
-                    type_operation=operation_control_id, camera=camera_obj
-                )
-                IndexOperations.objects.filter(camera=camera_obj).delete()
-                index_operation.save()
+            index_operation: IndexOperations = IndexOperations(
+                type_operation=operation_control_id, camera=camera_obj
+            )
+            IndexOperations.objects.filter(camera=camera_obj).delete()
+            index_operation.save()
 
             response: Dict[str, Any] = send_run_request(request)
             save_data(
