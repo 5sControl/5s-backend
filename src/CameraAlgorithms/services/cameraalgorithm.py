@@ -134,9 +134,7 @@ def create_camera_algorithms(
 
         if algorithm_name == "min_max_control":
             if camera_algo_obj.exists():
-                if compare_zones(
-                    algorithm_obj, camera_obj, zones
-                ):
+                if compare_zones(algorithm_obj, camera_obj, zones):
                     continue
                 else:
                     pid: int = camera_algo_obj.get(
@@ -172,17 +170,20 @@ def create_camera_algorithms(
                 "areas": areas,
                 "zones": stelag,
             }
-
             data.append(new_data)
-
             request["extra"] = data
+
             response: Dict[str, Any] = send_run_request(request)
+            save_data(
+                algorithm_obj=algorithm_obj,
+                camera_obj=camera_obj,
+                pid=response["pid"],
+                zones=zones,
+            )
 
         if algorithm_name == "machine_control":
             if camera_algo_obj.exists():
-                if compare_zones(
-                    algorithm_obj, camera_obj, zones
-                ):
+                if compare_zones(algorithm_obj, camera_obj, zones):
                     continue
                 else:
                     pid: int = camera_algo_obj.get(
@@ -206,12 +207,16 @@ def create_camera_algorithms(
             request["extra"] = data
 
             response: Dict[str, Any] = send_run_request(request)
+            save_data(
+                algorithm_obj=algorithm_obj,
+                camera_obj=camera_obj,
+                pid=response["pid"],
+                zones=zones,
+            )
 
         if algorithm_name == "idle_control":
             if camera_algo_obj.exists():
-                if compare_zones(
-                    algorithm_obj, camera_obj, zones
-                ):
+                if compare_zones(algorithm_obj, camera_obj, zones):
                     continue
                 else:
                     pid: int = camera_algo_obj.get(
@@ -223,15 +228,21 @@ def create_camera_algorithms(
                     )
 
             response: Dict[str, Any] = send_run_request(request)
+            save_data(
+                algorithm_obj=algorithm_obj,
+                camera_obj=camera_obj,
+                pid=response["pid"],
+                zones=zones,
+            )
 
         if algorithm_name == "operation_control":
             operation_control_id: int = algorithm["config"]["operation_control_id"]
 
             if camera_algo_obj.exists():
-                index_operations_obj: IndexOperations = IndexOperations.objects.get(camera=camera_obj)
-                if compare_zones(
-                    algorithm_obj, camera_obj, zones
-                ):
+                index_operations_obj: IndexOperations = IndexOperations.objects.get(
+                    camera=camera_obj
+                )
+                if compare_zones(algorithm_obj, camera_obj, zones):
                     continue
                 elif index_operations_obj.type_operation == operation_control_id:
                     continue
@@ -253,13 +264,16 @@ def create_camera_algorithms(
                 index_operation.save()
 
                 response: Dict[str, Any] = send_run_request(request)
-                print("OPERATION RESPONDE ", response)
+                save_data(
+                    algorithm_obj=algorithm_obj,
+                    camera_obj=camera_obj,
+                    pid=response["pid"],
+                    zones=zones,
+                )
 
         if algorithm_name == "safety_control_ear_protection":
             if camera_algo_obj.exists():
-                if compare_zones(
-                    algorithm_obj, camera_obj, zones
-                ):
+                if compare_zones(algorithm_obj, camera_obj, zones):
                     continue
                 else:
                     pid: int = camera_algo_obj.get(
@@ -270,13 +284,17 @@ def create_camera_algorithms(
                         f"Successfully deleted -> {algorithm_name} with pid {pid}"
                     )
 
-            response: Dict[str, Any] = send_run_request(request)
+                    response: Dict[str, Any] = send_run_request(request)
+                    save_data(
+                        algorithm_obj=algorithm_obj,
+                        camera_obj=camera_obj,
+                        pid=response["pid"],
+                        zones=zones,
+                    )
 
         if algorithm_name == "safety_control_head_protection":
             if camera_algo_obj.exists():
-                if compare_zones(
-                    algorithm_obj, camera_obj, zones
-                ):
+                if compare_zones(algorithm_obj, camera_obj, zones):
                     continue
                 else:
                     pid: int = camera_algo_obj.get(
@@ -287,13 +305,17 @@ def create_camera_algorithms(
                         f"Successfully deleted -> {algorithm_name} with pid {pid}"
                     )
 
-            response: Dict[str, Any] = send_run_request(request)
+                    response: Dict[str, Any] = send_run_request(request)
+                    save_data(
+                        algorithm_obj=algorithm_obj,
+                        camera_obj=camera_obj,
+                        pid=response["pid"],
+                        zones=zones,
+                    )
 
         if algorithm_name == "safety_control_hand_protection":
             if camera_algo_obj.exists():
-                if compare_zones(
-                    algorithm_obj, camera_obj, zones
-                ):
+                if compare_zones(algorithm_obj, camera_obj, zones):
                     continue
                 else:
                     pid: int = camera_algo_obj.get(
@@ -304,13 +326,17 @@ def create_camera_algorithms(
                         f"Successfully deleted -> {algorithm_name} with pid {pid}"
                     )
 
-            response: Dict[str, Any] = send_run_request(request)
+                    response: Dict[str, Any] = send_run_request(request)
+                    save_data(
+                        algorithm_obj=algorithm_obj,
+                        camera_obj=camera_obj,
+                        pid=response["pid"],
+                        zones=zones,
+                    )
 
         if algorithm_name == "safety_control_reflective_jacket":
             if camera_algo_obj.exists():
-                if compare_zones(
-                    algorithm_obj, camera_obj, zones
-                ):
+                if compare_zones(algorithm_obj, camera_obj, zones):
                     continue
                 else:
                     pid: int = camera_algo_obj.get(
@@ -321,21 +347,36 @@ def create_camera_algorithms(
                         f"Successfully deleted -> {algorithm_name} with pid {pid}"
                     )
 
-            response: Dict[str, Any] = send_run_request(request)
+                    response: Dict[str, Any] = send_run_request(request)
+                    save_data(
+                        algorithm_obj=algorithm_obj,
+                        camera_obj=camera_obj,
+                        pid=response["pid"],
+                        zones=zones,
+                    )
 
-        new_record: CameraAlgorithm = CameraAlgorithm(
-            algorithm=algorithm_obj,
-            camera=camera_obj,
-            process_id=response["pid"],
-            zones=zones,
-        )
-        new_record.save()
-
-        if zones is not None:
-            update_status_zones_true(zones)
-
-        logger.warning(f"New record -> {algorithm_obj.name} on camera {camera_obj.id}")
         return
+
+
+def save_data(
+    algorithm_obj: CameraAlgorithm,
+    camera_obj: Camera,
+    pid: int,
+    zones: List[Dict[str, int]],
+) -> None:
+    new_record: CameraAlgorithm = CameraAlgorithm(
+        algorithm=algorithm_obj,
+        camera=camera_obj,
+        process_id=pid,
+        zones=zones,
+    )
+    new_record.save()
+
+    if zones is not None:
+        update_status_zones_true(zones)
+
+    logger.warning(f"New record -> {algorithm_obj.name} on camera {camera_obj.id}")
+    return
 
 
 def camera_rtsp_link(id: str) -> str:
