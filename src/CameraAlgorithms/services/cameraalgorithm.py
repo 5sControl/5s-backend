@@ -253,7 +253,7 @@ def create_camera_algorithms(
             if index_operations_obj.exists() and index_operations_obj.first().type_operation == operation_control_id:
                 continue
 
-            pid: int = camera_algo_obj.process_id
+            pid: int = camera_algo_obj.first().process_id
             stop_and_update_algorithm(pid)
 
             index_operation: IndexOperations = IndexOperations(
