@@ -213,6 +213,18 @@ def create_camera_algorithms(
                 algorithm=algorithm_obj, camera=camera_obj
             )
 
+            if camera_algo_obj.exists():
+                if compare_zones(algorithm_obj, camera_obj, zones):
+                    continue
+                else:
+                    pid: int = CameraAlgorithm.objects.get(
+                        algorithm=algorithm_obj, camera=camera_obj
+                    ).process_id
+                    stop_and_update_algorithm(pid)
+                    logger.warning(
+                        f"Successfully deleted -> {algorithm_name} with pid {pid}"
+                    )
+
             response: Dict[str, Any] = send_run_request(request)
 
         if algorithm_name == "operation_control":
@@ -237,13 +249,18 @@ def create_camera_algorithms(
             camera_algo_obj: CameraAlgorithm = CameraAlgorithm.objects.filter(
                 algorithm=algorithm_obj, camera=camera_obj
             )
-            if camera_algo_obj.exists():
-                stop_and_update_algorithm(camera_algo_obj.first().process_id)
-                logger.warning(
-                    f"Successfully deleted -> {algorithm_name} with pid {camera_algo_obj.process_id}"
-                )
 
-                continue
+            if camera_algo_obj.exists():
+                if compare_zones(algorithm_obj, camera_obj, zones):
+                    continue
+                else:
+                    pid: int = CameraAlgorithm.objects.get(
+                        algorithm=algorithm_obj, camera=camera_obj
+                    ).process_id
+                    stop_and_update_algorithm(pid)
+                    logger.warning(
+                        f"Successfully deleted -> {algorithm_name} with pid {pid}"
+                    )
 
             response: Dict[str, Any] = send_run_request(request)
 
@@ -251,13 +268,18 @@ def create_camera_algorithms(
             camera_algo_obj: CameraAlgorithm = CameraAlgorithm.objects.filter(
                 algorithm=algorithm_obj, camera=camera_obj
             )
-            if camera_algo_obj.exists():
-                stop_and_update_algorithm(camera_algo_obj.first().process_id)
-                logger.warning(
-                    f"Successfully deleted -> {algorithm_name} with pid {camera_algo_obj.process_id}"
-                )
 
-                continue
+            if camera_algo_obj.exists():
+                if compare_zones(algorithm_obj, camera_obj, zones):
+                    continue
+                else:
+                    pid: int = CameraAlgorithm.objects.get(
+                        algorithm=algorithm_obj, camera=camera_obj
+                    ).process_id
+                    stop_and_update_algorithm(pid)
+                    logger.warning(
+                        f"Successfully deleted -> {algorithm_name} with pid {pid}"
+                    )
 
             response: Dict[str, Any] = send_run_request(request)
 
@@ -265,13 +287,18 @@ def create_camera_algorithms(
             camera_algo_obj: CameraAlgorithm = CameraAlgorithm.objects.filter(
                 algorithm=algorithm_obj, camera=camera_obj
             )
-            if camera_algo_obj.exists():
-                stop_and_update_algorithm(camera_algo_obj.first().process_id)
-                logger.warning(
-                    f"Successfully deleted -> {algorithm_name} with pid {camera_algo_obj.process_id}"
-                )
 
-                continue
+            if camera_algo_obj.exists():
+                if compare_zones(algorithm_obj, camera_obj, zones):
+                    continue
+                else:
+                    pid: int = CameraAlgorithm.objects.get(
+                        algorithm=algorithm_obj, camera=camera_obj
+                    ).process_id
+                    stop_and_update_algorithm(pid)
+                    logger.warning(
+                        f"Successfully deleted -> {algorithm_name} with pid {pid}"
+                    )
 
             response: Dict[str, Any] = send_run_request(request)
 
@@ -279,13 +306,18 @@ def create_camera_algorithms(
             camera_algo_obj: CameraAlgorithm = CameraAlgorithm.objects.filter(
                 algorithm=algorithm_obj, camera=camera_obj
             )
-            if camera_algo_obj.exists():
-                stop_and_update_algorithm(camera_algo_obj.first().process_id)
-                logger.warning(
-                    f"Successfully deleted -> {algorithm_name} with pid {camera_algo_obj.process_id}"
-                )
 
-                continue
+            if camera_algo_obj.exists():
+                if compare_zones(algorithm_obj, camera_obj, zones):
+                    continue
+                else:
+                    pid: int = CameraAlgorithm.objects.get(
+                        algorithm=algorithm_obj, camera=camera_obj
+                    ).process_id
+                    stop_and_update_algorithm(pid)
+                    logger.warning(
+                        f"Successfully deleted -> {algorithm_name} with pid {pid}"
+                    )
 
             response: Dict[str, Any] = send_run_request(request)
 
