@@ -263,13 +263,13 @@ def create_camera_algorithms(
                 IndexOperations.objects.filter(camera=camera_obj).delete()
                 index_operation.save()
 
-                response: Dict[str, Any] = send_run_request(request)
-                save_data(
-                    algorithm_obj=algorithm_obj,
-                    camera_obj=camera_obj,
-                    pid=response["pid"],
-                    zones=zones,
-                )
+            response: Dict[str, Any] = send_run_request(request)
+            save_data(
+                algorithm_obj=algorithm_obj,
+                camera_obj=camera_obj,
+                pid=response["pid"],
+                zones=zones,
+            )
 
         if algorithm_name == "safety_control_ear_protection":
             if camera_algo_obj.exists():
@@ -284,13 +284,13 @@ def create_camera_algorithms(
                         f"Successfully deleted -> {algorithm_name} with pid {pid}"
                     )
 
-                    response: Dict[str, Any] = send_run_request(request)
-                    save_data(
-                        algorithm_obj=algorithm_obj,
-                        camera_obj=camera_obj,
-                        pid=response["pid"],
-                        zones=zones,
-                    )
+            response: Dict[str, Any] = send_run_request(request)
+            save_data(
+                algorithm_obj=algorithm_obj,
+                camera_obj=camera_obj,
+                pid=response["pid"],
+                zones=zones,
+            )
 
         if algorithm_name == "safety_control_head_protection":
             if camera_algo_obj.exists():
@@ -305,13 +305,13 @@ def create_camera_algorithms(
                         f"Successfully deleted -> {algorithm_name} with pid {pid}"
                     )
 
-                    response: Dict[str, Any] = send_run_request(request)
-                    save_data(
-                        algorithm_obj=algorithm_obj,
-                        camera_obj=camera_obj,
-                        pid=response["pid"],
-                        zones=zones,
-                    )
+            response: Dict[str, Any] = send_run_request(request)
+            save_data(
+                algorithm_obj=algorithm_obj,
+                camera_obj=camera_obj,
+                pid=response["pid"],
+                zones=zones,
+            )
 
         if algorithm_name == "safety_control_hand_protection":
             if camera_algo_obj.exists():
@@ -326,13 +326,13 @@ def create_camera_algorithms(
                         f"Successfully deleted -> {algorithm_name} with pid {pid}"
                     )
 
-                    response: Dict[str, Any] = send_run_request(request)
-                    save_data(
-                        algorithm_obj=algorithm_obj,
-                        camera_obj=camera_obj,
-                        pid=response["pid"],
-                        zones=zones,
-                    )
+            response: Dict[str, Any] = send_run_request(request)
+            save_data(
+                algorithm_obj=algorithm_obj,
+                camera_obj=camera_obj,
+                pid=response["pid"],
+                zones=zones,
+            )
 
         if algorithm_name == "safety_control_reflective_jacket":
             if camera_algo_obj.exists():
@@ -347,13 +347,13 @@ def create_camera_algorithms(
                         f"Successfully deleted -> {algorithm_name} with pid {pid}"
                     )
 
-                    response: Dict[str, Any] = send_run_request(request)
-                    save_data(
-                        algorithm_obj=algorithm_obj,
-                        camera_obj=camera_obj,
-                        pid=response["pid"],
-                        zones=zones,
-                    )
+            response: Dict[str, Any] = send_run_request(request)
+            save_data(
+                algorithm_obj=algorithm_obj,
+                camera_obj=camera_obj,
+                pid=response["pid"],
+                zones=zones,
+            )
 
         return
 
