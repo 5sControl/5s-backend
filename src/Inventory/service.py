@@ -149,7 +149,7 @@ def started_process(camera):
     zones = []
     for item in algorithm_items:
         areas.append(
-            {"itemId": item.id, "itemName": item.name, "coords": item.coords}
+            {"itemId": item.id, "itemName": item.name, "multiRow": item.multi_row, "coords": item.coords}
         )
     try:
         camera_algorithm = CameraAlgorithm.objects.get(

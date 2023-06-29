@@ -150,7 +150,7 @@ def create_camera_algorithms(
             )
             for item in algorithm_items:
                 areas.append(
-                    {"itemId": item.id, "itemName": item.name, "coords": item.coords}
+                    {"itemId": item.id, "itemName": item.name, "multiRow": item.multi_row, "coords": item.coords}
                 )
 
             for zone_id in zones:
@@ -192,7 +192,7 @@ def create_camera_algorithms(
                 )
                 coords: Dict[str, Any] = zone_camera.coords
                 coords[0]["zoneId"] = zone_camera.id
-                coords[0]["zoneName"] = "zone " + str(zone_camera.name)
+                coords[0]["zoneName"] = zone_camera.name
 
                 data.append([{"coords": coords}])
 
