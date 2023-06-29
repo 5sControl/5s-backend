@@ -228,7 +228,8 @@ def create_camera_algorithms(
                     logger.warning(
                         f"Successfully deleted -> {algorithm_name} with pid {pid}"
                     )
-                elif index_operations_obj.type_operation != operation_control_id:
+
+                if index_operations_obj.type_operation != operation_control_id:
                     index_operations_obj.type_operation = operation_control_id
                     index_operations_obj.save()
 
