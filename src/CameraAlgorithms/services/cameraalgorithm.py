@@ -201,13 +201,6 @@ def create_camera_algorithms(
             camera_algo_obj: CameraAlgorithm = CameraAlgorithm.objects.filter(
                 algorithm=algorithm_obj, camera=camera_obj
             )
-            if camera_algo_obj.exists():
-                stop_and_update_algorithm(camera_algo_obj.first().process_id)
-                logger.warning(
-                    f"Successfully deleted -> {algorithm_name} with pid {camera_algo_obj.process_id}"
-                )
-
-                continue
 
             response: Dict[str, Any] = send_run_request(request)
 
