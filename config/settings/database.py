@@ -10,12 +10,12 @@ DATABASES = {
         "HOST": "localhost",
         "PORT": "5432",
     },
-    "test": {
+    "database_for_test": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": "test_database",
         "USER": "admin",
         "PASSWORD": "just4Taqtile",
-        "HOST": "localhost",
+        "HOST": "192.168.1.110",
         "PORT": "5433",
     },
 }
