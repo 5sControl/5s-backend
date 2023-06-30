@@ -2,7 +2,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import pyodbc
 
-from src.MsSqlConnector.connector import connector as connector_service
+from src.DatabaseConnections.services import connector as connector_service
 
 from src.Reports.models import SkanyReport
 

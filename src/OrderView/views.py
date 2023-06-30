@@ -7,8 +7,12 @@ from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.viewsets import ModelViewSet
 from src.Core.paginators import OrderViewPaginnator
+from src.DatabaseConnections.models import DatabaseConnection
 
-from src.MsSqlConnector.connector import connector as connector_service
+from src.DatabaseConnections.services import (
+    DatabaseConnectionManager,
+    connector as connector_service,
+)
 from src.OrderView.models import IndexOperations
 from src.OrderView.serializers import (
     DatabaseConnectionSerializer,
@@ -21,8 +25,6 @@ from src.OrderView.serializers import (
 from src.OrderView.services.operation_service import operation_service
 from src.OrderView.services.order_list_service import order_list_service
 from src.OrderView.services.order_service import order_service
-
-from src.MsSqlConnector.connector import connector
 
 
 class GetAllProductAPIView(generics.GenericAPIView):
@@ -91,15 +93,16 @@ class CreateDatabaseConnectionAPIView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        connection = serializer.validated_data
+        credentials = serializer.validated_data
+        manager = DatabaseConnectionManager()
 
-        if connector.is_stable(connection):
+        if manager.create_connection(credentials, "mssql"):
             serializer.save()
             return Response(
                 {
                     "success": True,
                     "message": "Database connection was created successfully",
-                    "connection": DatabaseConnectionSerializer(connection).data,
+                    "connection": DatabaseConnectionSerializer(credentials).data,
                 },
                 status=status.HTTP_201_CREATED,
             )
@@ -108,7 +111,7 @@ class CreateDatabaseConnectionAPIView(generics.CreateAPIView):
                 {
                     "success": False,
                     "message": "Database connection was not created successfully",
-                    "connection": DatabaseConnectionSerializer(connection).data,
+                    "connection": DatabaseConnectionSerializer(credentials).data,
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -119,16 +122,22 @@ class DeleteConectionAPIView(generics.GenericAPIView):
     serializer_class = DeleteConnectionSerializer
 
     def post(self, request, id):
-        connector_service.delete_connection(id)
+        manager = DatabaseConnectionManager()
+
+        if manager.delete_connection(id):
+            return Response(
+                {"success": True, "message": "Database was successfully deleted"},
+                status=status.HTTP_200_OK,
+            )
         return Response(
-            {"success": True, "message": "Database was successfully deleted"},
-            status=status.HTTP_200_OK,
+            {"success": False, "message": "Connection ID does not exist"},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
 
 class GetDatabasesAPIView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
-    queryset = connector_service.get_conections()
+    queryset = DatabaseConnection.objects.all()
     serializer_class = DatabaseConnectionSerializer
 
 

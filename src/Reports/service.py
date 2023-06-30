@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 import logging
 
 from src.CameraAlgorithms.models import Camera
-from src.MsSqlConnector.services import create_records
+from src.DatabaseConnections.repositories.services import create_records
 
 from src.Reports.models import Report, SkanyReport
 from src.OrderView.models import IndexOperations

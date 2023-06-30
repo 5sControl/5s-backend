@@ -2,7 +2,7 @@ from typing import List, Iterable
 
 import pyodbc
 
-from src.MsSqlConnector.connector import connector as connector_service
+from src.DatabaseConnections.services import connector as connector_service
 
 
 class OperationService:

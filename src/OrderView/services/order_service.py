@@ -7,7 +7,7 @@ from typing import Dict, List, Optional
 import pyodbc
 from src.CameraAlgorithms.models import Camera
 
-from src.MsSqlConnector.connector import connector as connector_service
+from src.DatabaseConnections.services import connector as connector_service
 from src.OrderView.models import IndexOperations
 
 from src.OrderView.utils import get_skany_video_info

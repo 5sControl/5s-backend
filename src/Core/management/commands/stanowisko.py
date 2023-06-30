@@ -6,7 +6,7 @@ import pyodbc
 from django.core.management.base import BaseCommand
 
 from src.Core.types import Query
-from src.MsSqlConnector.connector import connector as connector_service
+from src.DatabaseConnections.services import connector as connector_service
 from src.newOrderView.models import FiltrationOperationsTypeID
 
 logger = logging.getLogger(__name__)

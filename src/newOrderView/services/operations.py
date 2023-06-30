@@ -10,7 +10,7 @@ from django.db.models.query import QuerySet
 
 from src.CameraAlgorithms.models.camera import ZoneCameras
 from src.Core.types import Query
-from src.MsSqlConnector.connector import connector as connector_service
+from src.DatabaseConnections.services import connector as connector_service
 from src.Reports.models import Report
 
 from ..utils import add_ms, convert_to_gmt0, convert_to_unix

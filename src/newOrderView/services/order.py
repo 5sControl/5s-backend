@@ -6,7 +6,7 @@ import logging
 import pyodbc
 
 from src.Core.types import Query
-from src.MsSqlConnector.connector import connector as connector_service
+from src.DatabaseConnections.services import connector as connector_service
 from src.CameraAlgorithms.models import Camera
 from src.Reports.models import SkanyReport
 from src.OrderView.models import IndexOperations
@@ -131,7 +131,9 @@ class OrderServices:
 
         if order_data:
             id: int = order_data[0][0]
-            startTime: datetime = order_data[0][1]  # FIXME -> whithout transform datetime to str
+            startTime: datetime = order_data[0][
+                1
+            ]  # FIXME -> whithout transform datetime to str
             orderId: str = str(order_data[0][2]).strip()
             elementType: str = order_data[0][3]
             operationName: str = order_data[0][4]
@@ -140,7 +142,7 @@ class OrderServices:
             lastName: str = order_data[0][7]
 
             video_data: Optional[Dict[str, Any]] = None
-            
+
             next_params: List[Any] = [operation_id, startTime, workplaceID]
 
             endTime_query_result: List[Tuple[Any]] = connector_service.executer(
