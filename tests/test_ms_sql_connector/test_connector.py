@@ -23,7 +23,7 @@ class CreateDatabaseConnectionAPIViewTestCase(APITestCase):
             call_command("loaddata", fixture, verbosity=0)
 
     def test_create_valid_connection(self):
-        url = "/api/order/create-connection/"
+        url = "/api/order/create-connection"
         data = {
             "database_type": "orderview",
             "server": "192.168.1.110",
@@ -42,7 +42,7 @@ class CreateDatabaseConnectionAPIViewTestCase(APITestCase):
         )
 
     def test_create_invalid_connection(self):
-        url = "/api/order/create-connection/"
+        url = "/api/order/create-connection"
         data = {
             "database_type": "orderview",
             "server": "192.168.1.119",

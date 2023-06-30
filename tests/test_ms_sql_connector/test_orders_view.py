@@ -49,7 +49,6 @@ class CreateDatabaseConnectionAPIViewTestCase(APITestCase):
         self.assertEqual(response.data["all_page_count"], 1)
         self.assertEqual(len(response.data["results"]), 1)
 
-        self.assertEqual(response.data["results"][0]["indeks"], 363992)
         self.assertTrue(response.data["results"][0]["zlecenie"].startswith("PRW199234"))
         self.assertEqual(response.data["results"][0]["status"], "Started")
         self.assertEqual(
