@@ -23,7 +23,7 @@ class OrderRepository(MsSqlServerRepository):
         params: Tuple[Any] = (from_date, to_date)
 
         if operation_type_ids:
-            query += " AND st.indeks IN ({})" "".format(
+            query += " AND sk.stanowisko IN ({})" "".format(
                 ",".join(str(id) for id in operation_type_ids)
             )
 
