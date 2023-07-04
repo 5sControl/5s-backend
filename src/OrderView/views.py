@@ -11,8 +11,8 @@ from src.DatabaseConnections.models import DatabaseConnection
 
 from src.DatabaseConnections.services import (
     DatabaseConnectionManager,
-    connector as connector_service,
 )
+from src.DatabaseConnections.utils import check_database_connection
 from src.OrderView.models import IndexOperations
 from src.OrderView.serializers import (
     DatabaseConnectionSerializer,
@@ -22,9 +22,9 @@ from src.OrderView.serializers import (
     OrderDataByZlecenieSerializer,
     ProductSerializer,
 )
-from src.OrderView.services.operation_service import operation_service
 from src.OrderView.services.order_list_service import order_list_service
 from src.OrderView.services.order_service import order_service
+from src.newOrderView.repositories.stanowisko import WorkplaceRepository
 
 
 class GetAllProductAPIView(generics.GenericAPIView):
@@ -32,7 +32,7 @@ class GetAllProductAPIView(generics.GenericAPIView):
     pagination_class = OrderViewPaginnator
     serializer_class = ProductSerializer
 
-    @connector_service.check_database_connection
+    @check_database_connection
     def get(self, request):
         from_time = request.GET.get("from")
         to_time = request.GET.get("to")
@@ -68,7 +68,7 @@ class GetOrderDataByZlecenieAPIView(generics.GenericAPIView):
     serializer_class = OrderDataByZlecenieSerializer
 
     @method_decorator(cache_page(30))
-    @connector_service.check_database_connection
+    @check_database_connection
     def get(self, request, zlecenie_id):
         response = order_service.get_order(zlecenie_id)
         return Response(response, status=status.HTTP_200_OK)
@@ -79,9 +79,11 @@ class OperationNameApiView(generics.GenericAPIView):
     serializer_class = OperationNameSerializer
 
     @method_decorator(cache_page(30))
-    @connector_service.check_database_connection
+    @check_database_connection
     def get(self, request):
-        response = operation_service.get_operation_names()
+        wokplace_repo: WorkplaceRepository = WorkplaceRepository()
+
+        response = wokplace_repo.get_workplaces_names()
         return Response(response, status=status.HTTP_200_OK)
 
 

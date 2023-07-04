@@ -18,7 +18,9 @@ class DatabaseConnectionManager:
             return False
 
         if db_type == "mssql":
-            if MsSqlServerRepository().is_stable(server, database, username, password, port):
+            if MsSqlServerRepository().is_stable(
+                server, database, username, password, port
+            ):
                 return True
 
         return False

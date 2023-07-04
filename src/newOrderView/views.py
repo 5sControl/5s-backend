@@ -5,13 +5,11 @@ from django.core.cache import cache
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 
-from rest_framework import generics, status, viewsets
+from rest_framework import generics, status
 from rest_framework.response import Response
-from rest_framework.decorators import action
-
 
 from src.Core.paginators import NoPagination
-from src.DatabaseConnections.services import connector as connector_service
+from src.DatabaseConnections.utils import check_database_connection
 from src.newOrderView.models import FiltrationOperationsTypeID
 from src.newOrderView.serializers import FilterOperationsTypeIDSerializer
 
@@ -22,7 +20,7 @@ from .utils import generate_hash
 class GetOperation(generics.GenericAPIView):
     pagination_class = NoPagination
 
-    @connector_service.check_database_connection
+    @check_database_connection
     def get(self, request):
         from_date: str = request.GET.get("from")
         to_date: str = request.GET.get("to")
@@ -53,7 +51,7 @@ class GetOperation(generics.GenericAPIView):
 class GetMachine(generics.GenericAPIView):
     pagination_class = NoPagination
 
-    @connector_service.check_database_connection
+    @check_database_connection
     def get(self, request):
         from_date: str = request.GET.get("from")
         to_date: str = request.GET.get("to")
@@ -84,7 +82,7 @@ class GetMachine(generics.GenericAPIView):
 class GetOrders(generics.GenericAPIView):
     pagination_class = NoPagination
 
-    @connector_service.check_database_connection
+    @check_database_connection
     def get(self, request):
         from_date: str = request.GET.get("from")
         to_date: str = request.GET.get("to")
@@ -113,10 +111,12 @@ class GetOrders(generics.GenericAPIView):
 class GetOrderByDetail(generics.GenericAPIView):
     pagination_class = NoPagination
 
-    @connector_service.check_database_connection
+    @check_database_connection
     def get(self, request):
         operation_id: int = request.GET.get("operation")
-        response: Dict[str, Any] = OrderServices.get_order_by_details(operation_id)
+        response: Dict[str, Any] = OperationServices.get_operation_by_details(
+            operation_id
+        )
         return JsonResponse(data=response, status=status.HTTP_200_OK)
 
 
@@ -124,7 +124,7 @@ class GetWhnetOperation(generics.GenericAPIView):
     pagination_class = NoPagination
 
     @method_decorator(cache_page(30))
-    @connector_service.check_database_connection
+    @check_database_connection
     def get(self, request):
         response: Dict[str, Any] = OperationServices.get_whnet_operation()
 
