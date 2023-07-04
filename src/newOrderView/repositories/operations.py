@@ -74,11 +74,12 @@ class OperationsRepository(MsSqlServerRepository):
         params: Tuple[Any] = (stanowisko,)
 
         result: List[Tuple[Any]] = self.execute_query(query, params)
+        print(result)
 
         result = {
-            "skany_index": result[0],
-            "zlecenie": result[1],
-            "execution_date": result[2],
+            "skany_index": result[0][0],
+            "zlecenie": result[0][1],
+            "execution_date": result[0][2],
         }
 
         return result

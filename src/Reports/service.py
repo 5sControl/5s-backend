@@ -27,7 +27,6 @@ def edit_extra(camera: Camera):
     data["zlecenie"] = str(extra_data["zlecenie"])
     data["execution_date"] = str(extra_data["execution_date"])
 
-    logger.warning(f"final operation data is -> {data}")
     return data
 
 

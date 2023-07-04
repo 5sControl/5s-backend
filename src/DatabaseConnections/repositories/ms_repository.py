@@ -1,34 +1,36 @@
-import pyodbc
-
 from typing import List, Optional, Any
 
 from src.Core.types import Query
 from src.DatabaseConnections.models import DatabaseConnection
 
 from .base import BaseReadOnlyRepository
+from .drivers import PymssqlConnector, PyodbcConnector
 
 
 class MsSqlServerRepository(BaseReadOnlyRepository):
     def __init__(self):
         self.driver = "{ODBC Driver 17 for SQL Server}"
-        self.connector = pyodbc
+        self.connector = PymssqlConnector()
 
     def execute_query(
         self, query: Query, parameters: Optional[List[Any]] = None
     ) -> List[Any]:
         connection_string: str = self._get_connection_string()
-        with self.connector.connect(connection_string) as connection:
-            cursor = connection.cursor()
+        self.connector.connect(connection_string)
+        cursor = self.connector.cursor()
 
-            if parameters:
-                cursor.execute(query, parameters)
-            else:
-                cursor.execute(query)
+        if parameters:
+            if isinstance(self.connector, PymssqlConnector):
+                query = query.replace("?", "%s")
+            cursor.execute(query, parameters)
+        else:
+            cursor.execute(query)
 
-            result = cursor.fetchall()
-            cursor.close()
+        result = cursor.fetchall()
+        cursor.close()
+        self.connector.close()
 
-            return result
+        return result
 
     def is_stable(
         self, server: str, database: str, username: str, password: str, port: int
@@ -37,8 +39,8 @@ class MsSqlServerRepository(BaseReadOnlyRepository):
             server, database, username, password, port
         )
         try:
-            conn = self.connector.connect(conn_str)
-            conn.close()
+            self.connector.connect(conn_str)
+            self.connector.close()
         except Exception:
             return False
         return True
@@ -52,10 +54,19 @@ class MsSqlServerRepository(BaseReadOnlyRepository):
         port: int = 0,
     ) -> str:
         if server and database and username and password and port:
-            return f"SERVER={server};PORT={port};DATABASE={database};UID={username};PWD={password};DRIVER={self.driver};TrustServerCertificate=yes"
+            return {
+                "host": db_obj.server,
+                "user": db_obj.username,
+                "password": db_obj.password,
+                "database": db_obj.database,
+                "port": db_obj.port,
+            }
         else:
-            db_obj: DatabaseConnection = self.__get_credentials()
-            return f"SERVER={db_obj.server};PORT={db_obj.port};DATABASE={db_obj.database};UID={db_obj.username};PWD={db_obj.password};DRIVER={self.driver};TrustServerCertificate=yes"
-
-    def __get_credentials(self):
-        return DatabaseConnection.objects.get(dbms="mssql")
+            db_obj: DatabaseConnection = DatabaseConnection.objects.get(dbms="mssql")
+            return {
+                "host": db_obj.server,
+                "user": db_obj.username,
+                "password": db_obj.password,
+                "database": db_obj.database,
+                "port": db_obj.port,
+            }
