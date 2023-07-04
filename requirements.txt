@@ -63,6 +63,7 @@ urllib3==1.26.13
 zeep==4.2.1
 # ms sql connector
 pyodbc==4.0.35
+pymssql==2.2.7
 async-timeout==4.0.2
 # redis packages
 redis==4.5.4
