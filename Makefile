@@ -6,6 +6,7 @@ run:
 fill:
 	python manage.py algorithm
 	python manage.py createadmin
+	python manage.py stanowisko
 startprocess:
 	python manage.py startprocess
 all:
