@@ -10,7 +10,7 @@ from .drivers import PymssqlConnector, PyodbcConnector
 class MsSqlServerRepository(BaseReadOnlyRepository):
     def __init__(self):
         self.driver = "{ODBC Driver 17 for SQL Server}"
-        self.connector = PymssqlConnector()
+        self.connector = PyodbcConnector()
 
     def execute_query(
         self, query: Query, parameters: Optional[List[Any]] = None

@@ -74,7 +74,6 @@ class OperationsRepository(MsSqlServerRepository):
         params: Tuple[Any] = (stanowisko,)
 
         result: List[Tuple[Any]] = self.execute_query(query, params)
-        print(result)
 
         result = {
             "skany_index": result[0][0],
@@ -96,12 +95,11 @@ class OperationsRepository(MsSqlServerRepository):
             FROM Skany sk
                 JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeksskanu
                 JOIN zlecenia z ON sz.indekszlecenia = z.indeks
-            WHERE sk.stanowisko = ?
+            WHERE sk.stanowisko = ? AND sk.data >= ? AND sk.data <= ?
+            ORDER BY sk.data
         """
-        params: Tuple[Any] = (operation_id,)
+        params = (operation_id, from_date, to_date)
 
-        if from_date and to_date:
-            query += " AND sk.data >= ? AND sk.data <= ?"
-            params += (from_date, to_date)
+        result: List[Tuple[Any]] = self.execute_query(query, params)
 
-        query += " ORDER BY sk.data"
+        return result
