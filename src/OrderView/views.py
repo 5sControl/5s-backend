@@ -7,8 +7,12 @@ from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.viewsets import ModelViewSet
 from src.Core.paginators import OrderViewPaginnator
+from src.DatabaseConnections.models import DatabaseConnection
 
-from src.MsSqlConnector.connector import connector as connector_service
+from src.DatabaseConnections.services import (
+    DatabaseConnectionManager,
+)
+from src.DatabaseConnections.utils import check_database_connection
 from src.OrderView.models import IndexOperations
 from src.OrderView.serializers import (
     DatabaseConnectionSerializer,
@@ -18,11 +22,9 @@ from src.OrderView.serializers import (
     OrderDataByZlecenieSerializer,
     ProductSerializer,
 )
-from src.OrderView.services.operation_service import operation_service
 from src.OrderView.services.order_list_service import order_list_service
 from src.OrderView.services.order_service import order_service
-
-from src.MsSqlConnector.connector import connector
+from src.newOrderView.repositories.stanowisko import WorkplaceRepository
 
 
 class GetAllProductAPIView(generics.GenericAPIView):
@@ -30,7 +32,7 @@ class GetAllProductAPIView(generics.GenericAPIView):
     pagination_class = OrderViewPaginnator
     serializer_class = ProductSerializer
 
-    @connector_service.check_database_connection
+    @check_database_connection
     def get(self, request):
         from_time = request.GET.get("from")
         to_time = request.GET.get("to")
@@ -66,7 +68,7 @@ class GetOrderDataByZlecenieAPIView(generics.GenericAPIView):
     serializer_class = OrderDataByZlecenieSerializer
 
     @method_decorator(cache_page(30))
-    @connector_service.check_database_connection
+    @check_database_connection
     def get(self, request, zlecenie_id):
         response = order_service.get_order(zlecenie_id)
         return Response(response, status=status.HTTP_200_OK)
@@ -77,9 +79,11 @@ class OperationNameApiView(generics.GenericAPIView):
     serializer_class = OperationNameSerializer
 
     @method_decorator(cache_page(30))
-    @connector_service.check_database_connection
+    @check_database_connection
     def get(self, request):
-        response = operation_service.get_operation_names()
+        wokplace_repo: WorkplaceRepository = WorkplaceRepository()
+
+        response = wokplace_repo.get_workplaces_names()
         return Response(response, status=status.HTTP_200_OK)
 
 
@@ -91,15 +95,16 @@ class CreateDatabaseConnectionAPIView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        connection = serializer.validated_data
+        credentials = serializer.validated_data
+        manager = DatabaseConnectionManager()
 
-        if connector.is_stable(connection):
+        if manager.create_connection(credentials, "mssql"):
             serializer.save()
             return Response(
                 {
                     "success": True,
                     "message": "Database connection was created successfully",
-                    "connection": DatabaseConnectionSerializer(connection).data,
+                    "connection": DatabaseConnectionSerializer(credentials).data,
                 },
                 status=status.HTTP_201_CREATED,
             )
@@ -108,7 +113,7 @@ class CreateDatabaseConnectionAPIView(generics.CreateAPIView):
                 {
                     "success": False,
                     "message": "Database connection was not created successfully",
-                    "connection": DatabaseConnectionSerializer(connection).data,
+                    "connection": DatabaseConnectionSerializer(credentials).data,
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
@@ -119,16 +124,22 @@ class DeleteConectionAPIView(generics.GenericAPIView):
     serializer_class = DeleteConnectionSerializer
 
     def post(self, request, id):
-        connector_service.delete_connection(id)
+        manager = DatabaseConnectionManager()
+
+        if manager.delete_connection(id):
+            return Response(
+                {"success": True, "message": "Database was successfully deleted"},
+                status=status.HTTP_200_OK,
+            )
         return Response(
-            {"success": True, "message": "Database was successfully deleted"},
-            status=status.HTTP_200_OK,
+            {"success": False, "message": "Connection ID does not exist"},
+            status=status.HTTP_400_BAD_REQUEST,
         )
 
 
 class GetDatabasesAPIView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
-    queryset = connector_service.get_conections()
+    queryset = DatabaseConnection.objects.all()
     serializer_class = DatabaseConnectionSerializer
 
 
