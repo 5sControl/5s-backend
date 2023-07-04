@@ -2,17 +2,17 @@ from typing import Iterable, List, Any, Optional, Tuple, Dict
 from datetime import datetime, timedelta, time
 import logging
 
-import pyodbc
-
 from django.db.models import Q
 from django.contrib.postgres.fields import JSONField
 from django.db.models.query import QuerySet
 
-from src.CameraAlgorithms.models.camera import ZoneCameras
-from src.Core.types import Query
-from src.DatabaseConnections.services import connector as connector_service
-from src.Reports.models import Report
+from src.CameraAlgorithms.models.camera import Camera, ZoneCameras
+from src.OrderView.models import IndexOperations
+from src.OrderView.utils import get_skany_video_info
+from src.Reports.models import Report, SkanyReport
+from src.newOrderView.repositories.stanowisko import WorkplaceRepository
 
+from ..repositories import OperationsRepository
 from ..utils import add_ms, convert_to_gmt0, convert_to_unix
 
 logger = logging.getLogger(__name__)
@@ -23,23 +23,11 @@ class OperationServices:
     def get_operations(
         from_date: str, to_date: str, operation_type_ids: List[int]
     ) -> List[Dict[str, Any]]:
-        connection: pyodbc.Connection = connector_service.get_database_connection()
+        workplace_repo: WorkplaceRepository = WorkplaceRepository()
+        operation_repo: OperationsRepository = OperationsRepository()
 
-        stanowiska_query: Query = """
-            SELECT
-                indeks AS id,
-                raport AS orderId
-            FROM Stanowiska
-            WHERE 1=1
-        """
-
-        if operation_type_ids:
-            stanowiska_query += " AND indeks IN ({})" "".format(
-                ",".join(str(id) for id in operation_type_ids)
-            )
-
-        stanowiska_data: List[Tuple[Any]] = connector_service.executer(
-            connection=connection, query=stanowiska_query
+        stanowiska_data: List[Tuple[Any]] = workplace_repo.get_raports(
+            operation_type_ids
         )
 
         result_list: List[Dict[str, Any]] = []
@@ -48,23 +36,7 @@ class OperationServices:
             operation_id: int = row[0]
             operation_name: str = row[1]
 
-            operations_query: Query = """
-                SELECT
-                    sk.indeks AS id,
-                    sk.data AS startTime,
-                    LEAD(sk.data) OVER (ORDER BY sk.data) AS endTime,
-                    z.zlecenie AS orderId
-                FROM Skany sk
-                    JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeksskanu
-                    JOIN zlecenia z ON sz.indekszlecenia = z.indeks
-                WHERE sk.stanowisko = ?
-            """
-
-            params: List[Any] = [operation_id]
-
             if from_date and to_date:
-                operations_query += " AND sk.data >= ? AND sk.data <= ?"
-
                 from_date_dt: datetime = datetime.strptime(from_date, "%Y-%m-%d")
                 from_date_dt: datetime = from_date_dt + timedelta(microseconds=1)
 
@@ -73,12 +45,8 @@ class OperationServices:
                     to_date_dt + timedelta(days=1) - timedelta(microseconds=1)
                 )
 
-                params.extend([from_date_dt, to_date_dt])
-
-            operations_query += " ORDER BY sk.data"
-
-            operations_data: List[Tuple[Any]] = connector_service.executer(
-                connection=connection, query=operations_query, params=params
+            operations_data = operation_repo.get_operations(
+                operation_id=operation_id, from_date=from_date_dt, to_date=to_date_dt
             )
 
             operations_list: List[Dict[str, Any]] = []
@@ -143,23 +111,10 @@ class OperationServices:
     def get_machine(
         from_date: str, to_date: str, operation_type_ids: List[int]
     ) -> List[Dict[str, Any]]:
-        connection: pyodbc.Connection = connector_service.get_database_connection()
+        workplace_repo: WorkplaceRepository = WorkplaceRepository()
 
-        stanowiska_query: Query = """
-            SELECT
-                indeks AS id,
-                raport AS orderId
-            FROM Stanowiska
-            WHERE 1=1
-        """
-
-        if operation_type_ids:
-            stanowiska_query += " AND indeks IN ({})" "".format(
-                ",".join(str(id) for id in operation_type_ids)
-            )
-
-        stanowiska_data: List[Tuple[Any]] = connector_service.executer(
-            connection=connection, query=stanowiska_query
+        stanowiska_data: List[Tuple[Any]] = workplace_repo.get_raports(
+            operation_type_ids
         )
 
         result_list: List[Dict[str, Any]] = []
@@ -261,21 +216,12 @@ class OperationServices:
 
     @staticmethod
     def get_whnet_operation() -> List[Dict[str, Any]]:
-        connection: pyodbc.Connection = connector_service.get_database_connection()
+        workplace_repo: WorkplaceRepository = WorkplaceRepository()
+        stanowiska_data: List[Tuple[Any]] = workplace_repo.get_raports()
 
-        query: Query = """
-            SELECT
-                indeks AS id,
-                raport AS operationName
-            FROM Stanowiska
-        """
-
-        data: List[Tuple[Any]] = connector_service.executer(
-            connection=connection, query=query
-        )
         result_list: List[Dict[str, Any]] = []
 
-        for order_row in data:
+        for order_row in stanowiska_data:
             order: Dict[str, Any] = {
                 "id": int(order_row[0]),
                 "operationName": str(order_row[1]).strip(),
@@ -284,3 +230,91 @@ class OperationServices:
             result_list.append(order)
 
         return result_list
+
+    @staticmethod
+    def get_operation_by_details(operation_id: int) -> Dict[str, Any]:
+        operation_repo: OperationsRepository = OperationsRepository()
+
+        operation_data: List[Tuple[Any]] = operation_repo.get_operation_detail(
+            operation_id
+        )
+
+        if operation_data:
+            id: int = operation_data[0][0]
+            startTime: datetime = operation_data[0][
+                1
+            ]  # FIXME -> whithout transform datetime to str
+            orderId: str = str(operation_data[0][2]).strip()
+            elementType: str = operation_data[0][3]
+            operationName: str = operation_data[0][4]
+            workplaceID: int = operation_data[0][5]
+            firstName: str = operation_data[0][6]
+            lastName: str = operation_data[0][7]
+
+            video_data: Optional[Dict[str, Any]] = None
+
+            endTime_query_result: List[Tuple[Any]] = operation_repo.get_next_operation(
+                operation_id=operation_id, startTime=startTime, workplaceID=workplaceID
+            )
+
+            if endTime_query_result:
+                endTime: Optional[str] = str(endTime_query_result[0][0])
+            else:
+                endTime: Optional[str] = None
+
+            startTime_dt: datetime = add_ms(str(startTime))
+            startTime_dt: datetime = convert_to_gmt0(startTime_dt)
+            startTime_unix: int = convert_to_unix(startTime_dt)
+
+            if endTime is not None:
+                endTime_dt: datetime = add_ms(str(endTime))
+                endTime_dt: datetime = convert_to_gmt0(endTime_dt)
+
+                if endTime_dt.date() > startTime_dt.date():
+                    endTime_dt: datetime = startTime_dt + timedelta(hours=1)
+                else:
+                    endTime_dt: datetime = endTime_dt or startTime_dt + timedelta(
+                        hours=1
+                    )
+
+                endTime_unix: int = convert_to_unix(endTime_dt)
+            else:
+                endTime_dt = startTime_dt + timedelta(hours=1)
+                endTime_unix: int = convert_to_unix(endTime_dt)
+
+            camera_obj: Optional[Camera] = None
+            operation_status: Optional[bool] = None
+            video_data: Dict[str, bool] = {}
+
+            skany_report: Optional[SkanyReport] = SkanyReport.objects.filter(
+                skany_index=id
+            ).first()
+            camera_obj: Optional[Camera] = IndexOperations.objects.filter(
+                type_operation=workplaceID
+            ).first()
+
+            if skany_report:
+                operation_status: Optional[bool] = skany_report.violation_found
+                video_time: Optional[bool] = skany_report.start_time
+
+                if camera_obj and video_time:
+                    video_data: Dict[str, Any] = get_skany_video_info(
+                        time=(video_time), camera_ip=camera_obj.camera.id
+                    )
+
+            result: Dict[str, Any] = {
+                "id": id,
+                "orId": orderId,
+                "oprName": operationName,
+                "elType": elementType,
+                "sTime": startTime_unix,
+                "eTime": endTime_unix,
+                "frsName": firstName,
+                "lstName": lastName,
+                "status": operation_status,
+                "video": video_data,
+            }
+
+            return result
+        else:
+            return {}

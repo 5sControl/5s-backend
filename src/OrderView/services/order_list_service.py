@@ -2,9 +2,9 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import pyodbc
 
-from src.DatabaseConnections.services import connector as connector_service
-
 from src.Reports.models import SkanyReport
+
+from ..connector import connector
 
 
 class OrderListService:
@@ -46,7 +46,7 @@ class OrderListService:
         from_time: str,
         to_time: str,
     ) -> Optional[List[Dict[str, Dict[str, Any]]]]:
-        connection = connector_service.get_database_connection()
+        connection = connector.get_database_connection()
         self.extra_qury = " "
 
         self.extra_qury, params = self._build_query(
@@ -59,7 +59,7 @@ class OrderListService:
             to_time=to_time,
         )
 
-        results = connector_service.executer(
+        results = connector.executer(
             connection=connection,
             query=self.main_query + self.extra_qury,
             params=params,
@@ -164,9 +164,7 @@ class OrderListService:
             FROM skany_vs_zlecenia
             WHERE indeksskanu IN ({skany_indeks})
         """
-        fetched = connector_service.executer(
-            connection=connection, query=query_zl_indeks
-        )
+        fetched = connector.executer(connection=connection, query=query_zl_indeks)
         zlecenia_indeks_list = [result[0] for result in fetched]
 
         if zlecenia_indeks_list:
@@ -178,15 +176,15 @@ class OrderListService:
             FROM zlecenia
             WHERE indeks IN ({zlecenie_indeks})
         """
-        fetched = connector_service.executer(connection=connection, query=query_zl)
+        fetched = connector.executer(connection=connection, query=query_zl)
         zlecenie_list = [result[0] for result in fetched]
 
         return zlecenie_list
 
     def get_all_skany_indeks(self) -> List[int]:
-        connection = connector_service.get_database_connection()
+        connection = connector.get_database_connection()
 
-        fetched = connector_service.executer(
+        fetched = connector.executer(
             connection=connection, query=self.skany_index_query
         )
         indeks_skany = [result[0] for result in fetched]
@@ -226,7 +224,7 @@ class OrderListService:
             ", ".join([f"'{op_name}'" for op_name in operation_names])
         )
 
-        results = connector_service.executer(connection=connection, query=query)
+        results = connector.executer(connection=connection, query=query)
 
         for indeks_zlecenie in results:
             zlecenie.append(indeks_zlecenie[0])
