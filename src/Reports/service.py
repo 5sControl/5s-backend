@@ -1,24 +1,27 @@
-from typing import List, Dict
-from datetime import datetime, timedelta, timezone
+from typing import Any, List, Dict
+from datetime import datetime
 import logging
 
 from src.CameraAlgorithms.models import Camera
-from src.DatabaseConnections.repositories.services import create_records
 
 from src.Reports.models import Report, SkanyReport
 from src.OrderView.models import IndexOperations
+from src.newOrderView.repositories.operations import OperationsRepository
 
 logger = logging.getLogger(__name__)
 
 
 def edit_extra(camera: Camera):
+    operation_repo: OperationsRepository = OperationsRepository()
+    data: Dict[str, Any] = {}
+
     operation_index = (
         IndexOperations.objects.filter(camera=camera.id)
         .values("type_operation")
         .last()["type_operation"]
     )
-    extra_data = create_records.operation_control_data(operation_index)
-    data = {}
+
+    extra_data = operation_repo.get_operation_control_data(operation_index)
 
     data["skany_index"] = int(extra_data["skany_index"])
     data["zlecenie"] = str(extra_data["zlecenie"])
