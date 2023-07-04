@@ -33,11 +33,14 @@ class BaseRepository(AbstractRepository, ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def get_connection_string(self) -> str:
+    def _get_connection_string(self) -> str:
         raise NotImplementedError()
 
 
 class BaseReadOnlyRepository(BaseRepository):
+    def get_by_id(self, entity_id: int) -> None:
+        raise NotImplementedError("Create operation is not allowed.")
+
     def create(self, entity: Any) -> None:
         raise NotImplementedError("Create operation is not allowed.")
 

@@ -2,6 +2,7 @@ import pyodbc
 
 from typing import List, Optional, Any
 
+from src.Core.types import Query
 from src.DatabaseConnections.models import DatabaseConnection
 
 from .base import BaseReadOnlyRepository
@@ -13,9 +14,10 @@ class MsSqlServerRepository(BaseReadOnlyRepository):
         self.connector = pyodbc
 
     def execute_query(
-        self, query: str, parameters: Optional[List[Any]] = None
+        self, query: Query, parameters: Optional[List[Any]] = None
     ) -> List[Any]:
-        with self.connector.connect(self.connection_string) as connection:
+        connection_string: str = self._get_connection_string()
+        with self.connector.connect(connection_string) as connection:
             cursor = connection.cursor()
 
             if parameters:
@@ -28,8 +30,12 @@ class MsSqlServerRepository(BaseReadOnlyRepository):
 
             return result
 
-    def is_stable(self, server: str, database: str, username: str, password: str, port: int) -> bool:
-        conn_str = self._get_connection_string(server, database, username, password, port)
+    def is_stable(
+        self, server: str, database: str, username: str, password: str, port: int
+    ) -> bool:
+        conn_str = self._get_connection_string(
+            server, database, username, password, port
+        )
         try:
             conn = self.connector.connect(conn_str)
             conn.close()
