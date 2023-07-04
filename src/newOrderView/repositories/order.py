@@ -17,7 +17,6 @@ class OrderRepository(MsSqlServerRepository):
             FROM Skany sk
                 JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeksskanu
                 JOIN zlecenia z ON sz.indekszlecenia = z.indeks
-                JOIN Stanowiska st ON sk.stanowisko = st.indeks
             WHERE sk.data >= ? AND sk.data <= ?
         """
 
