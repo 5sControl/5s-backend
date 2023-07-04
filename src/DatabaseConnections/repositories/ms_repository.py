@@ -55,11 +55,11 @@ class MsSqlServerRepository(BaseReadOnlyRepository):
     ) -> str:
         if server and database and username and password and port:
             return {
-                "host": db_obj.server,
-                "user": db_obj.username,
-                "password": db_obj.password,
-                "database": db_obj.database,
-                "port": db_obj.port,
+                "host": server,
+                "user": username,
+                "password": password,
+                "database": database,
+                "port": port,
             }
         else:
             db_obj: DatabaseConnection = DatabaseConnection.objects.get(dbms="mssql")

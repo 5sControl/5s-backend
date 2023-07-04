@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Tuple
 from src.Core.types import Query
 from src.DatabaseConnections.repositories.ms_repository import MsSqlServerRepository
 
