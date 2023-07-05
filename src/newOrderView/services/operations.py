@@ -346,7 +346,7 @@ class OperationServices:
         result_list: List[Dict[str, Any]] = []
 
         for workplace, (workplace_duration, operation_count) in workplace_duration_dict.items():
-            average_duration = workplace_duration / operation_count
+            average_duration = int(workplace_duration / operation_count)
             result_list.append({"workplace": workplace, "average_duration": average_duration})
 
         return result_list
