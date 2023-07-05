@@ -107,8 +107,8 @@ class OperationsRepository(MsSqlServerRepository):
     def get_all_operations(self) -> List[Tuple[Any]]:
         query: Query = """
             SELECT
-                s.indeks AS id,
-                s.stanowisko AS workplace,
+                sk.indeks AS id,
+                s.indeks AS workplace,
                 sk.data AS startTime,
                 LEAD(sk.data) OVER (PARTITION BY s.stanowisko ORDER BY sk.data) AS endTime
             FROM Stanowiska s
