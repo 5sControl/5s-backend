@@ -162,7 +162,7 @@ class GetOperationsDuration(generics.GenericAPIView):
     @check_database_connection
     def get(self, requests):
         ids: Optional[List[int]] = requests.GET.getlist("id")
-        key: str = "get_duration" + str(*ids)
+        key: str = "get_duration" + str(ids)
         response: str = cache.get(key)
 
         if response is None:
