@@ -14,7 +14,9 @@ class PyodbcConnector:
         port = connection_data["port"]
         user = connection_data["user"]
         password = connection_data["password"]
-        self.connection = pyodbc.connect(f"SERVER={host};PORT={port};DATABASE={database};UID={user};PWD={password};DRIVER={self.driver};TrustServerCertificate=yes")
+        self.connection = pyodbc.connect(
+            f"SERVER={host};PORT={port};DATABASE={database};UID={user};PWD={password};DRIVER={self.driver};TrustServerCertificate=yes"
+        )
 
     def close(self):
         if self.connection:
