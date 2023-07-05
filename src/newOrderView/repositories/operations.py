@@ -110,7 +110,7 @@ class OperationsRepository(MsSqlServerRepository):
                 sk.indeks AS id,
                 s.indeks AS workplace,
                 sk.data AS startTime,
-                LEAD(sk.data) OVER (PARTITION BY s.stanowisko ORDER BY sk.data) AS endTime
+                LEAD(sk.data) OVER (PARTITION BY s.indeks ORDER BY sk.data) AS endTime
             FROM Stanowiska s
             LEFT JOIN Skany sk ON s.indeks = sk.stanowisko
             JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeksskanu
