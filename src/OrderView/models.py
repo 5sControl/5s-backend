@@ -8,9 +8,9 @@ class IndexOperations(models.Model):
     Parameter indeks stanowisko for searching in Winkhouse database
     """
 
-    type_operation = models.IntegerField(verbose_name="id_stanowisko operation control")
+    type_operation = models.IntegerField(verbose_name="id_stanowisko_operation_control")
     camera = models.OneToOneField(
-        Camera, verbose_name="operations_control camera", on_delete=models.CASCADE
+        Camera, verbose_name="operations_control_camera", on_delete=models.CASCADE
     )
 
     class Meta:

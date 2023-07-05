@@ -59,7 +59,7 @@ class Command(BaseCommand):
 
                 for item in algorithm_items:
                     areas.append(
-                        {"itemId": item.id, "itemName": item.name, "coords": item.coords}
+                        {"itemId": item.id, "itemName": item.name, "multiRow": item.multi_row, "coords": item.coords}
                     )
 
                 all_zones = camera_algorithm.zones

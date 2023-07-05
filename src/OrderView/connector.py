@@ -4,8 +4,7 @@ import pyodbc
 from rest_framework.response import Response
 from rest_framework import status
 from src.Core.types import Query
-
-from src.MsSqlConnector.models import DatabaseConnection
+from src.DatabaseConnections.models import DatabaseConnection
 
 
 class MsSqlConnector:
@@ -87,19 +86,6 @@ class MsSqlConnector:
     def delete_connection(self, id):
         DatabaseConnection.objects.get(id=id).delete()
         return True
-
-    def check_database_connection(self, func):
-        def wrapper(*args, **kwargs):
-            if DatabaseConnection.objects.first() is not None:
-                return func(*args, **kwargs)
-            else:
-                response_data = {
-                    "status": False,
-                    "message": "database connection doesnt exist",
-                }
-                return Response(response_data, status=status.HTTP_403_FORBIDDEN)
-
-        return wrapper
 
     def executer(
         self,

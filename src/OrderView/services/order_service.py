@@ -5,13 +5,13 @@ from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
 import pyodbc
+
 from src.CameraAlgorithms.models import Camera
-
-from src.MsSqlConnector.connector import connector as connector_service
 from src.OrderView.models import IndexOperations
-
 from src.OrderView.utils import get_skany_video_info
 from src.Reports.models import SkanyReport
+
+from ..connector import connector
 
 
 class OrderService:
@@ -38,7 +38,7 @@ class OrderService:
             """
 
     def get_order(self, zlecenie_id: str) -> List[Dict[str, List]]:
-        connection = connector_service.get_database_connection()
+        connection = connector.get_database_connection()
         response = {}
         status = "Completed"
         zlecenia_dict = self.get_zlecenia_query_by_zlecenie(connection, zlecenie_id)
@@ -61,9 +61,7 @@ class OrderService:
         return [response]
 
     def get_results(self, connection, param):
-        return connector_service.executer(
-            connection=connection, query=self.query, params=param
-        )
+        return connector.executer(connection=connection, query=self.query, params=param)
 
     def build_skany_dict(self, results, skany_ids_added):
         skany_dict = defaultdict(list)
@@ -163,7 +161,7 @@ class OrderService:
     ) -> List[Dict]:
         param = (zlecenie_id,)
 
-        results = connector_service.executer(
+        results = connector.executer(
             connection=connection, query=self.zl_by_zl_query, params=param
         )
 

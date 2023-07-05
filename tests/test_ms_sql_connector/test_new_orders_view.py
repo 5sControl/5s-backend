@@ -29,7 +29,7 @@ class CreateDatabaseConnectionAPIViewTestCase(APITestCase):
 
     def test_get_operation(self):
         param = "from=2023-06-21&to=2023-06-21"
-        url = f"/api/order/all-orders//api/new-order/operations/?{param}"
+        url = f"/api/new-order/operations/?{param}"
 
         self.client.force_authenticate(user=self.user)
         response = self.client.get(url)
@@ -38,7 +38,7 @@ class CreateDatabaseConnectionAPIViewTestCase(APITestCase):
         
         data = response.json()
         
-        self.assertEqual(data[0] == OPERATION_NEW_ORDER_VIEWS)
+        self.assertEqual(data[0], OPERATION_NEW_ORDER_VIEWS)
         self.assertIsInstance(data, list)
         self.assertEqual(len(data), 15)
         
@@ -56,7 +56,7 @@ class CreateDatabaseConnectionAPIViewTestCase(APITestCase):
 
         data = response.json()
 
-        self.assertEqual(data == ORDERS_NEW_ORDER_VIEWS)
+        self.assertEqual(data, ORDERS_NEW_ORDER_VIEWS)
 
     def test_get_orders_detail(self):
         param = "operation=1326033"
@@ -69,14 +69,14 @@ class CreateDatabaseConnectionAPIViewTestCase(APITestCase):
 
         data = response.json()
 
-        self.assertEqual(data["id"] == 1326033)
-        self.assertEqual(data["orId"] == "G66848")
-        self.assertEqual(data["oprName"] == "Okucia")
-        self.assertEqual(data["elType"] == "S9000 NL 6802/6003")
-        self.assertEqual(data["sTime"] == 1687238338000)
-        self.assertEqual(data["eTime"] == 1687241938000)
-        self.assertEqual(data["frsName"] == "Virmantas")
-        self.assertEqual(data["lstName"] == "Petraitis")
-        self.assertEqual(data["status"] == None)
-        self.assertEqual(data["video"] == {})
+        self.assertEqual(data["id"], 1326033)
+        self.assertEqual(data["orId"], "G66848")
+        self.assertEqual(data["oprName"], "Okucia")
+        self.assertEqual(data["elType"], "S9000 NL 6802/6003")
+        self.assertEqual(data["sTime"], 1687238338000)
+        self.assertEqual(data["eTime"], 1687241938000)
+        self.assertEqual(data["frsName"], "Virmantas")
+        self.assertEqual(data["lstName"], "Petraitis")
+        self.assertEqual(data["status"], None)
+        self.assertEqual(data["video"], {})
 

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from src.MsSqlConnector.models import DatabaseConnection
+from src.DatabaseConnections.models import DatabaseConnection
 
 from src.OrderView.models import IndexOperations
 
