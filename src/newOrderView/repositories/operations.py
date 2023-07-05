@@ -104,7 +104,7 @@ class OperationsRepository(MsSqlServerRepository):
 
         return result
 
-    def get_all_orders(self) -> List[Tuple[Any]]:
+    def get_all_operations(self) -> List[Tuple[Any]]:
         query: Query = """
             SELECT
                 sk.indeks AS id,
