@@ -321,10 +321,10 @@ class OperationServices:
 
         operation_data: List[Tuple[Any]] = operation_repo.get_all_operations()
 
-        workplace_duration_dict: Dict[str, Tuple[int, int]] = defaultdict(lambda: (0, 0))
+        workplace_duration_dict: Dict[int, Tuple[int, int]] = defaultdict(lambda: (0, 0))
 
         for operation_row in operation_data:
-            workplace: str = operation_row[1].strip()
+            workplace: int = operation_row[1]
             start_time: datetime = operation_row[2]
             end_time: Optional[datetime] = operation_row[3]
 
