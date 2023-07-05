@@ -316,7 +316,7 @@ class OperationServices:
             return {}
 
     @staticmethod
-    def culculate_avg_duration(self):
+    def culculate_avg_duration():
         operation_repo: OperationsRepository = OperationsRepository()
 
         operation_data: List[Tuple[Any]] = operation_repo.get_all_operations()
