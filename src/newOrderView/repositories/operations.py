@@ -107,13 +107,14 @@ class OperationsRepository(MsSqlServerRepository):
     def get_all_operations(self) -> List[Tuple[Any]]:
         query: Query = """
             SELECT
-                sk.indeks AS id,
-                sk.stanowisko AS workplace,
+                s.indeks AS id,
+                s.stanowisko AS workplace,
                 sk.data AS startTime,
-                LEAD(sk.data) OVER (PARTITION BY sk.stanowisko ORDER BY sk.data) AS endTime
-            FROM Skany sk
-                JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeksskanu
-                JOIN zlecenia z ON sz.indekszlecenia = z.indeks
+                LEAD(sk.data) OVER (PARTITION BY s.stanowisko ORDER BY sk.data) AS endTime
+            FROM Stanowiska s
+            LEFT JOIN Skany sk ON s.indeks = sk.stanowisko
+            JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeksskanu
+            JOIN zlecenia z ON sz.indekszlecenia = z.indeks
         """
 
         result: List[Tuple[Any]] = self.execute_query(query)

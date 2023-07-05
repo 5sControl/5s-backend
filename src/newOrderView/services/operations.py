@@ -316,7 +316,7 @@ class OperationServices:
             return {}
 
     @staticmethod
-    def culculate_avg_duration():
+    def calculate_avg_duration():
         operation_repo: OperationsRepository = OperationsRepository()
 
         operation_data: List[Tuple[Any]] = operation_repo.get_all_operations()
@@ -333,21 +333,20 @@ class OperationServices:
                     end_time = start_time + timedelta(hours=1)
                 else:
                     end_time = end_time or start_time + timedelta(hours=1)
-
             else:
                 end_time = start_time + timedelta(hours=1)
 
             duration: int = calculate_duration(start_time, end_time)
 
-            workplace_duration, workplace_count = workplace_duration_dict[workplace]
+            workplace_duration, operation_count = workplace_duration_dict[workplace]
             workplace_duration += duration
-            workplace_count += 1
-            workplace_duration_dict[workplace] = (workplace_duration, workplace_count)
+            operation_count += 1
+            workplace_duration_dict[workplace] = (workplace_duration, operation_count)
 
         result_list: List[Dict[str, Any]] = []
 
-        for workplace, (workplace_duration, workplace_count) in workplace_duration_dict.items():
-            average_duration = workplace_duration / workplace_count
+        for workplace, (workplace_duration, operation_count) in workplace_duration_dict.items():
+            average_duration = workplace_duration / operation_count
             result_list.append({"workplace": workplace, "average_duration": average_duration})
 
         return result_list
