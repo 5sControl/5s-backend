@@ -7,6 +7,7 @@ from .views import (
     GetWhnetOperation,
     GetMachine,
     FiltrationsDataView,
+    GetOperationsDuration,
 )
 
 
@@ -40,5 +41,10 @@ urlpatterns = [
         "filtration-data",
         FiltrationsDataView.as_view(),
         name="filtrations-data",
+    ),
+    path(
+        "avg-operations-duration",
+        GetOperationsDuration.as_view(),
+        name="avg-duration",
     ),
 ]

@@ -127,7 +127,6 @@ class GetWhnetOperation(generics.GenericAPIView):
     @check_database_connection
     def get(self, request):
         response: Dict[str, Any] = OperationServices.get_whnet_operation()
-
         return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
 
 
@@ -155,3 +154,18 @@ class FiltrationsDataView(generics.ListAPIView):
         if error:
             response_data["error"] = error
         return Response(response_data, status=status)
+
+
+class GetOperationsDuration(generics.GenericAPIView):
+    pagination_class = NoPagination
+
+    @check_database_connection
+    def get(self, request):
+        key: str = ("get_duration")
+        response = cache.get(key)
+
+        if response is None:
+            response: List[Dict[str, str]] = OperationServices.culculate_avg_duration()
+            cache.set(key, response, timeout=120)
+
+        return JsonResponse(response, status=status.HTTP_200_OK, safe=False)
