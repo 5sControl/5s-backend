@@ -103,3 +103,19 @@ class OperationsRepository(MsSqlServerRepository):
         result: List[Tuple[Any]] = self.execute_query(query, params)
 
         return result
+
+    def get_all_operations(self):
+        query: Query = """
+            SELECT
+                sk.indeks AS id,
+                z.zlecenie AS orderId,
+                sk.data AS startTime,
+                LEAD(sk.data) OVER (PARTITION BY sk.stanowisko ORDER BY sk.data) AS endTime
+            FROM Skany sk
+                JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeksskanu
+                JOIN zlecenia z ON sz.indekszlecenia = z.indeks
+        """
+
+        result: List[Tuple[Any]] = self.execute_query(query)
+
+        return result

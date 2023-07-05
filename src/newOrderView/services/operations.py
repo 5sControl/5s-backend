@@ -1,3 +1,4 @@
+from collections import defaultdict
 from typing import Iterable, List, Any, Optional, Tuple, Dict
 from datetime import datetime, timedelta, time
 import logging
@@ -13,7 +14,7 @@ from src.Reports.models import Report, SkanyReport
 from src.newOrderView.repositories.stanowisko import WorkplaceRepository
 
 from ..repositories import OperationsRepository
-from ..utils import add_ms, convert_to_gmt0, convert_to_unix
+from ..utils import add_ms, calculate_duration, convert_to_gmt0, convert_to_unix
 
 logger = logging.getLogger(__name__)
 
@@ -313,3 +314,40 @@ class OperationServices:
             return result
         else:
             return {}
+
+    @staticmethod
+    def culculate_avg_duration(self):
+        operation_repo: OperationsRepository = OperationsRepository()
+
+        operation_data: List[Tuple[Any]] = operation_repo.get_all_operations()
+
+        workplace_duration_dict: Dict[str, Tuple[int, int]] = defaultdict(lambda: (0, 0))
+
+        for operation_row in operation_data:
+            workplace: str = operation_row[1].strip()
+            start_time: datetime = operation_row[2]
+            end_time: Optional[datetime] = operation_row[3]
+
+            if end_time is not None:
+                if end_time.date() > start_time.date():
+                    end_time = start_time + timedelta(hours=1)
+                else:
+                    end_time = end_time or start_time + timedelta(hours=1)
+
+            else:
+                end_time = start_time + timedelta(hours=1)
+
+            duration: int = calculate_duration(start_time, end_time)
+
+            workplace_duration, workplace_count = workplace_duration_dict[workplace]
+            workplace_duration += duration
+            workplace_count += 1
+            workplace_duration_dict[workplace] = (workplace_duration, workplace_count)
+
+        result_list: List[Dict[str, Any]] = []
+
+        for workplace, (workplace_duration, workplace_count) in workplace_duration_dict.items():
+            average_duration = workplace_duration / workplace_count
+            result_list.append({"workplace": workplace, "average_duration": average_duration})
+
+        return result_list
