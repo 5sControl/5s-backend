@@ -1,4 +1,4 @@
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 
 from django.http import JsonResponse
 from django.core.cache import cache
@@ -160,12 +160,15 @@ class GetOperationsDuration(generics.GenericAPIView):
     pagination_class = NoPagination
 
     @check_database_connection
-    def get(self, request):
-        key: str = ("get_duration")
-        response = cache.get(key)
+    def get(self, requests):
+        ids: Optional[List[int]] = requests.GET.getlist("id")
+        key: str = "get_duration" + str(*ids)
+        response: str = cache.get(key)
 
         if response is None:
-            response: List[Dict[str, str]] = OperationServices.calculate_avg_duration()
+            response: List[Dict[str, str]] = OperationServices.calculate_avg_duration(
+                ids
+            )
             cache.set(key, response, timeout=120)
 
         return JsonResponse(response, status=status.HTTP_200_OK, safe=False)

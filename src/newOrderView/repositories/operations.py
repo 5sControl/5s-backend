@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 from src.Core.types import Query
 from src.DatabaseConnections.repositories.ms_repository import MsSqlServerRepository
 
@@ -104,7 +104,7 @@ class OperationsRepository(MsSqlServerRepository):
 
         return result
 
-    def get_all_operations(self) -> List[Tuple[Any]]:
+    def get_all_operations(self, ids: Optional[List[int]]) -> List[Tuple[Any]]:
         query: Query = """
             SELECT
                 sk.indeks AS id,
@@ -115,7 +115,10 @@ class OperationsRepository(MsSqlServerRepository):
             LEFT JOIN Skany sk ON s.indeks = sk.stanowisko
             JOIN Skany_vs_Zlecenia sz ON sk.indeks = sz.indeksskanu
             JOIN zlecenia z ON sz.indekszlecenia = z.indeks
+            WHERE 1=1
         """
+        if ids:
+            query += " AND s.indeks IN ({})" "".format(",".join(str(id) for id in ids))
 
         result: List[Tuple[Any]] = self.execute_query(query)
 
