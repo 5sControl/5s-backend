@@ -16,9 +16,14 @@ class OrderServices:
     ) -> List[Dict[str, Any]]:
         order_repo: OrderRepository = OrderRepository()
 
-        from_date_dt: datetime = datetime.strptime(from_date, "%Y-%m-%d") + timedelta(microseconds=1)
-        to_date_dt: datetime = datetime.strptime(to_date, "%Y-%m-%d") + timedelta(days=1) - timedelta(microseconds=1)
-
+        from_date_dt: datetime = datetime.strptime(from_date, "%Y-%m-%d") + timedelta(
+            microseconds=1
+        )
+        to_date_dt: datetime = (
+            datetime.strptime(to_date, "%Y-%m-%d")
+            + timedelta(days=1)
+            - timedelta(microseconds=1)
+        )
 
         order_data: List[Tuple[Any]] = order_repo.get_orders_by_operation(
             from_date=from_date_dt,

@@ -37,9 +37,14 @@ class OperationServices:
             operation_id: int = row[0]
             operation_name: str = row[1]
 
-
-            from_date_dt: datetime = datetime.strptime(from_date, "%Y-%m-%d") + timedelta(microseconds=1)
-            to_date_dt: datetime = datetime.strptime(to_date, "%Y-%m-%d") + timedelta(days=1) - timedelta(microseconds=1)
+            from_date_dt: datetime = datetime.strptime(
+                from_date, "%Y-%m-%d"
+            ) + timedelta(microseconds=1)
+            to_date_dt: datetime = (
+                datetime.strptime(to_date, "%Y-%m-%d")
+                + timedelta(days=1)
+                - timedelta(microseconds=1)
+            )
 
             operations_data = operation_repo.get_operations(
                 operation_id=operation_id, from_date=from_date_dt, to_date=to_date_dt
@@ -316,12 +321,13 @@ class OperationServices:
             return {}
 
     @staticmethod
-    def calculate_avg_duration():
+    def calculate_avg_duration(ids: Optional[List[int]] = None):
         operation_repo: OperationsRepository = OperationsRepository()
+        operation_data: List[Tuple[Any]] = operation_repo.get_all_operations(ids)
 
-        operation_data: List[Tuple[Any]] = operation_repo.get_all_operations()
-
-        workplace_duration_dict: Dict[int, Tuple[int, int]] = defaultdict(lambda: (0, 0))
+        workplace_duration_dict: Dict[int, Tuple[int, int]] = defaultdict(
+            lambda: (0, 0)
+        )
 
         for operation_row in operation_data:
             workplace: int = operation_row[1]
@@ -345,8 +351,13 @@ class OperationServices:
 
         result_list: List[Dict[str, Any]] = []
 
-        for workplace, (workplace_duration, operation_count) in workplace_duration_dict.items():
+        for workplace, (
+            workplace_duration,
+            operation_count,
+        ) in workplace_duration_dict.items():
             average_duration = int(workplace_duration / operation_count)
-            result_list.append({"workplace": workplace, "average_duration": average_duration})
+            result_list.append(
+                {"workplace": workplace, "average_duration": average_duration}
+            )
 
         return result_list
