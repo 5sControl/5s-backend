@@ -42,7 +42,7 @@ def delete_items(camera_id, items_count):
 def _get_algorithm_camera_data(camera_id: int):
     camera_obj: str = Camera.objects.get(id=camera_id)
     camera_algo_obj: List[Dict[str, int]] = CameraAlgorithm.objects.get(
-        algorithm="min_max_control", camera=camera_id
+        algorithm=8, camera=camera_id
     ).zones
 
     camera_data: Dict[str, str] = {
