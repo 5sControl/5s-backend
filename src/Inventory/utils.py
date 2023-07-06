@@ -29,14 +29,13 @@ def delete_items(camera_id, items_count):
 
     camera_data, algorithm_data = _get_algorithm_camera_data(camera_id)
 
-    process_id = CameraAlgorithm.objects.get(
-        camera=camera_id, algorithm=8
-    ).process_id
+    camera_algo_query = CameraAlgorithm.objects.filter(camera=camera_id, algorithm=8)
 
-    stop_and_update_algorithm(process_id)
+    if camera_algo_query.exists():
+        stop_and_update_algorithm(camera_algo_query.first().process_id)
 
-    if items_count > 0:
-        create_camera_algorithms(camera_data, algorithm_data)
+        if items_count > 0:
+            create_camera_algorithms(camera_data, algorithm_data)
 
 
 def _get_algorithm_camera_data(camera_id: int):
