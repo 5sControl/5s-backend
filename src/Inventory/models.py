@@ -57,6 +57,8 @@ class Items(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
+        instance = super().save(*args, **kwargs)
+
         is_update = bool(self.pk)
         camera_updated = (
             self.pk
@@ -65,8 +67,6 @@ class Items(models.Model):
         coords_updated = (
             self.pk and self.coords != self.__class__.objects.get(pk=self.pk).coords
         )
-
-        instance = super().save(*args, **kwargs)
 
         try:
             previous_camera = Items.objects.get(id=self.pk).camera_id
