@@ -1,9 +1,13 @@
+import logging
+
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
 
 from src.CameraAlgorithms.models import Camera
 from src.CompanyLicense.models import Company
 from src.Inventory.utils import delete_items, save_new_items
+
+logger = logging.getLogger(__name__)
 
 
 class Items(models.Model):
@@ -62,7 +66,10 @@ class Items(models.Model):
             self.pk and self.coords != self.__class__.objects.get(pk=self.pk).coords
         )
 
-        previous_camera = Items.objects.get(id=self.pk).camera_id
+        try:
+            previous_camera = Items.objects.get(id=self.pk).camera_id
+        except Items.DoesNotExist as e:
+            logger.critical(e)
 
         instance = super().save(*args, **kwargs)
 
