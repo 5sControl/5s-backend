@@ -9,20 +9,20 @@ logger = logging.getLogger(__name__)
 
 
 def save_new_items(
-    is_update, camera_updated, coords_updated, previous_camera, camera_id
+    camera_updated, previous_camera, camera_id
 ):
     from src.CameraAlgorithms.services.cameraalgorithm import create_camera_algorithms, stop_and_update_algorithm
 
     camera_data, algorithm_data = _get_algorithm_camera_data(camera_id)
 
-    if not is_update or camera_updated or coords_updated:
-        process_id = CameraAlgorithm.objects.filter(
-            camera_id=camera_id, algorithm__name="min_max_control"
-        ).process_id
-        stop_and_update_algorithm(process_id)
 
-        if camera_updated and previous_camera != None:
-            create_camera_algorithms(camera_data, algorithm_data)
+    process_id = CameraAlgorithm.objects.filter(
+        camera_id=camera_id, algorithm__name="min_max_control"
+    ).process_id
+    stop_and_update_algorithm(process_id)
+
+    if camera_updated and previous_camera != None:
+        create_camera_algorithms(camera_data, algorithm_data)
 
 
 def delete_items(camera_id, items_count):

@@ -57,6 +57,7 @@ class Items(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
+        instance = super().save(*args, **kwargs)
         is_update = bool(self.pk)
         camera_updated = (
             self.pk
@@ -71,15 +72,12 @@ class Items(models.Model):
         except Items.DoesNotExist as e:
             logger.critical(e)
 
-        instance = super().save(*args, **kwargs)
-
-        save_new_items(
-            is_update=is_update,
-            camera_updated=camera_updated,
-            coords_updated=coords_updated,
-            previous_camera=previous_camera,
-            camera_id=self.camera_id,
-        )
+        if not is_update or camera_updated or coords_updated:
+            save_new_items(
+                camera_updated=camera_updated,
+                previous_camera=previous_camera,
+                camera_id=self.camera_id,
+            )
 
         return instance
 
