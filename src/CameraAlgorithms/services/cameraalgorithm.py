@@ -323,6 +323,8 @@ def save_data(
 
     logger.warning(f"New record -> {algorithm_obj.name} on camera {camera_obj.id}")
 
+    return
+
 
 def camera_rtsp_link(id: str) -> str:
     cameras_data = Camera.objects.get(id=id)
