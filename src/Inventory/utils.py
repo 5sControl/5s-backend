@@ -35,7 +35,7 @@ def delete_items(camera_id, items_count):
 
     stop_and_update_algorithm(process_id)
 
-    if len(items_count) > 0:
+    if items_count > 0:
         create_camera_algorithms(camera_data, algorithm_data)
 
 
