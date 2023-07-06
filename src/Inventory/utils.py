@@ -15,7 +15,7 @@ def save_new_items(
 
     camera_data, algorithm_data = _get_algorithm_camera_data(camera_id)
 
-    process_id = CameraAlgorithm.objects.filter(
+    process_id = CameraAlgorithm.objects.get(
         camera_id=camera_id, algorithm__name="min_max_control"
     ).process_id
     stop_and_update_algorithm(process_id)
