@@ -73,6 +73,7 @@ class Items(models.Model):
             logger.critical(e)
 
         if not is_update or camera_updated or coords_updated:
+            logger.warning(f"Restarting CameraAlgorithm with new items")
             save_new_items(
                 camera_updated=camera_updated,
                 previous_camera=previous_camera,
@@ -86,4 +87,5 @@ class Items(models.Model):
         items_count = len(Items.objects.filter(camera_id=self.camera_id))
         delete_items(self.camera_id, items_count)
 
+        logger.warning(f"Deleted MinMaxControl")
         return instance
