@@ -29,7 +29,7 @@ def delete_items(camera_id, items_count):
 
     camera_data, algorithm_data = _get_algorithm_camera_data(camera_id)
 
-    process_id = CameraAlgorithm.objects.filter(
+    process_id = CameraAlgorithm.objects.get(
         camera=camera_id, algorithm=8
     ).process_id
 
