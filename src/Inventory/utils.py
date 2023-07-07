@@ -15,12 +15,15 @@ def save_new_items(
 
     camera_data, algorithm_data = _get_algorithm_camera_data(camera_id)
 
-    process_id = CameraAlgorithm.objects.get(
+    camera_algo_obj = CameraAlgorithm.objects.get(
         camera_id=camera_id, algorithm__name="min_max_control"
-    ).process_id
-    stop_and_update_algorithm(process_id)
+    )
 
-    if camera_updated and previous_camera != None:
+    if camera_algo_obj.exists():
+        process_id = camera_algo_obj.first().process_id
+        stop_and_update_algorithm(process_id)
+    else:
+        camera_updated and previous_camera != None:
         create_camera_algorithms(camera_data, algorithm_data)
 
 
