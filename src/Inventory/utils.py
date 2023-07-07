@@ -8,14 +8,12 @@ from src.CameraAlgorithms.models.camera import Camera
 logger = logging.getLogger(__name__)
 
 
-def save_new_items(
-    camera_updated, previous_camera, camera_id
-):
+def save_new_items(camera_id):
     from src.CameraAlgorithms.services.cameraalgorithm import create_camera_algorithms, stop_and_update_algorithm
 
     camera_data, algorithm_data = _get_algorithm_camera_data(camera_id)
 
-    camera_algo_obj = CameraAlgorithm.objects.get(
+    camera_algo_obj = CameraAlgorithm.objects.filter(
         camera_id=camera_id, algorithm__name="min_max_control"
     )
 

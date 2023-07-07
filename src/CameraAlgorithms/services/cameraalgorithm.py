@@ -133,6 +133,7 @@ def create_camera_algorithms(
         )
 
         if algorithm_name == "min_max_control":
+            logger.info("Starting min_max_control algorithm")
             if camera_algo_obj.exists():
                 if compare_zones(algorithm_obj, camera_obj, zones):
                     continue
@@ -174,6 +175,7 @@ def create_camera_algorithms(
             request["extra"] = data
 
         if algorithm_name == "machine_control":
+            logger.info("Starting machine control algorithm")
             if camera_algo_obj.exists():
                 if compare_zones(algorithm_obj, camera_obj, zones):
                     continue

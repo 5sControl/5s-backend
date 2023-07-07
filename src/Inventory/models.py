@@ -68,18 +68,9 @@ class Items(models.Model):
 
         instance = super().save(*args, **kwargs)
 
-        try:
-            previous_camera = Items.objects.get(id=self.pk).camera_id
-        except Items.DoesNotExist as e:
-            logger.critical(e)
-
         if not is_update or camera_updated or coords_updated:
             logger.warning(f"Restarting CameraAlgorithm with new items")
-            save_new_items(
-                camera_updated=camera_updated,
-                previous_camera=previous_camera,
-                camera_id=self.camera_id,
-            )
+            save_new_items(self.camera_id,)
 
         return instance
 
