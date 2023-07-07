@@ -11,9 +11,18 @@ logger = logging.getLogger(__name__)
 
 
 class Items(models.Model):
-    """Models items"""
+    OBJECT_TYPE_CHOICES = [
+        ("bottles", "Bottles"),
+        ("boxes", "Boxes"),
+    ]
 
     name = models.TextField(max_length=75, verbose_name="Item name")
+    object_type = models.CharField(
+        max_length=20,
+        choices=OBJECT_TYPE_CHOICES,
+        default="boxes",
+        verbose_name="Object type",
+    )
     status = models.CharField(max_length=20, default="Out of stock")
     current_stock_level = models.IntegerField(
         verbose_name="Current stock level", default=0
