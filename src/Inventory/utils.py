@@ -40,9 +40,13 @@ def delete_items(camera_id, items_count):
 
 def _get_algorithm_camera_data(camera_id: int):
     camera_obj: str = Camera.objects.get(id=camera_id)
-    camera_algo_obj: List[Dict[str, int]] = CameraAlgorithm.objects.get(
-        algorithm=8, camera=camera_id
-    ).zones
+
+    try:
+        camera_algo_zones_prev: List[Dict[str, int]] = CameraAlgorithm.objects.get(
+            algorithm=8, camera=camera_id
+        ).zones
+    except CameraAlgorithm.DoesNotExist:
+        camera_algo_zones_prev = []
 
     camera_data: Dict[str, str] = {
         "ip": camera_id,
@@ -50,7 +54,8 @@ def _get_algorithm_camera_data(camera_id: int):
         "username": camera_obj.username,
         "password": camera_obj.password,
     }
-    config: Dict[str, Dict[str, List[Dict[str, int]]]] = {"zonesID": camera_algo_obj}
+
+    config: Dict[str, Dict[str, List[Dict[str, int]]]] = {"zonesID": camera_algo_zones_prev}
     algorithm_data: List[Dict[str, Any]] = [
         {
             "name": "min_max_control",
