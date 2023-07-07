@@ -1,5 +1,4 @@
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import serializers, views, response
+from rest_framework import views, response
 from rest_framework.viewsets import ModelViewSet
 
 from django_countries import countries
@@ -9,7 +8,6 @@ from src.Suppliers.serializers import SuppliersSerializer, CountrySerializer
 
 
 class SuppliersView(ModelViewSet):
-    # permission_classes = [IsAuthenticated]
     pagination_class = None
     queryset = Company.objects.filter(my_company=False).order_by('id')
     serializer_class = SuppliersSerializer

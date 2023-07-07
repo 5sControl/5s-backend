@@ -150,7 +150,14 @@ def create_camera_algorithms(
             )
             for item in algorithm_items:
                 areas.append(
-                    {"itemId": item.id, "itemName": item.name, "multiRow": item.multi_row, "coords": item.coords}
+                    {
+                        "itemId": item.id,
+                        "itemName": item.name,
+                        "multiRow": item.multi_row,
+                        "coords": item.coords,
+                        "lowStockLevel": item.low_stock_level,
+                        "task": item.object_type,
+                    }
                 )
 
             for zone_id in zones:
