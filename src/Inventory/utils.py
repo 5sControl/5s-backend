@@ -23,7 +23,7 @@ def save_new_items(
         process_id = camera_algo_obj.first().process_id
         stop_and_update_algorithm(process_id)
     else:
-        camera_updated and previous_camera != None:
+        camera_updated and previous_camera != None
         create_camera_algorithms(camera_data, algorithm_data)
 
 
