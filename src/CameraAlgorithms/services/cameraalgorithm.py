@@ -133,6 +133,7 @@ def create_camera_algorithms(
         )
 
         if algorithm_name == "min_max_control":
+            logger.info("Starting min_max_control algorithm")
             if camera_algo_obj.exists():
                 if compare_zones(algorithm_obj, camera_obj, zones):
                     continue
@@ -181,6 +182,7 @@ def create_camera_algorithms(
             request["extra"] = data
 
         if algorithm_name == "machine_control":
+            logger.info("Starting machine control algorithm")
             if camera_algo_obj.exists():
                 if compare_zones(algorithm_obj, camera_obj, zones):
                     continue
@@ -329,6 +331,8 @@ def save_data(
         update_status_zones_true(zones)
 
     logger.warning(f"New record -> {algorithm_obj.name} on camera {camera_obj.id}")
+
+    return
 
 
 def camera_rtsp_link(id: str) -> str:

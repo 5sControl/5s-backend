@@ -169,6 +169,6 @@ class GetOperationsDuration(generics.GenericAPIView):
             response: List[Dict[str, str]] = OperationServices.calculate_avg_duration(
                 ids
             )
-            cache.set(key, response, timeout=120)
+            cache.set(key, response, timeout=360)
 
         return JsonResponse(response, status=status.HTTP_200_OK, safe=False)
