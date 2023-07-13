@@ -4,7 +4,7 @@ from src.Inventory.models import Items
 
 
 class ItemsSerializer(serializers.ModelSerializer):
-    object_type = serializers.CharField(max_length=50)
+    object_type = serializers.CharField(max_length=50, required=False, default='boxes')
 
     class Meta:
         model = Items
