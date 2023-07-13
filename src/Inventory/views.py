@@ -1,28 +1,28 @@
+from datetime import datetime
+
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.generics import RetrieveAPIView, CreateAPIView
-from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
 
-from src.Inventory.models import Items
-from src.Reports.models import Report
-
+from django.http import Http404
 from django.db.models import Q
-from datetime import datetime
 
+from src.Reports.models import Report
+from src.Core.paginators import NoPagination
 from src.CompanyLicense.decorators import validate_license
-
-from src.Inventory.serializers import ItemsSerializer
 from src.Reports.serializers import ReportSerializers
+
+from .models import Items
+from .serializers import ItemsSerializer
 
 
 class ItemsListAPIView(ListAPIView):
     queryset = Items.objects.all()
     serializer_class = ItemsSerializer
-    pagination_class = None
-    # permission_classes = [IsAuthenticated]
+    pagination_class = NoPagination
     ALLOWED_STATUSES = ["Out of stock", "Low stock level", "In stock"]
 
     @validate_license
@@ -51,13 +51,11 @@ class ItemsListAPIView(ListAPIView):
 class ItemsCreateAPIView(CreateAPIView):
     queryset = Items.objects.all()
     serializer_class = ItemsSerializer
-    # permission_classes = [IsAuthenticated]
 
 
 class ItemsRetrieveAPIView(RetrieveAPIView):
     queryset = Items.objects.all()
     serializer_class = ItemsSerializer
-    # permission_classes = [IsAuthenticated]
     lookup_field = 'id'
 
     def get(self, request, *args, **kwargs):
@@ -83,8 +81,6 @@ class ItemsRetrieveAPIView(RetrieveAPIView):
 
 
 class ItemsHistoryViewSet(APIView):
-    """History items"""
-
     permission_classes = [IsAuthenticated]
 
     @validate_license
