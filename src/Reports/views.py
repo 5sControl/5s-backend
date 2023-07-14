@@ -78,7 +78,7 @@ class ActionsWithPhotos(APIView):
                     requests.post(
                         f"{SERVER_URL}:9876/operation-control/", json=data
                     )
-                extra = edit_extra(camera)
+                extra = edit_extra(extra, camera)
 
         except KeyError as e:
             logger.critical(f"Error while parsing report: {e}")
