@@ -13,7 +13,7 @@ def process_item_status(data):
         count = item_data["count"]
         red_line = item_data["low_stock_level"]
         data_item = Items.objects.filter(id=item_data["itemId"]).values(
-            "current_stock_level", "low_stock_level", "status", "multi_row"
+            "current_stock_level", "low_stock_level", "status", "object_type"
         )
         min_item = data_item[0]["low_stock_level"]
         image_path = item_data["image_item"]
@@ -23,7 +23,7 @@ def process_item_status(data):
         item_serializer = ItemsSerializer(item)
         serialized_item = item_serializer.data
 
-        if data_item[0]["multi_row"]:
+        if data_item[0]["object_type"] == "red lines":
             if red_line:
                 item_status = "Low stock level"
                 if min_item == 0:
@@ -108,7 +108,7 @@ def process_item_status(data):
 
         print(
             f"item_id=={item.id}, item_name=={item.name}, item_status {item_status}, "
-            f"red_line == {red_line}, multi_row == {data_item[0]['multi_row']}"
+            f"red_line == {red_line}, multi_row == {data_item[0]['object_type']}"
         )
 
         item.status = item_status

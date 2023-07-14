@@ -66,9 +66,11 @@ class ActionsWithPhotos(APIView):
             photos = data.get("photos")
             violation_found = data.get("violation_found")
 
+            extra = data.get("extra")
+
             # FIXME: make easy this shit
             if algorithm_name == "min_max_control":
-                extra = process_item_status(data.get("extra"))
+                extra = process_item_status(extra)
 
             elif algorithm_name == "operation_control":
                 if EMULATE_DB:
@@ -77,8 +79,6 @@ class ActionsWithPhotos(APIView):
                         f"{SERVER_URL}:9876/operation-control/", json=data
                     )
                 extra = edit_extra(camera)
-            else:
-                extra = data.get("extra")
 
         except KeyError as e:
             logger.critical(f"Error while parsing report: {e}")
