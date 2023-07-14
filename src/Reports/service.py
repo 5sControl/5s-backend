@@ -11,9 +11,8 @@ from src.newOrderView.repositories.operations import OperationsRepository
 logger = logging.getLogger(__name__)
 
 
-def edit_extra(camera: Camera):
+def edit_extra(extra: Dict[str, Any], camera: Camera):
     operation_repo: OperationsRepository = OperationsRepository()
-    data: Dict[str, Any] = {}
 
     operation_index = (
         IndexOperations.objects.filter(camera=camera.id)
@@ -23,11 +22,11 @@ def edit_extra(camera: Camera):
 
     extra_data = operation_repo.get_operation_control_data(operation_index)
 
-    data["skany_index"] = int(extra_data["skany_index"])
-    data["zlecenie"] = str(extra_data["zlecenie"])
-    data["execution_date"] = str(extra_data["execution_date"])
+    extra["skany_index"] = int(extra_data["skany_index"])
+    extra["zlecenie"] = str(extra_data["zlecenie"])
+    extra["execution_date"] = str(extra_data["execution_date"])
 
-    return data
+    return extra
 
 
 def create_skanyreport(
