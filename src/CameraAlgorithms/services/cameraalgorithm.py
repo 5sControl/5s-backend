@@ -154,7 +154,6 @@ def create_camera_algorithms(
                     {
                         "itemId": item.id,
                         "itemName": item.name,
-                        "multiRow": item.multi_row,
                         "coords": item.coords,
                         "lowStockLevel": item.low_stock_level,
                         "task": item.object_type,
