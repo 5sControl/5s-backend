@@ -4,13 +4,13 @@ from src.Core.types import Query
 from src.DatabaseConnections.models import DatabaseConnection
 
 from .base import BaseReadOnlyRepository
-from .drivers import PymssqlConnector, PyodbcConnector
+from .drivers import PymssqlConnector
 
 
 class MsSqlServerRepository(BaseReadOnlyRepository):
     def __init__(self):
         self.driver = "{ODBC Driver 17 for SQL Server}"
-        self.connector = PyodbcConnector()
+        self.connector = PymssqlConnector()
 
     def execute_query(
         self, query: Query, parameters: Optional[List[Any]] = None
