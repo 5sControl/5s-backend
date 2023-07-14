@@ -14,6 +14,7 @@ class Items(models.Model):
     OBJECT_TYPE_CHOICES = [
         ("bottles", "Bottles"),
         ("boxes", "Boxes"),
+        ("red lines", "Red Lines"),
     ]
 
     name = models.TextField(max_length=75, verbose_name="Item name")
@@ -41,7 +42,6 @@ class Items(models.Model):
         blank=True,
         null=True,
     )
-    multi_row = models.BooleanField(verbose_name="Multi row", default=False)
     suppliers = models.ForeignKey(
         Company,
         related_name="Supplier",

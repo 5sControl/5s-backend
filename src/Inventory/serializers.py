@@ -20,7 +20,6 @@ class ItemsSerializer(serializers.ModelSerializer):
             "date_updated",
             "coords",
             "prev_status",
-            "multi_row",
             "order_quantity",
             "suppliers",
             "to_emails",
