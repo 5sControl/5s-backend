@@ -1,10 +1,10 @@
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Tuple
 from src.Core.types import Query
-from src.DatabaseConnections.repositories.ms_repository import MsSqlServerRepository
+from src.DatabaseConnections.repositories.ms_repository import WinHRepository
 
 
-class OperationsRepository(MsSqlServerRepository):
+class OperationsRepository(WinHRepository):
     model = "Skany"
 
     def get_by_id(self, entity_id: int) -> List[Tuple[Any]]:

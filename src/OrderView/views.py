@@ -98,7 +98,7 @@ class CreateDatabaseConnectionAPIView(generics.CreateAPIView):
         credentials = serializer.validated_data
         manager = DatabaseConnectionManager()
 
-        if manager.create_connection(credentials, "mssql"):
+        if manager.create_connection(credentials):
             serializer.save()
             return Response(
                 {

@@ -1,15 +1,15 @@
-from typing import List, Optional, Any
+from typing import Any, List, Optional
+
+import psycopg2
 
 from src.Core.types import Query
 from src.DatabaseConnections.models import DatabaseConnection
-
-from .base import BaseReadOnlyRepository
-from .drivers import PymssqlConnector
+from src.DatabaseConnections.repositories.base import BaseReadOnlyRepository
 
 
-class WinHRepository(BaseReadOnlyRepository):
+class OdooRepository(BaseReadOnlyRepository):
     def __init__(self):
-        self.connector = PymssqlConnector()
+        self.connector = psycopg2
 
     def execute_query(
         self, query: Query, parameters: Optional[List[Any]] = None
@@ -19,8 +19,6 @@ class WinHRepository(BaseReadOnlyRepository):
         cursor = self.connector.cursor()
 
         if parameters:
-            if isinstance(self.connector, PymssqlConnector):
-                query = query.replace("?", "%s")
             cursor.execute(query, parameters)
         else:
             cursor.execute(query)
@@ -34,15 +32,15 @@ class WinHRepository(BaseReadOnlyRepository):
     def is_stable(
         self, server: str, database: str, username: str, password: str, port: int
     ) -> bool:
-        conn_str = self._get_connection_string(
+        connection_string: dict = self._get_connection_string(
             server, database, username, password, port
         )
         try:
-            self.connector.connect(conn_str)
-            self.connector.close()
+            conn = self.connector.connect(**connection_string)
+            conn.close()
+            return True
         except Exception:
             return False
-        return True
 
     def _get_connection_string(
         self,
@@ -51,7 +49,7 @@ class WinHRepository(BaseReadOnlyRepository):
         username: str = "",
         password: str = "",
         port: int = 0,
-    ) -> str:
+    ) -> dict:
         if server and database and username and password and port:
             return {
                 "host": server,
@@ -69,3 +67,5 @@ class WinHRepository(BaseReadOnlyRepository):
                 "database": db_obj.database,
                 "port": db_obj.port,
             }
+
+psycopg2.connect

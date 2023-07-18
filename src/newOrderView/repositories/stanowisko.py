@@ -1,10 +1,10 @@
 from typing import Any, List, Tuple
 
 from src.Core.types import Query
-from src.DatabaseConnections.repositories.ms_repository import MsSqlServerRepository
+from src.DatabaseConnections.repositories.ms_repository import WinHRepository
 
 
-class WorkplaceRepository(MsSqlServerRepository):
+class WorkplaceRepository(WinHRepository):
     def get_workplaces_names(self) -> List[str]:
         query: Query = """
                 SELECT DISTINCT Raport
