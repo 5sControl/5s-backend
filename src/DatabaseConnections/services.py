@@ -1,11 +1,13 @@
 from typing import Any, Dict, List
 
 from src.DatabaseConnections.models import DatabaseConnection
-from src.DatabaseConnections.repositories.ms_repository import MsSqlServerRepository
+from src.DatabaseConnections.repositories.ms_repository import WinHRepository
+from src.DatabaseConnections.repositories.odoo import OdooRepository
 
 
 class DatabaseConnectionManager:
-    def create_connection(self, credentials: Dict[str, Any], db_type: str) -> bool:
+    def create_connection(self, credentials: Dict[str, Any]) -> bool:
+        database_type = credentials["database_type"]
         server = credentials["server"]
         database = credentials["database"]
         username = credentials["username"]
@@ -17,12 +19,16 @@ class DatabaseConnectionManager:
         ).exists():
             return False
 
-        if db_type == "mssql":
-            if MsSqlServerRepository().is_stable(
+        if database_type == "WBNet":
+            if WinHRepository().is_stable(
                 server, database, username, password, port
             ):
                 return True
-
+        elif database_type == "Odoo":
+            if OdooRepository().is_stable(
+                server, database, username, password, port
+            ):
+                return True
         return False
 
     def get_connections(self) -> List[Dict[str, Any]]:

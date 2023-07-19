@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
 
 
 class DatabaseConnection(models.Model):
@@ -14,5 +16,12 @@ class DatabaseConnection(models.Model):
     password = models.CharField(max_length=500)
     port = models.IntegerField(default=1433)
     dbms = models.CharField(
-        max_length=50, choices=DBMS_CHOICES, unique=True, default="mssql"
+        max_length=50, choices=DBMS_CHOICES, default="mssql"
     )
+    is_active = models.BooleanField(default=True, unique=True)
+
+@receiver(pre_save, sender=DatabaseConnection)
+def update_active_status(sender, instance, **kwargs):
+    if not instance.pk:
+        sender.objects.update(is_active=False)
+        instance.is_active = True

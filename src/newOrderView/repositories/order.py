@@ -1,10 +1,10 @@
 from typing import Any, List, Tuple
 
 from src.Core.types import Query
-from src.DatabaseConnections.repositories.ms_repository import MsSqlServerRepository
+from src.DatabaseConnections.repositories.ms_repository import WinHRepository
 
 
-class OrderRepository(MsSqlServerRepository):
+class OrderRepository(WinHRepository):
     def get_orders_by_operation(
         self, from_date: str, to_date: str, operation_type_ids: List[int]
     ) -> List[Tuple[Any]]:
