@@ -79,7 +79,9 @@ class Items(models.Model):
 
         if not is_update or camera_updated or coords_updated:
             logger.warning(f"Restarting CameraAlgorithm with new items")
-            save_new_items(self.camera_id,)
+            save_new_items(
+                self.camera_id,
+            )
 
         return instance
 
