@@ -233,6 +233,74 @@ def create_camera_algorithms(
         )
 
 
+def create_single_camera_algorithms(camera_data: Dict[str, str], algorithm_data: Dict[str, Any]) -> None:
+    camera_obj: Camera = Camera.objects.get(id=camera_data["ip"])
+    algorithm_obj: Algorithm = Algorithm.objects.get(name=algorithm_data["name"])
+
+    camera_algo_obj = CameraAlgorithm.objects.filter(
+        algorithm=algorithm_obj, camera=camera_obj
+    )
+
+    rtsp_link: str = camera_rtsp_link(camera_obj.id)
+
+    data: List[Dict[str, Any]] = []
+    areas: List[Dict[str, Any]] = []
+    stelag: List[Dict[str, Any]] = []
+
+    request: Dict[str, Any] = {
+        "camera_url": rtsp_link,
+        "algorithm": algorithm_obj.name,
+        "server_url": SERVER_URL,
+        "extra": data,
+    }
+
+    zones: List[Optional[Dict[str, int]]] = algorithm_data.get("config", {}).get(
+        "zonesID", []
+    )
+
+    algorithm_items: Iterable[Items] = Items.objects.filter(
+        camera=camera_obj.id
+    )
+    for item in algorithm_items:
+        areas.append(
+            {
+                "itemId": item.id,
+                "itemName": item.name,
+                "coords": item.coords,
+                "lowStockLevel": item.low_stock_level,
+                "task": item.object_type,
+            }
+        )
+
+    for zone_id in zones:
+        zone_camera = ZoneCameras.objects.get(
+            id=zone_id["id"], camera=camera_obj
+        )
+
+        stelag.append(
+            {
+                "zoneId": zone_camera.id,
+                "zoneName": zone_camera.name,
+                "coords": zone_camera.coords,
+            }
+        )
+
+    new_data: Dict[str, Any] = {
+        "areas": areas,
+        "zones": stelag,
+    }
+    data.append(new_data)
+    request["extra"] = data
+
+    response: Dict[str, Any] = send_run_request(request)
+    save_data(
+        algorithm_obj=algorithm_obj,
+        camera_obj=camera_obj,
+        pid=response["pid"],
+        zones=zones,
+    )
+
+
 def save_data(
     algorithm_obj: Algorithm,
     camera_obj: Camera,
