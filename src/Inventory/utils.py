@@ -28,7 +28,7 @@ class HandleItemUtils:
 
     def delete_items(self, camera_id, items_count):
         from src.CameraAlgorithms.services.cameraalgorithm import (
-            create_camera_algorithms,
+            create_single_camera_algorithms,
             stop_and_update_algorithm,
         )
 
@@ -42,7 +42,7 @@ class HandleItemUtils:
             stop_and_update_algorithm(camera_algo_query.first().process_id)
 
             if items_count > 0:
-                create_camera_algorithms(camera_data, algorithm_data)
+                create_single_camera_algorithms(camera_data, algorithm_data)
 
     def _get_algorithm_camera_data(
         self,
