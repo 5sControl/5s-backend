@@ -74,10 +74,6 @@ class Items(models.Model):
         coords_updated = (
             self.pk and self.coords != self.__class__.objects.get(pk=self.pk).coords
         )
-        object_type_updated = (
-            self.pk
-            and self.object_type != self.__class__.objects.get(pk=self.pk).object_type
-        )
 
         instance = super().save(*args, **kwargs)
 
