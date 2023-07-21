@@ -21,7 +21,6 @@ class Items(models.Model):
     object_type = models.CharField(
         max_length=20,
         choices=OBJECT_TYPE_CHOICES,
-        default="boxes",
         verbose_name="Object type",
     )
     status = models.CharField(max_length=20, default="Out of stock")
@@ -81,10 +80,6 @@ class Items(models.Model):
         )
 
         instance = super().save(*args, **kwargs)
-
-        if object_type_updated and self.object_type == "boxes":
-            self.object_type = self.__class__.objects.get(pk=self.pk).object_type
-            self.save()
 
         if not is_update or camera_updated or coords_updated:
             logger.warning(f"Restarting CameraAlgorithm with new items")
