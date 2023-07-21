@@ -233,7 +233,9 @@ def create_camera_algorithms(
         )
 
 
-def create_single_camera_algorithms(camera_data: Dict[str, str], algorithm_data: Dict[str, Any]) -> None:
+def create_single_camera_algorithms(
+    camera_data: Dict[str, str], algorithm_data: Dict[str, Any]
+) -> None:
     camera_obj: Camera = Camera.objects.get(id=camera_data["ip"])
     algorithm_obj: Algorithm = Algorithm.objects.get(name=algorithm_data["name"])
 
@@ -258,9 +260,7 @@ def create_single_camera_algorithms(camera_data: Dict[str, str], algorithm_data:
         "zonesID", []
     )
 
-    algorithm_items: Iterable[Items] = Items.objects.filter(
-        camera=camera_obj.id
-    )
+    algorithm_items: Iterable[Items] = Items.objects.filter(camera=camera_obj.id)
     for item in algorithm_items:
         areas.append(
             {
@@ -273,9 +273,7 @@ def create_single_camera_algorithms(camera_data: Dict[str, str], algorithm_data:
         )
 
     for zone_id in zones:
-        zone_camera = ZoneCameras.objects.get(
-            id=zone_id["id"], camera=camera_obj
-        )
+        zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
 
         stelag.append(
             {

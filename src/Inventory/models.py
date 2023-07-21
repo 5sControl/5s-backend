@@ -75,14 +75,20 @@ class Items(models.Model):
         coords_updated = (
             self.pk and self.coords != self.__class__.objects.get(pk=self.pk).coords
         )
+        object_type_updated = (
+            self.pk
+            and self.object_type != self.__class__.objects.get(pk=self.pk).object_type
+        )
 
         instance = super().save(*args, **kwargs)
 
+        if object_type_updated and self.object_type == "boxes":
+            self.object_type = self.__class__.objects.get(pk=self.pk).object_type
+            self.save()
+
         if not is_update or camera_updated or coords_updated:
             logger.warning(f"Restarting CameraAlgorithm with new items")
-            utils.save_new_items(
-                self.camera_id,
-            )
+            utils.save_new_items(self.camera_id)
 
         return instance
 
