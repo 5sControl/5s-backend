@@ -1,10 +1,8 @@
 import logging
-from typing import Any, Dict, List, Tuple, Iterable, Optional
+from typing import Any, Dict, List, Tuple
 
-from src.CameraAlgorithms.models.algorithm import CameraAlgorithm, Algorithm
-from src.CameraAlgorithms.models.camera import Camera, ZoneCameras
-from src.Core.const import SERVER_URL
-from src.Inventory.models import Items
+from src.CameraAlgorithms.models.algorithm import CameraAlgorithm
+from src.CameraAlgorithms.models.camera import Camera
 
 logger = logging.getLogger(__name__)
 
