@@ -12,20 +12,23 @@ logger = logging.getLogger(__name__)
 
 
 def edit_extra(extra: Dict[str, Any], camera: Camera):
-    operation_repo: OperationsRepository = OperationsRepository()
+    try:
+        operation_repo: OperationsRepository = OperationsRepository()
 
-    operation_index = (
-        IndexOperations.objects.filter(camera=camera.id)
-        .values("type_operation")
-        .last()["type_operation"]
-    )
+        operation_index = (
+            IndexOperations.objects.filter(camera=camera.id)
+            .values("type_operation")
+            .last()["type_operation"]
+        )
 
-    extra_data = operation_repo.get_operation_control_data(operation_index)
+        extra_data = operation_repo.get_operation_control_data(operation_index)
 
-    extra["skany_index"] = int(extra_data["skany_index"])
-    extra["zlecenie"] = str(extra_data["zlecenie"])
-    extra["execution_date"] = str(extra_data["execution_date"])
-
+        extra["skany_index"] = int(extra_data["skany_index"])
+        extra["zlecenie"] = str(extra_data["zlecenie"])
+        extra["execution_date"] = str(extra_data["execution_date"])
+    except Exception as index_error:
+        print(f"IndexError occurred: {index_error}")
+    print(1111111, extra)
     return extra
 
 
