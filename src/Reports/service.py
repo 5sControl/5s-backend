@@ -28,7 +28,7 @@ def edit_extra(extra: Dict[str, Any], camera: Camera):
         extra["execution_date"] = str(extra_data["execution_date"])
     except Exception as index_error:
         print(f"IndexError occurred: {index_error}")
-    print(1111111, extra)
+    print("Field extra operation_control", extra)
     return extra
 
 
