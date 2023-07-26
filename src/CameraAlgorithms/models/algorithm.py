@@ -4,10 +4,6 @@ from src.CameraAlgorithms.models import Camera
 
 
 class Algorithm(models.Model):
-    """
-    The Algorithm model represents a single algorithm
-    """
-
     name = models.CharField(max_length=100)
     is_available = models.BooleanField(default=False)
     description = models.TextField(blank=True, null=True)
@@ -23,10 +19,6 @@ class Algorithm(models.Model):
 
 
 class CameraAlgorithm(models.Model):
-    """
-    The CameraAlgorithm model represents a camera that uses a specific algorithm
-    """
-
     algorithm = models.ForeignKey(Algorithm, on_delete=models.CASCADE)
     camera = models.ForeignKey(Camera, on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True)
@@ -44,10 +36,6 @@ class CameraAlgorithm(models.Model):
 
 
 class CameraAlgorithmLog(models.Model):
-    """
-    Contains information about a deleted and created camera algorithm
-    """
-
     algorithm_name = models.CharField(max_length=150)
     camera_ip = models.CharField(max_length=150)
     stoped_at = models.DateTimeField(auto_now_add=False, blank=True, null=True)

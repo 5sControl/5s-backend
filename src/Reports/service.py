@@ -1,31 +1,35 @@
-from typing import List, Dict
-from datetime import datetime, timedelta, timezone
+from typing import Any, List, Dict
+from datetime import datetime
 import logging
 
 from src.CameraAlgorithms.models import Camera
-from src.MsSqlConnector.services import create_records
 
 from src.Reports.models import Report, SkanyReport
 from src.OrderView.models import IndexOperations
+from src.newOrderView.repositories.operations import OperationsRepository
 
 logger = logging.getLogger(__name__)
 
 
-def edit_extra(camera: Camera):
-    operation_index = (
-        IndexOperations.objects.filter(camera=camera.id)
-        .values("type_operation")
-        .last()["type_operation"]
-    )
-    extra_data = create_records.operation_control_data(operation_index)
-    data = {}
+def edit_extra(extra: Dict[str, Any], camera: Camera):
+    try:
+        operation_repo: OperationsRepository = OperationsRepository()
 
-    data["skany_index"] = int(extra_data["skany_index"])
-    data["zlecenie"] = str(extra_data["zlecenie"])
-    data["execution_date"] = str(extra_data["execution_date"])
+        operation_index = (
+            IndexOperations.objects.filter(camera=camera.id)
+            .values("type_operation")
+            .last()["type_operation"]
+        )
 
-    logger.warning(f"final operation data is -> {data}")
-    return data
+        extra_data = operation_repo.get_operation_control_data(operation_index)
+
+        extra["skany_index"] = int(extra_data["skany_index"])
+        extra["zlecenie"] = str(extra_data["zlecenie"])
+        extra["execution_date"] = str(extra_data["execution_date"])
+    except Exception as index_error:
+        print(f"IndexError occurred: {index_error}")
+    print("Field extra operation_control", extra)
+    return extra
 
 
 def create_skanyreport(

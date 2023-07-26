@@ -50,7 +50,7 @@ class Command(BaseCommand):
 
                     all_cords.append(coords[0])
 
-                request["extra"] = {"coords": all_cords}
+                request["extra"] = [{"coords": all_cords}]
 
             if camera_algorithm.algorithm.name == "min_max_control":
                 algorithm_items = Items.objects.filter(camera=camera_obj)
@@ -59,8 +59,14 @@ class Command(BaseCommand):
 
                 for item in algorithm_items:
                     areas.append(
-                        {"itemId": item.id, "itemName": item.name, "coords": item.coords}
-                    )
+                    {
+                        "itemId": item.id,
+                        "itemName": item.name,
+                        "coords": item.coords,
+                        "lowStockLevel": item.low_stock_level,
+                        "task": item.object_type,
+                    }
+                )
 
                 all_zones = camera_algorithm.zones
                 try:
@@ -81,6 +87,7 @@ class Command(BaseCommand):
 
             try:
                 result = send_run_request(request)
+                logger.info(f"Algorithm successfully started. Request {request}, Result {result}")
             except SenderError as e:
                 logger.critical(f"Yolo server is not available. Details: {e}")
             except InvalidResponseError as e:

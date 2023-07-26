@@ -35,7 +35,7 @@ INSTALLED_APPS = [
     # Common application
     "src.CameraAlgorithms",
     "src.OrderView",
-    "src.MsSqlConnector",
+    "src.DatabaseConnections",
     "src.CompanyLicense.apps.CompanyLicenseConfig",
     "src.Inventory.apps.InventoryConfig",
     "src.Employees.apps.EmployeesConfig",
