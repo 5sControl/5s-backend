@@ -5,7 +5,7 @@ from django.contrib.postgres.fields import ArrayField
 
 from src.CameraAlgorithms.models import Camera
 from src.CompanyLicense.models import Company
-from src.Inventory.utils import delete_items, save_new_items
+from src.Inventory.utils import HandleItemUtils
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +21,6 @@ class Items(models.Model):
     object_type = models.CharField(
         max_length=20,
         choices=OBJECT_TYPE_CHOICES,
-        default="boxes",
         verbose_name="Object type",
     )
     status = models.CharField(max_length=20, default="Out of stock")
@@ -66,6 +65,7 @@ class Items(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
+        utils = HandleItemUtils()
         is_update = bool(self.pk)
         camera_updated = (
             self.pk
@@ -79,14 +79,15 @@ class Items(models.Model):
 
         if not is_update or camera_updated or coords_updated:
             logger.warning(f"Restarting CameraAlgorithm with new items")
-            save_new_items(self.camera_id,)
+            utils.save_new_items(self.camera_id)
 
         return instance
 
     def delete(self, *args, **kwargs):
+        utils = HandleItemUtils()
         instance = super().delete(*args, **kwargs)
         items_count = len(Items.objects.filter(camera_id=self.camera_id))
-        delete_items(self.camera_id, items_count)
+        utils.delete_items(self.camera_id, items_count)
 
         logger.warning(f"Deleted MinMaxControl")
         return instance
