@@ -18,11 +18,13 @@ def send_notification_email(item, count, image_path, item_status):
     if item['subject'] is None:
         raise ValueError("Missing item subject")
 
-    print(f"<<<<<<<<{item}>>>>>>>>")
 
-    to_emails = item['to_emails']
-    copy_emails = item['copy_emails']
+    to_emails = item.get('to_emails', [])
+    print("to_emails", to_emails)
+    copy_emails = item.get('copy_emails', [])
+    print("copy_emails", copy_emails)
     recipient_list = list(set(to_emails + copy_emails))
+    print("recipient_list", recipient_list)
 
     used_algorithm = item["object_type"]
 
