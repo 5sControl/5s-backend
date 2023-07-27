@@ -24,7 +24,7 @@ def send_notification_email(item, count, image_path, item_status):
     copy_emails = item['copy_emails']
     recipient_list = list(set(to_emails + copy_emails))
 
-    used_algorithm = item.object_type
+    used_algorithm = item["object_type"]
 
     subject = f"{item['subject']}"
     if item_status == 'Low stock level':
