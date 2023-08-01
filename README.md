@@ -5,6 +5,8 @@ https://5s-kaunas-hp.netlify.app/
 anydesk: 145 479 941
 
 IP:172.16.101.100
+
+ngrok: ssh admin@6.tcp.ngrok.io -p17464
 ***
 
 
