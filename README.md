@@ -17,6 +17,8 @@ https://5s-kaunas-dell.netlify.app/
 anydesk:  1 321 188 697
 
 IP:192.168.5.109
+
+ngrok: ssh sserver@5.tcp.eu.ngrok.io -p 14712
 ***
 
 # **Office QA**
