@@ -6,7 +6,7 @@ anydesk: 145 479 941
 
 IP:172.16.101.100
 
-ngrok: ssh admin1@4.tcp.eu.ngrok.io -p 11117
+ngrok: ssh admin1@2.tcp.eu.ngrok.io -p 10274
 ***
 
 
@@ -18,7 +18,7 @@ anydesk:  1 321 188 697
 
 IP:192.168.5.109
 
-ngrok: ssh sserver@5.tcp.eu.ngrok.io -p 14712
+ngrok: ssh sserver@5.tcp.eu.ngrok.io -p 18419
 ***
 
 # **Office QA**
@@ -37,3 +37,4 @@ http://192.168.1.110:3000/
 
 http://192.168.1.185:3000/
 
+ngrok: ssh server@8.tcp.eu.ngrok.io -p 11360
