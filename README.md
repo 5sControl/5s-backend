@@ -30,8 +30,6 @@ http://192.168.1.111:3000/
 
 https://5s-office.netlify.app/
 
-https://5s-office.netlify.app/
-
 http://192.168.1.110:3000/
 ***
 
