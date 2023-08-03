@@ -57,3 +57,10 @@ class ZoneCameras(models.Model):
 
     def __str__(self):
         return self.name
+
+    def remove_invalid_coordinates(self):
+        self.coords = [coord for coord in self.coords if coord['x2'] != 0 and coord['y2'] != 0]
+
+    def save(self, *args, **kwargs):
+        self.remove_invalid_coordinates()
+        super().save(*args, **kwargs)
