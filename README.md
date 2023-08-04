@@ -31,6 +31,8 @@ http://192.168.1.111:3000/
 https://5s-office.netlify.app/
 
 http://192.168.1.110:3000/
+
+ngrok: ssh server@8.tcp.ngrok.io -p11360
 ***
 
 # **Office designers**
