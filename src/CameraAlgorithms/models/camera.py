@@ -96,4 +96,4 @@ class ZoneCameras(models.Model):
 
         if not is_update or coords_updated:
             logger.warning("Restarting CameraAlgorithm with new zone coors")
-            utils.save_new_zone(self.camera_id)
+            utils.save_new_zone(self.pk)
