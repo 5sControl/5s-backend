@@ -51,6 +51,7 @@ class HandleItemUtils:
         from src.CameraAlgorithms.models import CameraAlgorithm, Camera
 
         camera_algorithms: List[CameraAlgorithm] = self.get_camera_algorithms_by_zone_id(zone_id)
+        logger.warning(f"With zone {zone_id} was found {camera_algorithms}")
 
         for camera_algorithm_obj in camera_algorithms:
             camera_obj: Camera = Camera.objects.get(id=camera_algorithm_obj.camera.pk)
