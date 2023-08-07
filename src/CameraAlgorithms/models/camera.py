@@ -1,8 +1,12 @@
+import logging
+
 from django.db import models
-
 from django.core.validators import RegexValidator
-
 from django.core.exceptions import ValidationError
+
+from src.Inventory.utils import HandleItemUtils
+
+logger = logging.getLogger(__name__)
 
 
 class Camera(models.Model):
@@ -81,5 +85,15 @@ class ZoneCameras(models.Model):
         self.remove_invalid_coordinates()
         if len(self.coords) == 0:
             raise ValidationError("Unprocessable - Empty or negative data provided")
+
+        utils = HandleItemUtils()
+        is_update = bool(self.pk)
+        coords_updated = (
+            self.pk and self.coords != self.__class__.objects.get(pk=self.pk).coords
+        )
+
         super().save(*args, **kwargs)
 
+        if not is_update or coords_updated:
+            logger.warning("Restarting CameraAlgorithm with new zone coors")
+            utils.save_new_zone(self.camera_id)
