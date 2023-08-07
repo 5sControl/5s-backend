@@ -1,9 +1,6 @@
 import logging
 from typing import Any, Dict, List, Tuple
 
-from src.CameraAlgorithms.models.algorithm import CameraAlgorithm
-from src.CameraAlgorithms.models.camera import Camera
-
 logger = logging.getLogger(__name__)
 
 
@@ -13,6 +10,7 @@ class HandleItemUtils:
             create_single_camera_algorithms,
             stop_and_update_algorithm,
         )
+        from src.CameraAlgorithms.models import CameraAlgorithm
 
         camera_data, algorithm_data = self._get_algorithm_camera_data_min_max(camera_id)
 
@@ -31,6 +29,7 @@ class HandleItemUtils:
             create_single_camera_algorithms,
             stop_and_update_algorithm,
         )
+        from src.CameraAlgorithms.models import CameraAlgorithm
 
         camera_data, algorithm_data = self._get_algorithm_camera_data_min_max(camera_id)
 
@@ -49,6 +48,7 @@ class HandleItemUtils:
             create_single_camera_algorithms,
             stop_and_update_algorithm,
         )
+        from src.CameraAlgorithms.models import CameraAlgorithm, Camera
 
         camera_algorithms: List[CameraAlgorithm] = self.get_camera_algorithms_by_zone_id(zone_id)
 
@@ -72,13 +72,16 @@ class HandleItemUtils:
             stop_and_update_algorithm(process_id)
             create_single_camera_algorithms(camera_data, algorithm_data)
 
-    def get_camera_algorithms_by_zone_id(self, zone_id: int) -> List[CameraAlgorithm]:
+    def get_camera_algorithms_by_zone_id(self, zone_id: int):
+        from src.CameraAlgorithms.models import CameraAlgorithm
         return CameraAlgorithm.objects.filter(zones__contains=[{"id": zone_id}])
 
     def _get_algorithm_camera_data_min_max(
         self,
         camera_id: int,
     ) -> Tuple[Dict[str, str], Dict[str, Any]]:
+        from src.CameraAlgorithms.models import CameraAlgorithm, Camera
+
         camera_obj: Camera = Camera.objects.get(id=camera_id)
 
         try:
