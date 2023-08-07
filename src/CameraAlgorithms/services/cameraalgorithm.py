@@ -291,6 +291,7 @@ def create_single_camera_algorithms(
     request["extra"] = data
 
     response: Dict[str, Any] = send_run_request(request)
+    logger.warning("Successfullyj")
     save_data(
         algorithm_obj=algorithm_obj,
         camera_obj=camera_obj,

@@ -68,8 +68,9 @@ class HandleItemUtils:
                 "name": camera_algorithm_obj.algorithm.name,
                 "config": config,
             }
-
+            logger.warning("Stopping process")
             stop_and_update_algorithm(process_id)
+            logger.warning("Starting process")
             create_single_camera_algorithms(camera_data, algorithm_data)
 
     def get_camera_algorithms_by_zone_id(self, zone_id: int):
