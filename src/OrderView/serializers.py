@@ -20,6 +20,8 @@ class ApiConnectionSerializer(serializers.ModelSerializer):
 
 
 class DatabaseConnectionSerializer(serializers.ModelSerializer):
+    dbms = serializers.CharField(max_length=150, required=False)
+
     class Meta:
         model = ConnectionInfo
         fields = [

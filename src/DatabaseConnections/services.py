@@ -21,7 +21,7 @@ class CreateConnectionManager:
     def create_database_connection(
         self, credentials: Dict[str, Any]
     ) -> bool:
-        dbms: str = credentials["dbms"]
+        dbms: str = credentials.get("dbms", None)
         server: str = credentials["server"]
         database: str = credentials["database"]
         username: str = credentials["username"]
@@ -47,7 +47,6 @@ class CreateConnectionManager:
             type="database",
             defaults={
                 "is_active": True,
-                "dbms": dbms,
                 "server": server,
                 "database": database,
                 "username": username,
