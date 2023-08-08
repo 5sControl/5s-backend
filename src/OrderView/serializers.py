@@ -11,6 +11,7 @@ class ApiConnectionSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "type",
+            "is_active",
             "host",
         ]
 
@@ -28,6 +29,7 @@ class DatabaseConnectionSerializer(serializers.ModelSerializer):
             "id",
             "type",
             "dbms",
+            "is_active",
             "server",
             "database",
             "username",
