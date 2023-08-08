@@ -1,7 +1,7 @@
 from typing import List, Optional, Any
 
 from src.Core.types import Query
-from src.DatabaseConnections.models import DatabaseConnection
+from src.DatabaseConnections.models import ConnectionInfo
 
 from .base import BaseReadOnlyRepository
 from .drivers import PymssqlConnector
@@ -61,7 +61,7 @@ class WinHRepository(BaseReadOnlyRepository):
                 "port": port,
             }
         else:
-            db_obj: DatabaseConnection = DatabaseConnection.objects.get(is_active=True)
+            db_obj: ConnectionInfo = ConnectionInfo.objects.get(is_active=True, dbms="mssql")
             return {
                 "host": db_obj.server,
                 "user": db_obj.username,
