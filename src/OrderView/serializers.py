@@ -1,22 +1,46 @@
 from rest_framework import serializers
 
-from src.DatabaseConnections.models import DatabaseConnection
+from src.DatabaseConnections.models import ConnectionInfo
 
 from src.OrderView.models import IndexOperations
 
 
-class DatabaseConnectionSerializer(serializers.ModelSerializer):
+class ApiConnectionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = DatabaseConnection
+        model = ConnectionInfo
         fields = [
             "id",
-            "database_type",
+            "type",
+            "host",
+        ]
+
+    def create(self, validated_data):
+        ConnectionInfo.objects.filter(type="api").delete()
+        return super().create(validated_data)
+
+
+class DatabaseConnectionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ConnectionInfo
+        fields = [
+            "id",
+            "type",
+            "dbms",
             "server",
             "database",
             "username",
             "password",
             "port",
         ]
+
+    def create(self, validated_data):
+        ConnectionInfo.objects.filter(type="database").delete()
+        return super().create(validated_data)
+
+
+class ConnectionStatusSerializer(serializers.Serializer):
+    db = DatabaseConnectionSerializer(read_only=True)
+    api = ApiConnectionSerializer(read_only=True)
 
 
 class ProductSerializer(serializers.Serializer):
