@@ -18,9 +18,7 @@ class CreateConnectionManager:
 
         return created or connection
 
-    def create_database_connection(
-        self, credentials: Dict[str, Any]
-    ) -> bool:
+    def create_database_connection(self, credentials: Dict[str, Any]) -> bool:
         dbms: str = credentials.get("dbms", "mssql")
         server: str = credentials["server"]
         database: str = credentials["database"]
