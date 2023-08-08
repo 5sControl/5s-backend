@@ -53,13 +53,13 @@ class MsSqlConnector:
             return False
 
     def get_database_connection(self):
-        connection_data = ConnectionInfo.objects.get(type="database").values()
+        connection_data = ConnectionInfo.objects.get(type="database")
 
-        server = connection_data["server"]
-        database = connection_data["database"]
-        username = connection_data["username"]
-        password = connection_data["password"]
-        port = connection_data["port"]
+        server = connection_data.server
+        database = connection_data.database
+        username = connection_data.username
+        password = connection_data.password
+        port = connection_data.port
 
         conn_str = self._get_connection_string(
             server, database, username, password, self.driver, port
