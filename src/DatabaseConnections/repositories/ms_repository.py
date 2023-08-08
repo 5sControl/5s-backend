@@ -61,7 +61,7 @@ class WinHRepository(BaseReadOnlyRepository):
                 "port": port,
             }
         else:
-            db_obj: ConnectionInfo = ConnectionInfo.objects.get(is_active=True, dbms="mssql")
+            db_obj: ConnectionInfo = ConnectionInfo.objects.get(type="database")
             return {
                 "host": db_obj.server,
                 "user": db_obj.username,
