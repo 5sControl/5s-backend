@@ -19,6 +19,7 @@ routes = [
     path("mailer/", include("src.Mailer.urls"), name="mailer"),
     path("core/", include("src.Core.urls"), name="core"),
     path("suppliers/", include("src.Suppliers.urls"), name="suppliers"),
+    path("connector/", include("src.DatabaseConnections.urls"), name="connector"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 schema_view = get_schema_view(
