@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 from src.DatabaseConnections.models import ConnectionInfo
 from src.DatabaseConnections.repositories.ms_repository import WinHRepository
@@ -21,7 +21,7 @@ class CreateConnectionManager:
     def create_database_connection(
         self, credentials: Dict[str, Any]
     ) -> bool:
-        dbms: str = credentials.get("dbms", None)
+        dbms: str = credentials.get("dbms", "mssql")
         server: str = credentials["server"]
         database: str = credentials["database"]
         username: str = credentials["username"]
@@ -35,7 +35,6 @@ class CreateConnectionManager:
             if not is_stable:
                 logger.critical("Database connection is not stable")
                 return False
-
         elif dbms == "postgres":
             logger.critical("Database connection is not implemented")
             raise ValueError("Not implemented")
