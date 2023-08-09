@@ -42,11 +42,6 @@ class DatabaseConnectionSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
-class ConnectionStatusSerializer(serializers.Serializer):
-    db = DatabaseConnectionSerializer(read_only=True)
-    api = ApiConnectionSerializer(read_only=True)
-
-
 class ProductSerializer(serializers.Serializer):
     indeks = serializers.IntegerField()
     zlecenie = serializers.CharField(max_length=255)

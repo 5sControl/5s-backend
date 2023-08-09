@@ -1,12 +1,8 @@
 from django.urls import path
 
-from .views import UpdateActiveResourceView
+from .views import ActiveResourceView
 
 
 urlpatterns = [
-    path(
-        "status/",
-        UpdateActiveResourceView.as_view(),
-        name="connector-status",
-    )
+    path("status/", ActiveResourceView.as_view(), name="connector-status"),
 ]

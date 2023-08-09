@@ -1,3 +1,4 @@
+from typing import Dict
 from rest_framework.response import Response
 from rest_framework import generics, status
 
@@ -5,10 +6,33 @@ from src.DatabaseConnections.models import ConnectionInfo
 from src.DatabaseConnections.serilisers import ConnectionInfoSerializer
 
 
-class UpdateActiveResourceView(generics.UpdateAPIView):
+class ActiveResourceView(generics.GenericAPIView):
     serializer_class = ConnectionInfoSerializer
 
-    def update(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
+        database = ConnectionInfo.objects.filter(type="database")
+        api = ConnectionInfo.objects.filter(type="api")
+
+        result: Dict[str, str] = {}
+
+        if database.exists():
+            database = database.first()
+            result["database"] = {
+                "id": database.id,
+                "type": database.type,
+                "is_active": database.is_active,
+            }
+        if api.exists():
+            api = api.first()
+            result["api"] = {
+                "id": api.id,
+                "type": api.type,
+                "is_active": api.is_active,
+            }
+
+        return Response(result)
+
+    def put(self, request, *args, **kwargs):
         connector_type: str = request.data.get("type")
 
         if connector_type == "database":
