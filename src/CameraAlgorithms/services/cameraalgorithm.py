@@ -193,6 +193,8 @@ def create_camera_algorithms(
 
                 data.append([{"coords": coords}])
 
+            print("data", data)
+
             request["extra"] = data[0]
 
         elif algorithm_name == "operation_control":
