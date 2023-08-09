@@ -1,20 +1,25 @@
+from typing import Any, Dict, Tuple, Type, Callable
 from django.core.cache import cache
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
 
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.viewsets import ModelViewSet
-from src.Core.paginators import OrderViewPaginnator
-from src.DatabaseConnections.models import DatabaseConnection
+from rest_framework.request import Request
+from src.DatabaseConnections.models import ConnectionInfo
 
 from src.DatabaseConnections.services import (
-    DatabaseConnectionManager,
+    CreateConnectionManager,
 )
+from src.Core.paginators import OrderViewPaginnator
 from src.DatabaseConnections.utils import check_database_connection
 from src.OrderView.models import IndexOperations
 from src.OrderView.serializers import (
+    ApiConnectionSerializer,
+    ConnectionStatusSerializer,
     DatabaseConnectionSerializer,
     DeleteConnectionSerializer,
     IndexStanowiskoSerializer,
@@ -88,33 +93,40 @@ class OperationNameApiView(generics.GenericAPIView):
 
 
 # TODO: Replace views below to Connector application
-class CreateDatabaseConnectionAPIView(generics.CreateAPIView):
+class CreateConnectionAPIView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = DatabaseConnectionSerializer
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        credentials = serializer.validated_data
-        manager = DatabaseConnectionManager()
+    CONNECTION_TYPE_MAPPING: Dict[str, Tuple[Type[serializers.ModelSerializer], Callable[[CreateConnectionManager, Dict[str, Any]], bool]]] = {
+        "api": (ApiConnectionSerializer, CreateConnectionManager.create_api_connection),
+        "database": (DatabaseConnectionSerializer, CreateConnectionManager.create_database_connection),
+    }
 
-        if manager.create_connection(credentials):
-            serializer.save()
+    def create(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        connection_type: str = request.data.get("type")
+
+        serializer_class, manager_method = self.CONNECTION_TYPE_MAPPING.get(connection_type, (None, None))
+
+        if not serializer_class or not manager_method:
             return Response(
-                {
-                    "success": True,
-                    "message": "Database connection was created successfully",
-                    "connection": DatabaseConnectionSerializer(credentials).data,
-                },
-                status=status.HTTP_201_CREATED,
+                {"success": False, "message": "Invalid connection type"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer: serializers.ModelSerializer = serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        credentials: Dict[str, Any] = serializer.validated_data
+
+        manager: CreateConnectionManager = CreateConnectionManager()
+        result: bool = manager_method(manager, credentials)
+
+        if result:
+            return Response(
+                {"status": True, "message": "Connection was successfully created"},
+                status=status.HTTP_200_OK,
             )
         else:
             return Response(
-                {
-                    "success": False,
-                    "message": "Database connection was not created successfully",
-                    "connection": DatabaseConnectionSerializer(credentials).data,
-                },
+                {"status": False, "message": "Connection was not created"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -124,11 +136,11 @@ class DeleteConectionAPIView(generics.GenericAPIView):
     serializer_class = DeleteConnectionSerializer
 
     def post(self, request, id):
-        manager = DatabaseConnectionManager()
+        manager: CreateConnectionManager = CreateConnectionManager()
 
         if manager.delete_connection(id):
             return Response(
-                {"success": True, "message": "Database was successfully deleted"},
+                {"success": True, "message": "Connection was successfully deleted"},
                 status=status.HTTP_200_OK,
             )
         return Response(
@@ -137,10 +149,14 @@ class DeleteConectionAPIView(generics.GenericAPIView):
         )
 
 
-class GetDatabasesAPIView(generics.ListAPIView):
+class GetConnectionStatusAPIView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
-    queryset = DatabaseConnection.objects.all()
-    serializer_class = DatabaseConnectionSerializer
+    serializer_class = ConnectionStatusSerializer
+
+    def get_object(self):
+        db_connection = ConnectionInfo.objects.filter(type="database").first()
+        api_connection = ConnectionInfo.objects.filter(type="api").first()
+        return {"db": db_connection, "api": api_connection}
 
 
 class IndexOperationsView(ModelViewSet):

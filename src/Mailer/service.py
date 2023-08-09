@@ -18,14 +18,15 @@ def send_notification_email(item, count, image_path, item_status):
     if item['subject'] is None:
         raise ValueError("Missing item subject")
 
-    to_emails = item['to_emails']
-    copy_emails = item['copy_emails']
+    to_emails = item.get('to_emails', [])
+    to_emails = to_emails if to_emails is not None else []
+
+    copy_emails = item.get('copy_emails')
+    copy_emails = copy_emails if copy_emails is not None else []
+
     recipient_list = list(set(to_emails + copy_emails))
 
-    if item['multi_row'] == True:
-        used_algorithm = "multi row"
-    else:
-        used_algorithm = "single row"
+    used_algorithm = item["object_type"]
 
     subject = f"{item['subject']}"
     if item_status == 'Low stock level':

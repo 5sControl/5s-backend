@@ -1,10 +1,8 @@
 from typing import Any, Iterable, Optional
 import pyodbc
 
-from rest_framework.response import Response
-from rest_framework import status
 from src.Core.types import Query
-from src.DatabaseConnections.models import DatabaseConnection
+from src.DatabaseConnections.models import ConnectionInfo
 
 
 class MsSqlConnector:
@@ -34,7 +32,7 @@ class MsSqlConnector:
         return True
 
     def _is_database_connection_exist(self, server, database, username, port):
-        if DatabaseConnection.objects.filter(
+        if ConnectionInfo.objects.filter(
             server=server, database=database, username=username
         ):
             return False
@@ -55,17 +53,13 @@ class MsSqlConnector:
             return False
 
     def get_database_connection(self):
-        connection_data = (
-            DatabaseConnection.objects.all()
-            .values()
-            .first()  # FIXME: should be by database type
-        )
+        connection_data = ConnectionInfo.objects.get(type="database")
 
-        server = connection_data["server"]
-        database = connection_data["database"]
-        username = connection_data["username"]
-        password = connection_data["password"]
-        port = connection_data["port"]
+        server = connection_data.server
+        database = connection_data.database
+        username = connection_data.username
+        password = connection_data.password
+        port = connection_data.port
 
         conn_str = self._get_connection_string(
             server, database, username, password, self.driver, port
@@ -81,10 +75,10 @@ class MsSqlConnector:
         return f"SERVER={server};PORT={port};DATABASE={database};UID={username};PWD={password};DRIVER={driver};TrustServerCertificate=yes"  # noqa
 
     def get_conections(self):
-        return DatabaseConnection.objects.all()
+        return ConnectionInfo.objects.all()
 
     def delete_connection(self, id):
-        DatabaseConnection.objects.get(id=id).delete()
+        ConnectionInfo.objects.get(id=id).delete()
         return True
 
     def executer(

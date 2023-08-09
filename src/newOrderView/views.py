@@ -4,14 +4,17 @@ from django.http import JsonResponse
 from django.core.cache import cache
 from django.views.decorators.cache import cache_page
 from django.utils.decorators import method_decorator
+from django.shortcuts import get_object_or_404
 
 from rest_framework import generics, status
 from rest_framework.response import Response
 
 from src.Core.paginators import NoPagination
+from src.DatabaseConnections.models import ConnectionInfo
 from src.DatabaseConnections.utils import check_database_connection
 from src.newOrderView.models import FiltrationOperationsTypeID
 from src.newOrderView.serializers import FilterOperationsTypeIDSerializer
+from src.newOrderView.services.connector import connector_services
 
 from .services import OperationServices, OrderServices
 from .utils import generate_hash
@@ -37,14 +40,21 @@ class GetOperation(generics.GenericAPIView):
         )
         response = cache.get(key)
 
-        if response is None:
+        connector = get_object_or_404(ConnectionInfo, is_active=True).type
+
+        if connector == "api":
+            print("from api")
+            response: List[Dict[str, Any]] = connector_services.get_operations(from_date, to_date)
+        elif response is None:
+            print("from database")
             response: List[Dict[str, Any]] = OperationServices.get_operations(
                 from_date, to_date, operation_type_ids
             )
             cache.set(key, response, timeout=120)
-
-        if response:
+        else:
+            print("from cache")
             return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
+        print("empty result")
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -68,14 +78,18 @@ class GetMachine(generics.GenericAPIView):
         )
         response = cache.get(key)
 
-        if response is None:
+        connector = get_object_or_404(ConnectionInfo, is_active=True).type 
+
+        if connector == "api" and response is None:
+            response: List[Dict[str, Any]] = connector_services.get_orders(from_date, to_date)
+        elif connector == "database":
             response: List[Dict[str, Any]] = OperationServices.get_machine(
                 from_date, to_date, operation_type_ids
             )
             cache.set(key, response, timeout=60)
-
-        if response:
+        else:
             return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
