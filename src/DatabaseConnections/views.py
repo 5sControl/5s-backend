@@ -10,25 +10,21 @@ class ActiveResourceView(generics.GenericAPIView):
     serializer_class = ConnectionInfoSerializer
 
     def get(self, request, *args, **kwargs):
-        database = ConnectionInfo.objects.filter(type="database")
-        api = ConnectionInfo.objects.filter(type="api")
+        database = ConnectionInfo.objects.filter(type="database").first()
+        api = ConnectionInfo.objects.filter(type="api").first()
 
         result: Dict[str, str] = {}
 
-        if database.exists():
-            database = database.first()
-            result["database"] = {
-                "id": database.id,
-                "type": database.type,
-                "is_active": database.is_active,
-            }
-        if api.exists():
-            api = api.first()
-            result["api"] = {
-                "id": api.id,
-                "type": api.type,
-                "is_active": api.is_active,
-            }
+        result["database"] = {
+            "id": database.id,
+            "type": database.type,
+            "is_active": database.is_active,
+        }
+        result["api"] = {
+            "id": api.id,
+            "type": api.type,
+            "is_active": api.is_active,
+        }
 
         return Response(result)
 
@@ -36,11 +32,19 @@ class ActiveResourceView(generics.GenericAPIView):
         connector_type: str = request.data.get("type")
 
         if connector_type == "database":
-            connector_to_activate: ConnectionInfo = ConnectionInfo.objects.filter(type="database")
-            connector_to_deactivate: ConnectionInfo = ConnectionInfo.objects.filter(type="api")
+            connector_to_activate: ConnectionInfo = ConnectionInfo.objects.filter(
+                type="database"
+            )
+            connector_to_deactivate: ConnectionInfo = ConnectionInfo.objects.filter(
+                type="api"
+            )
         elif connector_type == "api":
-            connector_to_activate: ConnectionInfo = ConnectionInfo.objects.filter(type="api")
-            connector_to_deactivate: ConnectionInfo = ConnectionInfo.objects.filter(type="database")
+            connector_to_activate: ConnectionInfo = ConnectionInfo.objects.filter(
+                type="api"
+            )
+            connector_to_deactivate: ConnectionInfo = ConnectionInfo.objects.filter(
+                type="database"
+            )
         else:
             return Response(
                 {"detail": "Either 'api' or 'database' parameter must be provided."},
@@ -48,7 +52,10 @@ class ActiveResourceView(generics.GenericAPIView):
             )
 
         if not connector_to_activate.exists():
-            return Response({"detail": "Connection doesn't exist"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Connection doesn't exist"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         connector_to_deactivate.update(is_active=False)
         connector_to_activate.update(is_active=True)
         return Response({"detail": "Active resource updated successfully."})
