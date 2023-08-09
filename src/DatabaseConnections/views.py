@@ -10,23 +10,10 @@ class ActiveResourceView(generics.GenericAPIView):
     serializer_class = ConnectionInfoSerializer
 
     def get(self, request, *args, **kwargs):
-        database = ConnectionInfo.objects.filter(type="database").first()
-        api = ConnectionInfo.objects.filter(type="api").first()
-
-        result: Dict[str, str] = {}
-
-        result["database"] = {
-            "id": database.id,
-            "type": database.type,
-            "is_active": database.is_active,
-        }
-        result["api"] = {
-            "id": api.id,
-            "type": api.type,
-            "is_active": api.is_active,
-        }
-
-        return Response(result)
+        active_source = ConnectionInfo.objects.filter(is_active=True)
+        if active_source.exists():
+            return Response({"type": active_source.first().type}, status=status.HTTP_200_OK)
+        return Response({"type": "Not found"}, status=status.HTTP_404_NOT_FOUND)
 
     def put(self, request, *args, **kwargs):
         connector_type: str = request.data.get("type")
