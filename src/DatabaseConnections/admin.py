@@ -1,14 +1,18 @@
 from django.contrib import admin
 
-from .models import DatabaseConnection
+from .models import ConnectionInfo
 
 
-@admin.register(DatabaseConnection)
-class DatabaseConnectionAdmin(admin.ModelAdmin):
+@admin.register(ConnectionInfo)
+class ConnectionInfoAdmin(admin.ModelAdmin):
     list_display = (
-        "database_type",
+        "type",
+        "dbms",
+        "is_active",
         "server",
         "database",
         "username",
         "password",
+        "port",
+        "host",
     )

@@ -24,9 +24,9 @@ class FindCameraAPIView(generics.GenericAPIView):
         return Response(response_data, status=status.HTTP_200_OK)
 
 
-class SystemMessagesApiView(mixins.ListModelMixin,
-                            mixins.CreateModelMixin,
-                            viewsets.GenericViewSet):
+class SystemMessagesApiView(
+    mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet
+):
     serializer_class = SystemMessagesSerializer
     queryset = SystemMessage.objects.order_by("-id")
     pagination_class = SystemMessagesPaginator

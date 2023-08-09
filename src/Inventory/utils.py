@@ -1,9 +1,6 @@
 import logging
 from typing import Any, Dict, List, Tuple
 
-from src.CameraAlgorithms.models.algorithm import CameraAlgorithm
-from src.CameraAlgorithms.models.camera import Camera
-
 logger = logging.getLogger(__name__)
 
 
@@ -13,8 +10,9 @@ class HandleItemUtils:
             create_single_camera_algorithms,
             stop_and_update_algorithm,
         )
+        from src.CameraAlgorithms.models import CameraAlgorithm
 
-        camera_data, algorithm_data = self._get_algorithm_camera_data(camera_id)
+        camera_data, algorithm_data = self._get_algorithm_camera_data_min_max(camera_id)
 
         camera_algo_obj = CameraAlgorithm.objects.filter(
             camera_id=camera_id, algorithm__name="min_max_control"
@@ -31,8 +29,9 @@ class HandleItemUtils:
             create_single_camera_algorithms,
             stop_and_update_algorithm,
         )
+        from src.CameraAlgorithms.models import CameraAlgorithm
 
-        camera_data, algorithm_data = self._get_algorithm_camera_data(camera_id)
+        camera_data, algorithm_data = self._get_algorithm_camera_data_min_max(camera_id)
 
         camera_algo_query = CameraAlgorithm.objects.filter(
             camera=camera_id, algorithm=8
@@ -44,10 +43,47 @@ class HandleItemUtils:
             if items_count > 0:
                 create_single_camera_algorithms(camera_data, algorithm_data)
 
-    def _get_algorithm_camera_data(
+    def save_new_zone(self, zone_id: int) -> None:
+        from src.CameraAlgorithms.services.cameraalgorithm import (
+            create_single_camera_algorithms,
+            stop_and_update_algorithm,
+        )
+        from src.CameraAlgorithms.models import CameraAlgorithm, Camera
+
+        camera_algorithms: List[CameraAlgorithm] = self.get_camera_algorithms_by_zone_id(zone_id)
+        logger.warning(f"With zone {zone_id} was found {camera_algorithms}")
+
+        for camera_algorithm_obj in camera_algorithms:
+            camera_obj: Camera = Camera.objects.get(id=camera_algorithm_obj.camera.pk)
+            zone: List[Dict[str, int]] = camera_algorithm_obj.zones
+            process_id: int = camera_algorithm_obj.process_id
+            camera_data: Dict[str, str] = {
+                "ip": camera_obj.pk,
+                "name": camera_obj.name,
+                "username": camera_obj.username,
+                "password": camera_obj.password,
+            }
+
+            config: Dict[str, List[Any]] = {"zonesID": zone}
+            algorithm_data: Dict[str, Any] = {
+                "name": camera_algorithm_obj.algorithm.name,
+                "config": config,
+            }
+            logger.warning("Stopping process")
+            stop_and_update_algorithm(process_id)
+            logger.warning("Starting process")
+            create_single_camera_algorithms(camera_data, algorithm_data)
+
+    def get_camera_algorithms_by_zone_id(self, zone_id: int):
+        from src.CameraAlgorithms.models import CameraAlgorithm
+        return CameraAlgorithm.objects.filter(zones__contains=[{"id": zone_id}])
+
+    def _get_algorithm_camera_data_min_max(
         self,
         camera_id: int,
     ) -> Tuple[Dict[str, str], Dict[str, Any]]:
+        from src.CameraAlgorithms.models import CameraAlgorithm, Camera
+
         camera_obj: Camera = Camera.objects.get(id=camera_id)
 
         try:

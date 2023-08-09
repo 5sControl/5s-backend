@@ -21,5 +21,9 @@ class Command(BaseCommand):
         for id in stanowiska_data:
             oprtID = id[0]
             oprtName = id[1]
-            if not FiltrationOperationsTypeID.objects.filter(operation_type_id=oprtID).exists():
-                FiltrationOperationsTypeID.objects.create(operation_type_id=oprtID, name=oprtName)
+            if not FiltrationOperationsTypeID.objects.filter(
+                operation_type_id=oprtID
+            ).exists():
+                FiltrationOperationsTypeID.objects.create(
+                    operation_type_id=oprtID, name=oprtName
+                )

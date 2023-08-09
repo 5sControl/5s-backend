@@ -193,7 +193,7 @@ def create_camera_algorithms(
 
                 data.append([{"coords": coords}])
 
-            request["extra"] = data
+            request["extra"] = data[0]
 
         elif algorithm_name == "operation_control":
             operation_control_id = algorithm["config"]["operation_control_id"]
@@ -238,10 +238,6 @@ def create_single_camera_algorithms(
 ) -> None:
     camera_obj: Camera = Camera.objects.get(id=camera_data["ip"])
     algorithm_obj: Algorithm = Algorithm.objects.get(name=algorithm_data["name"])
-
-    camera_algo_obj = CameraAlgorithm.objects.filter(
-        algorithm=algorithm_obj, camera=camera_obj
-    )
 
     rtsp_link: str = camera_rtsp_link(camera_obj.id)
 
@@ -291,6 +287,7 @@ def create_single_camera_algorithms(
     request["extra"] = data
 
     response: Dict[str, Any] = send_run_request(request)
+    logger.warning("Successfullyj")
     save_data(
         algorithm_obj=algorithm_obj,
         camera_obj=camera_obj,

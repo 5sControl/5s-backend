@@ -6,8 +6,8 @@ from .views import (
     GetAllProductAPIView,
     GetOrderDataByZlecenieAPIView,
     OperationNameApiView,
-    CreateDatabaseConnectionAPIView,
-    GetDatabasesAPIView,
+    CreateConnectionAPIView,
+    GetConnectionStatusAPIView,
     DeleteConectionAPIView,
     IndexOperationsView,
 )
@@ -26,12 +26,12 @@ urlpatterns = [
     # database configuration
     path(
         "create-connection/",
-        CreateDatabaseConnectionAPIView.as_view(),
+        CreateConnectionAPIView.as_view(),
         name="mssql-connection",
     ),
     path(
         "get-connections/",
-        GetDatabasesAPIView.as_view(),
+        GetConnectionStatusAPIView.as_view(),
         name="get-list-of-all-database-connections",
     ),
     path(
