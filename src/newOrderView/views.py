@@ -1,4 +1,3 @@
-import logging
 from typing import Dict, List, Any, Optional
 
 from django.http import JsonResponse
@@ -19,8 +18,6 @@ from src.newOrderView.services.connector import connector_services
 
 from .services import OperationServices, OrderServices
 from .utils import generate_hash
-
-logger = logging.getLogger(__name__)
 
 
 class GetOperation(generics.GenericAPIView):
@@ -46,18 +43,18 @@ class GetOperation(generics.GenericAPIView):
         connector = get_object_or_404(ConnectionInfo, is_active=True).type
 
         if connector == "database" and response is None:
-            logger.info("from database")
+            print("from database")
             response: List[Dict[str, Any]] = OperationServices.get_operations(
                 from_date, to_date, operation_type_ids
             )
             cache.set(key, response, timeout=120)
         elif connector == "api" and response is None:
-            logger.info("from api")
+            print("from api")
             response: List[Dict[str, Any]] = connector_services.get_operations(from_date, to_date)
         else:
-            logger.info("from cache")
+            print("from cache")
             return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
-        logger.info("empty result")
+        print("empty result")
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
