@@ -33,8 +33,9 @@ class GetOperation(generics.GenericAPIView):
         connector = get_object_or_404(ConnectionInfo, is_active=True).type
 
         if connector == "api":
+            print("API")
             response: List[Dict[str, Any]] = connector_services.get_operations(from_date, to_date)
-        elif response is None:
+        elif connector == "database" and response is None:
             response: List[Dict[str, Any]] = OperationServices.get_operations(
                 from_date, to_date, operation_type_ids
             )
@@ -56,8 +57,9 @@ class GetOrders(generics.GenericAPIView):
         connector = get_object_or_404(ConnectionInfo, is_active=True).type
 
         if connector == "api" and response is None:
+            print("API")
             response: List[Dict[str, Any]] = connector_services.get_orders(from_date, to_date)
-        elif connector == "database":
+        elif connector == "database" and response is None:
             response: List[Dict[str, Any]] = OrderServices.get_order(
                 from_date, to_date, operation_type_ids
             )
