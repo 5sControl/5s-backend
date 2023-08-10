@@ -17,7 +17,7 @@ from src.newOrderView.serializers import FilterOperationsTypeIDSerializer
 from src.newOrderView.services.connector import connector_services
 
 from .services import OperationServices, OrderServices
-from .utils import generate_hash
+from .utils import get_cache_data, get_date_interval
 
 
 class GetOperation(generics.GenericAPIView):
@@ -25,20 +25,10 @@ class GetOperation(generics.GenericAPIView):
 
     @check_database_connection
     def get(self, request):
-        from_date: str = request.GET.get("from")
-        to_date: str = request.GET.get("to")
+        from_date, to_date = get_date_interval(request)
+        cache_key, operation_type_ids = get_cache_data(from_date, to_date)
 
-        operation_type_ids = FiltrationOperationsTypeID.objects.filter(
-            is_active=True
-        ).values_list("operation_type_id", flat=True)
-        operation_type_ids = list(operation_type_ids)
-
-        key: str = (
-            generate_hash("get_operation", from_date, to_date)
-            + ":"
-            + ":".join(str(id) for id in operation_type_ids)
-        )
-        response = cache.get(key)
+        response = cache.get(cache_key)
 
         connector = get_object_or_404(ConnectionInfo, is_active=True).type
 
@@ -48,46 +38,9 @@ class GetOperation(generics.GenericAPIView):
             response: List[Dict[str, Any]] = OperationServices.get_operations(
                 from_date, to_date, operation_type_ids
             )
-            cache.set(key, response, timeout=120)
-        else:
-            return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
+            cache.set(cache_key, response, timeout=120)
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class GetMachine(generics.GenericAPIView):
-    pagination_class = NoPagination
-
-    @check_database_connection
-    def get(self, request):
-        from_date: str = request.GET.get("from")
-        to_date: str = request.GET.get("to")
-
-        operation_type_ids = FiltrationOperationsTypeID.objects.filter(
-            is_active=True
-        ).values_list("operation_type_id", flat=True)
-        operation_type_ids = list(operation_type_ids)
-
-        key: str = (
-            generate_hash("get_machine", from_date, to_date)
-            + ":"
-            + ":".join(str(id) for id in operation_type_ids)
-        )
-        response = cache.get(key)
-
-        connector = get_object_or_404(ConnectionInfo, is_active=True).type 
-
-        if connector == "api" and response is None:
-            response: List[Dict[str, Any]] = connector_services.get_orders(from_date, to_date)
-        elif connector == "database":
-            response: List[Dict[str, Any]] = OperationServices.get_machine(
-                from_date, to_date, operation_type_ids
-            )
-            cache.set(key, response, timeout=60)
-        else:
-            return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
-
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
 
 
 class GetOrders(generics.GenericAPIView):
@@ -95,28 +48,43 @@ class GetOrders(generics.GenericAPIView):
 
     @check_database_connection
     def get(self, request):
-        from_date: str = request.GET.get("from")
-        to_date: str = request.GET.get("to")
+        from_date, to_date = get_date_interval(request)
+        cache_key, operation_type_ids = get_cache_data(from_date, to_date)
 
-        operation_type_ids = FiltrationOperationsTypeID.objects.filter(
-            is_active=True
-        ).values_list("operation_type_id", flat=True)
-        operation_type_ids = list(operation_type_ids)
+        response = cache.get(cache_key)
 
-        key: str = (
-            generate_hash("get_order", from_date, to_date)
-            + ":"
-            + ":".join(str(id) for id in operation_type_ids)
-        )
-        response = cache.get(key)
+        connector = get_object_or_404(ConnectionInfo, is_active=True).type
 
-        if response is None:
-            response: List[Dict[str, str]] = OrderServices.get_order(
+        if connector == "api" and response is None:
+            response: List[Dict[str, Any]] = connector_services.get_orders(from_date, to_date)
+        elif connector == "database":
+            response: List[Dict[str, Any]] = OrderServices.get_order(
                 from_date, to_date, operation_type_ids
             )
-            cache.set(key, response, timeout=120)
+            cache.set(cache_key, response, timeout=120)
 
-        return JsonResponse(response, status=status.HTTP_200_OK, safe=False)
+        return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
+
+
+class GetMachine(generics.GenericAPIView):
+    pagination_class = NoPagination
+
+    @check_database_connection
+    def get(self, request):
+        from_date, to_date = get_date_interval(request)
+        cache_key, operation_type_ids = get_cache_data(from_date, to_date)
+
+        response = cache.get(cache_key)
+
+        if response is None:
+            response: List[Dict[str, Any]] = OperationServices.get_machine(
+                from_date, to_date, operation_type_ids
+            )
+            cache.set(cache_key, response, timeout=60)
+
+        if response:
+            return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class GetOrderByDetail(generics.GenericAPIView):

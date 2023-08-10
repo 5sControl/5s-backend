@@ -32,8 +32,6 @@ class OdooConnector:
 
     def _send_request(self, url: str) -> List[Dict[str, Any]]:
         response: List[Dict[str, Any]] = requests.get(url)
-        print(url)
-        print(response.json())
         return self._serialize(response)
 
     def _collect_query_params(self, url: str, f_date: str, t_date: str) -> str:
