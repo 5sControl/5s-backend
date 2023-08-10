@@ -16,7 +16,7 @@ def get_response(cache_key: str, from_date: str, to_date: str, operation_type_id
         print("API")
         if type == "operation":
             response: List[Dict[str, Any]] = connector_services.get_operations(from_date, to_date)
-        elif type == "order":
+        elif type == "orders":
             response: List[Dict[str, Any]] = OrderServices.get_order(from_date, to_date, operation_type_ids)
     elif connector == "database":
         response = cache.get(cache_key)
