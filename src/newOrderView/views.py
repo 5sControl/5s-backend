@@ -14,7 +14,8 @@ from src.newOrderView.models import FiltrationOperationsTypeID
 from src.newOrderView.serializers import FilterOperationsTypeIDSerializer
 
 from .services import OperationServices
-from .utils import get_cache_data, get_date_interval, get_response
+from .services.view_services import get_response
+from .utils import get_cache_data, get_date_interval
 
 
 class GetOperation(generics.GenericAPIView):

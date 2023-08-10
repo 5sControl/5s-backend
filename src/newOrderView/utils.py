@@ -10,7 +10,6 @@ from rest_framework.request import Request
 from src.DatabaseConnections.models import ConnectionInfo
 from src.newOrderView.models import FiltrationOperationsTypeID
 from src.newOrderView.services.connector import connector_services
-from src.newOrderView.services.operations import OperationServices, OrderServices
 
 
 def add_ms(time: str) -> datetime:
@@ -60,23 +59,3 @@ def get_date_interval(request: Request) -> Tuple[str]:
     to_date: str = request.GET.get("to")
 
     return from_date, to_date
-
-
-def get_response(cache_key: str, from_date: str, to_date: str, operation_type_ids: List[id], type: str) -> List[Dict[str, Any]]:
-    connector = get_object_or_404(ConnectionInfo, is_active=True).type
-
-    if connector == "api":
-        print("API")
-        if type == "operation":
-            response: List[Dict[str, Any]] = connector_services.get_operations(from_date, to_date)
-        elif type == "order":
-            response: List[Dict[str, Any]] = OrderServices.get_order(from_date, to_date, operation_type_ids)
-    elif connector == "database":
-        response = cache.get(cache_key)
-        if response is None:
-            response: List[Dict[str, Any]] = OperationServices.get_operations(
-                from_date, to_date, operation_type_ids
-            )
-            cache.set(cache_key, response, timeout=120)
-
-    return response
