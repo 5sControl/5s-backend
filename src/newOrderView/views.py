@@ -43,18 +43,15 @@ class GetOperation(generics.GenericAPIView):
         connector = get_object_or_404(ConnectionInfo, is_active=True).type
 
         if connector == "api":
-            print("from api")
             response: List[Dict[str, Any]] = connector_services.get_operations(from_date, to_date)
         elif response is None:
-            print("from database")
             response: List[Dict[str, Any]] = OperationServices.get_operations(
                 from_date, to_date, operation_type_ids
             )
             cache.set(key, response, timeout=120)
         else:
-            print("from cache")
             return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
-        print("empty result")
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
