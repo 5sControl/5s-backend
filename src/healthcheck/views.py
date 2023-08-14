@@ -3,8 +3,9 @@ from rest_framework import generics, status
 from rest_framework.response import Response
 
 from src.Core.paginators import NoPagination
-from src.healthcheck.serializers import CpuLoadSerializer
-from src.healthcheck.utils import get_healthckeck_data
+
+from .serializers import CpuLoadSerializer
+from .utils import get_healthckeck_data
 
 
 class GetHealthCheckApiView(generics.GenericAPIView):
