@@ -33,11 +33,11 @@ INSTALLED_APPS = [
     "django_crontab",
     "src.newOrderView",
     # Common application
-    "src.Healthcheck"
     "src.CameraAlgorithms",
     "src.OrderView",
     "src.DatabaseConnections",
     "src.CompanyLicense.apps.CompanyLicenseConfig",
+    "src.Healthcheck.apps.HealthcheckConfig",
     "src.Inventory.apps.InventoryConfig",
     "src.Employees.apps.EmployeesConfig",
     "src.Suppliers.apps.SuppliersConfig",
