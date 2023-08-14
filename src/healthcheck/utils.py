@@ -6,6 +6,4 @@ def get_cpu_load_percentage():
 
 
 def get_healthckeck_data():
-    return {
-        'cpu_load': get_cpu_load_percentage()
-    }
+    return {"cpu_load": get_cpu_load_percentage()}
