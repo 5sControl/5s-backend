@@ -7,6 +7,8 @@ anydesk: 145 479 941
 IP:172.16.101.100
 
 ngrok: ssh admin1@2.tcp.eu.ngrok.io -p 10274
+
+ngrok: https://e4bc-81-7-77-205.ngrok-free.app/
 ***
 
 
