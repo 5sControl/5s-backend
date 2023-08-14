@@ -13,7 +13,6 @@ def get_response(cache_key: str, from_date: str, to_date: str, operation_type_id
     connector = get_object_or_404(ConnectionInfo, is_active=True).type
 
     if connector == "api":
-        print("API")
         if type == "operation":
             response: List[Dict[str, Any]] = connector_services.get_operations(from_date, to_date)
         elif type == "orders":
