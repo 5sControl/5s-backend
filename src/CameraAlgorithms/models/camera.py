@@ -65,11 +65,13 @@ class ZoneCameras(models.Model):
         return self.name
 
     def is_coordinate_positive(self, coord):
-        return coord['x1'] > 0 and coord['x2'] > 0 and coord['y1'] > 0 and coord['y2'] > 0
+        return (
+            coord["x1"] > 0 and coord["x2"] > 0 and coord["y1"] > 0 and coord["y2"] > 0
+        )
 
     def calculate_area(self, coord):
-        width = coord['x2'] - coord['x1']
-        height = coord['y2'] - coord['y1']
+        width = coord["x2"] - coord["x1"]
+        height = coord["y2"] - coord["y1"]
         return width * height
 
     def remove_invalid_coordinates(self):

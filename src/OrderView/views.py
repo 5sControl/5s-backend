@@ -96,15 +96,26 @@ class OperationNameApiView(generics.GenericAPIView):
 class CreateConnectionAPIView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
 
-    CONNECTION_TYPE_MAPPING: Dict[str, Tuple[Type[serializers.ModelSerializer], Callable[[CreateConnectionManager, Dict[str, Any]], bool]]] = {
+    CONNECTION_TYPE_MAPPING: Dict[
+        str,
+        Tuple[
+            Type[serializers.ModelSerializer],
+            Callable[[CreateConnectionManager, Dict[str, Any]], bool],
+        ],
+    ] = {
         "api": (ApiConnectionSerializer, CreateConnectionManager.create_api_connection),
-        "database": (DatabaseConnectionSerializer, CreateConnectionManager.create_database_connection),
+        "database": (
+            DatabaseConnectionSerializer,
+            CreateConnectionManager.create_database_connection,
+        ),
     }
 
     def create(self, request: Request, *args: Any, **kwargs: Any) -> Response:
         connection_type: str = request.data.get("type")
 
-        serializer_class, manager_method = self.CONNECTION_TYPE_MAPPING.get(connection_type, (None, None))
+        serializer_class, manager_method = self.CONNECTION_TYPE_MAPPING.get(
+            connection_type, (None, None)
+        )
 
         if not serializer_class or not manager_method:
             return Response(
