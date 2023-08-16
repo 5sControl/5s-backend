@@ -42,6 +42,11 @@ ALGORITHMS = [
         "description": machine_control_description,
     },
     {
+        "name": "machine_control_js",
+        "is_available": True,
+        "description": machine_control_description + " (JS)",
+    },
+    {
         "name": "safety_control_ear_protection",
         "is_available": True,
         "description": safety_control_ear_protection_description,
