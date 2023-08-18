@@ -14,13 +14,13 @@ ngrok: https://e4bc-81-7-77-205.ngrok-free.app/
 
 # **Kaunas prod** DELL
 
-https://5s-kaunas-dell.netlify.app/
+https://5408-81-7-77-205.ngrok-free.app/
 
 anydesk:  1 321 188 697
 
 IP:192.168.5.109
 
-ngrok: ssh sserver@0.tcp.eu.ngrok.io -p 19346
+ngrok: ssh sserver@6.tcp.eu.ngrok.io -p 10080
 
 ***
 
