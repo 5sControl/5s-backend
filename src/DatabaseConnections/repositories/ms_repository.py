@@ -37,6 +37,7 @@ class WinHRepository(BaseReadOnlyRepository):
         conn_str = self._get_connection_string(
             server, database, username, password, port
         )
+        print(f"CONNECTION STRING: {conn_str}")
         try:
             self.connector.connect(conn_str)
             self.connector.close()
