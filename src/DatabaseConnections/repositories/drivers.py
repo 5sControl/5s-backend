@@ -12,7 +12,7 @@ class PymssqlConnector:
             port=connection_data["port"],
             user=connection_data["user"],
             password=connection_data["password"],
-            database=connection_data["databases"],
+            database=connection_data["database"],
         )
 
     def close(self):
