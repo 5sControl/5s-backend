@@ -1,7 +1,4 @@
-import requests
-
 from src.Inventory.models import Items
-from src.DatabaseConnections.models import ConnectionInfo
 
 from src.Inventory.serializers import ItemsSerializer
 
@@ -124,35 +121,5 @@ def process_item_status(data):
 
         result.append(item_data)
     return result
-
-
-def odoo_notifikation(message):
-    connection = ConnectionInfo.objects.filter(type="api").values('host', 'database', 'username', 'password')[0]
-    base_url = connection.get('host')
-    username = connection.get('username')
-    password = connection.get('password')
-    db_name = connection.get('database')
-    login_endpoint = "/web/session/authenticate"
-
-    session = requests.Session()
-    response = session.post(f"{base_url}{login_endpoint}", json={
-        "jsonrpc": "2.0",
-        "params": {
-            "db": db_name,
-            "login": username,
-            "password": password
-        }
-    })
-
-    if response.ok:
-        data = {
-            "message": message
-        }
-        send_message_endpoint = "/min_max/send_message"
-        response = session.post(f"{base_url}{send_message_endpoint}", json=data)
-        return response.text
-    else:
-        return {"message": "Authentication failed!"}
-
 
 

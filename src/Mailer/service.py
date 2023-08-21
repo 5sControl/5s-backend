@@ -1,4 +1,5 @@
 import os
+import requests
 
 import smtplib
 from email.message import EmailMessage
@@ -9,6 +10,7 @@ from datetime import time
 from celery import shared_task
 
 from src.Mailer.models import SMTPSettings, WorkingTime
+from src.DatabaseConnections.models import ConnectionInfo
 
 
 @shared_task
@@ -31,6 +33,12 @@ def send_notification_email(item, count, image_path, item_status):
     subject = f"{item['subject']}"
     if item_status == 'Low stock level':
         message = f"Current stock of {item['name']}: {count} {used_algorithm}. Low stock level of {item['name']}: {item['low_stock_level']}. The inventory level of {item['name']} in your stock has fallen to a low level. This means that there are only a limited number of units left in stock and that the item may soon become unavailable. To avoid any inconvenience, we recommend that you take action to replenish your stock of {item['name']} as soon as possible. You are receiving this email because your email account was entered in 5S Control system to receive notifications regarding low stock levels of inventory."
+        print(message)
+        # send notification ODOO
+        try:
+            odoo_notification(message)
+        except Exception as exception:
+            raise exception
 
     image_name = image_path.split('/')[-1]
 
@@ -91,3 +99,35 @@ def test_smtp_settings(smtp_settings):
     except Exception as e:
         print(e)
         return False, str(e)
+
+
+@shared_task
+def odoo_notification(message: str):
+    """Send ODOO notification"""
+
+    connection = ConnectionInfo.objects.filter(type="api").values('host', 'database', 'username', 'password')[0]
+    base_url = connection.get('host')
+    username = connection.get('username')
+    password = connection.get('password')
+    db_name = connection.get('database')
+    login_endpoint = "/web/session/authenticate"
+
+    session = requests.Session()
+    response = session.post(f"{base_url}{login_endpoint}", json={
+        "jsonrpc": "2.0",
+        "params": {
+            "db": db_name,
+            "login": username,
+            "password": password
+        }
+    })
+
+    if response.ok:
+        data = {
+            "message": message
+        }
+        send_message_endpoint = "/min_max/send_message"
+        response = session.post(f"{base_url}{send_message_endpoint}", json=data)
+    else:
+        raise "Authentication failed!"
+
