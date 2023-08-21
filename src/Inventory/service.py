@@ -1,5 +1,10 @@
+import requests
+
 from src.Inventory.models import Items
+from src.DatabaseConnections.models import ConnectionInfo
+
 from src.Inventory.serializers import ItemsSerializer
+
 from src.Mailer.message import send_email_to_suppliers
 from src.Mailer.service import send_notification_email
 
@@ -108,7 +113,7 @@ def process_item_status(data):
 
         print(
             f"item_id=={item.id}, item_name=={item.name}, item_status {item_status}, "
-            f"red_line == {red_line}, multi_row == {data_item[0]['object_type']}"
+            f"red_line == {red_line}, item_type == {data_item[0]['object_type']}"
         )
 
         item.status = item_status
@@ -119,3 +124,35 @@ def process_item_status(data):
 
         result.append(item_data)
     return result
+
+
+def odoo_notifikation(message):
+    connection = ConnectionInfo.objects.filter(type="api").values('host', 'database', 'username', 'password')[0]
+    base_url = connection.get('host')
+    username = connection.get('username')
+    password = connection.get('password')
+    db_name = connection.get('database')
+    login_endpoint = "/web/session/authenticate"
+
+    session = requests.Session()
+    response = session.post(f"{base_url}{login_endpoint}", json={
+        "jsonrpc": "2.0",
+        "params": {
+            "db": db_name,
+            "login": username,
+            "password": password
+        }
+    })
+
+    if response.ok:
+        data = {
+            "message": message
+        }
+        send_message_endpoint = "/min_max/send_message"
+        response = session.post(f"{base_url}{send_message_endpoint}", json=data)
+        return response.text
+    else:
+        return {"message": "Authentication failed!"}
+
+
+
