@@ -33,7 +33,7 @@ def send_notification_email(item, count, image_path, item_status):
     subject = f"{item['subject']}"
     if item_status == 'Low stock level':
         message = f"Current stock of {item['name']}: {count} {used_algorithm}. Low stock level of {item['name']}: {item['low_stock_level']}. The inventory level of {item['name']} in your stock has fallen to a low level. This means that there are only a limited number of units left in stock and that the item may soon become unavailable. To avoid any inconvenience, we recommend that you take action to replenish your stock of {item['name']} as soon as possible. You are receiving this email because your email account was entered in 5S Control system to receive notifications regarding low stock levels of inventory."
-        print(message)
+
         # send notification ODOO
         try:
             odoo_notification(message)
@@ -106,19 +106,23 @@ def odoo_notification(message: str):
     """Send ODOO notification"""
 
     connection = ConnectionInfo.objects.filter(type="api").values('host', 'database', 'username', 'password')[0]
-    base_url = connection.get('host')
-    username = connection.get('username')
-    password = connection.get('password')
-    db_name = connection.get('database')
-    login_endpoint = "/web/session/authenticate"
+
+    if connection['host'] is None:
+        raise ValueError("Missing connection host")
+    if connection['username'] is None:
+        raise ValueError("Missing connection username")
+    if connection['password'] is None:
+        raise ValueError("Missing connection password")
+    if connection['database'] is None:
+        raise ValueError("Missing connection database")
 
     session = requests.Session()
-    response = session.post(f"{base_url}{login_endpoint}", json={
+    response = session.post(f"{connection['host']}/web/session/authenticate", json={
         "jsonrpc": "2.0",
         "params": {
-            "db": db_name,
-            "login": username,
-            "password": password
+            "db": connection['database'],
+            "login": connection['username'],
+            "password": connection['password']
         }
     })
 
@@ -127,7 +131,7 @@ def odoo_notification(message: str):
             "message": message
         }
         send_message_endpoint = "/min_max/send_message"
-        response = session.post(f"{base_url}{send_message_endpoint}", json=data)
+        response = session.post(f"{connection['host']}{send_message_endpoint}", json=data)
     else:
         raise "Authentication failed!"
 
