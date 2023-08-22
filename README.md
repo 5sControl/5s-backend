@@ -20,9 +20,9 @@ anydesk:  1 321 188 697
 
 IP:192.168.5.109
 
-ngrok: https://5408-81-7-77-205.ngrok-free.app/
+ngrok: https://40c4-81-7-77-205.ngrok-free.app/
 
-ngrok: ssh sserver@6.tcp.eu.ngrok.io -p 10080
+ngrok: ssh sserver@5.tcp.eu.ngrok.io -p 17890
 
 ***
 
