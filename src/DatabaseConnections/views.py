@@ -1,4 +1,3 @@
-from typing import Dict
 from rest_framework.response import Response
 from rest_framework import generics, status
 
@@ -12,7 +11,9 @@ class ActiveResourceView(generics.GenericAPIView):
     def get(self, request, *args, **kwargs):
         active_source = ConnectionInfo.objects.filter(is_active=True)
         if active_source.exists():
-            return Response({"type": active_source.first().type}, status=status.HTTP_200_OK)
+            return Response(
+                {"type": active_source.first().type}, status=status.HTTP_200_OK
+            )
         return Response({"type": "Not found"}, status=status.HTTP_404_NOT_FOUND)
 
     def put(self, request, *args, **kwargs):

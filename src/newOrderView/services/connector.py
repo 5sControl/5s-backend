@@ -6,7 +6,9 @@ from src.DatabaseConnections.models import ConnectionInfo
 
 
 class OdooConnector:
-    def get_operations(self, f_date: str, t_date: str) -> Optional[List[Dict[str, Any]]]:
+    def get_operations(
+        self, f_date: str, t_date: str
+    ) -> Optional[List[Dict[str, Any]]]:
         base_url: str = self._modify_url_by_path(self._get_base_url(), "operations")
         request_url: str = self._collect_query_params(base_url, f_date, t_date)
 
@@ -26,7 +28,9 @@ class OdooConnector:
         if raise_exception:
             url: str = ConnectionInfo.objects.get(type="api", is_active=True).host
         else:
-            url: str = ConnectionInfo.objects.filter(type="api", is_active=True).first().host
+            url: str = (
+                ConnectionInfo.objects.filter(type="api", is_active=True).first().host
+            )
 
         return url + "/fives"
 

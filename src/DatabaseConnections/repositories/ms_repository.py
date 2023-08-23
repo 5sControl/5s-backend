@@ -1,3 +1,4 @@
+import logging
 from typing import List, Optional, Any
 
 from src.Core.types import Query
@@ -5,6 +6,8 @@ from src.DatabaseConnections.models import ConnectionInfo
 
 from .base import BaseReadOnlyRepository
 from .drivers import PymssqlConnector
+
+logger = logging.getLogger(__name__)
 
 
 class WinHRepository(BaseReadOnlyRepository):
@@ -40,7 +43,8 @@ class WinHRepository(BaseReadOnlyRepository):
         try:
             self.connector.connect(conn_str)
             self.connector.close()
-        except Exception:
+        except Exception as e:
+            logger.critical(f"Connection failed: {e}")
             return False
         return True
 
