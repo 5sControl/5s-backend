@@ -1,5 +1,7 @@
 from src.Inventory.models import Items
+
 from src.Inventory.serializers import ItemsSerializer
+
 from src.Mailer.message import send_email_to_suppliers
 from src.Mailer.service import send_notification_email
 
@@ -108,7 +110,7 @@ def process_item_status(data):
 
         print(
             f"item_id=={item.id}, item_name=={item.name}, item_status {item_status}, "
-            f"red_line == {red_line}, multi_row == {data_item[0]['object_type']}"
+            f"red_line == {red_line}, item_type == {data_item[0]['object_type']}"
         )
 
         item.status = item_status
@@ -119,3 +121,5 @@ def process_item_status(data):
 
         result.append(item_data)
     return result
+
+
