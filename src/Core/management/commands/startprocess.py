@@ -39,7 +39,8 @@ class Command(BaseCommand):
                 "extra": extra_params,
             }
 
-            if camera_algorithm.algorithm.name == "machine_control":
+            if camera_algorithm.algorithm.name == "machine_control"\
+                    or camera_algorithm.algorithm.name == "machine_control_js":
                 all_zones = camera_algorithm.zones
                 all_cords = []
                 for zone_id in all_zones:
