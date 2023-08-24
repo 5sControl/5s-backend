@@ -181,7 +181,7 @@ def create_camera_algorithms(
             data.append(new_data)
             request["extra"] = data
 
-        elif algorithm_name == "machine_control":
+        elif algorithm_name == "machine_control" or algorithm_name == "machine_control_js":
             logger.info("Starting machine control algorithm")
             for zone_id in zones:
                 zone_camera: ZoneCameras = ZoneCameras.objects.get(
