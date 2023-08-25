@@ -1,5 +1,9 @@
+import requests
+import json
+
 from rest_framework.response import Response
 from rest_framework import generics, status
+from rest_framework.views import APIView
 
 from src.DatabaseConnections.models import ConnectionInfo
 from src.DatabaseConnections.serilisers import ConnectionInfoSerializer
@@ -47,3 +51,27 @@ class ActiveResourceView(generics.GenericAPIView):
         connector_to_deactivate.update(is_active=False)
         connector_to_activate.update(is_active=True)
         return Response({"detail": "Active resource updated successfully."})
+
+
+class GetOdooAllItems(APIView):
+    def get(self, request, *args, **kwargs):
+        """Returns a list of all items from the ODOO"""
+        try:
+            connection = ConnectionInfo.objects.filter(type="api").values('host', 'database', 'username', 'password')[0]
+
+            if connection['host'] is None:
+                raise ValueError("Missing connection host")
+            if connection['username'] is None:
+                raise ValueError("Missing connection username")
+            if connection['password'] is None:
+                raise ValueError("Missing connection password")
+            if connection['database'] is None:
+                raise ValueError("Missing connection database")
+            response = requests.get(f"{connection['host']}/min_max/all_items")
+            if response.status_code == 200:
+                data = response.json().get('data')
+                return Response(data, status=status.HTTP_200_OK)
+            else:
+                return Response({"error": "Failed to fetch data from external service"}, status=response.status_code)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
