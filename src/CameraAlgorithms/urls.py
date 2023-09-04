@@ -16,6 +16,7 @@ from .views import (
 
 router = DefaultRouter()
 router.register(r"zone", ZoneCameraListAPIView, basename="ZoneCameraList")
+router.register(r"algorithms-detail", AlgorithmDetailApiView, basename="algorithms-available")
 
 
 urlpatterns = [
@@ -27,11 +28,6 @@ urlpatterns = [
         "create-process/",
         CreateCameraAlgorithmsApiView.as_view(),
         name="camera-algorithm-create",
-    ),
-    path(
-        "algorithms-detail/",
-        AlgorithmDetailApiView.as_view(),
-        name="algorithms-available",
     ),
     path("get-process/", AlgorithmProcessApiView.as_view(), name="camera-process"),
     path("logs/", CameraAlgorithmLogListAPIView.as_view(), name="log"),
