@@ -85,6 +85,23 @@ class Command(BaseCommand):
                                 "coords": zone_camera.coords,
                             }
                         )
+
+                    else:
+                        # collect all zones for any custom algorithm
+                        all_zones = camera_algorithm.zones
+                        all_cords = []
+                        for zone_id in all_zones:
+                            zone_camera = ZoneCameras.objects.get(
+                                id=zone_id["id"], camera=camera_obj
+                            )
+                            coords = zone_camera.coords
+                            coords[0]["zoneId"] = zone_camera.id
+                            coords[0]["zoneName"] = zone_camera.name
+
+                            all_cords.append(coords[0])
+
+                        request["extra"] = [{"coords": all_cords}]
+
                 except Exception as e:
                     logger.critical(f"Error while collecting zone: {e}")
 
