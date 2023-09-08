@@ -116,8 +116,9 @@ class Command(BaseCommand):
             except SenderError as e:
                 logger.critical(f"Yolo server is not available. Details: {e}")
             except InvalidResponseError as e:
-                print(11111111, request.get('algorithm'), camera_algorithm)
-                # CameraAlgorithm.objects.get(process_id=pid).delete()
+                records_to_delete = CameraAlgorithm.objects.filter(algorithm=request.get('algorithm'), camera=camera_algorithm)
+                records_to_delete.delete()
+                print(f"Delete records {camera_algorithm}")
                 logger.critical(
                     f"Yolo can't start algorithm {algorithm_obj.name} on camera {camera_obj.id}. Details: {e}"
                 )
