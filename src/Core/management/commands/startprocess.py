@@ -8,7 +8,7 @@ from src.Core.exceptions import SenderError, InvalidResponseError
 from src.Inventory.models import Items
 
 from src.CameraAlgorithms.models.camera import ZoneCameras
-from src.CameraAlgorithms.models import Camera, CameraAlgorithm
+from src.CameraAlgorithms.models import Camera, CameraAlgorithm, Algorithm
 from src.CameraAlgorithms.services.cameraalgorithm import (
     camera_rtsp_link,
     send_run_request,
@@ -119,7 +119,8 @@ class Command(BaseCommand):
                 logger.critical(
                     f"Yolo can't start algorithm {algorithm_obj.name} on camera {camera_obj.id}. Details: {e}"
                 )
-                records_to_delete = CameraAlgorithm.objects.filter(algorithm=request.get('algorithm'),
+                id_algorithm = Algorithm.objects.get(name=request.get('algorithm')).id
+                records_to_delete = CameraAlgorithm.objects.filter(algorithm=id_algorithm,
                                                                    camera=camera_algorithm.camera)
                 records_to_delete.delete()
                 print(f"Deleter records in CameraAlgorithm, {request.get('algorithm')} - {camera_algorithm.camera}")
