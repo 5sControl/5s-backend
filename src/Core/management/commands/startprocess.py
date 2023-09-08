@@ -110,6 +110,7 @@ class Command(BaseCommand):
 
             try:
                 result = send_run_request(request)
+                print("#@$%^&*&^%$#", result)
                 logger.info(
                     f"Algorithm successfully started. Request {request}, Result {result}"
                 )
