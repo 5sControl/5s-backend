@@ -110,13 +110,14 @@ class Command(BaseCommand):
 
             try:
                 result = send_run_request(request)
-                print("#@$%^&*&^%$#", result)
                 logger.info(
                     f"Algorithm successfully started. Request {request}, Result {result}"
                 )
             except SenderError as e:
                 logger.critical(f"Yolo server is not available. Details: {e}")
             except InvalidResponseError as e:
+                print(11111111, request.get('algorithm'), camera_algorithm)
+                # CameraAlgorithm.objects.get(process_id=pid).delete()
                 logger.critical(
                     f"Yolo can't start algorithm {algorithm_obj.name} on camera {camera_obj.id}. Details: {e}"
                 )
