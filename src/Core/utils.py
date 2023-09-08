@@ -28,9 +28,6 @@ def Sender(operation, data, cstm_port=None):
         link = f"{SERVER_URL}:{port}{url}"
 
     request = requests.post(link, json=data)
-    if request.json().get('status') == False:
-        print("!!!!!!!!!", data)
-        # CameraAlgorithm.objects.get(process_id=pid).delete()
     logger.warning(f"request status from sender -> {request}")
     request.raise_for_status()
 
