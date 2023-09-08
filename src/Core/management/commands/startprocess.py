@@ -123,7 +123,6 @@ class Command(BaseCommand):
                 records_to_delete = CameraAlgorithm.objects.filter(algorithm=id_algorithm,
                                                                    camera=camera_algorithm.camera)
                 records_to_delete.delete()
-                print(f"Deleter records in CameraAlgorithm, {request.get('algorithm')} - {camera_algorithm.camera}")
                 logger.critical(f"Deleter records in CameraAlgorithm {request.get('algorithm')} - {camera_algorithm.camera}")
             else:
                 new_process_id = result["pid"]
