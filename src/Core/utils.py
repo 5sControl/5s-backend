@@ -28,7 +28,7 @@ def Sender(operation, data, cstm_port=None):
         link = f"{SERVER_URL}:{port}{url}"
 
     request = requests.post(link, json=data)
-    print(111111111, request.content)
+    print(111111111, request.json().get('status'))
     logger.warning(f"request status from sender -> {request}")
     request.raise_for_status()
 
