@@ -384,7 +384,7 @@ def stop_camera_algorithm(pid: int) -> Dict[str, Any]:
     )
     logger.warning(response)
     if not response["status"]:
-        CameraAlgorithm.objects.get(process_id=pid).id.delete()
+        CameraAlgorithm.objects.get(process_id=pid).delete()
         raise InvalidResponseError("/stop", response["status"])
 
     return response
