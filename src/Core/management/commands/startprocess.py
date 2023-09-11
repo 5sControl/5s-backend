@@ -39,22 +39,20 @@ class Command(BaseCommand):
                 "extra": extra_params,
             }
 
-            if camera_algorithm.algorithm.name == "machine_control"\
-                    or camera_algorithm.algorithm.name == "machine_control_js":
-                all_zones = camera_algorithm.zones
-                all_cords = []
-                for zone_id in all_zones:
-                    zone_camera = ZoneCameras.objects.get(
-                        id=zone_id["id"], camera=camera_obj
-                    )
-                    coords = zone_camera.coords
-                    coords[0]["zoneId"] = zone_camera.id
-                    coords[0]["zoneName"] = zone_camera.name
+            all_zones = camera_algorithm.zones
+            all_cords = []
+            for zone_id in all_zones:
+                zone_camera = ZoneCameras.objects.get(
+                    id=zone_id["id"], camera=camera_obj
+                )
+                coords = zone_camera.coords
+                coords[0]["zoneId"] = zone_camera.id
+                coords[0]["zoneName"] = zone_camera.name
 
-                    all_cords.append(coords[0])
+                all_cords.append(coords[0])
 
-                request["extra"] = [{"coords": all_cords}]
-            print(111111111, camera_algorithm.algorithm.name == "min_max_control", f"{camera_algorithm.algorithm.name}")
+            request["extra"] = [{"coords": all_cords}]
+
             if camera_algorithm.algorithm.name == "min_max_control":
                 algorithm_items = Items.objects.filter(camera=camera_obj)
                 areas = []
@@ -85,28 +83,12 @@ class Command(BaseCommand):
                                 "coords": zone_camera.coords,
                             }
                         )
-
-                    # else:
-                    #     # collect all zones for any custom algorithm
-                    #     all_zones = camera_algorithm.zones
-                    #     all_cords = []
-                    #     for zone_id in all_zones:
-                    #         zone_camera = ZoneCameras.objects.get(
-                    #             id=zone_id["id"], camera=camera_obj
-                    #         )
-                    #         coords = zone_camera.coords
-                    #         coords[0]["zoneId"] = zone_camera.id
-                    #         coords[0]["zoneName"] = zone_camera.name
-                    #
-                    #         all_cords.append(coords[0])
-                    #
-                    #     request["extra"] = [{"coords": all_cords}]
-
                 except Exception as e:
                     logger.critical(f"Error while collecting zone: {e}")
 
                 new_data = {"areas": areas, "zones": zones}
                 extra_params.append(new_data)
+                request["extra"] = extra_params
 
             try:
                 result = send_run_request(request)
