@@ -101,11 +101,6 @@ class Command(BaseCommand):
                 logger.critical(
                     f"Yolo can't start algorithm {algorithm_obj.name} on camera {camera_obj.id}. Details: {e}"
                 )
-                id_algorithm = Algorithm.objects.get(name=request.get('algorithm')).id
-                records_to_delete = CameraAlgorithm.objects.filter(algorithm=id_algorithm,
-                                                                   camera=camera_algorithm.camera)
-                records_to_delete.delete()
-                logger.critical(f"Deleter records in CameraAlgorithm {request.get('algorithm')} - {camera_algorithm.camera}")
             else:
                 new_process_id = result["pid"]
                 camera_algorithm.process_id = new_process_id
