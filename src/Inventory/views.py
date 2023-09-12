@@ -85,7 +85,7 @@ class ItemsRetrieveAPIView(RetrieveAPIView):
 
 
 class ItemsHistoryViewSet(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     @validate_license
     def get(self, request, date, start_time, end_time, item_id=None):
