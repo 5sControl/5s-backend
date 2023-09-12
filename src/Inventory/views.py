@@ -20,6 +20,7 @@ from .serializers import ItemsSerializer
 
 
 class ItemsListAPIView(ListAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Items.objects.all()
     serializer_class = ItemsSerializer
     pagination_class = NoPagination
@@ -51,11 +52,13 @@ class ItemsListAPIView(ListAPIView):
 
 # @validate_license
 class ItemsCreateAPIView(CreateAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Items.objects.all()
     serializer_class = ItemsSerializer
 
 
 class ItemsRetrieveAPIView(RetrieveAPIView):
+    permission_classes = [IsAuthenticated]
     queryset = Items.objects.all()
     serializer_class = ItemsSerializer
     lookup_field = "id"
