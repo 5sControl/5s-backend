@@ -1,12 +1,10 @@
-import requests
-import json
-
 from rest_framework.response import Response
 from rest_framework import generics, status
 from rest_framework.views import APIView
 
 from src.DatabaseConnections.models import ConnectionInfo
-from src.DatabaseConnections.serilisers import ConnectionInfoSerializer
+from src.DatabaseConnections.serilisers import ConnectionInfoSerializer, OdooItemSerializer
+from src.DatabaseConnections.utils import get_all_items_odoo
 
 
 class ActiveResourceView(generics.GenericAPIView):
@@ -55,23 +53,10 @@ class ActiveResourceView(generics.GenericAPIView):
 
 class GetOdooAllItems(APIView):
     def get(self, request, *args, **kwargs):
-        """Returns a list of all items from the ODOO"""
         try:
-            connection = ConnectionInfo.objects.filter(type="api").values('host', 'database', 'username', 'password')[0]
+            data_items = get_all_items_odoo()
+            serializer = OdooItemSerializer(data_items, many=True)
 
-            if connection['host'] is None:
-                raise ValueError("Missing connection host")
-            if connection['username'] is None:
-                raise ValueError("Missing connection username")
-            if connection['password'] is None:
-                raise ValueError("Missing connection password")
-            if connection['database'] is None:
-                raise ValueError("Missing connection database")
-            response = requests.get(f"{connection['host']}/min_max/all_items")
-            if response.status_code == 200:
-                data = response.json().get('data')
-                return Response(data, status=status.HTTP_200_OK)
-            else:
-                return Response({"error": "Failed to fetch data from external service"}, status=response.status_code)
+            return Response(serializer.data, status=200)
         except Exception as e:
-            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({'error': str(e)}, status=500)

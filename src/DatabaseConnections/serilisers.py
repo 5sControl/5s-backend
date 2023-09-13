@@ -15,3 +15,8 @@ class ConnectorStatusSerializer(serializers.Serializer):
             "type",
             "is_active",
         ]
+
+
+class OdooItemSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField()
