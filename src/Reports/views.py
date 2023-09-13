@@ -153,7 +153,7 @@ class ReportListView(APIView):
 
 
 class SearchReportListView(GenericAPIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     serializer_class = ReportSerializers
 
     @validate_license

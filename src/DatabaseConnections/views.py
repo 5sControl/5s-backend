@@ -1,8 +1,10 @@
 from rest_framework.response import Response
 from rest_framework import generics, status
+from rest_framework.views import APIView
 
 from src.DatabaseConnections.models import ConnectionInfo
-from src.DatabaseConnections.serilisers import ConnectionInfoSerializer
+from src.DatabaseConnections.serilisers import ConnectionInfoSerializer, OdooItemSerializer
+from src.DatabaseConnections.utils import get_all_items_odoo
 
 
 class ActiveResourceView(generics.GenericAPIView):
@@ -47,3 +49,14 @@ class ActiveResourceView(generics.GenericAPIView):
         connector_to_deactivate.update(is_active=False)
         connector_to_activate.update(is_active=True)
         return Response({"detail": "Active resource updated successfully."})
+
+
+class GetOdooAllItems(APIView):
+    def get(self, request, *args, **kwargs):
+        try:
+            data_items = get_all_items_odoo()
+            serializer = OdooItemSerializer(data_items, many=True)
+
+            return Response(serializer.data, status=200)
+        except Exception as e:
+            return Response({'error': str(e)}, status=500)

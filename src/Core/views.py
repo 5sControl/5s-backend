@@ -1,13 +1,12 @@
-import os
 import requests
 
+from django.core.paginator import Paginator
 from rest_framework.response import Response
 from rest_framework import status, generics, viewsets, mixins
 
 from .const import SERVER_URL
 from .serializers import SystemMessagesSerializer
 from .models import SystemMessage
-from .paginators import SystemMessagesPaginator
 
 
 class FindCameraAPIView(generics.GenericAPIView):
@@ -29,4 +28,10 @@ class SystemMessagesApiView(
 ):
     serializer_class = SystemMessagesSerializer
     queryset = SystemMessage.objects.order_by("-id")
-    pagination_class = SystemMessagesPaginator
+
+    def get_queryset(self):
+        page_size = self.request.query_params.get('page_size', 25)
+        paginator = Paginator(self.queryset, page_size)
+        page_number = self.request.query_params.get('page', 1)
+        page = paginator.get_page(page_number)
+        return page

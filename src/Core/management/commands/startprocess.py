@@ -8,7 +8,7 @@ from src.Core.exceptions import SenderError, InvalidResponseError
 from src.Inventory.models import Items
 
 from src.CameraAlgorithms.models.camera import ZoneCameras
-from src.CameraAlgorithms.models import Camera, CameraAlgorithm
+from src.CameraAlgorithms.models import Camera, CameraAlgorithm, Algorithm
 from src.CameraAlgorithms.services.cameraalgorithm import (
     camera_rtsp_link,
     send_run_request,
@@ -39,20 +39,19 @@ class Command(BaseCommand):
                 "extra": extra_params,
             }
 
-            if camera_algorithm.algorithm.name == "machine_control":
-                all_zones = camera_algorithm.zones
-                all_cords = []
-                for zone_id in all_zones:
-                    zone_camera = ZoneCameras.objects.get(
-                        id=zone_id["id"], camera=camera_obj
-                    )
-                    coords = zone_camera.coords
-                    coords[0]["zoneId"] = zone_camera.id
-                    coords[0]["zoneName"] = zone_camera.name
+            all_zones = camera_algorithm.zones
+            all_cords = []
+            for zone_id in all_zones:
+                zone_camera = ZoneCameras.objects.get(
+                    id=zone_id["id"], camera=camera_obj
+                )
+                coords = zone_camera.coords
+                coords[0]["zoneId"] = zone_camera.id
+                coords[0]["zoneName"] = zone_camera.name
 
-                    all_cords.append(coords[0])
+                all_cords.append(coords[0])
 
-                request["extra"] = [{"coords": all_cords}]
+            request["extra"] = [{"coords": all_cords}]
 
             if camera_algorithm.algorithm.name == "min_max_control":
                 algorithm_items = Items.objects.filter(camera=camera_obj)
@@ -89,6 +88,7 @@ class Command(BaseCommand):
 
                 new_data = {"areas": areas, "zones": zones}
                 extra_params.append(new_data)
+                request["extra"] = extra_params
 
             try:
                 result = send_run_request(request)

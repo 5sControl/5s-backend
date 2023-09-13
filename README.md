@@ -6,9 +6,9 @@ anydesk: 145 479 941
 
 IP:172.16.101.100
 
-ngrok: ssh admin1@0.tcp.eu.ngrok.io -p 18864
+ngrok: ssh admin1@6.tcp.eu.ngrok.io -p 13731
 
-ngrok: https://a2f8-81-7-77-205.ngrok-free.app/
+ngrok: https://8977-81-7-77-205.ngrok-free.app
 ***
 
 
@@ -37,9 +37,9 @@ https://5s-office.netlify.app/
 
 http://192.168.1.110:3000/
 
-ngrok: ssh server@8.tcp.ngrok.io -p11360
+ngrok: ssh server@8.tcp.ngrok.io -p19264
 
-ngrok: https://40da-134-17-26-206.ngrok-free.app/
+ngrok: https://e449-134-17-26-206.ngrok-free.app/
 ***
 
 # **Office designers**
