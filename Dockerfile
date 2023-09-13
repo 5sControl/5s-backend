@@ -1,7 +1,6 @@
 FROM python:3.9-slim AS builder
 
 RUN apt-get update && apt-get install -y \
-    cmake \
     gcc \
     python3-dev \
     musl-dev \
