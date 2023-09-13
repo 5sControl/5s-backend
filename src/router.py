@@ -7,6 +7,7 @@ from drf_yasg import openapi
 
 from rest_framework import permissions
 
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 routes = [
     path("employees/", include("src.Employees.urls"), name="employees"),
@@ -25,12 +26,13 @@ routes = [
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="StaffControl API",
+        title="5controlS API",
         default_version="v3.1.3",
-        description="StaffControl Api implementation",
+        description="5controlS Api implementation",
     ),
     public=True,
     permission_classes=[permissions.AllowAny],
+    authentication_classes=[JWTAuthentication],
     patterns=[path("api/", include(routes))],
     urlconf='config.urls',
 )

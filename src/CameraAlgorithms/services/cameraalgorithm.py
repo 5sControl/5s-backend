@@ -216,14 +216,22 @@ def create_camera_algorithms(
             IndexOperations.objects.filter(camera=camera_obj).delete()
             index_operation.save()
 
-        elif algorithm_name in [
-            "idle_control",
-            "safety_control_ear_protection",
-            "safety_control_head_protection",
-            "safety_control_hand_protection",
-            "safety_control_reflective_jacket",
-        ]:
-            pass
+        else:
+            # Runs for any custom algorithm
+            for zone_id in zones:
+                zone_camera: ZoneCameras = ZoneCameras.objects.get(
+                    id=zone_id["id"], camera=camera_obj
+                )
+                coords: Dict[str, Any] = zone_camera.coords
+                coords[0]["zoneId"] = zone_camera.id
+                coords[0]["zoneName"] = zone_camera.name
+
+                data.append([{"coords": coords}])
+
+            if len(data) > 0:
+                request["extra"] = data[0]
+            else:
+                request["extra"] = data
 
         logger.info(f"Starting {algorithm_name} algorithm")
 
@@ -376,6 +384,7 @@ def stop_camera_algorithm(pid: int) -> Dict[str, Any]:
     )
     logger.warning(response)
     if not response["status"]:
+        CameraAlgorithm.objects.get(process_id=pid).delete()
         raise InvalidResponseError("/stop", response["status"])
 
     return response
