@@ -7,25 +7,21 @@ from rest_framework.permissions import IsAuthenticated
 from src.Core.permissions import IsSuperuserPermission
 
 from src.Employees.services import user_manager
-from src.Employees.serializers import UserSerializer
+from src.Employees.serializers import UserSerializer, CreateUserSerializer
 
 
-class CreateUserView(generics.GenericAPIView):
-    """Create new staff or worker user"""
-
+class CreateUserView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated, IsSuperuserPermission]
-    serializer_class = UserSerializer
+    serializer_class = CreateUserSerializer
 
-    def post(self, request, *args, **kwargs):
-        user_type = request.data.get("user_type")
-        username = request.data.get("username")
-        password = request.data.get("password")
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-        if not user_type or not username or not password:
-            return Response(
-                data={"error": "User Type, Username, and Password are required"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        user_type = serializer.validated_data.get("user_type")
+        username = serializer.validated_data.get("username")
+        password = serializer.validated_data.get("password")
+
         if not User.objects.filter(username=username).exists():
             if user_type.lower() == "admin":
                 user_manager.create_admin(username, password)
@@ -46,5 +42,6 @@ class CreateUserView(generics.GenericAPIView):
 
 
 class UserListApiView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated, IsSuperuserPermission]
     queryset = User.objects.all()
     serializer_class = UserSerializer
