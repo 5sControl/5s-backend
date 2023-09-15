@@ -49,16 +49,3 @@ SIMPLE_JWT = {
     "UPDATE_LAST_LOGIN": False,
 }
 
-SWAGGER_SETTINGS = {
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
-    ],
-    "SECURITY_DEFINITIONS": {
-        "JWT": {
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header",
-        },
-    },
-    "AUTH_HEADER_TYPES": ["JWT"],
-}
