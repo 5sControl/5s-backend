@@ -27,13 +27,13 @@ class CameraAPIView(generics.ListAPIView):
     serializer_class = CameraModelSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = NoPagination
-    queryset = Camera.objects.all()
+    queryset = Camera.objects.all().order_by('id')
 
 
 class AlgorithmDetailApiView(ModelViewSet):
     serializer_class = AlgorithmDetailSerializer
     permission_classes = [IsAuthenticated]
-    queryset = Algorithm.objects.all()
+    queryset = Algorithm.objects.all().order_by('id')
     pagination_class = NoPagination
 
 
