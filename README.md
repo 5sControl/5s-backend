@@ -37,8 +37,6 @@ https://5s-office.netlify.app/
 
 http://192.168.1.110:3000/
 
-ngrok: https://e449-134-17-26-206.ngrok-free.app
-
 ngrok: ssh server@8.tcp.ngrok.io -p19264
 
 ngrok: https://e449-134-17-26-206.ngrok-free.app/
