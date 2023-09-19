@@ -59,6 +59,7 @@ class CreateCameraAlgorithmsApiView(generics.GenericAPIView):
     serializer_class = CreateCameraAlgorithmSerializer
 
     def post(self, request, *args, **kwargs):
+        """Creates a separate camera and camera/algorithm"""
         serializer = CreateCameraAlgorithmSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         CreateCameraAlgorithms(serializer.validated_data)
