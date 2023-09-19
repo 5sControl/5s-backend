@@ -57,11 +57,6 @@ ALGORITHMS = [
         "description": safety_control_head_protection_description,
     },
     {
-        "name": "safety_control_hand_protection",
-        "is_available": False,
-        "description": safety_control_hand_protection_description,
-    },
-    {
         "name": "safety_control_reflective_jacket",
         "is_available": True,
         "description": safety_control_reflective_jacket_description,
