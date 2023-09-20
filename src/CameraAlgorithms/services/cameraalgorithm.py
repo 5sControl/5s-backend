@@ -19,8 +19,8 @@ logger = logging.getLogger(__name__)
 @check_active_cameras
 @check_active_algorithms
 def CreateCameraAlgorithms(camera_algorithm_data: Dict[str, Any]) -> None:
-    camera: Dict[str, str] = camera_algorithm_data["camera"]
-    algorithms: List[Dict[str, Any]] = camera_algorithm_data["algorithms"]
+    camera: Dict[str, str] = camera_algorithm_data.get("camera")
+    algorithms: List[Dict[str, Any]] = camera_algorithm_data.get("algorithms", [])
 
     create_camera(camera)
 
