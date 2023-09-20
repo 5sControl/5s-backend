@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class Items(models.Model):
     OBJECT_TYPE_CHOICES = [
         ("bottle", "Bottle"),
-        ("boxe", "Boxe"),
+        ("box", "Box"),
         ("red line", "Red Line"),
     ]
 
