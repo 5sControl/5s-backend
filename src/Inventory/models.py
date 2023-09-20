@@ -12,9 +12,9 @@ logger = logging.getLogger(__name__)
 
 class Items(models.Model):
     OBJECT_TYPE_CHOICES = [
-        ("bottles", "Bottles"),
-        ("boxes", "Boxes"),
-        ("red lines", "Red Lines"),
+        ("bottle", "Bottle"),
+        ("box", "Box"),
+        ("red line", "Red Line"),
     ]
 
     name = models.TextField(max_length=75, verbose_name="Item name")

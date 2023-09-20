@@ -49,7 +49,7 @@ class CreateAlgorithmSerializer(serializers.Serializer):
 
 class CreateCameraAlgorithmSerializer(serializers.Serializer):
     camera = CreateCameraSerializer()
-    algorithms = CreateAlgorithmSerializer(many=True)
+    algorithms = CreateAlgorithmSerializer(many=True, required=False)
 
 
 class CameraProcessSerializer(serializers.ModelSerializer):

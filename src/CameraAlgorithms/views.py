@@ -27,13 +27,13 @@ class CameraAPIView(generics.ListAPIView):
     serializer_class = CameraModelSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = NoPagination
-    queryset = Camera.objects.all()
+    queryset = Camera.objects.all().order_by('id')
 
 
 class AlgorithmDetailApiView(ModelViewSet):
     serializer_class = AlgorithmDetailSerializer
     permission_classes = [IsAuthenticated]
-    queryset = Algorithm.objects.all()
+    queryset = Algorithm.objects.all().order_by('name')
     pagination_class = NoPagination
 
 
@@ -59,6 +59,7 @@ class CreateCameraAlgorithmsApiView(generics.GenericAPIView):
     serializer_class = CreateCameraAlgorithmSerializer
 
     def post(self, request, *args, **kwargs):
+        """Creates a separate camera and camera/algorithm"""
         serializer = CreateCameraAlgorithmSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         CreateCameraAlgorithms(serializer.validated_data)

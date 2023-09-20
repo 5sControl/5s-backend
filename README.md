@@ -6,9 +6,9 @@ anydesk: 145 479 941
 
 IP:172.16.101.100
 
-ngrok: ssh admin1@6.tcp.eu.ngrok.io -p 13731
+ngrok: ssh admin1@6.tcp.eu.ngrok.io -p 16931
 
-ngrok: https://8977-81-7-77-205.ngrok-free.app
+ngrok: https://dc99-81-7-77-205.ngrok-free.app/
 ***
 
 
@@ -20,9 +20,9 @@ anydesk:  1 321 188 697
 
 IP:192.168.5.109
 
-ngrok: https://40c4-81-7-77-205.ngrok-free.app/
+ngrok: https://fa32-81-7-77-205.ngrok-free.app/
 
-ngrok: ssh sserver@5.tcp.eu.ngrok.io -p 17890
+ngrok: ssh sserver@4.tcp.eu.ngrok.io -p 14137
 
 ***
 
