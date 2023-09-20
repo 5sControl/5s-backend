@@ -83,7 +83,7 @@ def version(request):
     versions = versions + [{
         "name": "5S Control version",
         "version": "v0.5.3",
-        "date": "20.09.2023",
+        "date": "09.20.2023",
         "description": ""
     }]
 
