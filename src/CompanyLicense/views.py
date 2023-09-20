@@ -21,7 +21,7 @@ import requests
 
 
 class LicenseViewSet(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         serializer = LicenseSerializer(data=request.data)
@@ -43,7 +43,7 @@ class LicenseViewSet(APIView):
 
 class LicenseInfoView(APIView):
     http_method_names = ["get"]
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         try:
@@ -82,8 +82,8 @@ def version(request):
     versions = []
     versions = versions + [{
         "name": "5S Control version",
-        "version": "v0.5.2",
-        "date": "13.09.2023",
+        "version": "v0.5.3",
+        "date": "20.09.2023",
         "description": ""
     }]
 
@@ -101,7 +101,7 @@ def version(request):
 
 
 class CompanyView(ModelViewSet):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     pagination_class = None
     serializer_class = CompanySerializer
 
@@ -125,7 +125,7 @@ class CompanyView(ModelViewSet):
 
 
 class InformationView(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         try:
