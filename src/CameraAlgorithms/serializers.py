@@ -121,5 +121,5 @@ class AlgorithmInfoSerializer(serializers.Serializer):
         if image_name:
             parts = image_name.split(":")
             if len(parts) == 2:
-                return parts[1]  # Версия из image_name
+                return parts[1]
         return ""

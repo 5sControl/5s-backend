@@ -132,8 +132,11 @@ class UniqueImageNameView(APIView):
 
 
 class AlgorithmInfoView(APIView):
+    def get_queryset(self):
+        return Algorithm.objects.filter(is_available=True)
+
     def get(self, request, format=None):
-        algorithms = Algorithm.objects.all()
+        algorithms = self.get_queryset()
         serializer = AlgorithmInfoSerializer(algorithms, many=True)
 
         additional_data = {
@@ -146,4 +149,4 @@ class AlgorithmInfoView(APIView):
         data = serializer.data
         data.append(additional_data)
 
-        return Response(data, status=status.HTTP_200_OK)
+        return Response(reversed(data), status=status.HTTP_200_OK)
