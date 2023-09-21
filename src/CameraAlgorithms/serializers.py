@@ -127,5 +127,5 @@ class AlgorithmInfoSerializer(serializers.Serializer):
     def get_name(self, obj):
         name = obj.name
         if name:
-            name = name.replace("_", " ").title()
+            name = name.replace("_", " ").capitalize()
         return name
