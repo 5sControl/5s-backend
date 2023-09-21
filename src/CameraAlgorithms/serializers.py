@@ -111,7 +111,7 @@ class UniqueImageNameSerializer(serializers.Serializer):
 
 
 class AlgorithmInfoSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=100)
+    name = serializers.SerializerMethodField()
     version = serializers.SerializerMethodField()
     date = serializers.DateTimeField(source='date_updated', format="%m.%d.%Y")
     description = serializers.CharField()
@@ -123,3 +123,9 @@ class AlgorithmInfoSerializer(serializers.Serializer):
             if len(parts) == 2:
                 return parts[1]
         return ""
+
+    def get_name(self, obj):
+        name = obj.name
+        if name:
+            name = name.replace("_", " ").title()
+        return name
