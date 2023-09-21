@@ -35,6 +35,7 @@ class Command(BaseCommand):
             request: Dict[str, Any] = {
                 "camera_url": rtsp_link,
                 "algorithm": algorithm_obj.name,
+                "image_name": algorithm_obj.image_name,
                 "server_url": SERVER_URL,
                 "extra": extra_params,
             }
