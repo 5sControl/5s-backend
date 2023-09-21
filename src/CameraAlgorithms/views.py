@@ -133,7 +133,7 @@ class UniqueImageNameView(APIView):
 
 class AlgorithmInfoView(APIView):
     def get_queryset(self):
-        return Algorithm.objects.filter(is_available=True)
+        return Algorithm.objects.exclude(image_name=None)
 
     def get(self, request, format=None):
         algorithms = self.get_queryset()
