@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .models import Camera, ZoneCameras
-from .models import Algorithm, CameraAlgorithm, CameraAlgorithmLog
+from src.CameraAlgorithms.models import Algorithm, CameraAlgorithm, CameraAlgorithmLog
 
 
 class CameraModelSerializer(serializers.ModelSerializer):
@@ -100,3 +100,12 @@ class ZoneCameraSerializer(serializers.ModelSerializer):
         model = ZoneCameras
         fields = "__all__"
         read_only_fields = ["is_active"]
+
+
+class UniqueImageNameSerializer(serializers.Serializer):
+    unique_image_names = serializers.SerializerMethodField()
+
+    def get_unique_image_names(self, obj):
+        algorithms = Algorithm.objects.exclude(image_name=None).values_list('image_name', flat=True).distinct()
+        return algorithms
+

@@ -20,6 +20,7 @@ from .serializers import (
     CreateCameraAlgorithmSerializer,
     CameraAlgorithmLogSerializer,
     ZoneCameraSerializer,
+    UniqueImageNameSerializer,
 )
 
 
@@ -119,3 +120,11 @@ class CameraZoneAlgorithmView(APIView):
         response_data = {"camera": camera_id, "algorithms": algorithms}
 
         return Response(response_data)
+
+
+class UniqueImageNameView(APIView):
+    """Getting unique container names"""
+    def get(self, request, format=None):
+        serializer = UniqueImageNameSerializer()
+        data = serializer.get_unique_image_names(None)
+        return Response(data, status=status.HTTP_200_OK)
