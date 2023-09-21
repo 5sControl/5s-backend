@@ -10,7 +10,6 @@ class Command(BaseCommand):
 
     def create_or_update_algorithms(self):
         for algorithms_data in ALGORITHMS:
-            print(algorithms_data)
             algorithm, created = Algorithm.objects.update_or_create(
                 name=algorithms_data["name"],
                 defaults={
