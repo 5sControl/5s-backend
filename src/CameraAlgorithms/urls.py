@@ -12,7 +12,7 @@ from .views import (
     ZoneCameraListAPIView,
     ZoneCameraListView,
     CameraZoneAlgorithmView,
-    UniqueImageNameView,
+    UniqueImageNameView, AlgorithmInfoView,
 )
 
 router = DefaultRouter()
@@ -37,6 +37,7 @@ urlpatterns = [
         "zones-algorithms/", CameraZoneAlgorithmView.as_view(), name="algorithms-zone"
     ),
     path('unique-image-names/', UniqueImageNameView.as_view(), name='unique-image-names'),
+    path('algorithm-info/', AlgorithmInfoView.as_view(), name='algorithm-info'),
 
 ]
 

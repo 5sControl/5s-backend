@@ -21,6 +21,7 @@ from .serializers import (
     CameraAlgorithmLogSerializer,
     ZoneCameraSerializer,
     UniqueImageNameSerializer,
+    AlgorithmInfoSerializer,
 )
 
 
@@ -127,4 +128,22 @@ class UniqueImageNameView(APIView):
     def get(self, request, format=None):
         serializer = UniqueImageNameSerializer()
         data = serializer.get_unique_image_names(None)
+        return Response(data, status=status.HTTP_200_OK)
+
+
+class AlgorithmInfoView(APIView):
+    def get(self, request, format=None):
+        algorithms = Algorithm.objects.all()
+        serializer = AlgorithmInfoSerializer(algorithms, many=True)
+
+        additional_data = {
+            "name": "5S Control version",
+            "version": "v0.5.3",
+            "date": "09.20.2023",
+            "description": ""
+        }
+
+        data = serializer.data
+        data.append(additional_data)
+
         return Response(data, status=status.HTTP_200_OK)

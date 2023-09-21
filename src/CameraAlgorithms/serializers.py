@@ -109,3 +109,17 @@ class UniqueImageNameSerializer(serializers.Serializer):
         algorithms = Algorithm.objects.exclude(image_name=None).values_list('image_name', flat=True).distinct()
         return algorithms
 
+
+class AlgorithmInfoSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=100)
+    version = serializers.SerializerMethodField()
+    date = serializers.DateTimeField(source='date_updated', format="%m.%d.%Y")
+    description = serializers.CharField()
+
+    def get_version(self, obj):
+        image_name = obj.image_name
+        if image_name:
+            parts = image_name.split(":")
+            if len(parts) == 2:
+                return parts[1]  # Версия из image_name
+        return ""
