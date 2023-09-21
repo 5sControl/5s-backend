@@ -25,7 +25,7 @@ def process_item_status(data):
         item_serializer = ItemsSerializer(item)
         serialized_item = item_serializer.data
 
-        if data_item[0]["object_type"] == "red lines":
+        if data_item[0]["object_type"] == "red line":
             if red_line:
                 item_status = "Low stock level"
                 if min_item == 0:
