@@ -38,11 +38,13 @@ ALGORITHMS = [
     {"name": "operation_control", "is_available": True, "description": None},
     {
         "name": "machine_control",
+        "image_name": "5scontrol/machine_control_python:v1.3.3",
         "is_available": True,
         "description": machine_control_description,
     },
     {
         "name": "machine_control_js",
+        "image_name": "5scontrol/machine_control_js:v0.5.0",
         "is_available": True,
         "description": machine_control_description + " (JS)",
     },
@@ -63,8 +65,13 @@ ALGORITHMS = [
     },
     {
         "name": "safety_control_reflective_jacket",
-        "is_available": True,
+        "is_available": False,
         "description": safety_control_reflective_jacket_description,
     },
-    {"name": "min_max_control", "is_available": True, "description": None},
+    {
+        "name": "min_max_control",
+        "image_name": "5scontrol/min_max_python:v0.5.3",
+        "is_available": True,
+        "description": None
+    },
 ]
