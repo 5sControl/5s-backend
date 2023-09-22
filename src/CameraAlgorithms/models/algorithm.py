@@ -4,8 +4,8 @@ from src.CameraAlgorithms.models import Camera
 
 
 class Algorithm(models.Model):
-    name = models.CharField(max_length=100)
-    image_name = models.CharField(max_length=150, blank=True, null=True)
+    name = models.CharField(max_length=100, unique=True)
+    image_name = models.CharField(max_length=150, blank=True, null=True, unique=True)
     date_updated = models.DateTimeField(auto_now=True)
     is_available = models.BooleanField(default=False)
     description = models.TextField(blank=True, null=True)
