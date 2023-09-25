@@ -2,6 +2,8 @@ from django.db import models
 
 from src.CameraAlgorithms.models import Camera
 
+from src.Core.utils import Sender
+
 
 class Algorithm(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -9,6 +11,7 @@ class Algorithm(models.Model):
     date_updated = models.DateTimeField(auto_now=True)
     is_available = models.BooleanField(default=False)
     description = models.TextField(blank=True, null=True)
+    download_status = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -18,6 +21,20 @@ class Algorithm(models.Model):
         verbose_name_plural = "Algorithms"
 
         db_table = "algorithm"
+
+    def save(self, *args, **kwargs):
+        data = {'image_name': self.image_name}
+        result = Sender("search", data)
+        if result.get('status'):
+            if result.get("download"):
+                self.download_status = True
+                super().save(*args, **kwargs)
+            else:
+                self.download_status = False
+                super().save(*args, **kwargs)
+                raise ValueError(f"Image {self.image_name}, not loaded")
+        else:
+            raise ValueError(f" Error, {self.image_name} there is no such name")
 
 
 class CameraAlgorithm(models.Model):
