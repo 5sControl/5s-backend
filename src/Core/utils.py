@@ -23,7 +23,7 @@ def Sender(operation, data, cstm_port=None):
         port = 3333
 
     elif operation == "search":
-        url = "image/search"
+        url = "/image/search"
         port = 3333
 
     if cstm_port:
