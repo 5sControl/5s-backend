@@ -23,8 +23,8 @@ class Algorithm(models.Model):
         db_table = "algorithm"
 
     def save(self, *args, **kwargs):
-        data = {'image_name': self.image_name}
-        result = Sender("search", data)
+
+        result = Sender("search", self.image_name)
         if result.get('status'):
             if result.get("download"):
                 self.download_status = True
