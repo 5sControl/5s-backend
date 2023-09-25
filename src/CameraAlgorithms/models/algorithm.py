@@ -10,6 +10,7 @@ class Algorithm(models.Model):
     name = models.CharField(max_length=100, unique=True)
     image_name = models.CharField(max_length=150, blank=True, null=True, unique=True)
     date_updated = models.DateTimeField(auto_now=True)
+    date_created = models.DateTimeField(blank=True, null=True)
     is_available = models.BooleanField(default=False)
     description = models.TextField(blank=True, null=True)
     download_status = models.BooleanField(default=False)
