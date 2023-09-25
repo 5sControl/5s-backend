@@ -26,12 +26,16 @@ def Sender(operation, data, cstm_port=None):
         url = f"/image/search?image_name={data}"
         port = 3333
 
+    if operation == "loading":
+        url = f"/image/download?image_name={data}"
+        port = 3333
+
     if cstm_port:
         link = f"{SERVER_URL}:{cstm_port}{url}"
     else:
         link = f"{SERVER_URL}:{port}{url}"
 
-    if operation == "search":
+    if operation in ["search", "loading"]:
         request = requests.get(f"{SERVER_URL}:{port}{url}")
         logger.warning(f"Request status from sender docker_image -> {request}")
     else:

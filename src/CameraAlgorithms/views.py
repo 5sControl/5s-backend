@@ -9,6 +9,7 @@ from src.Core.permissions import IsStaffPermission, IsSuperuserPermission
 
 from .models import Camera, ZoneCameras
 from .models import Algorithm, CameraAlgorithm, CameraAlgorithmLog
+from .services.tasks import uploading_algorithm
 from .services.cameraalgorithm import (
     CreateCameraAlgorithms,
     DeleteCamera,
@@ -150,3 +151,12 @@ class AlgorithmInfoView(APIView):
         data.append(additional_data)
 
         return Response(reversed(data), status=status.HTTP_200_OK)
+
+
+class UploadAlgorithmView(APIView):
+    def post(self, request, id_algorithm: int, format=None):
+
+        algorithm = Algorithm.objects.get(id=id_algorithm)
+        uploading_algorithm.apply_async(algorithm)
+
+        return Response({"message": "File upload started"}, status=status.HTTP_202_ACCEPTED)
