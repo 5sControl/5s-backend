@@ -9,11 +9,8 @@ logger = logging.getLogger(__name__)
 
 
 @shared_task
-def uploading_algorithm(**kwargs):
+def uploading_algorithm(id_algorithm, image_name):
     """Background loading of the algorithm"""
-
-    id_algorithm = kwargs.get('id_algorithm')
-    image_name = kwargs.get('image_name')
 
     algorithm = Algorithm.objects.get(id=id_algorithm)
     result = Sender("loading", image_name)
