@@ -1,4 +1,5 @@
 from django.db import models
+from django.http import HttpResponse
 
 from src.CameraAlgorithms.models import Camera
 
@@ -29,10 +30,11 @@ class Algorithm(models.Model):
             if result.get("download"):
                 self.download_status = True
                 super().save(*args, **kwargs)
+                return HttpResponse("Image loaded successfully", status=200)
             else:
                 self.download_status = False
                 super().save(*args, **kwargs)
-                raise ValueError(f"Image {self.image_name}, not loaded")
+                return HttpResponse("Image not loaded", status=200)
         else:
             raise ValueError(f" Error, {self.image_name} there is no such name")
 
