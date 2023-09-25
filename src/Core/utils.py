@@ -22,6 +22,10 @@ def Sender(operation, data, cstm_port=None):
         url = "/stop"
         port = 3333
 
+    elif operation == "search":
+        url = "image/search"
+        port = 3333
+
     if cstm_port:
         link = f"{SERVER_URL}:{cstm_port}{url}"
     else:
