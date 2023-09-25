@@ -157,6 +157,6 @@ class UploadAlgorithmView(APIView):
     def post(self, request, id_algorithm: int, format=None):
 
         algorithm = Algorithm.objects.get(id=id_algorithm)
-        uploading_algorithm.apply_async(algorithm.id, algorithm.image_name)
+        uploading_algorithm.apply_async(args=[algorithm.id], kwargs={'image_name': algorithm.image_name})
 
         return Response({"message": "File upload started"}, status=status.HTTP_202_ACCEPTED)
