@@ -1,7 +1,5 @@
 from celery import shared_task
 
-from datetime import datetime
-
 import logging
 
 from src.Core.utils import Sender
