@@ -16,7 +16,7 @@ def uploading_algorithm(id_algorithm, image_name):
 
     algorithm = Algorithm.objects.get(id=id_algorithm)
     result = Sender("loading", image_name)
-    if result.status:
+    if result.get("status"):
         date_str = result.get("date")
         date_created = datetime.fromisoformat(date_str)
         algorithm.date_created = date_created
