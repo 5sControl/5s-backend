@@ -7,6 +7,8 @@ from src.CameraAlgorithms.models import Camera
 from src.CompanyLicense.models import Company
 from src.Inventory.utils import HandleItemUtils
 
+from django.core.exceptions import ValidationError
+
 logger = logging.getLogger(__name__)
 
 
@@ -74,6 +76,10 @@ class Items(models.Model):
         coords_updated = (
             self.pk and self.coords != self.__class__.objects.get(pk=self.pk).coords
         )
+
+        if self.coords:
+            from src.Inventory.service import is_valid_coordinates
+            self.coords = is_valid_coordinates(self.coords)
 
         instance = super().save(*args, **kwargs)
 
