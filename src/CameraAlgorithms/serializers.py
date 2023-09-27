@@ -114,7 +114,7 @@ class UniqueImageNameSerializer(serializers.Serializer):
 class AlgorithmInfoSerializer(serializers.Serializer):
     name = serializers.SerializerMethodField()
     version = serializers.SerializerMethodField()
-    date = serializers.DateTimeField(source='date_updated', format="%m.%d.%Y")
+    date = serializers.DateTimeField(source='date_created', format="%m.%d.%Y")
     description = serializers.CharField()
 
     def get_version(self, obj):
