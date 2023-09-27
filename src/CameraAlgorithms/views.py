@@ -142,8 +142,8 @@ class AlgorithmInfoView(APIView):
 
         additional_data = {
             "name": "5S Control version",
-            "version": "v0.5.3",
-            "date": "09.20.2023",
+            "version": "v0.5.4",
+            "date": "09.27.2023",
             "description": ""
         }
 
