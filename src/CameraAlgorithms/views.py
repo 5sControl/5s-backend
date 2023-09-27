@@ -8,7 +8,7 @@ from src.Core.paginators import NoPagination
 from src.Core.permissions import IsStaffPermission, IsSuperuserPermission
 
 from .models import Camera, ZoneCameras
-from .models import Algorithm, CameraAlgorithm, CameraAlgorithmLog
+from src.CameraAlgorithms.models import Algorithm, CameraAlgorithm, CameraAlgorithmLog
 from .services.tasks import uploading_algorithm
 from .services.cameraalgorithm import (
     CreateCameraAlgorithms,
@@ -36,7 +36,7 @@ class CameraAPIView(generics.ListAPIView):
 class AlgorithmDetailApiView(ModelViewSet):
     serializer_class = AlgorithmDetailSerializer
     permission_classes = [IsAuthenticated]
-    queryset = Algorithm.objects.all().order_by('name')
+    queryset = Algorithm.objects.all().exclude(is_available=False).order_by('name')
     pagination_class = NoPagination
 
 
