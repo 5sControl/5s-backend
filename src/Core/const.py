@@ -43,7 +43,7 @@ ALGORITHMS = [
     {
         "name": "operation_control",
         "image_name": None,
-        "is_available": True,
+        "is_available": False,
         "description": None
     },
     {
@@ -61,7 +61,7 @@ ALGORITHMS = [
     {
         "name": "safety_control_ear_protection",
         "image_name": None,
-        "is_available": True,
+        "is_available": False,
         "description": safety_control_ear_protection_description,
     },
     {
@@ -84,7 +84,7 @@ ALGORITHMS = [
     },
     {
         "name": "min_max_control",
-        "image_name": "5scontrol/min_max_python:v0.5.3",
+        "image_name": "5scontrol/min_max_python:v0.5.4",
         "is_available": True,
         "description": None
     },
