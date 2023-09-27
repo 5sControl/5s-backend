@@ -1,6 +1,6 @@
 from celery import shared_task
 
-from datetime import datetime, timezone
+from datetime import datetime
 
 import logging
 
@@ -18,8 +18,7 @@ def uploading_algorithm(id_algorithm, image_name):
     result = Sender("loading", image_name)
     if result.get("status"):
         date_str = result.get("date")
-        date_created = datetime.fromisoformat(date_str.replace('Z', '+00:00')).astimezone(timezone.utc)
-
+        date_created = datetime.fromisoformat(date_str)
         algorithm.date_created = date_created
         algorithm.download_status = True
         algorithm.save()
