@@ -26,18 +26,19 @@ class Algorithm(models.Model):
 
     def save(self, *args, **kwargs):
 
-        result = Sender("search", self.image_name)
-        if result.get('status'):
-            if result.get("download"):
-                self.download_status = True
-                super().save(*args, **kwargs)
-                return HttpResponse("Image loaded successfully", status=200)
+        if self.is_available:
+            result = Sender("search", self.image_name)
+            if result.get('status'):
+                if result.get("download"):
+                    self.download_status = True
+                    super().save(*args, **kwargs)
+                    return HttpResponse("Image loaded successfully", status=200)
+                else:
+                    self.download_status = False
+                    super().save(*args, **kwargs)
+                    return HttpResponse("Image not loaded", status=200)
             else:
-                self.download_status = False
-                super().save(*args, **kwargs)
-                return HttpResponse("Image not loaded", status=200)
-        else:
-            raise ValueError(f" Error, {self.image_name} there is no such name")
+                raise ValueError(f" Error, {self.image_name} there is no such name")
 
 
 class CameraAlgorithm(models.Model):
