@@ -1,4 +1,4 @@
-from datetime import datetime
+from dateutil.parser import parse
 
 from django.db import models
 from django.http import HttpResponse
@@ -33,8 +33,7 @@ class Algorithm(models.Model):
             if result.get('status'):
                 if result.get("download"):
                     self.download_status = True
-                    date_string = result.get("date")
-                    self.date_created = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%S.%fZ')
+                    self.date_created = parse(result.get("date"))
                     super().save(*args, **kwargs)
                     return HttpResponse("Image loaded successfully", status=200)
                 else:

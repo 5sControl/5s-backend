@@ -1,6 +1,6 @@
 from celery import shared_task
 
-from datetime import datetime
+from dateutil.parser import parse
 
 import logging
 
@@ -17,8 +17,7 @@ def uploading_algorithm(id_algorithm, image_name):
     algorithm = Algorithm.objects.get(id=id_algorithm)
     result = Sender("loading", image_name)
     if result.get("status"):
-        date_str = result.get("date")
-        date_created = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%S.%fZ')
+        date_created = parse(result.get("date"))
         algorithm.date_created = date_created
         algorithm.download_status = True
         algorithm.save()
