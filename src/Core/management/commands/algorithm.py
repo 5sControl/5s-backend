@@ -6,11 +6,11 @@ from src.Core.const import ALGORITHMS
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        self.create_or_update_algorithms()
+        self.create_algorithms()
 
-    def create_or_update_algorithms(self):
+    def create_algorithms(self):
         for algorithms_data in ALGORITHMS:
-            algorithm, created = Algorithm.objects.update_or_create(
+            Algorithm.objects.get_or_create(
                 name=algorithms_data["name"],
                 defaults={
                     "is_available": algorithms_data["is_available"],
@@ -18,5 +18,3 @@ class Command(BaseCommand):
                     "description": algorithms_data["description"],
                 },
             )
-            if created:
-                algorithm.save()

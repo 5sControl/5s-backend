@@ -36,46 +36,55 @@ This control is essential in workplaces where machines are used, such as factori
 ALGORITHMS = [
     {
         "name": "idle_control",
+        "image_name": "5scontrol/idle_python:latest",
         "is_available": True,
         "description": None
     },
     {
         "name": "operation_control",
-        "is_available": True,
+        "image_name": "5scontrol/operation_control_js:latest",
+        "is_available": False,
         "description": None
     },
     {
         "name": "machine_control",
+        "image_name": "5scontrol/machine_control_python:latest",
         "is_available": True,
         "description": machine_control_description,
     },
     {
         "name": "machine_control_js",
+        "image_name": "5scontrol/machine_control_js:latest",
         "is_available": True,
         "description": machine_control_description + " (JS)",
     },
     {
         "name": "safety_control_ear_protection",
+        "image_name": None,
         "is_available": False,
         "description": safety_control_ear_protection_description,
     },
     {
         "name": "safety_control_head_protection",
+        "image_name": None,
         "is_available": False,
         "description": safety_control_head_protection_description,
     },
     {
         "name": "safety_control_hand_protection",
+        "image_name": None,
         "is_available": False,
         "description": safety_control_hand_protection_description,
     },
     {
         "name": "safety_control_reflective_jacket",
+        "image_name": None,
         "is_available": False,
         "description": safety_control_reflective_jacket_description,
     },
     {
         "name": "min_max_control",
+        "image_name": "5scontrol/min_max_python:latest",
         "is_available": True,
         "description": None
     },
