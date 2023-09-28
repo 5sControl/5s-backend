@@ -18,8 +18,7 @@ def uploading_algorithm(id_algorithm, image_name):
     result = Sender("loading", image_name)
     if result.get("status"):
         date_str = result.get("date")
-        date_string = date_str.split(".")[0]
-        date_created = datetime.fromisoformat(date_string)
+        date_created = datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%S.%fZ')
         algorithm.date_created = date_created
         algorithm.download_status = True
         algorithm.save()

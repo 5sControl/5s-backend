@@ -34,9 +34,7 @@ class Algorithm(models.Model):
                 if result.get("download"):
                     self.download_status = True
                     date_string = result.get("date")
-                    date_string = date_string.split(".")[0]
-                    date_obj = datetime.fromisoformat(date_string)
-                    self.date_created = date_obj
+                    self.date_created = datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%S.%fZ')
                     super().save(*args, **kwargs)
                     return HttpResponse("Image loaded successfully", status=200)
                 else:
