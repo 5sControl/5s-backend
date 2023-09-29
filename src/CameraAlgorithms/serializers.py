@@ -71,7 +71,7 @@ class AlgorithmDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Algorithm
         fields = "__all__"
-        read_only_fields = ('date_updated', 'date_created', 'download_status')
+        read_only_fields = ('download_status',)
 
 
 class StopAlgorithmSerializer(serializers.Serializer):
