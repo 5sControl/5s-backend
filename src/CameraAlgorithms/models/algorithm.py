@@ -43,6 +43,14 @@ class Algorithm(models.Model):
             else:
                 raise ValueError(f" Error, {self.image_name} there is no such name")
 
+    def delete(self, *args, **kwargs):
+        camera_algorithms = CameraAlgorithm.objects.filter(algorithm_id=self.id)
+        process_ids = camera_algorithms.values_list('process_id', flat=True)
+        for process in process_ids:
+            from src.CameraAlgorithms.services.cameraalgorithm import stop_and_update_algorithm
+            stop_and_update_algorithm(process)
+            super().delete(*args, **kwargs)
+
 
 class CameraAlgorithm(models.Model):
     algorithm = models.ForeignKey(Algorithm, on_delete=models.CASCADE)
