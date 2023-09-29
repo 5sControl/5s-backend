@@ -49,7 +49,7 @@ class Algorithm(models.Model):
         for process in process_ids:
             from src.CameraAlgorithms.services.cameraalgorithm import stop_and_update_algorithm
             stop_and_update_algorithm(process)
-            super().delete(*args, **kwargs)
+        super().delete(*args, **kwargs)
 
 
 class CameraAlgorithm(models.Model):
