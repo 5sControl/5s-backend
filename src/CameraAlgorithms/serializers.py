@@ -65,8 +65,8 @@ class AlgorithmSerializer(serializers.ModelSerializer):
 
 
 class AlgorithmDetailSerializer(serializers.ModelSerializer):
-    date_created = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%f %z")
-    date_updated = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%f %z")
+    date_created = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%f %z", required=False)
+    date_updated = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%f %z", required=False)
 
     class Meta:
         model = Algorithm
