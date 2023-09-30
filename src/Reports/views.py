@@ -68,7 +68,6 @@ class ActionsWithPhotos(APIView):
 
             extra = data.get("extra")
 
-            # FIXME: make easy this shit
             if algorithm_name == "min_max_control":
                 extra = process_item_status(extra)
 

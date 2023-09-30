@@ -5,6 +5,8 @@ from src.Inventory.serializers import ItemsSerializer
 from src.Mailer.message import send_email_to_suppliers
 from src.Mailer.service import send_notification_email
 
+from django.core.exceptions import ValidationError
+
 
 def process_item_status(data):
     """Updates the item status and adds the status to the extra"""
@@ -25,7 +27,7 @@ def process_item_status(data):
         item_serializer = ItemsSerializer(item)
         serialized_item = item_serializer.data
 
-        if data_item[0]["object_type"] == "red lines":
+        if data_item[0]["object_type"] == "red line":
             if red_line:
                 item_status = "Low stock level"
                 if min_item == 0:
@@ -121,5 +123,26 @@ def process_item_status(data):
 
         result.append(item_data)
     return result
+
+
+def is_valid_coordinates(coords):
+    valid_coords = []
+
+    for coord in coords:
+        if (
+            coord["x1"] > 0
+            and coord["x2"] > 0
+            and coord["y1"] > 0
+            and coord["y2"] > 0
+        ):
+            area = (coord["x2"] - coord["x1"]) * (coord["y2"] - coord["y1"])
+            if area > 250:
+                valid_coords.append(coord)
+    if len(valid_coords) == 0:
+        raise ValidationError("Invalid size based on coords")
+    return valid_coords
+
+
+
 
 

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .models import Camera, ZoneCameras
-from .models import Algorithm, CameraAlgorithm, CameraAlgorithmLog
+from src.CameraAlgorithms.models import Algorithm, CameraAlgorithm, CameraAlgorithmLog
 
 
 class CameraModelSerializer(serializers.ModelSerializer):
@@ -65,9 +65,13 @@ class AlgorithmSerializer(serializers.ModelSerializer):
 
 
 class AlgorithmDetailSerializer(serializers.ModelSerializer):
+    date_created = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%f %z", required=False)
+    date_updated = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%f %z", required=False)
+
     class Meta:
         model = Algorithm
         fields = "__all__"
+        read_only_fields = ('download_status',)
 
 
 class StopAlgorithmSerializer(serializers.Serializer):
@@ -100,3 +104,32 @@ class ZoneCameraSerializer(serializers.ModelSerializer):
         model = ZoneCameras
         fields = "__all__"
         read_only_fields = ["is_active"]
+
+
+class UniqueImageNameSerializer(serializers.Serializer):
+    unique_image_names = serializers.SerializerMethodField()
+
+    def get_unique_image_names(self, obj):
+        algorithms = Algorithm.objects.exclude(image_name=None).values_list('image_name', flat=True).distinct()
+        return algorithms
+
+
+class AlgorithmInfoSerializer(serializers.Serializer):
+    name = serializers.SerializerMethodField()
+    version = serializers.SerializerMethodField()
+    date = serializers.DateTimeField(source='date_created', format="%m.%d.%Y")
+    description = serializers.CharField()
+
+    def get_version(self, obj):
+        image_name = obj.image_name
+        if image_name:
+            parts = image_name.split(":")
+            if len(parts) == 2:
+                return parts[1]
+        return ""
+
+    def get_name(self, obj):
+        name = obj.name
+        if name:
+            name = name.replace("_", " ").capitalize()
+        return name

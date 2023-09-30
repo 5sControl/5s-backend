@@ -44,7 +44,7 @@ class Camera(models.Model):
 class ZoneCameras(models.Model):
     camera = models.ForeignKey(
         Camera,
-        on_delete=models.SET_NULL,
+        on_delete=models.CASCADE,
         related_name="Zone_cameras",
         blank=True,
         null=True,

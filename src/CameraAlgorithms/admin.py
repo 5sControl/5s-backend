@@ -10,7 +10,8 @@ class CamerasAdmin(admin.ModelAdmin):
 
 @admin.register(Algorithm)
 class AlgorithmAdmin(admin.ModelAdmin):
-    list_filter = ("id", "name")
+    list_filter = ("download_status", "name")
+    list_display = ("name", "image_name", "download_status", "id")
 
 
 @admin.register(CameraAlgorithm)

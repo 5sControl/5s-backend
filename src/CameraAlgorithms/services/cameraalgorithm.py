@@ -122,6 +122,7 @@ def create_camera_algorithms(
         request: Dict[str, Any] = {
             "camera_url": rtsp_link,
             "algorithm": algorithm_obj.name,
+            "image_name": algorithm_obj.image_name,
             "server_url": SERVER_URL,
             "extra": data,
         }
@@ -259,6 +260,7 @@ def create_single_camera_algorithms(
     request: Dict[str, Any] = {
         "camera_url": rtsp_link,
         "algorithm": algorithm_obj.name,
+        "image_name": algorithm_obj.image_name,
         "server_url": SERVER_URL,
         "extra": data,
     }
