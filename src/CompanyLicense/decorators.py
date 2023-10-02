@@ -3,8 +3,7 @@ from functools import wraps
 
 from django.http import HttpResponseBadRequest
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import redirect
-
+from config.settings.base import LICENSE_ACTIVE
 from src.CompanyLicense.models import License
 from src.CameraAlgorithms.models import Camera
 from src.CameraAlgorithms.models import CameraAlgorithm
@@ -17,12 +16,14 @@ def validate_license(view_func):
 
     @wraps(view_func)
     def wrapper(request, *args, **kwargs):
-        company = License.objects.last()
-        if company is None:
-            raise PermissionDenied("No active license")
+        license_active = LICENSE_ACTIVE
+        if license_active:
+            company = License.objects.last()
+            if company is None:
+                raise PermissionDenied("No active license")
 
-        if not company.is_active or date.today() > company.valid_until:
-            raise PermissionDenied("license expired")
+            if not company.is_active or date.today() > company.valid_until:
+                raise PermissionDenied("license expired")
         return view_func(request, *args, **kwargs)
 
     return wrapper
@@ -35,18 +36,20 @@ def check_active_cameras(view_func):
 
     @wraps(view_func)
     def wrapped_view(request, *args, **kwargs):
-        company = License.objects.last()
+        license_active = LICENSE_ACTIVE
+        if license_active:
+            company = License.objects.last()
 
-        if not company.is_active:
-            return HttpResponseBadRequest("Your license is inactive.")
+            if not company.is_active:
+                return HttpResponseBadRequest("Your license is inactive.")
 
-        active_cameras_count = Camera.objects.filter(is_active=True).count()
-        if active_cameras_count >= company.count_cameras:
-            return HttpResponseBadRequest(
-                "You have exceeded the limit of active cameras."
-            )
+            active_cameras_count = Camera.objects.filter(is_active=True).count()
+            if active_cameras_count >= company.count_cameras:
+                return HttpResponseBadRequest(
+                    "You have exceeded the limit of active cameras."
+                )
 
-        return view_func(request, *args, **kwargs)
+            return view_func(request, *args, **kwargs)
 
     return wrapped_view
 
@@ -60,19 +63,21 @@ def check_active_algorithms(view_func):
 
     @wraps(view_func)
     def wrapped_view(request, *args, **kwargs):
-        company = License.objects.last()
+        license_active = LICENSE_ACTIVE
+        if license_active:
+            company = License.objects.last()
 
-        if not company.is_active:
-            return HttpResponseBadRequest("Your license is inactive.")
+            if not company.is_active:
+                return HttpResponseBadRequest("Your license is inactive.")
 
-        active_algorithms_count = (
-            CameraAlgorithm.objects.values("algorithm_id").distinct().count()
-        )
-        if active_algorithms_count >= company.neurons_active:
-            return HttpResponseBadRequest(
-                "You have exceeded the limit of active algorithm."
+            active_algorithms_count = (
+                CameraAlgorithm.objects.values("algorithm_id").distinct().count()
             )
+            if active_algorithms_count >= company.neurons_active:
+                return HttpResponseBadRequest(
+                    "You have exceeded the limit of active algorithm."
+                )
 
-        return view_func(request, *args, **kwargs)
+            return view_func(request, *args, **kwargs)
 
     return wrapped_view
