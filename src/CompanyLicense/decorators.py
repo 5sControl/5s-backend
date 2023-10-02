@@ -1,9 +1,10 @@
 from datetime import date
 from functools import wraps
 
+from config.settings import LICENSE_ACTIVE
+
 from django.http import HttpResponseBadRequest
 from django.core.exceptions import PermissionDenied
-from config.settings.base import LICENSE_ACTIVE
 from src.CompanyLicense.models import License
 from src.CameraAlgorithms.models import Camera
 from src.CameraAlgorithms.models import CameraAlgorithm
