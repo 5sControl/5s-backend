@@ -125,6 +125,7 @@ class InformationView(APIView):
             name_company = None
 
         response_data = {
+            "license_active": LICENSE_ACTIVE,
             "count_days": f"{count_days} days",
             "name_company": name_company,
         }
