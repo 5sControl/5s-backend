@@ -9,6 +9,7 @@ from datetime import time
 
 from celery import shared_task
 
+from src.Core.const import SERVER_URL
 from src.Mailer.models import SMTPSettings, WorkingTime
 from src.DatabaseConnections.models import ConnectionInfo
 
@@ -29,10 +30,16 @@ def send_notification_email(item, count, image_path, item_status):
     recipient_list = list(set(to_emails + copy_emails))
 
     used_algorithm = item["object_type"]
-    message = ""
+
     subject = f"{item['subject']}"
+
+    message = ""
+
+    if item_status == "Out of stock":
+        message = f"{item['name']} is currently out of stock.\n To avoid any inconvenience, we recommend that you take action to replenish your stock of {item['low_stock_level']} as soon as possible.\n{SERVER_URL}:3000/inventory/\n You are receiving this email because your email account was entered in 5S Control system to receive notifications regarding low stock levels of inventory."
+
     if item_status == 'Low stock level':
-        message = f"Current stock of {item['name']}: {count} {used_algorithm}. Low stock level of {item['name']}: {item['low_stock_level']}. The inventory level of {item['name']} in your stock has fallen to a low level. This means that there are only a limited number of units left in stock and that the item may soon become unavailable. To avoid any inconvenience, we recommend that you take action to replenish your stock of {item['name']} as soon as possible. You are receiving this email because your email account was entered in 5S Control system to receive notifications regarding low stock levels of inventory."
+        message = f"Current stock of {item['name']}: {count} {used_algorithm}. Low stock level of {item['name']}: {item['low_stock_level']}. The inventory level of {item['name']} in your stock has fallen to a low level. This means that there are only a limited number of units left in stock and that the item may soon become unavailable. To avoid any inconvenience, we recommend that you take action to replenish your stock of {item['name']} as soon as possible.\n{SERVER_URL}:3000/inventory\nYou are receiving this email because your email account was entered in 5S Control system to receive notifications regarding low stock levels of inventory."
 
         # send notification ODOO
         try:
