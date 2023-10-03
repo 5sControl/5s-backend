@@ -38,7 +38,7 @@ def send_notification_email(item, count, image_path, item_status):
         try:
             odoo_notification(message)
         except Exception as exception:
-            raise exception
+            print(f"Odoo notification failed: {exception}")
 
     image_name = image_path.split('/')[-1]
 
