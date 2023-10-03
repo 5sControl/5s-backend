@@ -70,6 +70,15 @@ def process_item_status(data):
                 item_status = "Out of stock"
                 if item.prev_status == "Low stock level":
                     item.prev_status = None
+                    # send_notification
+                    try:
+                        item.prev_status = None
+                        send_notification_email.apply_async(
+                            args=[serialized_item, count, image_path, item_status],
+                            countdown=0,
+                        )
+                    except Exception as e:
+                        print(f"Email notification errors: {e}")
 
                 else:
                     if item.prev_status != None:
