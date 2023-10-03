@@ -1,3 +1,4 @@
+import logging
 from src.Inventory.models import Items
 
 from src.Inventory.serializers import ItemsSerializer
@@ -6,6 +7,8 @@ from src.Mailer.message import send_email_to_suppliers
 from src.Mailer.service import send_notification_email
 
 from django.core.exceptions import ValidationError
+
+logger = logging.getLogger(__name__)
 
 
 def process_item_status(data):
@@ -134,7 +137,8 @@ def process_item_status(data):
     return result
 
 
-def is_valid_coordinates(coords):
+def is_valid_coordinates(coords, type_object):
+    size_coord = {"item": 250, "zone": 500}
     valid_coords = []
 
     for coord in coords:
@@ -145,9 +149,10 @@ def is_valid_coordinates(coords):
             and coord["y2"] > 0
         ):
             area = (coord["x2"] - coord["x1"]) * (coord["y2"] - coord["y1"])
-            if area > 250:
+            if area > size_coord[f"{type_object}"]:
                 valid_coords.append(coord)
     if len(valid_coords) == 0:
+        logger.warning(f"There are no positive coordinates for the {type_object}:", coords)
         raise ValidationError("Invalid size based on coords")
     return valid_coords
 

@@ -2,7 +2,6 @@ import logging
 
 from django.db import models
 from django.core.validators import RegexValidator
-from django.core.exceptions import ValidationError
 
 from src.Inventory.utils import HandleItemUtils
 
@@ -64,29 +63,10 @@ class ZoneCameras(models.Model):
     def __str__(self):
         return self.name
 
-    def is_coordinate_positive(self, coord):
-        return (
-            coord["x1"] > 0 and coord["x2"] > 0 and coord["y1"] > 0 and coord["y2"] > 0
-        )
-
-    def calculate_area(self, coord):
-        width = coord["x2"] - coord["x1"]
-        height = coord["y2"] - coord["y1"]
-        return width * height
-
-    def remove_invalid_coordinates(self):
-        valid_coords = []
-        for coord in self.coords:
-            if self.is_coordinate_positive(coord):
-                area = self.calculate_area(coord)
-                if area > 500:
-                    valid_coords.append(coord)
-        self.coords = valid_coords
-
     def save(self, *args, **kwargs):
-        self.remove_invalid_coordinates()
-        if len(self.coords) == 0:
-            raise ValidationError("Unprocessable - Empty or negative data provided")
+        if self.coords:
+            from src.Inventory.service import is_valid_coordinates
+            self.coords = is_valid_coordinates(self.coords, "zone")
 
         utils = HandleItemUtils()
         is_update = bool(self.pk)
