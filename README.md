@@ -4,7 +4,7 @@
 
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
 
-**[5controlS](https://5controls.com/)** is an open source platform. Plug-in your ML-algorithms and get ready-to-use software for manufacturing monitoring.
+**[5controlS](https://5controls.com/)** is an open source platform. Plug-in your ML-algorithms and get a ready-to-use software for manufacturing monitoring.
 
 # **Project repositories**
 **5controlS platform:**
@@ -24,6 +24,10 @@
 **Algorithms servers**
 1. [inference-server-js]()
 
+# **Documentation**
+
+[User Documentation](https://github.com/5sControl/Manufacturing-Automatization-Enterprise/wiki)
+
 # **Contributing**
 Thank you for considering contributing to 5controlS. We truly believe that we can build an outstanding product together!
 
@@ -31,7 +35,7 @@ We welcome a variety of ways to contribute. Read below to learn how you can take
 
 ## **Code of conduct**
 
-Please note that this project is released with a Contributor [Code of conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
+Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
 
 # **License**
 
