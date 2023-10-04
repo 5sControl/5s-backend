@@ -6,11 +6,9 @@ from django.urls import path, include
 from src.router import routes
 
 urlpatterns = [
-    path("api-auth/", include("rest_framework.urls")),
-    path("auth/", include("djoser.urls")),
-    path("auth/", include("djoser.urls.jwt")),
-    path("admin/", admin.site.urls),
+
     path("api/", include(routes)),
+    path("admin/", admin.site.urls),
 ]
 
 urlpatterns += static(settings.VIDEO_URL, document_root=settings.VIDEO_ROOT)
