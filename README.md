@@ -76,7 +76,7 @@ http://192.168.1.111:3000/
 
 # **Office dev**
 
-https://5s-office.netlify.app/
+https://grand-alien-apparently.ngrok-free.app/
 
 http://192.168.1.110:3000/
 
