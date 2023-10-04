@@ -37,6 +37,7 @@ class Command(BaseCommand):
                 "algorithm": algorithm_obj.name,
                 "image_name": algorithm_obj.image_name,
                 "server_url": SERVER_URL,
+                "link_reports": f"{SERVER_URL}:8000/api/reports/report-with-photos/",
                 "extra": extra_params,
             }
 
