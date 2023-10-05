@@ -80,9 +80,8 @@ https://grand-alien-apparently.ngrok-free.app/
 
 http://192.168.1.110:3000/
 
-ngrok: ssh server@8.tcp.ngrok.io -p19264
+ngrok: ssh server@4.tcp.eu.ngrok.io -p 15674
 
-ngrok: https://e449-134-17-26-206.ngrok-free.app/
 ***
 
 # **Office designers**
