@@ -18,15 +18,15 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend"],
 }
-# if DEBUG:
-#     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = [
-#         'rest_framework.renderers.BrowsableAPIRenderer',
-#         'rest_framework.renderers.JSONRenderer',
-#     ]
-# else:
-#     REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = [
-#         'rest_framework.renderers.JSONRenderer',
-#     ]
+if DEBUG:
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = [
+        'rest_framework.renderers.BrowsableAPIRenderer',
+        'rest_framework.renderers.JSONRenderer',
+    ]
+else:
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = [
+        'rest_framework.renderers.JSONRenderer',
+    ]
 
 DJOSER = {
     "PASSWORD_RESET_CONFIRM_URL": "#/password/reset/confirm/{uid}/{token}",
