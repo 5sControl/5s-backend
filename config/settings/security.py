@@ -24,6 +24,19 @@ CORS_ALLOW_METHODS = [
     'OPTIONS',
 ]
 
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:8000",
     "http://localhost:5500",
@@ -43,7 +56,8 @@ CORS_ORIGIN_WHITELIST = [
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://*",
-    "https://*",
+    "https://localhost:8000",
+    "https://*.eu.ngrok.io",
     "https://d84d-81-7-77-205.ngrok-free.app",
+    "https://grand-alien-apparently.ngrok-free.app",
 ]
