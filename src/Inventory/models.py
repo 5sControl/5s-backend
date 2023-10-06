@@ -75,6 +75,10 @@ class Items(models.Model):
             self.pk and self.coords != self.__class__.objects.get(pk=self.pk).coords
         )
 
+        if self.coords:
+            from src.Inventory.service import is_valid_coordinates
+            self.coords = is_valid_coordinates(self.coords, "item")
+
         instance = super().save(*args, **kwargs)
 
         if not is_update or camera_updated or coords_updated:

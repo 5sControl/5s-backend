@@ -30,7 +30,7 @@ RUN pip3 install --upgrade pip && \
 
 COPY . .
 
-EXPOSE 80
+EXPOSE 8000
 
 RUN chmod +x /usr/src/app/entrypoint.sh
 

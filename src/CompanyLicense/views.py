@@ -65,14 +65,14 @@ class LicenseInfoView(APIView):
         )
 
         response_data = {
-            "date_joined": company.date_joined,
-            "valid_until": company.valid_until,
-            "licence_is_active": company.is_active,
-            "licence_count_cameras": company.count_cameras,
-            "licence_neurons_active": company.neurons_active,
+            "date_joined": company.date_joined if company else None,
+            "valid_until": company.valid_until if company else None,
+            "licence_is_active": company.is_active if company else None,
+            "licence_count_cameras": company.count_cameras if company else None,
+            "licence_neurons_active": company.neurons_active if company else None,
             "company_active_count_cameras": active_cameras_count,
             "company_active_count_neurons": active_algorithms_count,
-            "days_left": f"{count_days} days",
+            "days_left": f"{count_days} days" if company else None,
         }
         return Response(response_data, status=200)
 

@@ -8,7 +8,8 @@ from src.Core.paginators import NoPagination
 from src.Core.permissions import IsStaffPermission, IsSuperuserPermission
 
 from .models import Camera, ZoneCameras
-from .models import Algorithm, CameraAlgorithm, CameraAlgorithmLog
+from src.CameraAlgorithms.models import Algorithm, CameraAlgorithm, CameraAlgorithmLog
+from .services.tasks import uploading_algorithm
 from .services.cameraalgorithm import (
     CreateCameraAlgorithms,
     DeleteCamera,
@@ -20,6 +21,8 @@ from .serializers import (
     CreateCameraAlgorithmSerializer,
     CameraAlgorithmLogSerializer,
     ZoneCameraSerializer,
+    UniqueImageNameSerializer,
+    AlgorithmInfoSerializer,
 )
 
 
@@ -33,7 +36,7 @@ class CameraAPIView(generics.ListAPIView):
 class AlgorithmDetailApiView(ModelViewSet):
     serializer_class = AlgorithmDetailSerializer
     permission_classes = [IsAuthenticated]
-    queryset = Algorithm.objects.all().order_by('name')
+    queryset = Algorithm.objects.all().exclude(is_available=False).order_by('name')
     pagination_class = NoPagination
 
 
@@ -119,3 +122,41 @@ class CameraZoneAlgorithmView(APIView):
         response_data = {"camera": camera_id, "algorithms": algorithms}
 
         return Response(response_data)
+
+
+class UniqueImageNameView(APIView):
+    """Getting unique container names"""
+    def get(self, request, format=None):
+        serializer = UniqueImageNameSerializer()
+        data = serializer.get_unique_image_names(None)
+        return Response(data, status=status.HTTP_200_OK)
+
+
+class AlgorithmInfoView(APIView):
+    def get_queryset(self):
+        return Algorithm.objects.exclude(image_name=None)
+
+    def get(self, request, format=None):
+        algorithms = self.get_queryset()
+        serializer = AlgorithmInfoSerializer(algorithms, many=True)
+
+        additional_data = {
+            "name": "5S Control version",
+            "version": "v0.5.4",
+            "date": "09.27.2023",
+            "description": ""
+        }
+
+        data = serializer.data
+        data.append(additional_data)
+
+        return Response(reversed(data), status=status.HTTP_200_OK)
+
+
+class UploadAlgorithmView(APIView):
+    def post(self, request, id_algorithm: int, format=None):
+
+        algorithm = Algorithm.objects.get(id=id_algorithm)
+        uploading_algorithm.apply_async((algorithm.id, algorithm.image_name))
+
+        return Response({"message": "File upload started"}, status=status.HTTP_202_ACCEPTED)

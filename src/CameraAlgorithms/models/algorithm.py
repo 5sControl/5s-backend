@@ -1,12 +1,21 @@
+from dateutil.parser import parse
+
 from django.db import models
+from django.http import HttpResponse
 
 from src.CameraAlgorithms.models import Camera
 
+from src.Core.utils import Sender
+
 
 class Algorithm(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
+    image_name = models.CharField(max_length=150, blank=True, null=True, unique=True)
+    date_updated = models.DateTimeField(auto_now=True)
+    date_created = models.DateTimeField(blank=True, null=True)
     is_available = models.BooleanField(default=False)
     description = models.TextField(blank=True, null=True)
+    download_status = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -16,6 +25,31 @@ class Algorithm(models.Model):
         verbose_name_plural = "Algorithms"
 
         db_table = "algorithm"
+
+    def save(self, *args, **kwargs):
+
+        if self.is_available:
+            result = Sender("search", self.image_name)
+            if result.get('status'):
+                if result.get("download"):
+                    self.download_status = True
+                    self.date_created = parse(result.get("date"))
+                    super().save(*args, **kwargs)
+                    return HttpResponse("Image loaded successfully", status=200)
+                else:
+                    self.download_status = False
+                    super().save(*args, **kwargs)
+                    return HttpResponse("Image not loaded", status=200)
+            else:
+                raise ValueError(f" Error, {self.image_name} there is no such name")
+
+    def delete(self, *args, **kwargs):
+        camera_algorithms = CameraAlgorithm.objects.filter(algorithm_id=self.id)
+        process_ids = camera_algorithms.values_list('process_id', flat=True)
+        for process in process_ids:
+            from src.CameraAlgorithms.services.cameraalgorithm import stop_and_update_algorithm
+            stop_and_update_algorithm(process)
+        super().delete(*args, **kwargs)
 
 
 class CameraAlgorithm(models.Model):
