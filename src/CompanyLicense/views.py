@@ -2,12 +2,11 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
 from rest_framework.viewsets import ModelViewSet
 
 from django.db.models import Max
 
-from src.Core.const import SERVER_URL
+from config.settings import LICENSE_ACTIVE
 
 from django.core.exceptions import PermissionDenied
 
@@ -17,7 +16,6 @@ from .serializers import LicenseSerializer, CompanySerializer
 
 from .models import License, Company
 from src.CameraAlgorithms.models import CameraAlgorithm, Camera
-import requests
 
 
 class LicenseViewSet(APIView):
@@ -46,19 +44,21 @@ class LicenseInfoView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        try:
-            company = License.objects.last()
-            if company is None:
-                raise PermissionDenied("No active license")
-        except License.DoesNotExist:
-            return Response({"error": "Company not found"}, status=404)
+        if LICENSE_ACTIVE:
+            try:
+                company = License.objects.last()
+                if company is None and LICENSE_ACTIVE:
+                    raise PermissionDenied("No active license")
+            except License.DoesNotExist:
+                return Response({"error": "Company not found"}, status=404)
 
-        is_license_active = f"{company.valid_until - timezone.now().date()}"
+            is_license_active = f"{company.valid_until - timezone.now().date()}"
 
-        count_days = int(is_license_active.split(",")[0].split(" ")[0]) + 1
-        if count_days < 0:
-            count_days = 0
-
+            count_days = int(is_license_active.split(",")[0].split(" ")[0]) + 1
+            if count_days < 0:
+                count_days = 0
+        else:
+            company = None
         active_cameras_count = Camera.objects.filter(is_active=True).count()
         active_algorithms_count = (
             CameraAlgorithm.objects.values("algorithm").distinct().count()
@@ -75,29 +75,6 @@ class LicenseInfoView(APIView):
             "days_left": f"{count_days} days" if company else None,
         }
         return Response(response_data, status=200)
-
-
-@api_view(['GET'])
-def version(request):
-    versions = []
-    versions = versions + [{
-        "name": "5S Control version",
-        "version": "v0.5.3",
-        "date": "09.20.2023",
-        "description": ""
-    }]
-
-    try:
-        js_algs_port = 3333
-        request = requests.post(
-            url=f"{SERVER_URL}:{js_algs_port}/info"
-        )
-        request_json = request.json()
-        versions = versions + request_json
-    except Exception as e:
-        return Response({"error": f"Versions not found: {e}"}, status=404)
-
-    return Response(versions)
 
 
 class CompanyView(ModelViewSet):
@@ -148,6 +125,7 @@ class InformationView(APIView):
             name_company = None
 
         response_data = {
+            "license_active": LICENSE_ACTIVE,
             "count_days": f"{count_days} days",
             "name_company": name_company,
         }
