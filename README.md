@@ -46,9 +46,27 @@ We welcome a variety of ways to contribute. Read below to learn how you can take
 
 Please note that this project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in this project you agree to abide by its terms.
 
+## Code contributing
+
+If you want to contribute, read  our [contributing guide](CONTRIBUTING.md) to learn about our development process and pull requests workflow.
+
+We also gave a list of [good first issues]() that will help you make your first step to beсoming a 5S contributor.
+
 # **License**
 
 > Please note that [some](Components-with-copyleft-licensies.md) of the Official Algorithms are using copyleft licensies.  
+
+<br>
+<div align="center">
+  <a href="https://5controls.com/" style="text-decoration:none;">
+    <img src="https://github.com/5sControl/5s-backend/assets/131950264/4d35b2f3-11ba-4a6f-896e-85244f7d8de7" width="10%" alt="" /></a> 
+  <img src="https://github.com/5sControl/5s-backend/assets/131950264/d48bcf5c-8aa6-42c4-a47d-5548ae23940d" width="3%" alt="" />
+  <a href="https://github.com/5sControl" style="text-decoration:none;">
+    <img src="https://github.com/5sControl/5s-backend/assets/131950264/04c4ba47-ee81-442c-9081-59e23f2fb54a" width="4%" alt="" /></a>
+  <img src="https://github.com/5sControl/5s-backend/assets/131950264/d48bcf5c-8aa6-42c4-a47d-5548ae23940d" width="3%" alt="" />
+  <a href="https://www.youtube.com/@5scontrol" style="text-decoration:none;">
+    <img src="https://github.com/5sControl/5s-backend/assets/131950264/d1dc71cb-0e3f-40fa-b767-1b1024551a16" width="5%" alt="" /></a>
+</div>
 
 # **Kaunas QA** HP
 
