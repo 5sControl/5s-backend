@@ -50,7 +50,7 @@ Please note that this project is released with a [Contributor Code of Conduct](C
 
 If you want to contribute, read  our [contributing guide](CONTRIBUTING.md) to learn about our development process and pull requests workflow.
 
-We also gave a list of [good first issues]() that will help you make your first step to beсoming a 5S contributor.
+We also have a list of [good first issues]() that will help you make your first step to beсoming a 5S contributor.
 
 # **License**
 
