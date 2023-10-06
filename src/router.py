@@ -10,6 +10,10 @@ from rest_framework import permissions
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 routes = [
+    path("api-auth/", include("rest_framework.urls")),
+    path("auth/", include("djoser.urls")),
+    path("auth/", include("djoser.urls.jwt")),
+
     path("employees/", include("src.Employees.urls"), name="employees"),
     path("camera-algorithms/", include("src.CameraAlgorithms.urls"), name="camera-algorithms"),
     path("reports/", include("src.Reports.urls"), name="reports"),

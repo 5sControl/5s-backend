@@ -7,8 +7,6 @@ from src.CameraAlgorithms.models import Camera
 from src.CompanyLicense.models import Company
 from src.Inventory.utils import HandleItemUtils
 
-from django.core.exceptions import ValidationError
-
 logger = logging.getLogger(__name__)
 
 
@@ -79,7 +77,7 @@ class Items(models.Model):
 
         if self.coords:
             from src.Inventory.service import is_valid_coordinates
-            self.coords = is_valid_coordinates(self.coords)
+            self.coords = is_valid_coordinates(self.coords, "item")
 
         instance = super().save(*args, **kwargs)
 
