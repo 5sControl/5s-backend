@@ -89,7 +89,7 @@ https://grand-alien-apparently.ngrok-free.app/
 
 http://192.168.1.110:3000/
 
-ngrok: ssh server@0.tcp.eu.ngrok.io -p 15048
+ngrok: ssh server@6.tcp.eu.ngrok.io -p 15323
 
 ***
 
