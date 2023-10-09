@@ -4,7 +4,11 @@
 
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg)](CODE_OF_CONDUCT.md)
 
-**[5controlS](https://5controls.com/)** is an open source platform. Plug-in your ML-algorithms and get a ready-to-use software for manufacturing monitoring.
+**[5controlS](https://5controls.com/)** is an open source AI-powered manufacturing operations platform that helps companies improve productivity, eliminate waste, and enhance workplace safety using computer vision (CV) and machine learning (ML). 
+
+The platform generates detailed reports to provide insights on how processes can be optimized.
+
+Plug-in your ML-algorithms or some of the Official 5s algorithms and get a ready-to-use software for manufacturing monitoring.
 
 # **Project repositories**
 
