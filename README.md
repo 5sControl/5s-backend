@@ -21,7 +21,7 @@ The connections between the project repositories are illustrated by the followin
 2. [5s-frontend](https://github.com/5sControl/5s-frontend)
 3. [5s-algorithms-controller](https://github.com/5sControl/5s-algorithms-controller)
 4. [5s-onvif](https://github.com/5sControl/5s-onvif)
-5. [5s-onvif-finder]()
+5. [5s-onvif-finder](https://github.com/5sControl/5s-onvif-finder))
 
 **Official Algorithms:**
 1. [min-max](https://github.com/5sControl/min-max)
