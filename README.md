@@ -50,51 +50,62 @@ Please note that this project is released with a [Contributor Code of Conduct](C
 
 > Please note that [some](Components-with-copyleft-licensies.md) of the Official Algorithms are using copyleft licensies.  
 
-# **Kaunas QA** HP
+________________________________________________________________
+# To install, do the following
 
-https://5s-kaunas-hp.netlify.app/
+The first thing to do is to clone the repository:
+```sh
+$ https://github.com/5sControl/5s-backend.git
+$ cd 5s-backend
+```
+Create a virtual environment to install dependencies in and activate it:
 
-anydesk: 145 479 941
+```sh
+$ python3 -m venv venv
+$ source venv/bin/activate
+```
+Note the `(venv)` in front of the prompt. This indicates that this terminal
+session operates in a virtual environment set up by `venv`.
 
-IP:172.16.101.100
+Create .env file in 5s-backend root folder:
+```sh
+touch .env
+```
+Your secret key should be in .env file like this:
+```
+SECRET_KEY = asddsad231jsfjp32ojrjpfjsdoivzoidvhoxic
+```
+Variable debug True debug mode False production mode
+```
+DEBUG=True
+```
+Create an IP variable.
+This is the IP address of your machine in the network
+```
+IP=192.168.1.101
+SERVER_URL=http://192.168.1.101
+PRODUCTION=False
+LICENSE_ACTIVE=False
+```
+Add connection parameters to DB:
+```
+DJANGO_DB_ENGINE=django.db.backends.postgresql
+DJANGO_DB_NAME=your name db
+DJANGO_DB_USER=your username db
+DJANGO_DB_PASSWORD=your password db
+DJANGO_DB_HOST=your host db
+DJANGO_DB_PORT=your port db
+```
 
-ngrok: ssh admin1@6.tcp.eu.ngrok.io -p 16931
+Execute the command that will create migrations in the db, superuser and start the server
 
-ngrok: https://dc99-81-7-77-205.ngrok-free.app/
-***
+```sh
+make all
+```
+If the command is executed successfully, you will see in the terminal navigate to `http://127.0.0.1:8000/`
 
-
-# **Kaunas prod** DELL
-
-https://5s-kaunas-dell.netlify.app/
-
-anydesk:  1 321 188 697
-
-IP:192.168.5.109
-
-ngrok: https://fa32-81-7-77-205.ngrok-free.app/
-
-ngrok: ssh sserver@4.tcp.eu.ngrok.io -p 14137
-
-***
-
-# **Office QA**
-
-http://192.168.1.111:3000/
-***
-
-# **Office dev**
-
-https://grand-alien-apparently.ngrok-free.app/
-
-http://192.168.1.110:3000/
-
-ngrok: ssh server@0.tcp.eu.ngrok.io -p 15048
-
-***
-
-# **Office designers**
-
-http://192.168.1.185:3000/
-
-ngrok: ssh server@8.tcp.eu.ngrok.io -p 11360
+You can go to the address 
+```sh
+http://127.0.0.1:8000/api/swagger/
+```
+Swagger will open where you will see a list of available URLs
