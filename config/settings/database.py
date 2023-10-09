@@ -1,22 +1,25 @@
+from config.settings.base import config, BASE_DIR
+
 import sys
 
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "fiveScontrol",
-        "USER": "admin",
-        "PASSWORD": "just4Taqtile",
-        "HOST": "localhost",
-        "PORT": "5432",
+        "ENGINE": config("DB_ENGINE", default="django.db.backends.sqlite3"),
+        "NAME": config("DB_NAME", default=BASE_DIR / "db.sqlite3"),
+        "USER": config("DB_USER", default=None),
+        "PASSWORD": config("DB_PASSWORD", default=None),
+        "HOST": config("DB_HOST", default=None),
+        "PORT": config("DB_PORT", default=None),
     },
+
     "database_for_test": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "test_database",
-        "USER": "admin",
-        "PASSWORD": "just4Taqtile",
-        "HOST": "192.168.1.110",
-        "PORT": "5433",
+        "ENGINE": config("DB_ENGINE", default="django.db.backends.sqlite3"),
+        "NAME": config("TEST_DB_NAME"),
+        "USER": config("DB_USER", default=None),
+        "PASSWORD": config("DB_PASSWORD", default=None),
+        "HOST": config("DB_HOST", default=None),
+        "PORT": config("TEST_DB_PORT", default=None),
     },
 }
 

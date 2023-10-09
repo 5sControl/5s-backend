@@ -76,51 +76,69 @@ We also have a list of [good first issues]() that will help you make your first 
     <img src="https://github.com/5sControl/Manufacturing-Automatization-Enterprise/blob/ebf176c81fdb62d81b2555cb6228adc074f60be0/assets/youtube%20(1).png" width="5%" alt="" /></a>
 </div>
 
-# **Kaunas QA** HP
+________________________________________________________________
+# To install, do the following
 
-https://5s-kaunas-hp.netlify.app/
+The first thing to do is to clone the repository:
+```sh
+git clone https://github.com/5sControl/5s-backend.git
+cd 5s-backend
+```
+Create a virtual environment to install dependencies in and activate it:
 
-anydesk: 145 479 941
+```sh
+python3 -m venv venv
+source venv/bin/activate
+```
+Note the `(venv)` in front of the prompt. This indicates that this terminal
+session operates in a virtual environment set up by `venv`.
 
-IP:172.16.101.100
+Then install the dependencies:
+```sh
+pip install -r requirements.txt
+```
 
-ngrok: ssh admin1@6.tcp.eu.ngrok.io -p 16931
+Create .env file in 5s-backend root folder:
+```sh
+touch .env
+```
+All variables and how they should look can be seen in the file `.env.example`
 
-ngrok: https://dc99-81-7-77-205.ngrok-free.app/
-***
+Your secret key should be in .env file like this:
+```
+SECRET_KEY = asddsad231jsfjp32ojrjpfjsdoivzoidvhoxic
+```
+Debug mode enabled `DEBUG=True`
+```
+DEBUG=True
+```
+Create an IP variable.
+This is the IP address of your machine in the network
+```
+IP=192.168.1.101
+SERVER_URL=http://192.168.1.101
+PRODUCTION=False
+LICENSE_ACTIVE=False
+```
+Add connection parameters to DB:
+```
+DB_ENGINE=django.db.backends.postgresql
+DB_NAME=your name db
+DB_USER=your username db
+DB_PASSWORD=your password db
+DB_HOST=your host db
+DB_PORT=your port db
+```
 
+Execute the command that will create migrations in the db, superuser and start the server
 
-# **Kaunas prod** DELL
+```sh
+make all
+```
+If the command is executed successfully, you will see in the terminal navigate to `http://127.0.0.1:8000/`
 
-https://5s-kaunas-dell.netlify.app/
-
-anydesk:  1 321 188 697
-
-IP:192.168.5.109
-
-ngrok: https://fa32-81-7-77-205.ngrok-free.app/
-
-ngrok: ssh sserver@4.tcp.eu.ngrok.io -p 14137
-
-***
-
-# **Office QA**
-
-http://192.168.1.111:3000/
-***
-
-# **Office dev**
-
-https://grand-alien-apparently.ngrok-free.app/
-
-http://192.168.1.110:3000/
-
-ngrok: ssh server@6.tcp.eu.ngrok.io -p 10456
-
-***
-
-# **Office designers**
-
-http://192.168.1.185:3000/
-
-ngrok: ssh server@8.tcp.eu.ngrok.io -p 11360
+You can go to the address 
+```sh
+http://127.0.0.1:8000/api/swagger/
+```
+Swagger will open where you will see a list of available URLs
