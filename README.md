@@ -55,27 +55,34 @@ ________________________________________________________________
 
 The first thing to do is to clone the repository:
 ```sh
-$ https://github.com/5sControl/5s-backend.git
-$ cd 5s-backend
+git clone https://github.com/5sControl/5s-backend.git
+cd 5s-backend
 ```
 Create a virtual environment to install dependencies in and activate it:
 
 ```sh
-$ python3 -m venv venv
-$ source venv/bin/activate
+python3 -m venv venv
+source venv/bin/activate
 ```
 Note the `(venv)` in front of the prompt. This indicates that this terminal
 session operates in a virtual environment set up by `venv`.
+
+Then install the dependencies:
+```sh
+pip install -r requirements.txt
+```
 
 Create .env file in 5s-backend root folder:
 ```sh
 touch .env
 ```
+All variables and how they should look can be seen in the file `.env.example`
+
 Your secret key should be in .env file like this:
 ```
 SECRET_KEY = asddsad231jsfjp32ojrjpfjsdoivzoidvhoxic
 ```
-Variable debug True debug mode False production mode
+Debug mode enabled `DEBUG=True`
 ```
 DEBUG=True
 ```
@@ -89,12 +96,12 @@ LICENSE_ACTIVE=False
 ```
 Add connection parameters to DB:
 ```
-DJANGO_DB_ENGINE=django.db.backends.postgresql
-DJANGO_DB_NAME=your name db
-DJANGO_DB_USER=your username db
-DJANGO_DB_PASSWORD=your password db
-DJANGO_DB_HOST=your host db
-DJANGO_DB_PORT=your port db
+DB_ENGINE=django.db.backends.postgresql
+DB_NAME=your name db
+DB_USER=your username db
+DB_PASSWORD=your password db
+DB_HOST=your host db
+DB_PORT=your port db
 ```
 
 Execute the command that will create migrations in the db, superuser and start the server
