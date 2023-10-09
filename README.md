@@ -37,6 +37,10 @@ The connections between the project repositories are illustrated by the followin
 
 [User Documentation](https://github.com/5sControl/Manufacturing-Automatization-Enterprise/wiki)
 
+[Installation Guide Pt.1](https://5controls.com/blog/installing-5s-control-software)
+
+[Installation Guide Pt.2](https://5controls.com/blog/installing-5s-control-software-part-2-docker)
+
 # **Contributing**
 Thank you for considering contributing to 5controlS. We truly believe that we can build an outstanding product together!
 
