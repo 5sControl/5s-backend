@@ -4,7 +4,7 @@ import sys
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "fivescontrol",
+        "NAME": "fiveScontrol",
         "USER": "admin",
         "PASSWORD": "just4Taqtile",
         "HOST": "localhost",
