@@ -28,6 +28,9 @@ class ReportSerializers(serializers.ModelSerializer):
             "status",
         ]
 
+    date_created = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%f %z", required=False)
+    date_updated = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%f %z", required=False)
+
 
 class OperationReportSerializer(serializers.ModelSerializer):
     operationID = serializers.IntegerField(source="skany_index")
