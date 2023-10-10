@@ -4,6 +4,8 @@ from src.Reports.models import Report, SkanyReport
 from src.ImageReport.serializers import PhotoSerializers
 from src.CameraAlgorithms.serializers import AlgorithmSerializer, CameraReportSerializer
 
+from datetime import datetime
+
 
 class ReportSerializers(serializers.ModelSerializer):
     """All photos on Reports"""
@@ -11,6 +13,8 @@ class ReportSerializers(serializers.ModelSerializer):
     photos = PhotoSerializers(many=True)
     algorithm = AlgorithmSerializer(many=False)
     camera = CameraReportSerializer(many=False)
+    stop_tracking = serializers.SerializerMethodField()
+    start_tracking = serializers.SerializerMethodField()
 
     class Meta:
         model = Report
@@ -30,6 +34,22 @@ class ReportSerializers(serializers.ModelSerializer):
 
     date_created = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%f %z", required=False)
     date_updated = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%f %z", required=False)
+
+    def get_stop_tracking(self, obj):
+        if obj.stop_tracking:
+            formatted_date = datetime.strptime(obj.stop_tracking, "%Y-%m-%d %H:%M:%S.%f").strftime(
+                "%Y-%m-%d %H:%M:%S.%f %z"
+            )
+            return formatted_date + "+0000"
+        return None
+
+    def get_start_tracking(self, obj):
+        if obj.start_tracking:
+            formatted_date = datetime.strptime(obj.start_tracking, "%Y-%m-%d %H:%M:%S.%f").strftime(
+                "%Y-%m-%d %H:%M:%S.%f %z"
+            )
+            return formatted_date + "+0000"
+        return None
 
 
 class OperationReportSerializer(serializers.ModelSerializer):
