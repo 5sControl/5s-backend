@@ -15,6 +15,7 @@ class ReportSerializers(serializers.ModelSerializer):
     camera = CameraReportSerializer(many=False)
     stop_tracking = serializers.SerializerMethodField()
     start_tracking = serializers.SerializerMethodField()
+    extra = serializers.SerializerMethodField()
 
     class Meta:
         model = Report
@@ -34,6 +35,15 @@ class ReportSerializers(serializers.ModelSerializer):
 
     date_created = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%f %z", required=False)
     date_updated = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%f %z", required=False)
+
+    def get_extra(self, obj):
+        extra = obj.extra
+        item_id = self.context.get('item_id')
+        if item_id:
+            filtered_extra = [item for item in extra if item.get('itemId') == item_id]
+        else:
+            filtered_extra = obj.extra
+        return filtered_extra
 
     def get_stop_tracking(self, obj):
         if obj.stop_tracking:

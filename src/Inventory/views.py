@@ -112,6 +112,7 @@ class ItemsHistoryViewSet(APIView):
 
         queryset = queryset.order_by("algorithm__name", "camera__id", "id")
 
-        serializer = ReportSerializers(queryset, many=True)
+        serializer = ReportSerializers(queryset, many=True, context={'item_id': item_id})
+
 
         return Response(serializer.data)
