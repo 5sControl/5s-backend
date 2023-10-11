@@ -17,6 +17,8 @@ class UserSerializer(serializers.ModelSerializer):
             "status",
         ]
 
+    date_joined = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%f %z", required=False)
+
     def create(self, validated_data):
         validated_data["password"] = make_password(validated_data["password"])
         return super(UserSerializer, self).create(validated_data)
