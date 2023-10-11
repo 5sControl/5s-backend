@@ -42,6 +42,7 @@ class CreateUserView(generics.CreateAPIView):
 
 
 class UserListApiView(generics.ListAPIView):
+    pagination_class = None
     permission_classes = [IsAuthenticated, IsSuperuserPermission]
     queryset = User.objects.all()
     serializer_class = UserSerializer
