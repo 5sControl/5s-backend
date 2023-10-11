@@ -5,6 +5,7 @@ from src.Inventory.views import (
     ItemsRetrieveAPIView,
     ItemsHistoryViewSet,
     ItemsCreateAPIView,
+    HistoryViewSet,
 )
 
 
@@ -20,4 +21,5 @@ urlpatterns = [
         "history/<str:date>/<str:start_time>/<str:end_time>/",
         ItemsHistoryViewSet.as_view(),
     ),
+    path("search/<str:date>/<int:item_id>/", HistoryViewSet.as_view(), name="Search date and item_id")
 ]
