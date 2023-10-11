@@ -114,5 +114,4 @@ class ItemsHistoryViewSet(APIView):
 
         serializer = ReportSerializers(queryset, many=True, context={'item_id': item_id})
 
-
         return Response(serializer.data)
