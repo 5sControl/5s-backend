@@ -30,7 +30,8 @@
 | zeep==4.2.1                          | Copyright (c) 2016-2021 Michael van Tellingen                                                                                                                          |
 | django-crontab==0.7.1                | Copyright (c) 2011-2017 Lars Kreisz<br>                                                                                                                                |
 | schedule==1.2.0                      | Copyright (c) 2013 Daniel Bader (http://dbader.org)<br>                                                                                                                |
-| django-extensions==3.2.1             | Copyright (c) 2007 Michael Trier       
+| django-extensions==3.2.1             | Copyright (c) 2007 Michael Trier 
+| pycodestyle==2.10.0                  | Copyright © 2006-2009 Johann C. Rocholl <johann@rocholl.net><br>Copyright © 2009-2014 Florent Xicluna <florent.xicluna@gmail.com><br>Copyright © 2014-2020 Ian Lee <IanLee1521@gmail.com><br>|
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -72,7 +73,7 @@ ___
 | django-celery-results==2.5.0  | Copyright (c) 2017-2032 Asif Saif Uddin. All Rights Reserved.<br>Copyright (c) 2015-2016 Ask Solem. All Rights Reserved.<br>Copyright (c) 2012-2014 GoPivotal, Inc. All Rights Reserved.<br>Copyright (c) 2009-2012 Ask Solem. All Rights Reserved.<br> 
 | psutil                        | Copyright (c) 2009, Jay Loden, Dave Daeschler, Giampaolo Rodola <br>All rights reserved.<br> |
 |django-redis==5.2.0            | Copyright (c) 2011-2016 Andrey Antukh <niwi@niwi.nz> <br> Copyright (c) 2011 Sean Bleier<br>All rights reserved.<br> |
-
+|rredis==4.5.4                  | Copyright 2021 Redis Ltd. <br>|
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
@@ -115,4 +116,56 @@ You may obtain a copy of the License at https://www.python.org/download/releases
 
 ___
 # MPL-2.0
+
+**Lbraries:**
+- certifi==2022.12.7
+- pathspec==0.11.0
+
+You may obtain a copy of the License at https://www.mozilla.org/en-US/MPL/2.0/.
+
+___
+# HPND
+Pillow - Copyright © 2010-2023 by Jeffrey A. Clark (Alex) and contributors.
+
+You may obtain a copy of the License at https://github.com/python-pillow/Pillow/blob/main/LICENSE.
+
+___
+# ISC
+requests-oauthlib==1.3.1 - Copyright (c) 2014 Kenneth Reitz.
+
+Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted, provided that the above copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED “AS IS” AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+___
+# BSD-2-Clause
+pycryptodome==3.17 - The copyright of each piece belongs to the respective author.
+
+Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS “AS IS” AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+___
+# GNU LGPL-2.1
+
+pymssql==2.2.7 
+
+Copyright (C) 2003 Joon-cheol Park <jooncheol@gmail.com><br>
+2008 Andrzej Kukula <akukula@gmail.com><br>
+2009-2010 Damien Churchill <damoxc@gmail.com><br>
+
+
+You may obtain a copy of the License at https://opensource.org/license/lgpl-2-1/
+
+___
+# GNU LGPL-3.0
+psycopg2-binary 
+Copyright (C) 2020-2021 The Psycopg Team
+
+You may obtain a copy of the License at https://opensource.org/license/lgpl-3-0/
+
 
