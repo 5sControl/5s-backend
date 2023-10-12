@@ -127,6 +127,7 @@ If you want to contribute, read  our [contributing guide](CONTRIBUTING.md) to le
 We also have a list of [good first issues]() that will help you make your first step to beсoming a 5S contributor.
 
 # **License**
+> 5controlS uses third party libraries that are distributed under their own terms (see [LICENSE-3RD-PARTY.md](LICENSE-3RD-PARTY.md)).<br>
 
 > Please note that [some](Components-with-copyleft-licensies.md) of the Official Algorithms are using copyleft licensies.  
 
