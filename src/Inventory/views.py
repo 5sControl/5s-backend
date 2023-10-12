@@ -13,7 +13,7 @@ from django.db.models import Q
 from src.Reports.models import Report
 from src.Core.paginators import NoPagination
 from src.CompanyLicense.decorators import validate_license
-from src.Reports.serializers import ReportSerializers
+from src.Reports.serializers import ReportSerializers, SearchReportSerializers
 
 from .models import Items
 from .serializers import ItemsSerializer
@@ -112,6 +112,33 @@ class ItemsHistoryViewSet(APIView):
 
         queryset = queryset.order_by("algorithm__name", "camera__id", "id")
 
-        serializer = ReportSerializers(queryset, many=True)
+        serializer = ReportSerializers(queryset, many=True, context={'item_id': item_id})
+
+        return Response(serializer.data)
+
+
+class HistoryViewSet(APIView):
+    """Search by date and item_id"""
+
+    permission_classes = [IsAuthenticated]
+
+    @validate_license
+    def get(self, request, date, item_id=None):
+        algorithm_name = "min_max_control"
+        date_obj = datetime.strptime(date, "%Y-%m-%d").date()
+        start_of_day = datetime.combine(date_obj, datetime.min.time())
+        end_of_day = datetime.combine(date_obj, datetime.max.time())
+
+        queryset = Report.objects.filter(
+            Q(date_created__gte=start_of_day) & Q(date_created__lte=end_of_day)
+        )
+
+        if algorithm_name:
+            queryset = queryset.filter(algorithm__name=algorithm_name)
+
+        if item_id:
+            queryset = queryset.filter(extra__icontains=f'"itemId": {item_id},').order_by('id')
+
+        serializer = SearchReportSerializers(queryset, many=True, context={'item_id': item_id})
 
         return Response(serializer.data)
