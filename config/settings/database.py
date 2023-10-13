@@ -11,6 +11,7 @@ DATABASES = {
         "PASSWORD": config("DB_PASSWORD", default=None),
         "HOST": config("DB_HOST", default=None),
         "PORT": config("DB_PORT", default=None),
+        "CONN_MAX_AGE": None
     },
 
     "database_for_test": {
