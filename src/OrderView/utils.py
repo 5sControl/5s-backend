@@ -11,10 +11,7 @@ def get_skany_video_info(time: time, camera_ip: str) -> Dict[str, Any]:
         "time": time,
     }
     print("request data for video: ", request_data)
-    if ONVIF_SERVICE_URL:
-        url = f"{ONVIF_SERVICE_URL}:3456/is_video_available/"
-    else:
-        url = f"{SERVER_URL}:3456/is_video_available/"
+    url = f"{ONVIF_SERVICE_URL}:3456/is_video_available/"
     try:
         response: requests = requests.post(
             url=f"{url}",
