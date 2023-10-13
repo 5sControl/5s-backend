@@ -17,7 +17,7 @@ The connections between the project repositories are illustrated by the followin
 > Please note that to ensure system stability and perfomance you can use one of the Official 5S algorithms instead of Your Algorithm.
 
 <p align="center">
-  <img src="https://github.com/5sControl/5s-backend/assets/131950264/60cbc463-ce88-4af2-a4ed-7e3c01f7a955" alt="5controlS-diagram" />
+  <img src="https://github.com/5sControl/5s-webserver/assets/131950264/6bfb9a7b-e16f-4600-8656-3f41fc61dba3" alt="5controlS-diagram" />
 </p>
 
 **5controlS Platform:**
@@ -25,7 +25,7 @@ The connections between the project repositories are illustrated by the followin
 2. [5s-frontend](https://github.com/5sControl/5s-frontend)
 3. [5s-algorithms-controller](https://github.com/5sControl/5s-algorithms-controller)
 4. [5s-onvif](https://github.com/5sControl/5s-onvif)
-5. [5s-onvif-finder](https://github.com/5sControl/5s-onvif-finder))
+5. [5s-onvif-finder](https://github.com/5sControl/5s-onvif-finder)
 
 **Official Algorithms:**
 1. [min-max](https://github.com/5sControl/min-max)
@@ -35,7 +35,7 @@ The connections between the project repositories are illustrated by the followin
 5. [machine-control-js](https://github.com/5sControl/machine-control-js)
 
 **Algorithms Servers:**
-1. [inference-server-js]()
+1. [inference-server-js](https://github.com/5sControl/inference-server-js)
 
 # To install, do the following
 
@@ -124,12 +124,12 @@ Please note that this project is released with a [Contributor Code of Conduct](C
 
 If you want to contribute, read  our [contributing guide](CONTRIBUTING.md) to learn about our development process and pull requests workflow.
 
-We also have a list of [good first issues]() that will help you make your first step to beсoming a 5S contributor.
+We also have a list of [good first issues](https://github.com/5sControl/5s-backend/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+issue%22) that will help you make your first step to beсoming a 5S contributor.
 
 # **License**
-> 5controlS uses third party libraries that are distributed under their own terms (see [LICENSE-3RD-PARTY.md](https://github.com/5sControl/5s-backend/blob/main/LICENSE-3RD-PARTY.md)).<br>
 
-> Please note that [some](Components-with-copyleft-licensies.md) of the Official Algorithms are using copyleft licensies.  
+[GNU GPL-3.0](LICENSE)
+> 5controlS uses third party libraries that are distributed under their own terms (see [LICENSE-3RD-PARTY.md](https://github.com/5sControl/5s-backend/blob/main/LICENSE-3RD-PARTY.md)).<br>
 
 <br>
 <div align="center">
