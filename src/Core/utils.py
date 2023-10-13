@@ -1,7 +1,7 @@
 import requests
 import logging
 
-from src.Core.const import SERVER_URL
+from src.Core.const import SERVER_URL, ALGORITHMS_CONTROLLER_SERVICE_URL, ONVIF_SERVICE_URL
 
 logger = logging.getLogger(__name__)
 
@@ -10,13 +10,18 @@ def Sender(operation, data, cstm_port=None):
     url = None
     port = None
 
+    if ALGORITHMS_CONTROLLER_SERVICE_URL:
+        service_url = ALGORITHMS_CONTROLLER_SERVICE_URL
+    else:
+        service_url = SERVER_URL
+
     if operation == "add_camera":
         url = "/add_camera"
         port = 3456
     if operation == "run":
         url = "/run"
         port = 3333
-        data["server_url"] = SERVER_URL
+        data["server_url"] = service_url
 
     if operation == "stop":
         url = "/stop"
@@ -30,13 +35,21 @@ def Sender(operation, data, cstm_port=None):
         url = f"/image/download?image_name={data}"
         port = 3333
 
+
+    if ALGORITHMS_CONTROLLER_SERVICE_URL and port == 3333:
+        service_url = ALGORITHMS_CONTROLLER_SERVICE_URL
+
+
+    if ONVIF_SERVICE_URL and port == 3456:
+        service_url = ONVIF_SERVICE_URL
+
     if cstm_port:
-        link = f"{SERVER_URL}:{cstm_port}{url}"
+        link = f"{service_url}:{cstm_port}{url}"
     else:
-        link = f"{SERVER_URL}:{port}{url}"
+        link = f"{service_url}:{port}{url}"
 
     if operation in ["search", "loading"]:
-        request = requests.get(f"{SERVER_URL}:{port}{url}")
+        request = requests.get(f"{service_url}:{port}{url}")
         logger.warning(f"Request status from sender docker_image -> {request}")
     else:
         request = requests.post(link, json=data)

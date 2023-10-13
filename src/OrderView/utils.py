@@ -2,7 +2,7 @@ from typing import Any, Dict
 import requests
 import time
 
-from src.Core.const import SERVER_URL
+from src.Core.const import SERVER_URL, ONVIF_SERVICE_URL
 
 
 def get_skany_video_info(time: time, camera_ip: str) -> Dict[str, Any]:
@@ -11,9 +11,13 @@ def get_skany_video_info(time: time, camera_ip: str) -> Dict[str, Any]:
         "time": time,
     }
     print("request data for video: ", request_data)
+    if ONVIF_SERVICE_URL:
+        url = f"{ONVIF_SERVICE_URL}:3456/is_video_available/"
+    else:
+        url = f"{SERVER_URL}:3456/is_video_available/"
     try:
         response: requests = requests.post(
-            url=f"{SERVER_URL}:3456/is_video_available/",
+            url=f"{url}",
             json=request_data,
         )
     except Exception:

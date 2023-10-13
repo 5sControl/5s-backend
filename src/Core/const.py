@@ -3,6 +3,8 @@ import os
 from decouple import config
 
 SERVER_URL = os.environ.get("SERVER_URL")
+ONVIF_SERVICE_URL = os.environ.get("ONVIF_SERVICE_URL")
+ALGORITHMS_CONTROLLER_SERVICE_URL = os.environ.get("ALGORITHMS_CONTROLLER_SERVICE_URL")
 if not SERVER_URL:
     SERVER_URL = config("SERVER_URL")
 
