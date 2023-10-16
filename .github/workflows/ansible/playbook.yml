@@ -6,4 +6,4 @@
     - name: Change working directory
       become: true
       become_user: server
-      shell: cd /home/server/reps/server- && make django run
+      shell: cd /home/server/reps/server- && make django
