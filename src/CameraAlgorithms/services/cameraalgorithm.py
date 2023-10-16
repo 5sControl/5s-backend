@@ -5,7 +5,7 @@ from typing import Any, Dict, Iterable, List, Optional, Set
 
 from src.Core.exceptions import InvalidResponseError, SenderError, CameraConnectionError
 from src.Core.utils import Sender
-from src.Core.const import SERVER_URL
+from src.Core.const import DJANGO_SERVICE_URL
 from src.Inventory.models import Items
 from src.OrderView.models import IndexOperations
 from src.CompanyLicense.decorators import check_active_cameras, check_active_algorithms
@@ -123,8 +123,8 @@ def create_camera_algorithms(
             "camera_url": rtsp_link,
             "algorithm": algorithm_obj.name,
             "image_name": algorithm_obj.image_name,
-            "server_url": SERVER_URL,
-            "link_reports": f"{SERVER_URL}:8000/api/reports/report-with-photos/",
+            "server_url": DJANGO_SERVICE_URL,
+            "link_reports": f"{DJANGO_SERVICE_URL}:8000/api/reports/report-with-photos/",
             "extra": data,
         }
 
@@ -262,8 +262,8 @@ def create_single_camera_algorithms(
         "camera_url": rtsp_link,
         "algorithm": algorithm_obj.name,
         "image_name": algorithm_obj.image_name,
-        "server_url": SERVER_URL,
-        "link_reports": f"{SERVER_URL}:8000/api/reports/report-with-photos/",
+        "server_url": DJANGO_SERVICE_URL,
+        "link_reports": f"{DJANGO_SERVICE_URL}:8000/api/reports/report-with-photos/",
         "extra": data,
     }
 

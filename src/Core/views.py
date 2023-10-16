@@ -4,14 +4,14 @@ from django.core.paginator import Paginator
 from rest_framework.response import Response
 from rest_framework import status, generics, viewsets, mixins
 
-from .const import SERVER_URL
+from .const import ONVIFFINDER_SERVICE_URL
 from .serializers import SystemMessagesSerializer
 from .models import SystemMessage
 
 
 class FindCameraAPIView(generics.GenericAPIView):
     def get(self, request, *args, **kwargs):
-        cameras_response = requests.get(f"{SERVER_URL}:7654/get_all_onvif_cameras/")
+        cameras_response = requests.get(f"{ONVIFFINDER_SERVICE_URL}:7654/get_all_onvif_cameras/")
         try:
             cameras = cameras_response.json()
         except ValueError as e:
