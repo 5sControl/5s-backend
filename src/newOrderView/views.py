@@ -24,7 +24,7 @@ class GetOperation(generics.GenericAPIView):
     @check_database_connection
     def get(self, request):
         from_date, to_date = get_date_interval(request)
-        cache_key, operation_type_ids = get_cache_data(from_date, to_date)
+        cache_key, operation_type_ids = get_cache_data('get_operation', from_date, to_date)
 
         response: List[Dict[str, Any]] = get_response(
             cache_key, from_date, to_date, operation_type_ids, "operation"
@@ -39,7 +39,7 @@ class GetOrders(generics.GenericAPIView):
     @check_database_connection
     def get(self, request):
         from_date, to_date = get_date_interval(request)
-        cache_key, operation_type_ids = get_cache_data(from_date, to_date)
+        cache_key, operation_type_ids = get_cache_data('get_order', from_date, to_date)
 
         response: List[Dict[str, Any]] = get_response(
             cache_key, from_date, to_date, operation_type_ids, "orders"
@@ -54,7 +54,7 @@ class GetMachine(generics.GenericAPIView):
     @check_database_connection
     def get(self, request):
         from_date, to_date = get_date_interval(request)
-        cache_key, operation_type_ids = get_cache_data(from_date, to_date)
+        cache_key, operation_type_ids = get_cache_data('get_machine', from_date, to_date)
 
         response = cache.get(cache_key)
 
