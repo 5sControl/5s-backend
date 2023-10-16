@@ -100,20 +100,27 @@ class ItemsHistoryViewSet(APIView):
         start_of_day = datetime.combine(date_obj, start_time_obj)
         end_of_day = datetime.combine(date_obj, end_time_obj)
 
-        queryset = Report.objects.filter(
+        today_queryset = Report.objects.filter(
             Q(date_created__gte=start_of_day) & Q(date_created__lte=end_of_day)
         ).order_by("-date_created", "-id")
 
         if algorithm_name:
-            queryset = queryset.filter(algorithm__name=algorithm_name)
+            today_queryset = today_queryset.filter(algorithm__name=algorithm_name)
+
+        all_reports_queryset = Report.objects.filter().order_by("-date_created", "-id")
 
         if item_id:
-            queryset = queryset.filter(extra__icontains=f'"itemId": {item_id},')
+            today_queryset = today_queryset.filter(extra__icontains=f'"itemId": {item_id},')
 
-        queryset = queryset.order_by("algorithm__name", "camera__id", "id")
+            if not today_queryset:
+                last_report = all_reports_queryset.filter(extra__icontains=f'"itemId": {item_id},').first()
 
-        serializer = ReportSerializers(queryset, many=True, context={'item_id': item_id})
+                if last_report:
+                    serializer = ReportSerializers(last_report)
+                    return Response(serializer.data)
 
+        today_queryset = today_queryset.order_by("algorithm__name", "camera__id", "id")
+        serializer = ReportSerializers(today_queryset, many=True, context={'item_id': item_id})
         return Response(serializer.data)
 
 
