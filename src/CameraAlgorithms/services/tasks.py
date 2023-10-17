@@ -19,7 +19,6 @@ def uploading_algorithm(id_algorithm, image_name):
     result = Sender("loading", image_name)
     if result.get("status"):
         date_created = parse(result.get("date"))
-        print("date_created", date_created)
         algorithm.date_created = date_created
         algorithm.download_status = True
         algorithm.save()
