@@ -18,9 +18,10 @@ class HandleItemUtils:
             camera_id=camera_id, algorithm__name="min_max_control"
         )
 
-        if camera_algo_obj.exists():
+        if camera_algo_obj:
             process_id = camera_algo_obj.first().process_id
-            stop_and_update_algorithm(process_id)
+            if process_id:
+                stop_and_update_algorithm(process_id)
 
         create_single_camera_algorithms(camera_data, algorithm_data)
 
