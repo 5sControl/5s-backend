@@ -5,7 +5,7 @@ logger = logging.getLogger(__name__)
 
 
 class HandleItemUtils:
-    def save_new_items(self, camera_id: int) -> None:
+    def save_new_items(self, camera_id) -> None:
         from src.CameraAlgorithms.services.cameraalgorithm import (
             create_single_camera_algorithms,
             stop_and_update_algorithm,
@@ -14,12 +14,12 @@ class HandleItemUtils:
 
         camera_data, algorithm_data = self._get_algorithm_camera_data_min_max(camera_id)
 
-        camera_algo_obj = CameraAlgorithm.objects.get(
+        camera_algo_obj = CameraAlgorithm.objects.filter(
             camera_id=camera_id, algorithm__name="min_max_control"
         )
 
         if camera_algo_obj.exists():
-            process_id = camera_algo_obj.process_id
+            process_id = camera_algo_obj.first().process_id
             stop_and_update_algorithm(process_id)
 
         create_single_camera_algorithms(camera_data, algorithm_data)
