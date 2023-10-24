@@ -33,8 +33,8 @@ class ReportSerializers(serializers.ModelSerializer):
             "status",
         ]
 
-    date_created = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%f %z", required=False)
-    date_updated = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%f %z", required=False)
+    date_created = serializers.DateTimeField(format="iso-8601", required=False)
+    date_updated = serializers.DateTimeField(format="iso-8601", required=False)
 
     def get_extra(self, obj):
         extra = obj.extra
@@ -47,19 +47,13 @@ class ReportSerializers(serializers.ModelSerializer):
 
     def get_stop_tracking(self, obj):
         if obj.stop_tracking:
-            formatted_date = datetime.strptime(obj.stop_tracking, "%Y-%m-%d %H:%M:%S.%f").strftime(
-                "%Y-%m-%d %H:%M:%S.%f %z"
-            )
-            return formatted_date + "+0000"
-        return None
+            formatted_date = datetime.strptime(obj.stop_tracking, "%Y-%m-%d %H:%M:%S.%f")
+            return formatted_date.strftime("%Y-%m-%dT%H:%M:%SZ")
 
     def get_start_tracking(self, obj):
         if obj.start_tracking:
-            formatted_date = datetime.strptime(obj.start_tracking, "%Y-%m-%d %H:%M:%S.%f").strftime(
-                "%Y-%m-%d %H:%M:%S.%f %z"
-            )
-            return formatted_date + "+0000"
-        return None
+            formatted_date = datetime.strptime(obj.start_tracking, "%Y-%m-%d %H:%M:%S.%f")
+            return formatted_date.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
 class OperationReportSerializer(serializers.ModelSerializer):
