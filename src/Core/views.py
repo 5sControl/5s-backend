@@ -3,8 +3,11 @@ import requests
 from django.core.paginator import Paginator
 from rest_framework.response import Response
 from rest_framework import status, generics, viewsets, mixins
+from django.http import JsonResponse
+
 
 from .const import ONVIFFINDER_SERVICE_URL
+from .management.commands.startprocess import start_process
 from .serializers import SystemMessagesSerializer
 from .models import SystemMessage
 
@@ -35,3 +38,9 @@ class SystemMessagesApiView(
         page_number = self.request.query_params.get('page', 1)
         page = paginator.get_page(page_number)
         return page
+
+
+def start_all_processing(request):
+    start_process()
+    response_data = {'message': 'successfully'}
+    return JsonResponse(response_data)

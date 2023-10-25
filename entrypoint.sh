@@ -13,8 +13,6 @@ python manage.py algorithm
 python manage.py createadmin
 python manage.py stanowisko
 
-python manage.py startprocess
-
 while true; do
     sleep 1
 done
