@@ -13,8 +13,6 @@ class ReportSerializers(serializers.ModelSerializer):
     photos = PhotoSerializers(many=True)
     algorithm = AlgorithmSerializer(many=False)
     camera = CameraReportSerializer(many=False)
-    stop_tracking = serializers.SerializerMethodField()
-    start_tracking = serializers.SerializerMethodField()
     extra = serializers.SerializerMethodField()
 
     class Meta:
@@ -33,8 +31,10 @@ class ReportSerializers(serializers.ModelSerializer):
             "status",
         ]
 
-    date_created = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%f %z", required=False)
-    date_updated = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%f %z", required=False)
+    date_created = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%fZ", required=False)
+    date_updated = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%fZ", required=False)
+    stop_tracking = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%fZ", required=False)
+    start_tracking = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%fZ", required=False)
 
     def get_extra(self, obj):
         extra = obj.extra
@@ -44,22 +44,6 @@ class ReportSerializers(serializers.ModelSerializer):
         else:
             filtered_extra = obj.extra
         return filtered_extra
-
-    def get_stop_tracking(self, obj):
-        if obj.stop_tracking:
-            formatted_date = datetime.strptime(obj.stop_tracking, "%Y-%m-%d %H:%M:%S.%f").strftime(
-                "%Y-%m-%d %H:%M:%S.%f %z"
-            )
-            return formatted_date + "+0000"
-        return None
-
-    def get_start_tracking(self, obj):
-        if obj.start_tracking:
-            formatted_date = datetime.strptime(obj.start_tracking, "%Y-%m-%d %H:%M:%S.%f").strftime(
-                "%Y-%m-%d %H:%M:%S.%f %z"
-            )
-            return formatted_date + "+0000"
-        return None
 
 
 class OperationReportSerializer(serializers.ModelSerializer):
@@ -95,8 +79,6 @@ class SearchReportSerializers(serializers.ModelSerializer):
     """Report search items"""
 
     photos = PhotoSerializers(many=True)
-    stop_tracking = serializers.SerializerMethodField()
-    start_tracking = serializers.SerializerMethodField()
     algorithm = serializers.SerializerMethodField()
 
     class Meta:
@@ -115,8 +97,10 @@ class SearchReportSerializers(serializers.ModelSerializer):
             "status",
         ]
 
-    date_created = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%f %z", required=False)
-    date_updated = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%f %z", required=False)
+    date_created = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%fZ", required=False)
+    date_updated = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%fZ", required=False)
+    stop_tracking = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%fZ", required=False)
+    start_tracking = serializers.DateTimeField("%Y-%m-%d %H:%M:%S.%fZ", required=False)
 
     def get_algorithm(self, obj):
         return obj.algorithm.name if obj.algorithm else None
@@ -135,19 +119,3 @@ class SearchReportSerializers(serializers.ModelSerializer):
             data.update({key: value for item in filtered_extra for key, value in item.items()})
 
         return data if filtered_extra else None
-
-    def get_stop_tracking(self, obj):
-        if obj.stop_tracking:
-            formatted_date = datetime.strptime(obj.stop_tracking, "%Y-%m-%d %H:%M:%S.%f").strftime(
-                "%Y-%m-%d %H:%M:%S.%f %z"
-            )
-            return formatted_date + "+0000"
-        return None
-
-    def get_start_tracking(self, obj):
-        if obj.start_tracking:
-            formatted_date = datetime.strptime(obj.start_tracking, "%Y-%m-%d %H:%M:%S.%f").strftime(
-                "%Y-%m-%d %H:%M:%S.%f %z"
-            )
-            return formatted_date + "+0000"
-        return None

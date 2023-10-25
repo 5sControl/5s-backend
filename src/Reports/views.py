@@ -60,8 +60,14 @@ class ActionsWithPhotos(APIView):
             algorithm = Algorithm.objects.get(name=algorithm_name)
             camera = Camera.objects.get(id=camera_ip)
 
-            start_tracking = data.get("start_tracking")
-            stop_tracking = data.get("stop_tracking")
+            start_tracking_str = data.get("start_tracking")
+            stop_tracking_str = data.get("stop_tracking")
+
+            start_tracking = datetime.strptime(start_tracking_str, "%Y-%m-%d %H:%M:%S.%f")
+            stop_tracking = datetime.strptime(stop_tracking_str, "%Y-%m-%d %H:%M:%S.%f")
+
+            start_tracking_formatted = start_tracking.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+            stop_tracking_formatted = stop_tracking.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
             photos = data.get("photos")
             violation_found = data.get("violation_found")
@@ -88,13 +94,13 @@ class ActionsWithPhotos(APIView):
             extra=extra,
             algorithm=algorithm,
             violation_found=violation_found,
-            start_tracking=start_tracking,
-            stop_tracking=stop_tracking,
+            start_tracking=start_tracking_formatted,
+            stop_tracking=stop_tracking_formatted,
         )
 
         if algorithm_name == "operation_control":
             create_skanyreport(
-                action, extra, not violation_found, start_tracking, stop_tracking
+                action, extra, not violation_found, data.get("start_tracking"), data.get("stop_tracking")
             )
 
         if photos:
