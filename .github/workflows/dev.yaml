@@ -16,3 +16,6 @@ jobs:
 
       - name: Push container
         run: docker push 5scontrol/django:latest
+
+      - name: Deploy
+        run: curl 192.168.1.115:4545/deploy-pod?service=backend
