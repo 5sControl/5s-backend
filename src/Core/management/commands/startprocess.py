@@ -17,10 +17,6 @@ from src.CameraAlgorithms.services.cameraalgorithm import (
 logger = logging.getLogger(__name__)
 
 
-# class Command(BaseCommand):
-#     def handle(self, *args, **kwargs):
-#         self.start_process()
-
 def start_process() -> None:
     camera_algorithms = CameraAlgorithm.objects.filter(is_active=True).exclude(
         process_id=None

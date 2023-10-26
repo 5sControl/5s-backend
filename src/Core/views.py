@@ -5,11 +5,11 @@ from rest_framework.response import Response
 from rest_framework import status, generics, viewsets, mixins
 from django.http import JsonResponse
 
+from src.Core.const import ONVIFFINDER_SERVICE_URL
 
-from .const import ONVIFFINDER_SERVICE_URL
-from .management.commands.startprocess import start_process
-from .serializers import SystemMessagesSerializer
-from .models import SystemMessage
+from src.Core.management.commands.startprocess import start_process
+from src.Core.serializers import SystemMessagesSerializer
+from src.Core.models import SystemMessage
 
 
 class FindCameraAPIView(generics.GenericAPIView):
