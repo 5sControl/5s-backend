@@ -129,6 +129,13 @@ DB_PASSWORD=your password db
 DB_HOST=your host db
 DB_PORT=your port db
 ```
+```
+ONVIF_SERVICE_URL=onvif-service
+ONVIFFINDER_SERVICE_URL=onviffinder-service
+ALGORITHMS_CONTROLLER_SERVICE_URL=algorithms-controller-service
+DJANGO_SERVICE_URL=django-service
+NGROK_URL=https://ngrok-free.app/
+```
 
 Execute the command that will create migrations in the db, superuser and start the server
 
