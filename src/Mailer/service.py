@@ -9,8 +9,11 @@ from datetime import time
 
 from celery import shared_task
 
+from src.CameraAlgorithms.services.cameraalgorithm import stop_camera_algorithm, create_single_camera_algorithms
 from src.Mailer.models import SMTPSettings, WorkingTime
 from src.DatabaseConnections.models import ConnectionInfo
+from src.CameraAlgorithms.models.algorithm import CameraAlgorithm
+
 
 from decouple import config
 
@@ -144,4 +147,23 @@ def odoo_notification(message: str):
         response = session.post(f"{connection['host']}{send_message_endpoint}", json=data)
     else:
         raise "Authentication failed!"
+
+
+def work_time_min_max():
+    algorithm = "min_max_control"
+    all_cameras = []
+
+    all_algorithm = CameraAlgorithm.objects.filter(algorithm__name__iexact=algorithm)
+    for algorithms in all_algorithm:
+        pid_process = algorithms.process_id
+        # STOP процесс
+        stop_camera_algorithm(pid_process)
+        all_cameras.append(algorithms.camera_id)
+
+    return task_start_minmax(all_cameras, algorithm)
+
+
+def task_start_minmax(all_cameras, algorithm):
+    for camera in all_cameras:
+        create_single_camera_algorithms({'ip': camera}, {"name": algorithm})
 

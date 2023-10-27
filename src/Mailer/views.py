@@ -1,7 +1,7 @@
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from django.http import HttpResponse
-
+from rest_framework import status
 from rest_framework.response import Response
 
 import json
@@ -50,5 +50,18 @@ def email_list(request):
 class WorkingTimeView(ModelViewSet):
     permission_classes = [IsAuthenticated]
     pagination_class = None
-    queryset = WorkingTime.objects.all().order_by('id')
     serializer_class = WorkingTimeSerializer
+
+    def get_queryset(self):
+        last_working_time = WorkingTime.objects.last()
+        if last_working_time is not None:
+            return WorkingTime.objects.filter(id=last_working_time.id)
+        return WorkingTime.objects.none()
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+

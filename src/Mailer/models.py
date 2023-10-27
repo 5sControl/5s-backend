@@ -56,12 +56,13 @@ class DayOfWeek(models.Model):
 
 class WorkingTime(models.Model):
     """
-    Time send notifications
+    Working time MinMax
     """
 
     time_start = models.TimeField(verbose_name="Start time")
     time_end = models.TimeField(verbose_name="End time")
-    days_of_week = models.ManyToManyField(DayOfWeek, default=DayOfWeek.objects.all)
+    days_of_week = models.ManyToManyField(DayOfWeek, blank=True, null=True)
 
     def __str__(self):
         return f"{self.time_end} - {self.time_start}"
+
