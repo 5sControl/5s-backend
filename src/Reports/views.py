@@ -18,6 +18,7 @@ from src.Core.paginators import NoPagination
 from src.ImageReport.models import Image
 from src.CameraAlgorithms.models import Camera
 from src.CameraAlgorithms.models import Algorithm
+from src.Mailer.service import check_work_time
 from src.Reports.models import Report, SkanyReport
 from src.Reports.serializers import (
     ReportSerializers,
@@ -75,7 +76,10 @@ class ActionsWithPhotos(APIView):
             extra = data.get("extra")
 
             if algorithm_name == "min_max_control":
-                extra = process_item_status(extra)
+                if check_work_time():
+                    extra = process_item_status(extra)
+                else:
+                    return
 
             elif algorithm_name == "operation_control":
                 if EMULATE_DB:

@@ -167,3 +167,13 @@ def task_start_minmax(all_cameras, algorithm):
     for camera in all_cameras:
         create_single_camera_algorithms({'ip': camera}, {"name": algorithm})
 
+
+def check_work_time():
+    working_time = WorkingTime.objects.last()
+    if working_time is not None:
+        time_start = working_time.time_start
+        time_end = working_time.time_end
+        current_time = datetime.now().time()
+        return time_start <= current_time <= time_end
+    else:
+        return True
