@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
 
 from src.Core.permissions import IsSuperuserPermission
 
@@ -46,3 +47,11 @@ class UserListApiView(generics.ListAPIView):
     permission_classes = [IsAuthenticated, IsSuperuserPermission]
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+
+class UserInfoFromToken(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user_serializer = UserSerializer(request.user)
+        return Response(user_serializer.data, status=status.HTTP_200_OK)
