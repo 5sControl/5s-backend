@@ -61,7 +61,7 @@ class WorkingTime(models.Model):
 
     time_start = models.TimeField(verbose_name="Start time")
     time_end = models.TimeField(verbose_name="End time")
-    days_of_week = models.ManyToManyField(DayOfWeek, blank=True, null=True)
+    days_of_week = models.ManyToManyField(DayOfWeek, blank=True)
 
     def __str__(self):
         return f"{self.time_end} - {self.time_start}"
