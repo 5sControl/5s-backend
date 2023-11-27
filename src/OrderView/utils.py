@@ -1,8 +1,12 @@
 from typing import Any, Dict
 import requests
 import time
+import logging
+
 
 from src.Core.const import SERVER_URL, ONVIF_SERVICE_URL
+
+logger = logging.getLogger(__name__)
 
 
 def get_skany_video_info(time: time, camera_ip: str) -> Dict[str, Any]:
@@ -42,7 +46,7 @@ def get_package_video_info(time: time, camera_ip: str) -> Dict[str, Any]:
         return {"status": False}
 
     result: Dict[str, Any] = response.json()
-    print("video result: ", result)
+    logger.warning(f"Video result: ", result)
     result["camera_ip"]: str = camera_ip
 
     return result
