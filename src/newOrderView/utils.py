@@ -4,6 +4,7 @@ from typing import List, Tuple
 
 from rest_framework.request import Request
 
+from src.CameraAlgorithms.models import ZoneCameras
 from src.newOrderView.models import FiltrationOperationsTypeID
 
 
@@ -54,3 +55,11 @@ def get_date_interval(request: Request) -> Tuple[str]:
     to_date: str = request.GET.get("to")
 
     return from_date, to_date
+
+
+def find_camera_by_workspace(workspace: str = "Komplektavimas"):
+    try:
+        camera = ZoneCameras.objects.get(workplace=workspace)
+        return camera.camera_id
+    except ZoneCameras.DoesNotExist:
+        return None

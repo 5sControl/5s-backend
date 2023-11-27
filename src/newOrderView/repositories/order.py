@@ -3,6 +3,8 @@ from typing import Any, List, Tuple
 from src.Core.types import Query
 from src.DatabaseConnections.repositories.ms_repository import WinHRepository
 
+from datetime import datetime
+
 
 class OrderRepository(WinHRepository):
     def get_orders_by_operation(
@@ -30,3 +32,20 @@ class OrderRepository(WinHRepository):
         result: List[Tuple[Any]] = self.execute_query(query, params)
 
         return result
+
+    def packing_time_search(self, order_number):
+        query: Query = """
+                SELECT Data
+                FROM Zlecenia
+                WHERE Zlecenie = %s AND Stanowisko = 43;
+            """
+        params: Tuple[Any] = (order_number,)
+
+        result: List[Tuple[Any]] = self.execute_query(query, params)
+
+        result_in_milliseconds = [self.convert_to_milliseconds(row[0]) for row in result]
+
+        return result_in_milliseconds
+
+    def convert_to_milliseconds(self, timestamp):
+        return int(datetime.timestamp(timestamp) * 1000)
