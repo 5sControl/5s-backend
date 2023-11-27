@@ -20,6 +20,10 @@ from .services.view_services import get_response
 from .utils import get_cache_data, get_date_interval, find_camera_by_workspace
 from ..OrderView.utils import get_package_video_info
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class GetOperation(generics.GenericAPIView):
     pagination_class = NoPagination
@@ -150,6 +154,7 @@ class GetOrderPackaging(APIView):
         operation_times = self.order_repository.packing_time_search(order_number)
 
         if not operation_times:
+            logger.warning(f"No video found for order {order_number}")
             return Response(
                 {"message": f"No video found for order {order_number}"},
                 status=status.HTTP_404_NOT_FOUND
