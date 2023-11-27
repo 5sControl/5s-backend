@@ -133,3 +133,7 @@ class GetOperationsDuration(generics.GenericAPIView):
             cache.set(key, response, timeout=360)
 
         return JsonResponse(response, status=status.HTTP_200_OK, safe=False)
+
+
+class GetOrderPackaging(generics.GenericAPIView):
+    pass
