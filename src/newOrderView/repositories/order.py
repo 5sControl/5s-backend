@@ -35,10 +35,18 @@ class OrderRepository(WinHRepository):
 
     def packing_time_search(self, order_number):
         query: Query = """
-                SELECT Data
-                FROM Zlecenia
-                WHERE Zlecenie = %s AND Stanowisko = 43;
-            """
+                SELECT S.*
+                FROM Skany S
+                JOIN Skany_vs_Zlecenia SZ ON S.indeks = SZ.indeksskanu
+                JOIN Zlecenia Z ON SZ.indekszlecenia = Z.Indeks
+                WHERE Z.Zlecenie = %s
+                    AND S.Stanowisko = 43;
+        """
+        # query: Query = """
+        #         SELECT Data
+        #         FROM Zlecenia
+        #         WHERE Zlecenie = %s AND Stanowisko = 43;
+        #     """
         params: Tuple[Any] = (order_number,)
 
         result: List[Tuple[Any]] = self.execute_query(query, params)
