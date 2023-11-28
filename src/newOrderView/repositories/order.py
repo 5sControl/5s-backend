@@ -35,7 +35,7 @@ class OrderRepository(WinHRepository):
 
     def packing_time_search(self, order_number):
         query: Query = """
-                SELECT S.*
+                SELECT S.Data
                 FROM Skany S
                 JOIN Skany_vs_Zlecenia SZ ON S.indeks = SZ.indeksskanu
                 JOIN Zlecenia Z ON SZ.indekszlecenia = Z.Indeks
