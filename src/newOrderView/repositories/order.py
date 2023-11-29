@@ -1,5 +1,7 @@
 from typing import Any, List, Tuple
 
+import pytz
+
 from src.Core.types import Query
 from src.DatabaseConnections.repositories.ms_repository import WinHRepository
 
@@ -42,11 +44,7 @@ class OrderRepository(WinHRepository):
                 WHERE Z.Zlecenie = %s
                     AND S.Stanowisko = 43;
         """
-        # query: Query = """
-        #         SELECT Data
-        #         FROM Zlecenia
-        #         WHERE Zlecenie = %s AND Stanowisko = 43;
-        #     """
+
         params: Tuple[Any] = (order_number,)
 
         result: List[Tuple[Any]] = self.execute_query(query, params)
@@ -56,4 +54,6 @@ class OrderRepository(WinHRepository):
         return result_in_milliseconds
 
     def convert_to_milliseconds(self, timestamp):
-        return int(datetime.timestamp(timestamp) * 1000)
+        timestamp_utc = pytz.timezone('Europe/Vilnius').localize(timestamp).astimezone(pytz.utc)
+
+        return int(datetime.timestamp(timestamp_utc) * 1000)
