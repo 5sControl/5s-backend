@@ -1,8 +1,8 @@
 from rest_framework.routers import DefaultRouter
-from .views import SocialPostViewSet
+from src.ReportsAI.views import ExtensionReportViewSet
 
 router = DefaultRouter()
-router.register(r'reports', SocialPostViewSet)
+router.register(r'reports', ExtensionReportViewSet)
 
 urlpatterns = []
 

@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from .models import SocialPost
+from src.ReportsAI.models import ExtensionReport
 
 
-class SocialPostSerializer(serializers.ModelSerializer):
+class ExtensionReportSerializer(serializers.ModelSerializer):
     class Meta:
-        model = SocialPost
+        model = ExtensionReport
         fields = '__all__'

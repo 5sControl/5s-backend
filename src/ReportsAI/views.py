@@ -1,12 +1,12 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
-from .models import SocialPost
-from .serializers import SocialPostSerializer
+from src.ReportsAI.models import ExtensionReport
+from src.ReportsAI.serializers import ExtensionReportSerializer
 
 
-class SocialPostViewSet(viewsets.ModelViewSet):
+class ExtensionReportViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     pagination_class = None
-    queryset = SocialPost.objects.all()
-    serializer_class = SocialPostSerializer
+    queryset = ExtensionReport.objects.all()
+    serializer_class = ExtensionReportSerializer
