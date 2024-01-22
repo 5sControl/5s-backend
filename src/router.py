@@ -29,6 +29,7 @@ routes = [
     path("extension_linkedin/", include("src.ReportsAI.urls"), name="extension-linkedin"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+
 schema_view = get_schema_view(
     openapi.Info(
         title="5controlS API",
