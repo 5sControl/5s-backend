@@ -26,6 +26,7 @@ routes = [
     path("suppliers/", include("src.Suppliers.urls"), name="suppliers"),
     path("connector/", include("src.DatabaseConnections.urls"), name="connector"),
     path("healthcheck/", include("src.Healthcheck.urls"), name="healthcheck"),
+    path("extension_linkedin/", include("src.ReportsAI.urls"), name="extension-linkedin"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 schema_view = get_schema_view(
