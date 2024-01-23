@@ -93,3 +93,4 @@ images/
 database/dataset/encoding_*
 
 config/settings/database_settings.py
+static
