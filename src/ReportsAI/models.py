@@ -4,7 +4,7 @@ from django.db import models
 class ExtensionReport(models.Model):
     text_post = models.TextField()
     text_comment = models.TextField()
-    link_author_comment = models.URLField()
+    link_author_comment = models.URLField(null=True, blank=True)
 
     # UserInfo
     about_user = models.TextField()
