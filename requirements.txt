@@ -78,3 +78,4 @@ django-celery-results==2.5.0
 psycopg2-binary==2.9.6
 # healthcheck
 psutil
+whitenoise==6.6.0
