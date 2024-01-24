@@ -54,7 +54,6 @@ class ActionViewSet(viewsets.ModelViewSet):
 class ActionsWithPhotos(APIView):
     def post(self, request):
         data = request.data
-        print('\n', data, "\n")
         try:
             algorithm_name = data.get("algorithm")
             camera_ip = data.get("camera")
@@ -77,10 +76,17 @@ class ActionsWithPhotos(APIView):
             extra = data.get("extra")
 
             if algorithm_name == "min_max_control":
-                if check_work_time():
+                work_time = check_work_time()
+                if work_time.get("status"):
                     extra = process_item_status(extra)
                 else:
-                    return
+                    message = f"Reporting is currently prohibited. work_time " \
+                              f"{work_time.get('time_start')} -> {work_time.get('time_end')}"
+                    logger.warning(message)
+                    return Response(
+                        {"check_work_time": False, "message": message},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
             elif algorithm_name == "operation_control":
                 if EMULATE_DB:

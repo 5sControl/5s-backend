@@ -174,6 +174,7 @@ def check_work_time():
         time_start = working_time.time_start
         time_end = working_time.time_end
         current_time = datetime.now().time()
-        return time_start <= current_time <= time_end
+        status = time_start <= current_time <= time_end
+        return {"status": status, "time_start": time_start, "time_end": time_end}
     else:
-        return True
+        return {"status": True}
