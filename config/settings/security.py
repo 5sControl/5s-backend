@@ -54,6 +54,7 @@ CORS_ORIGIN_WHITELIST = [
     "https://*",
     "https://d84d-81-7-77-205.ngrok-free.app",
     "https://grand-alien-apparently.ngrok-free.app",
+    "https://5scontrol.serveo.net"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
