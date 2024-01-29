@@ -9,6 +9,7 @@ from src.Core.permissions import IsStaffPermission, IsSuperuserPermission
 
 from .models import Camera, ZoneCameras
 from src.CameraAlgorithms.models import Algorithm, CameraAlgorithm, CameraAlgorithmLog
+from src.CameraAlgorithms.services.security import decrypt
 from .services.tasks import uploading_algorithm
 from .services.cameraalgorithm import (
     CreateCameraAlgorithms,
@@ -23,6 +24,7 @@ from .serializers import (
     ZoneCameraSerializer,
     UniqueImageNameSerializer,
     AlgorithmInfoSerializer,
+    EncryptedDataSerializer,
 )
 
 
@@ -160,3 +162,16 @@ class UploadAlgorithmView(APIView):
         uploading_algorithm.apply_async((algorithm.id, algorithm.image_name))
 
         return Response({"message": "File upload started"}, status=status.HTTP_202_ACCEPTED)
+
+
+class DecryptDataView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = EncryptedDataSerializer(data=request.data)
+        if serializer.is_valid():
+            encrypted_data = serializer.validated_data['encrypted_data']
+            decrypted_data = decrypt(encrypted_data)
+            return Response({'decrypted_data': decrypted_data}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

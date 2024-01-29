@@ -133,3 +133,7 @@ class AlgorithmInfoSerializer(serializers.Serializer):
         if name:
             name = name.replace("_", " ").capitalize()
         return name
+
+
+class EncryptedDataSerializer(serializers.Serializer):
+    encrypted_data = serializers.CharField()
