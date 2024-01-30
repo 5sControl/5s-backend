@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from .models import Camera, ZoneCameras
 from src.CameraAlgorithms.models import Algorithm, CameraAlgorithm, CameraAlgorithmLog
+from .services.security import decrypt
 
 
 class CameraModelSerializer(serializers.ModelSerializer):
@@ -133,3 +134,21 @@ class AlgorithmInfoSerializer(serializers.Serializer):
         if name:
             name = name.replace("_", " ").capitalize()
         return name
+
+
+class CameraSerializer(serializers.ModelSerializer):
+    password = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Camera
+        fields = (
+            "id",
+            "name",
+            "username",
+            "password",
+            "is_active",
+        )
+
+    def get_password(self, obj):
+        print(obj.password)
+        return decrypt(obj.password)
