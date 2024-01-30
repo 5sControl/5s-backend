@@ -15,7 +15,7 @@ from .views import (
     UniqueImageNameView,
     AlgorithmInfoView,
     UploadAlgorithmView,
-    DecryptDataView,
+    CameraListView,
 )
 
 router = DefaultRouter()
@@ -42,7 +42,7 @@ urlpatterns = [
     path('unique-image-names/', UniqueImageNameView.as_view(), name='unique-image-names'),
     path('algorithm-info/', AlgorithmInfoView.as_view(), name='algorithm-info'),
     path('upload-algorithm/<int:id_algorithm>/', UploadAlgorithmView.as_view(), name='upload-algorithm'),
-    path('decrypt/', DecryptDataView.as_view(), name='decrypt_data'),
+    path('camera-for-onvif/', CameraListView.as_view(), name='decrypt_data'),
 
 ]
 

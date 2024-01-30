@@ -24,7 +24,7 @@ from .serializers import (
     ZoneCameraSerializer,
     UniqueImageNameSerializer,
     AlgorithmInfoSerializer,
-    EncryptedDataSerializer,
+    CameraSerializer,
 )
 
 
@@ -164,14 +164,8 @@ class UploadAlgorithmView(APIView):
         return Response({"message": "File upload started"}, status=status.HTTP_202_ACCEPTED)
 
 
-class DecryptDataView(APIView):
+class CameraListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
-
-    def post(self, request, *args, **kwargs):
-        serializer = EncryptedDataSerializer(data=request.data)
-        if serializer.is_valid():
-            encrypted_data = serializer.validated_data['encrypted_data']
-            decrypted_data = decrypt(encrypted_data)
-            return Response({'decrypted_data': decrypted_data}, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    pagination_class = NoPagination
+    queryset = Camera.objects.all()
+    serializer_class = CameraSerializer
