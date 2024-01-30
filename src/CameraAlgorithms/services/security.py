@@ -20,3 +20,7 @@ def decrypt(data):
     plaintext = cipher.decrypt(data)
     plaintext = unpad(plaintext, AES.block_size)
     return plaintext.decode()
+
+
+def is_encrypted(password):
+    return password[-2:] == "=="
