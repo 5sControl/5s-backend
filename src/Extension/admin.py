@@ -1,5 +1,5 @@
 from django.contrib import admin
-from src.ReportsAI.models import ExtensionReport
+from src.Extension.models import ExtensionReport
 
 
 @admin.register(ExtensionReport)

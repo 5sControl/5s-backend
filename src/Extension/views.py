@@ -1,8 +1,8 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
-from src.ReportsAI.models import ExtensionReport
-from src.ReportsAI.serializers import ExtensionReportSerializer
+from src.Extension.models import ExtensionReport
+from src.Extension.serializers import ExtensionReportSerializer
 
 
 class ExtensionReportViewSet(viewsets.ModelViewSet):

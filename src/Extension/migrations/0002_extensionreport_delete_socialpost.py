@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("ReportsAI", "0001_initial"),
+        ("Extension", "0001_initial"),
     ]
 
     operations = [

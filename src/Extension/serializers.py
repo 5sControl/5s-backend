@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from src.ReportsAI.models import ExtensionReport
+from src.Extension.models import ExtensionReport
 
 
 class ExtensionReportSerializer(serializers.ModelSerializer):

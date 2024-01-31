@@ -5,7 +5,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("ReportsAI", "0003_alter_extensionreport_link_author_comment"),
+        ("Extension", "0003_alter_extensionreport_link_author_comment"),
     ]
 
     operations = [

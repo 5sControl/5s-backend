@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     "src.Suppliers.apps.SuppliersConfig",
     # Collections reports
     "src.Reports.apps.ReportsConfig",
-    "src.ReportsAI.apps.ReportsAIConfig",
+    "src.Extension.apps.ExtensionConfig",
     "src.ImageReport.apps.ImageConfig",
     "src.Mailer.apps.MailerConfig",
     "src.Core.apps.CoreConfig",
