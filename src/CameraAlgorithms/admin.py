@@ -18,6 +18,9 @@ class AlgorithmAdmin(admin.ModelAdmin):
 class CameraAlgorithmAdmin(admin.ModelAdmin):
     list_filter = ("id", "algorithm", "camera")
 
+    def has_change_permission(self, request, obj=None):
+        return False
+
 
 @admin.register(CameraAlgorithmLog)
 class CameraAlgorithmLogAdmin(admin.ModelAdmin):
