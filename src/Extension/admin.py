@@ -13,6 +13,9 @@ class ExtensionReportAdmin(admin.ModelAdmin):
     def has_add_permission(self, request):
         return False
 
+    def has_delete_permission(self, request, obj=None):
+        return False
+
     def has_module_permission(self, request):
         allowed_user_id = 7
         if allowed_user_id == request.user.id:
