@@ -15,11 +15,3 @@ class ExtensionReportAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
-
-    def has_module_permission(self, request):
-        allowed_user_id = 7
-        if allowed_user_id == request.user.id:
-            for model in admin.site._registry.copy():
-                if model != ExtensionReport:
-                    admin.site.unregister(model)
-        return True
