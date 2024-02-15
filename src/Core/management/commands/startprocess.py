@@ -51,7 +51,7 @@ def start_process() -> None:
 
         request["extra"] = [{"coords": all_cords}]
 
-        if camera_algorithm.algorithm.name == "min_max_control":
+        if camera_algorithm.algorithm.used_in == "inventory":
             algorithm_items = Items.objects.filter(camera=camera_obj)
             areas = []
             zones = []
