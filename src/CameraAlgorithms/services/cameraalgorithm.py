@@ -148,7 +148,7 @@ def create_camera_algorithms(
                     f"Successfully deleted -> {algorithm_name} with pid {pid}"
                 )
 
-        if algorithm_name == "min_max_control":
+        if algorithm_obj.used_in == "inventory":
             algorithm_items: Iterable[Items] = Items.objects.filter(
                 camera=camera_obj.id
             )
