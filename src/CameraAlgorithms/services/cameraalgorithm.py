@@ -149,6 +149,7 @@ def create_camera_algorithms(
                 )
 
         if algorithm_obj.used_in == "inventory":
+            print("Start algorithm inventory", algorithm)
             algorithm_items: Iterable[Items] = Items.objects.filter(
                 camera=camera_obj.id
             )
