@@ -75,7 +75,7 @@ class ActionsWithPhotos(APIView):
 
             extra = data.get("extra")
 
-            if algorithm_name == "min_max_control":
+            if algorithm.used_in == "inventory":
                 work_time = check_work_time()
                 if work_time.get("status"):
                     extra = process_item_status(extra)
