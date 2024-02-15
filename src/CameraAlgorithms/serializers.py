@@ -120,6 +120,7 @@ class AlgorithmInfoSerializer(serializers.Serializer):
     version = serializers.SerializerMethodField()
     date = serializers.DateTimeField(source='date_created', format="%m.%d.%Y")
     description = serializers.CharField()
+    used_in = serializers.CharField()
 
     def get_version(self, obj):
         image_name = obj.image_name
