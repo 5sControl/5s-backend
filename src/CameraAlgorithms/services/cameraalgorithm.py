@@ -111,7 +111,7 @@ def create_camera_algorithms(
         camera_algo_obj = CameraAlgorithm.objects.filter(
             algorithm=algorithm_obj, camera=camera_obj
         )
-        print(algorithm_obj)
+
         algorithm_name: str = algorithm["name"]
         rtsp_link: str = camera_rtsp_link(camera_obj.id)
 
@@ -149,7 +149,7 @@ def create_camera_algorithms(
                 )
 
         if algorithm_obj.used_in == "inventory":
-            print("Start algorithm inventory", algorithm)
+
             algorithm_items: Iterable[Items] = Items.objects.filter(
                 camera=camera_obj.id
             )
