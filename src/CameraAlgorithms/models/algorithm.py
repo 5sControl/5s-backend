@@ -8,6 +8,12 @@ from src.CameraAlgorithms.models import Camera
 from src.Core.utils import Sender
 
 
+class UsedInChoice(models.TextChoices):
+    dashboard = "dashboard"
+    orders_view = "orders_view"
+    inventory = "inventory"
+
+
 class Algorithm(models.Model):
     name = models.CharField(max_length=100, unique=True)
     image_name = models.CharField(max_length=150, blank=True, null=True, unique=True)
@@ -16,6 +22,7 @@ class Algorithm(models.Model):
     is_available = models.BooleanField(default=False)
     description = models.TextField(blank=True, null=True)
     download_status = models.BooleanField(default=False)
+    used_in = models.CharField(choices=UsedInChoice.choices, max_length=20, default="dashboard")
 
     def __str__(self):
         return self.name
