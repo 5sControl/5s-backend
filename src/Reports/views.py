@@ -180,7 +180,9 @@ class SearchReportListView(GenericAPIView):
         camera_ids = self.request.query_params.getlist("camera__id")
         algorithm_names = self.request.query_params.getlist("algorithm")
 
-        queryset = Report.objects.all().order_by("-id")
+        dashboard_algorithms = Algorithm.objects.filter(used_in="dashboard")
+
+        queryset = Report.objects.filter(algorithm__in=dashboard_algorithms).order_by("-id")
 
         if start_time:
             queryset = queryset.filter(date_created__gte=f"{date} {start_time}")
@@ -196,10 +198,6 @@ class SearchReportListView(GenericAPIView):
             for algorithm_name in algorithm_names[0].split(","):
                 algorithm_filters |= Q(algorithm__name=algorithm_name)
             queryset = queryset.filter(algorithm_filters)
-
-        queryset = queryset.exclude(algorithm__name="min_max_control")
-
-        queryset = queryset.order_by("-id")
 
         return queryset
 
