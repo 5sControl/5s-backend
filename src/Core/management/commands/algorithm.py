@@ -9,12 +9,13 @@ class Command(BaseCommand):
         self.create_algorithms()
 
     def create_algorithms(self):
-        for algorithms_data in ALGORITHMS:
-            Algorithm.objects.get_or_create(
-                name=algorithms_data["name"],
-                defaults={
-                    "is_available": algorithms_data["is_available"],
-                    "image_name": algorithms_data["image_name"],
-                    "description": algorithms_data["description"],
-                },
-            )
+        pass
+        # for algorithms_data in ALGORITHMS:
+        #     Algorithm.objects.get_or_create(
+        #         name=algorithms_data["name"],
+        #         defaults={
+        #             "is_available": algorithms_data["is_available"],
+        #             "image_name": algorithms_data["image_name"],
+        #             "description": algorithms_data["description"],
+        #         },
+        #     )
