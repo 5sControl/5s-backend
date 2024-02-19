@@ -42,6 +42,7 @@ CORS_ORIGIN_WHITELIST = [
     "http://localhost:8000",
     "http://localhost:5500",
     "http://localhost:3000",
+    "http://localhost:3002",
     "https://localhost:8000",
     "https://*.eu.ngrok.io",
     "http://*.eu.ngrok.io",
@@ -55,6 +56,7 @@ CORS_ORIGIN_WHITELIST = [
     "https://d84d-81-7-77-205.ngrok-free.app",
     "https://grand-alien-apparently.ngrok-free.app",
     "https://pleasant-bluejay-next.ngrok-free.app",
+    "https://crucial-heron-vastly.ngrok-free.app",
     "https://5scontrol.serveo.net",
 ]
 
@@ -63,6 +65,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://*.eu.ngrok.io",
     "https://d84d-81-7-77-205.ngrok-free.app",
     "https://grand-alien-apparently.ngrok-free.app",
+    "https://crucial-heron-vastly.ngrok-free.app",
     "https://pleasant-bluejay-next.ngrok-free.app",
     "https://5scontrol.serveo.net",
 ]
