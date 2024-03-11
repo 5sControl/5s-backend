@@ -36,7 +36,7 @@ class HandleItemUtils:
         for camera_algo_query in all_camera_algo_query:
             camera_data, algorithm_data = self._get_algorithm_camera_data_min_max(camera_algo_query.camera_id)
 
-            if camera_algo_query.exists():
+            if camera_algo_query:
                 stop_and_update_algorithm(camera_algo_query.process_id)
 
                 if items_count > 0:
