@@ -10,15 +10,20 @@ class HandleItemUtils:
             create_single_camera_algorithms,
             stop_and_update_algorithm,
         )
-        from src.CameraAlgorithms.models import CameraAlgorithm
+        from src.CameraAlgorithms.models import CameraAlgorithm, Algorithm
 
-        all_camera_algo_obj = CameraAlgorithm.objects.filter(algorithm__used_in="inventory")
+        all_algorithms_id = Algorithm.objects.filter(used_in="inventory")
 
-        for camera_algo_obj in all_camera_algo_obj:
-            camera_data, algorithm_data = self._get_algorithm_camera_data_min_max(camera_algo_obj.camera_id)
+        for used_algorithm_id in all_algorithms_id:
+            algorithm_id = used_algorithm_id.id
+            camera_data, algorithm_data = self._get_algorithm_camera_data_min_max(camera_id)
+
+            camera_algo_obj = CameraAlgorithm.objects.filter(
+                camera_id=camera_id, algorithm__id=algorithm_id
+            )
 
             if camera_algo_obj:
-                process_id = camera_algo_obj.process_id
+                process_id = camera_algo_obj.first().process_id
                 if process_id:
                     stop_and_update_algorithm(process_id)
 
