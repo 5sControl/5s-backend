@@ -12,18 +12,17 @@ class HandleItemUtils:
         )
         from src.CameraAlgorithms.models import CameraAlgorithm
 
-        camera_data, algorithm_data = self._get_algorithm_camera_data_min_max(camera_id)
+        all_camera_algo_obj = CameraAlgorithm.objects.filter(algorithm__used_in="inventory")
 
-        camera_algo_obj = CameraAlgorithm.objects.filter(
-            camera_id=camera_id, algorithm__used_in="inventory"
-        )
+        for camera_algo_obj in all_camera_algo_obj:
+            camera_data, algorithm_data = self._get_algorithm_camera_data_min_max(camera_algo_obj.camera_id)
 
-        if camera_algo_obj:
-            process_id = camera_algo_obj.first().process_id
-            if process_id:
-                stop_and_update_algorithm(process_id)
+            if camera_algo_obj:
+                process_id = camera_algo_obj.first().process_id
+                if process_id:
+                    stop_and_update_algorithm(process_id)
 
-        create_single_camera_algorithms(camera_data, algorithm_data)
+            create_single_camera_algorithms(camera_data, algorithm_data)
 
     def delete_items(self, camera_id, items_count):
         from src.CameraAlgorithms.services.cameraalgorithm import (
