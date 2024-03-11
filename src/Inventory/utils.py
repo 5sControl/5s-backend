@@ -19,7 +19,7 @@ class HandleItemUtils:
             camera_data, algorithm_data = self._get_algorithm_camera_data_min_max(camera_id)
 
             camera_algo_obj = CameraAlgorithm.objects.filter(
-                camera_id=camera_id, algorithm__id=algorithm_id
+                camera_id=camera_id, algorithm_id=algorithm_id
             )
 
             if camera_algo_obj:
