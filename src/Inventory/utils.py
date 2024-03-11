@@ -31,15 +31,16 @@ class HandleItemUtils:
         )
         from src.CameraAlgorithms.models import CameraAlgorithm
 
-        camera_data, algorithm_data = self._get_algorithm_camera_data_min_max(camera_id)
+        all_camera_algo_query = CameraAlgorithm.objects.filter(algorithm__used_in="inventory")
 
-        camera_algo_query = CameraAlgorithm.objects.filter(algorithm__used_in="inventory")
+        for camera_algo_query in all_camera_algo_query:
+            camera_data, algorithm_data = self._get_algorithm_camera_data_min_max(camera_algo_query.camera_id)
 
-        if camera_algo_query.exists():
-            stop_and_update_algorithm(camera_algo_query.first().process_id)
+            if camera_algo_query.exists():
+                stop_and_update_algorithm(camera_algo_query.process_id)
 
-            if items_count > 0:
-                create_single_camera_algorithms(camera_data, algorithm_data)
+                if items_count > 0:
+                    create_single_camera_algorithms(camera_data, algorithm_data)
 
     def save_new_zone(self, zone_id: int) -> None:
         from src.CameraAlgorithms.services.cameraalgorithm import (
