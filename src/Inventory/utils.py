@@ -18,7 +18,7 @@ class HandleItemUtils:
             camera_data, algorithm_data = self._get_algorithm_camera_data_min_max(camera_algo_obj.camera_id)
 
             if camera_algo_obj:
-                process_id = camera_algo_obj.first().process_id
+                process_id = camera_algo_obj.process_id
                 if process_id:
                     stop_and_update_algorithm(process_id)
 
