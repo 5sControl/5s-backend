@@ -15,7 +15,7 @@ class HandleItemUtils:
         camera_data, algorithm_data = self._get_algorithm_camera_data_min_max(camera_id)
 
         camera_algo_obj = CameraAlgorithm.objects.filter(
-            camera_id=camera_id, algorithm__name="min_max_control"
+            camera_id=camera_id, algorithm__used_in="inventory"
         )
 
         if camera_algo_obj:
@@ -34,9 +34,7 @@ class HandleItemUtils:
 
         camera_data, algorithm_data = self._get_algorithm_camera_data_min_max(camera_id)
 
-        camera_algo_query = CameraAlgorithm.objects.filter(
-            camera=camera_id, algorithm=8
-        )
+        camera_algo_query = CameraAlgorithm.objects.filter(algorithm__used_in="inventory")
 
         if camera_algo_query.exists():
             stop_and_update_algorithm(camera_algo_query.first().process_id)
