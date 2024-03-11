@@ -16,11 +16,9 @@ class HandleItemUtils:
 
         for used_algorithm_id in all_algorithms_id:
             algorithm_id = used_algorithm_id.id
-            camera_data, algorithm_data = self._get_algorithm_camera_data_min_max(camera_id)
+            camera_data, algorithm_data = self._get_algorithm_camera_data_min_max(camera_id, algorithm_id)
 
-            camera_algo_obj = CameraAlgorithm.objects.filter(
-                camera_id=camera_id, algorithm_id=algorithm_id
-            )
+            camera_algo_obj = CameraAlgorithm.objects.filter(camera_id=camera_id, algorithm__id=algorithm_id)
 
             if camera_algo_obj:
                 process_id = camera_algo_obj.first().process_id
@@ -34,15 +32,20 @@ class HandleItemUtils:
             create_single_camera_algorithms,
             stop_and_update_algorithm,
         )
-        from src.CameraAlgorithms.models import CameraAlgorithm
+        from src.CameraAlgorithms.models import CameraAlgorithm, Algorithm
 
-        all_camera_algo_query = CameraAlgorithm.objects.filter(algorithm__used_in="inventory")
+        all_algorithms_id = Algorithm.objects.filter(used_in="inventory")
 
-        for camera_algo_query in all_camera_algo_query:
-            camera_data, algorithm_data = self._get_algorithm_camera_data_min_max(camera_algo_query.camera_id)
+        for used_algorithm_id in all_algorithms_id:
+            algorithm_id = used_algorithm_id.id
+            camera_data, algorithm_data = self._get_algorithm_camera_data_min_max(camera_id, algorithm_id)
 
-            if camera_algo_query:
-                stop_and_update_algorithm(camera_algo_query.process_id)
+            camera_algo_query = CameraAlgorithm.objects.filter(
+                camera=camera_id, algorithm=algorithm_id
+            )
+
+            if camera_algo_query.exists():
+                stop_and_update_algorithm(camera_algo_query.first().process_id)
 
                 if items_count > 0:
                     create_single_camera_algorithms(camera_data, algorithm_data)
@@ -85,6 +88,7 @@ class HandleItemUtils:
     def _get_algorithm_camera_data_min_max(
         self,
         camera_id: int,
+        algorithm_id: int,
     ) -> Tuple[Dict[str, str], Dict[str, Any]]:
         from src.CameraAlgorithms.models import CameraAlgorithm, Camera
 
@@ -92,7 +96,7 @@ class HandleItemUtils:
 
         try:
             camera_algo_zones_prev: List[Dict[str, int]] = CameraAlgorithm.objects.get(
-                algorithm=8, camera=camera_id
+                algorithm=algorithm_id, camera=camera_id
             ).zones
         except CameraAlgorithm.DoesNotExist:
             camera_algo_zones_prev = []
