@@ -90,7 +90,9 @@ class HandleItemUtils:
         camera_id: int,
         algorithm_id: int,
     ) -> Tuple[Dict[str, str], Dict[str, Any]]:
-        from src.CameraAlgorithms.models import CameraAlgorithm, Camera
+        from src.CameraAlgorithms.models import CameraAlgorithm, Camera, Algorithm
+
+        algorithm_name = Algorithm.objects.get(id=algorithm_id).name
 
         camera_obj: Camera = Camera.objects.get(id=camera_id)
 
@@ -110,7 +112,7 @@ class HandleItemUtils:
 
         config: Dict[str, List[Any]] = {"zonesID": camera_algo_zones_prev}
         algorithm_data: Dict[str, Any] = {
-            "name": "min_max_control",
+            "name": algorithm_name,
             "config": config,
         }
 
