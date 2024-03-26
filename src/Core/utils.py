@@ -21,7 +21,7 @@ def Sender(operation, data, cstm_port=None):
     if operation == "run":
         url = "/run"
         port = 3333
-        data["server_url"] = service_url
+        # data["server_url"] = service_url
 
     if operation == "stop":
         url = "/stop"

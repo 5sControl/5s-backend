@@ -3,7 +3,7 @@ from typing import Dict, Any
 
 from django.core.management.base import BaseCommand
 
-from src.Core.const import DJANGO_SERVICE_URL
+from src.Core.const import DJANGO_SERVICE_URL, SERVER_URL
 from src.Core.exceptions import SenderError, InvalidResponseError
 from src.Inventory.models import Items
 
@@ -32,7 +32,7 @@ def start_process() -> None:
             "camera_url": rtsp_link,
             "algorithm": algorithm_obj.name,
             "image_name": algorithm_obj.image_name,
-            "server_url": DJANGO_SERVICE_URL,
+            "server_url": SERVER_URL,
             "link_reports": f"{DJANGO_SERVICE_URL}:8000/api/reports/report-with-photos/",
             "extra": extra_params,
         }
