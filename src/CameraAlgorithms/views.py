@@ -61,7 +61,7 @@ class DeleteCameraAPIView(generics.DestroyAPIView):
 
 class CreateCameraAlgorithmsApiView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated, IsSuperuserPermission | IsStaffPermission]
-    serializer_class = CreateCameraAlgorithmSerializer
+    # serializer_class = CreateCameraAlgorithmSerializer
 
     def post(self, request, *args, **kwargs):
         """Creates a separate camera and camera/algorithm"""
