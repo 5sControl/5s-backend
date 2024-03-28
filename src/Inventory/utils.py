@@ -5,43 +5,50 @@ logger = logging.getLogger(__name__)
 
 
 class HandleItemUtils:
-    def save_new_items(self, camera_id: int) -> None:
+    def save_new_items(self, camera_id) -> None:
         from src.CameraAlgorithms.services.cameraalgorithm import (
             create_single_camera_algorithms,
             stop_and_update_algorithm,
         )
-        from src.CameraAlgorithms.models import CameraAlgorithm
+        from src.CameraAlgorithms.models import CameraAlgorithm, Algorithm
 
-        camera_data, algorithm_data = self._get_algorithm_camera_data_min_max(camera_id)
+        all_algorithms_id = Algorithm.objects.filter(used_in="inventory")
 
-        camera_algo_obj = CameraAlgorithm.objects.filter(
-            camera_id=camera_id, algorithm__name="min_max_control"
-        )
+        for used_algorithm_id in all_algorithms_id:
+            algorithm_id = used_algorithm_id.id
+            camera_data, algorithm_data = self._get_algorithm_camera_data_min_max(camera_id, algorithm_id)
 
-        if camera_algo_obj.exists():
-            process_id = camera_algo_obj.first().process_id
-            stop_and_update_algorithm(process_id)
+            camera_algo_obj = CameraAlgorithm.objects.filter(camera_id=camera_id, algorithm__id=algorithm_id)
 
-        create_single_camera_algorithms(camera_data, algorithm_data)
+            if camera_algo_obj:
+                process_id = camera_algo_obj.first().process_id
+                if process_id:
+                    stop_and_update_algorithm(process_id)
+
+            create_single_camera_algorithms(camera_data, algorithm_data)
 
     def delete_items(self, camera_id, items_count):
         from src.CameraAlgorithms.services.cameraalgorithm import (
             create_single_camera_algorithms,
             stop_and_update_algorithm,
         )
-        from src.CameraAlgorithms.models import CameraAlgorithm
+        from src.CameraAlgorithms.models import CameraAlgorithm, Algorithm
 
-        camera_data, algorithm_data = self._get_algorithm_camera_data_min_max(camera_id)
+        all_algorithms_id = Algorithm.objects.filter(used_in="inventory")
 
-        camera_algo_query = CameraAlgorithm.objects.filter(
-            camera=camera_id, algorithm=8
-        )
+        for used_algorithm_id in all_algorithms_id:
+            algorithm_id = used_algorithm_id.id
+            camera_data, algorithm_data = self._get_algorithm_camera_data_min_max(camera_id, algorithm_id)
 
-        if camera_algo_query.exists():
-            stop_and_update_algorithm(camera_algo_query.first().process_id)
+            camera_algo_query = CameraAlgorithm.objects.filter(
+                camera=camera_id, algorithm=algorithm_id
+            )
 
-            if items_count > 0:
-                create_single_camera_algorithms(camera_data, algorithm_data)
+            if camera_algo_query.exists():
+                stop_and_update_algorithm(camera_algo_query.first().process_id)
+
+                if items_count > 0:
+                    create_single_camera_algorithms(camera_data, algorithm_data)
 
     def save_new_zone(self, zone_id: int) -> None:
         from src.CameraAlgorithms.services.cameraalgorithm import (
@@ -81,14 +88,17 @@ class HandleItemUtils:
     def _get_algorithm_camera_data_min_max(
         self,
         camera_id: int,
+        algorithm_id: int,
     ) -> Tuple[Dict[str, str], Dict[str, Any]]:
-        from src.CameraAlgorithms.models import CameraAlgorithm, Camera
+        from src.CameraAlgorithms.models import CameraAlgorithm, Camera, Algorithm
+
+        algorithm_name = Algorithm.objects.get(id=algorithm_id).name
 
         camera_obj: Camera = Camera.objects.get(id=camera_id)
 
         try:
             camera_algo_zones_prev: List[Dict[str, int]] = CameraAlgorithm.objects.get(
-                algorithm=8, camera=camera_id
+                algorithm=algorithm_id, camera=camera_id
             ).zones
         except CameraAlgorithm.DoesNotExist:
             camera_algo_zones_prev = []
@@ -102,7 +112,7 @@ class HandleItemUtils:
 
         config: Dict[str, List[Any]] = {"zonesID": camera_algo_zones_prev}
         algorithm_data: Dict[str, Any] = {
-            "name": "min_max_control",
+            "name": algorithm_name,
             "config": config,
         }
 

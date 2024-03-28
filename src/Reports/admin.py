@@ -26,6 +26,9 @@ class ReportAdmin(admin.ModelAdmin):
         queryset = queryset.prefetch_related('photos')
         return queryset
 
+    def has_change_permission(self, request, obj=None):
+        return False
+
 
 admin.site.register(Report, ReportAdmin)
 

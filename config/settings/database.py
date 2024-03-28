@@ -11,6 +11,7 @@ DATABASES = {
         "PASSWORD": config("DB_PASSWORD", default=None),
         "HOST": config("DB_HOST", default=None),
         "PORT": config("DB_PORT", default=None),
+        "CONN_MAX_AGE": None
     },
 
     "database_for_test": {
@@ -29,7 +30,7 @@ if "test" in sys.argv:
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://localhost:6379/0",
+        "LOCATION": "redis://" + config("REDIS_HOST", default="localhost") + ":6379/0",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         },

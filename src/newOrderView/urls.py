@@ -8,6 +8,7 @@ from .views import (
     GetMachine,
     FiltrationsDataView,
     GetOperationsDuration,
+    GetOrderPackaging
 )
 
 
@@ -47,4 +48,9 @@ urlpatterns = [
         GetOperationsDuration.as_view(),
         name="avg-duration",
     ),
+    path(
+        "order-packaging/",
+        GetOrderPackaging.as_view(),
+        name="order-packaging",
+    )
 ]

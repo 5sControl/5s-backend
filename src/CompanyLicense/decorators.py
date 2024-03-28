@@ -51,6 +51,8 @@ def check_active_cameras(view_func):
                 )
 
             return view_func(request, *args, **kwargs)
+        else:
+            return view_func(request, *args, **kwargs)
 
     return wrapped_view
 
@@ -79,6 +81,8 @@ def check_active_algorithms(view_func):
                     "You have exceeded the limit of active algorithm."
                 )
 
+            return view_func(request, *args, **kwargs)
+        else:
             return view_func(request, *args, **kwargs)
 
     return wrapped_view

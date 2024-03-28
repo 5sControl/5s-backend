@@ -5,13 +5,14 @@ from typing import Any, Dict, Iterable, List, Optional, Set
 
 from src.Core.exceptions import InvalidResponseError, SenderError, CameraConnectionError
 from src.Core.utils import Sender
-from src.Core.const import SERVER_URL
+from src.Core.const import DJANGO_SERVICE_URL
 from src.Inventory.models import Items
 from src.OrderView.models import IndexOperations
 from src.CompanyLicense.decorators import check_active_cameras, check_active_algorithms
 
 from ..models import Camera, ZoneCameras, Algorithm, CameraAlgorithm
 from .logs_services import logs_service
+from src.Core.const import SERVER_URL
 
 logger = logging.getLogger(__name__)
 
@@ -124,7 +125,7 @@ def create_camera_algorithms(
             "algorithm": algorithm_obj.name,
             "image_name": algorithm_obj.image_name,
             "server_url": SERVER_URL,
-            "link_reports": f"{SERVER_URL}:8000/api/reports/report-with-photos/",
+            "link_reports": f"{DJANGO_SERVICE_URL}:8000/api/reports/report-with-photos/",
             "extra": data,
         }
 
@@ -148,7 +149,8 @@ def create_camera_algorithms(
                     f"Successfully deleted -> {algorithm_name} with pid {pid}"
                 )
 
-        if algorithm_name == "min_max_control":
+        if algorithm_obj.used_in == "inventory":
+
             algorithm_items: Iterable[Items] = Items.objects.filter(
                 camera=camera_obj.id
             )
@@ -263,7 +265,7 @@ def create_single_camera_algorithms(
         "algorithm": algorithm_obj.name,
         "image_name": algorithm_obj.image_name,
         "server_url": SERVER_URL,
-        "link_reports": f"{SERVER_URL}:8000/api/reports/report-with-photos/",
+        "link_reports": f"{DJANGO_SERVICE_URL}:8000/api/reports/report-with-photos/",
         "extra": data,
     }
 
@@ -302,7 +304,7 @@ def create_single_camera_algorithms(
     request["extra"] = data
 
     response: Dict[str, Any] = send_run_request(request)
-    logger.warning("Successfullyj")
+    logger.warning("Successfully")
     save_data(
         algorithm_obj=algorithm_obj,
         camera_obj=camera_obj,

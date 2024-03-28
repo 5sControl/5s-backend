@@ -9,6 +9,7 @@ from src.Core.permissions import IsStaffPermission, IsSuperuserPermission
 
 from .models import Camera, ZoneCameras
 from src.CameraAlgorithms.models import Algorithm, CameraAlgorithm, CameraAlgorithmLog
+from src.CameraAlgorithms.services.security import decrypt
 from .services.tasks import uploading_algorithm
 from .services.cameraalgorithm import (
     CreateCameraAlgorithms,
@@ -23,6 +24,7 @@ from .serializers import (
     ZoneCameraSerializer,
     UniqueImageNameSerializer,
     AlgorithmInfoSerializer,
+    CameraSerializer,
 )
 
 
@@ -142,8 +144,8 @@ class AlgorithmInfoView(APIView):
 
         additional_data = {
             "name": "5S Control version",
-            "version": "v0.5.4",
-            "date": "10.12.2023",
+            "version": "v0.5.5",
+            "date": "11.27.2023",
             "description": ""
         }
 
@@ -160,3 +162,10 @@ class UploadAlgorithmView(APIView):
         uploading_algorithm.apply_async((algorithm.id, algorithm.image_name))
 
         return Response({"message": "File upload started"}, status=status.HTTP_202_ACCEPTED)
+
+
+class CameraListView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    pagination_class = NoPagination
+    queryset = Camera.objects.all()
+    serializer_class = CameraSerializer

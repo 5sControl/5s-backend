@@ -4,6 +4,7 @@ from django.db import models
 from django.core.validators import RegexValidator
 
 from src.Inventory.utils import HandleItemUtils
+from src.CameraAlgorithms.services.security import encrypt
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +30,8 @@ class Camera(models.Model):
         return self.id
 
     def save(self, *args, **kwargs):
+        if self.password:
+            self.password = encrypt(self.password)
         if not self.name:
             self.name = self.id
         super().save(*args, **kwargs)

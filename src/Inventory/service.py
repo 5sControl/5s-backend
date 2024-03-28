@@ -1,4 +1,6 @@
 import logging
+from math import sqrt
+
 from src.Inventory.models import Items
 
 from src.Inventory.serializers import ItemsSerializer
@@ -131,17 +133,25 @@ def process_item_status(data):
 def is_valid_coordinates(coords, type_object):
     size_coord = {"item": 250, "zone": 500}
     valid_coords = []
-
     for coord in coords:
-        if (
-            coord["x1"] > 0
-            and coord["x2"] > 0
-            and coord["y1"] > 0
-            and coord["y2"] > 0
-        ):
-            area = (coord["x2"] - coord["x1"]) * (coord["y2"] - coord["y1"])
-            if area > size_coord[f"{type_object}"]:
-                valid_coords.append(coord)
+        if "zoneType" in coord and coord["zoneType"] == 4:
+            if all(coord[f"x{i}"] > 0 and coord[f"y{i}"] > 0 for i in range(1, 5)):
+                base1 = sqrt((coord["x2"] - coord["x1"]) ** 2 + (coord["y2"] - coord["y1"]) ** 2)
+                base2 = sqrt((coord["x4"] - coord["x3"]) ** 2 + (coord["y4"] - coord["y3"]) ** 2)
+                height = abs(coord["y1"] - coord["y4"])
+                area = (base1 + base2) * height / 2
+                if area > size_coord[f"{type_object}"]:
+                    valid_coords.append(coord)
+        else:
+            if (
+                coord["x1"] > 0
+                and coord["x2"] > 0
+                and coord["y1"] > 0
+                and coord["y2"] > 0
+            ):
+                area = (coord["x2"] - coord["x1"]) * (coord["y2"] - coord["y1"])
+                if area > size_coord[f"{type_object}"]:
+                    valid_coords.append(coord)
     if len(valid_coords) == 0:
         logger.warning(f"There are no positive coordinates for the {type_object}:", coords)
         raise ValidationError("Invalid size based on coords")

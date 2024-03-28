@@ -10,13 +10,19 @@ class CamerasAdmin(admin.ModelAdmin):
 
 @admin.register(Algorithm)
 class AlgorithmAdmin(admin.ModelAdmin):
-    list_filter = ("download_status", "name")
-    list_display = ("name", "image_name", "download_status", "id")
+    list_filter = ("download_status", "name", "used_in")
+    list_display = ("name", "used_in", "image_name", "download_status", "id")
 
 
 @admin.register(CameraAlgorithm)
 class CameraAlgorithmAdmin(admin.ModelAdmin):
     list_filter = ("id", "algorithm", "camera")
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_add_permission(self, request):
+        return False
 
 
 @admin.register(CameraAlgorithmLog)

@@ -1,5 +1,7 @@
 from pathlib import Path
 
+import os
+
 from decouple import config
 
 
@@ -15,6 +17,7 @@ ALLOWED_HOSTS = ["*"]
 
 
 INSTALLED_APPS = [
+    "whitenoise.runserver_nostatic",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -45,6 +48,7 @@ INSTALLED_APPS = [
     "src.Suppliers.apps.SuppliersConfig",
     # Collections reports
     "src.Reports.apps.ReportsConfig",
+    "src.Extension.apps.ExtensionConfig",
     "src.ImageReport.apps.ImageConfig",
     "src.Mailer.apps.MailerConfig",
     "src.Core.apps.CoreConfig",
@@ -69,6 +73,7 @@ TEMPLATES = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -92,8 +97,9 @@ USE_I18N = True
 USE_TZ = True
 
 
-STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATICFILES_DIRS = [BASE_DIR / "staticfiles"]
+STATIC_URL = "/api/static/"
 
 MEDIA_URL = "/images/"
 MEDIA_ROOT = BASE_DIR / "images/"

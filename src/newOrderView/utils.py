@@ -4,6 +4,7 @@ from typing import List, Tuple
 
 from rest_framework.request import Request
 
+from src.CameraAlgorithms.models import ZoneCameras
 from src.newOrderView.models import FiltrationOperationsTypeID
 
 
@@ -34,14 +35,14 @@ def calculate_duration(start_time: datetime, end_time: datetime) -> int:
     return result
 
 
-def get_cache_data(from_date: str, to_date: str) -> Tuple[str, List[int]]:
+def get_cache_data(key: str, from_date: str, to_date: str) -> Tuple[str, List[int]]:
     operation_type_ids = FiltrationOperationsTypeID.objects.filter(
         is_active=True
     ).values_list("operation_type_id", flat=True)
     operation_type_ids = list(operation_type_ids)
 
     key: str = (
-        generate_hash("get_order", from_date, to_date)
+        generate_hash(key, from_date, to_date)
         + ":"
         + ":".join(str(id) for id in operation_type_ids)
     )
@@ -54,3 +55,11 @@ def get_date_interval(request: Request) -> Tuple[str]:
     to_date: str = request.GET.get("to")
 
     return from_date, to_date
+
+
+def find_camera_by_workspace(workspace: str = "Komplektavimas"):
+    try:
+        camera = ZoneCameras.objects.get(workplace=workspace)
+        return camera.camera_id
+    except ZoneCameras.DoesNotExist:
+        return None

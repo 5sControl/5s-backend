@@ -9,9 +9,15 @@ from datetime import time
 
 from celery import shared_task
 
-from src.Core.const import SERVER_URL
+from src.CameraAlgorithms.services.cameraalgorithm import stop_camera_algorithm, create_single_camera_algorithms
 from src.Mailer.models import SMTPSettings, WorkingTime
 from src.DatabaseConnections.models import ConnectionInfo
+from src.CameraAlgorithms.models.algorithm import CameraAlgorithm
+
+
+from decouple import config
+
+NGROK_URL = config("NGROK_URL")
 
 
 @shared_task
@@ -36,10 +42,10 @@ def send_notification_email(item, count, image_path, item_status):
     message = ""
 
     if item_status == "Out of stock":
-        message = f"{item['name']} is currently out of stock.\n To avoid any inconvenience, we recommend that you take action to replenish your stock of {item['low_stock_level']} as soon as possible.\n{SERVER_URL}:3000/inventory/\n You are receiving this email because your email account was entered in 5S Control system to receive notifications regarding low stock levels of inventory."
+        message = f"{item['name']} is currently out of stock.\n To avoid any inconvenience, we recommend that you take action to replenish your stock of {item['low_stock_level']} as soon as possible.\n\n{NGROK_URL}inventory/\n\n You are receiving this email because your email account was entered in 5S Control system to receive notifications regarding low stock levels of inventory."
 
     if item_status == 'Low stock level':
-        message = f"Current stock of {item['name']}: {count} {used_algorithm}. Low stock level of {item['name']}: {item['low_stock_level']}. The inventory level of {item['name']} in your stock has fallen to a low level. This means that there are only a limited number of units left in stock and that the item may soon become unavailable. To avoid any inconvenience, we recommend that you take action to replenish your stock of {item['name']} as soon as possible.\n{SERVER_URL}:3000/inventory\nYou are receiving this email because your email account was entered in 5S Control system to receive notifications regarding low stock levels of inventory."
+        message = f"Current stock of {item['name']}: {count} {used_algorithm}. Low stock level of {item['name']}: {item['low_stock_level']}. The inventory level of {item['name']} in your stock has fallen to a low level. This means that there are only a limited number of units left in stock and that the item may soon become unavailable. To avoid any inconvenience, we recommend that you take action to replenish your stock of {item['name']} as soon as possible.\n\n{NGROK_URL}inventory\n\nYou are receiving this email because your email account was entered in 5S Control system to receive notifications regarding low stock levels of inventory."
 
         # send notification ODOO
         try:
@@ -142,3 +148,33 @@ def odoo_notification(message: str):
     else:
         raise "Authentication failed!"
 
+
+def work_time_min_max():
+    algorithm = "min_max_control"
+    all_cameras = []
+
+    all_algorithm = CameraAlgorithm.objects.filter(algorithm__name__iexact=algorithm)
+    for algorithms in all_algorithm:
+        pid_process = algorithms.process_id
+        # STOP процесс
+        stop_camera_algorithm(pid_process)
+        all_cameras.append(algorithms.camera_id)
+
+    return task_start_minmax(all_cameras, algorithm)
+
+
+def task_start_minmax(all_cameras, algorithm):
+    for camera in all_cameras:
+        create_single_camera_algorithms({'ip': camera}, {"name": algorithm})
+
+
+def check_work_time():
+    working_time = WorkingTime.objects.last()
+    if working_time is not None:
+        time_start = working_time.time_start
+        time_end = working_time.time_end
+        current_time = datetime.now().time()
+        status = time_start <= current_time <= time_end
+        return {"status": status, "time_start": time_start, "time_end": time_end}
+    else:
+        return {"status": True}

@@ -14,8 +14,8 @@ class Report(models.Model):
 
     algorithm = models.ForeignKey(Algorithm, on_delete=models.CASCADE)
     camera = models.ForeignKey(Camera, null=True, on_delete=models.SET_NULL)
-    start_tracking = models.CharField(max_length=100, blank=True, null=True)
-    stop_tracking = models.CharField(max_length=100, blank=True, null=True)
+    start_tracking = models.DateTimeField(auto_now_add=False, null=True)
+    stop_tracking = models.DateTimeField(auto_now_add=False, null=True)
     violation_found = models.BooleanField(blank=True, null=True, default=None)
     extra = models.JSONField(blank=True, null=True)
     date_created = models.DateTimeField(auto_now_add=True)

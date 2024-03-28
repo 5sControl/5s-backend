@@ -18,6 +18,7 @@ from src.Core.paginators import NoPagination
 from src.ImageReport.models import Image
 from src.CameraAlgorithms.models import Camera
 from src.CameraAlgorithms.models import Algorithm
+from src.Mailer.service import check_work_time
 from src.Reports.models import Report, SkanyReport
 from src.Reports.serializers import (
     ReportSerializers,
@@ -60,16 +61,32 @@ class ActionsWithPhotos(APIView):
             algorithm = Algorithm.objects.get(name=algorithm_name)
             camera = Camera.objects.get(id=camera_ip)
 
-            start_tracking = data.get("start_tracking")
-            stop_tracking = data.get("stop_tracking")
+            start_tracking_str = data.get("start_tracking")
+            stop_tracking_str = data.get("stop_tracking")
+
+            start_tracking = datetime.strptime(start_tracking_str, "%Y-%m-%d %H:%M:%S.%f")
+            stop_tracking = datetime.strptime(stop_tracking_str, "%Y-%m-%d %H:%M:%S.%f")
+
+            start_tracking_formatted = start_tracking.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+            stop_tracking_formatted = stop_tracking.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
             photos = data.get("photos")
             violation_found = data.get("violation_found")
 
             extra = data.get("extra")
 
-            if algorithm_name == "min_max_control":
-                extra = process_item_status(extra)
+            if algorithm.used_in == "inventory":
+                work_time = check_work_time()
+                if work_time.get("status"):
+                    extra = process_item_status(extra)
+                else:
+                    message = f"Reporting is currently prohibited. work_time " \
+                              f"{work_time.get('time_start')} -> {work_time.get('time_end')}"
+                    logger.warning(message)
+                    return Response(
+                        {"check_work_time": False, "message": message},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
             elif algorithm_name == "operation_control":
                 if EMULATE_DB:
@@ -88,13 +105,13 @@ class ActionsWithPhotos(APIView):
             extra=extra,
             algorithm=algorithm,
             violation_found=violation_found,
-            start_tracking=start_tracking,
-            stop_tracking=stop_tracking,
+            start_tracking=start_tracking_formatted,
+            stop_tracking=stop_tracking_formatted,
         )
 
         if algorithm_name == "operation_control":
             create_skanyreport(
-                action, extra, not violation_found, start_tracking, stop_tracking
+                action, extra, not violation_found, data.get("start_tracking"), data.get("stop_tracking")
             )
 
         if photos:
@@ -163,7 +180,9 @@ class SearchReportListView(GenericAPIView):
         camera_ids = self.request.query_params.getlist("camera__id")
         algorithm_names = self.request.query_params.getlist("algorithm")
 
-        queryset = Report.objects.all().order_by("-id")
+        dashboard_algorithms = Algorithm.objects.filter(used_in="dashboard")
+
+        queryset = Report.objects.filter(algorithm__in=dashboard_algorithms).order_by("-id")
 
         if start_time:
             queryset = queryset.filter(date_created__gte=f"{date} {start_time}")
@@ -179,10 +198,6 @@ class SearchReportListView(GenericAPIView):
             for algorithm_name in algorithm_names[0].split(","):
                 algorithm_filters |= Q(algorithm__name=algorithm_name)
             queryset = queryset.filter(algorithm_filters)
-
-        queryset = queryset.exclude(algorithm__name="min_max_control")
-
-        queryset = queryset.order_by("-id")
 
         return queryset
 

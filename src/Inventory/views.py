@@ -92,7 +92,7 @@ class ItemsHistoryViewSet(APIView):
 
     @validate_license
     def get(self, request, date, start_time, end_time, item_id=None):
-        algorithm_name = "min_max_control"
+        algorithm_used = "inventory"
         date_obj = datetime.strptime(date, "%Y-%m-%d").date()
         start_time_obj = datetime.strptime(start_time, "%H:%M:%S").time()
         end_time_obj = datetime.strptime(end_time, "%H:%M:%S").time()
@@ -100,20 +100,27 @@ class ItemsHistoryViewSet(APIView):
         start_of_day = datetime.combine(date_obj, start_time_obj)
         end_of_day = datetime.combine(date_obj, end_time_obj)
 
-        queryset = Report.objects.filter(
+        today_queryset = Report.objects.filter(
             Q(date_created__gte=start_of_day) & Q(date_created__lte=end_of_day)
         ).order_by("-date_created", "-id")
 
-        if algorithm_name:
-            queryset = queryset.filter(algorithm__name=algorithm_name)
+        if algorithm_used:
+            today_queryset = today_queryset.filter(algorithm__used_in=algorithm_used)
+
+        all_reports_queryset = Report.objects.filter().order_by("-date_created", "-id")
 
         if item_id:
-            queryset = queryset.filter(extra__icontains=f'"itemId": {item_id},')
+            today_queryset = today_queryset.filter(extra__icontains=f'"itemId": {item_id},')
 
-        queryset = queryset.order_by("algorithm__name", "camera__id", "id")
+            if not today_queryset:
+                last_report = all_reports_queryset.filter(extra__icontains=f'"itemId": {item_id},').first()
 
-        serializer = ReportSerializers(queryset, many=True, context={'item_id': item_id})
+                if last_report:
+                    serializer = ReportSerializers(last_report, many=False, context={'item_id': item_id})
+                    return Response([serializer.data])
 
+        today_queryset = today_queryset.order_by("algorithm__name", "camera__id", "id")
+        serializer = ReportSerializers(today_queryset, many=True, context={'item_id': item_id})
         return Response(serializer.data)
 
 

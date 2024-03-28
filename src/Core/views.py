@@ -3,15 +3,18 @@ import requests
 from django.core.paginator import Paginator
 from rest_framework.response import Response
 from rest_framework import status, generics, viewsets, mixins
+from django.http import JsonResponse
 
-from .const import SERVER_URL
-from .serializers import SystemMessagesSerializer
-from .models import SystemMessage
+from src.Core.const import ONVIFFINDER_SERVICE_URL
+
+from src.Core.management.commands.startprocess import start_process
+from src.Core.serializers import SystemMessagesSerializer
+from src.Core.models import SystemMessage
 
 
 class FindCameraAPIView(generics.GenericAPIView):
     def get(self, request, *args, **kwargs):
-        cameras_response = requests.get(f"{SERVER_URL}:7654/get_all_onvif_cameras/")
+        cameras_response = requests.get(f"{ONVIFFINDER_SERVICE_URL}:7654/get_all_onvif_cameras/")
         try:
             cameras = cameras_response.json()
         except ValueError as e:
@@ -35,3 +38,9 @@ class SystemMessagesApiView(
         page_number = self.request.query_params.get('page', 1)
         page = paginator.get_page(page_number)
         return page
+
+
+def start_all_processing(request):
+    start_process()
+    response_data = {'message': 'successfully'}
+    return JsonResponse(response_data)
