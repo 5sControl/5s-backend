@@ -151,5 +151,4 @@ class CameraSerializer(serializers.ModelSerializer):
         )
 
     def get_password(self, obj):
-        print(obj.password)
         return decrypt(obj.password)
