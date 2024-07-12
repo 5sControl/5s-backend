@@ -6,4 +6,5 @@ from .models import ManifestConnection
 class ManifestConnectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ManifestConnection
-        fields = ('host', 'username', 'password')
+        fields = ('host', 'username', 'password', 'status', 'last_updated')
+        read_only_fields = ['status', 'last_updated']
