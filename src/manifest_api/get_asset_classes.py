@@ -1,5 +1,4 @@
 import requests
-from rest_framework import status
 from src.manifest_api.models import ManifestConnection
 
 

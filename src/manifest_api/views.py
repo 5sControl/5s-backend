@@ -17,8 +17,8 @@ class ManifestConnectionViewSet(viewsets.ModelViewSet):
 
 class AssetClassesView(APIView):
     def get(self, request):
-        # try:
+        try:
             data = get_asset_classes()
             return Response(data, status=status.HTTP_200_OK)
-        # except requests.exceptions.RequestException as e:
-        #     return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        except requests.exceptions.RequestException as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
