@@ -25,9 +25,13 @@ def get_asset_classes(query, **kwargs):
         'Authorization': token,
         'User-Agent': 'PostmanRuntime/7.37.3',
     }
+
+    response = None
     try:
+
         response = requests.request("POST", url, headers=headers, data=payload)
-        data = (response.json())
-        return data
+        data = response.json()
+        return data, response.status_code
+
     except requests.exceptions.RequestException as e:
-        raise ValueError({'error': str(e)})
+        return {'error': str(e)}, response.status_code

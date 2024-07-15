@@ -1,9 +1,6 @@
-import requests
-
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
 
 from src.manifest_api.get_data import get_asset_classes
 from src.manifest_api.models import ManifestConnection
@@ -11,33 +8,24 @@ from src.manifest_api.serializers import ManifestConnectionSerializer
 
 
 class ManifestConnectionViewSet(viewsets.ModelViewSet):
+    pagination_class = None
     queryset = ManifestConnection.objects.all()
     serializer_class = ManifestConnectionSerializer
 
 
 class AssetClassesView(APIView):
     def get(self, request):
-        try:
-            data = get_asset_classes(query="asset_class")
-            return Response(data, status=status.HTTP_200_OK)
-        except requests.exceptions.RequestException as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        data, status_code = get_asset_classes(query="asset_class")
+        return Response(data, status=status_code)
 
 
 class AssetsView(APIView):
     def get(self, request, asset_class_id):
-        try:
-            data = get_asset_classes(query="asset", asset_class_id=asset_class_id)
-            return Response(data, status=status.HTTP_200_OK)
-        except requests.exceptions.RequestException as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        data, status_code = get_asset_classes(query="asset", asset_class_id=asset_class_id)
+        return Response(data, status=status_code)
 
 
 class TemplateView(APIView):
     def get(self, request, asset_class_id):
-        try:
-            data = get_asset_classes(query="template", asset_class_id=asset_class_id)
-            return Response(data, status=status.HTTP_200_OK)
-        except requests.exceptions.RequestException as e:
-            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
+        data, status_code = get_asset_classes(query="template", asset_class_id=asset_class_id)
+        return Response(data, status=status_code)

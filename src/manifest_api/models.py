@@ -34,7 +34,7 @@ class ManifestConnection(models.Model):
         }
         headers = {
             'Content-Type': 'application/json',
-            'User-Agent': 'Mozilla/5.0'
+            'User-Agent': 'PostmanRuntime/7.37.3',
         }
 
         try:
