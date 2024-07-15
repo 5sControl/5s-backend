@@ -7,8 +7,8 @@ router.register(r'login', ManifestConnectionViewSet)
 
 urlpatterns = [
     path('asset_classes/', AssetClassesView.as_view(), name='asset-classes'),
-    path('asset/', AssetsView.as_view(), name='asset'),
-    path('template/', TemplateView.as_view(), name='template'),
+    path('asset/<int:asset_class_id>/', AssetsView.as_view(), name='asset'),
+    path('template/<int:asset_class_id>/', TemplateView.as_view(), name='template'),
 ]
 
 urlpatterns += router.urls
