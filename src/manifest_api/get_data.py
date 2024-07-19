@@ -62,7 +62,7 @@ def get_steps_by_asset_class():
                 data.append(
                     {
                         "id": step.get("id"),
-                        "name": f'Step {step.get("step")} {step.get("title")}',
+                        "operationName": f'Step {step.get("step")} {step.get("title")}',
                     }
                 )
 
