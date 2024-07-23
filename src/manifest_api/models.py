@@ -9,6 +9,12 @@ class ManifestConnection(models.Model):
     token = models.CharField(max_length=500, blank=True)
     status = models.BooleanField(default=False)
     last_updated = models.DateTimeField(auto_now_add=True)
+    #reportd to manigest
+    asset_class_id = models.IntegerField(null=True, blank=True)
+    asset_id = models.IntegerField(null=True, blank=True)
+    location_id = models.IntegerField(null=True, blank=True)
+    job_template = models.IntegerField(null=True, blank=True)
+    assigned_user = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.host} - {self.username}"
