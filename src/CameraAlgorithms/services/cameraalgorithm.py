@@ -222,18 +222,22 @@ def create_camera_algorithms(
 
         else:
             # Runs for any custom algorithm
+            new_coords = []
             for zone_id in zones:
                 zone_camera: ZoneCameras = ZoneCameras.objects.get(
                     id=zone_id["id"], camera=camera_obj
                 )
-                coords: Dict[str, Any] = zone_camera.coords
-                coords[0]["zoneId"] = zone_camera.id
-                coords[0]["zoneName"] = zone_camera.name
+                new_coords.append(
+                    zone_camera.coords[0] |
+                    {
+                        "zoneId": zone_camera.id,
+                        "zoneName": zone_camera.name
+                    }
+                )
 
-                data.append([{"coords": coords}])
-
-            if len(data) > 0:
-                request["extra"] = data[0]
+                # data.append([{"coords": coords}])
+            if len(new_coords) > 0:
+                request["extra"] = new_coords
             else:
                 request["extra"] = data
 
