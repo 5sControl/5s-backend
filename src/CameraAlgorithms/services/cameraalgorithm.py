@@ -237,7 +237,7 @@ def create_camera_algorithms(
 
                 # data.append([{"coords": coords}])
             if len(new_coords) > 0:
-                request["extra"] = new_coords
+                request["extra"] = [{"coords": new_coords}]
             else:
                 request["extra"] = data
 
