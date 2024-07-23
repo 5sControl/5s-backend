@@ -5,7 +5,7 @@ import requests
 class ManifestConnection(models.Model):
     host = models.CharField(max_length=200)
     username = models.CharField(max_length=100)
-    password = models.CharField(max_length=100, null=True)
+    password = models.CharField(max_length=100, null=True, blank=True)
     token = models.CharField(max_length=500, blank=True)
     status = models.BooleanField(default=False)
     last_updated = models.DateTimeField(auto_now_add=True)
