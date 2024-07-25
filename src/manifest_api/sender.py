@@ -36,7 +36,8 @@ def send_manifest_response(data):
 
     for zone_id in set(zone_ids):
         workplace = ZoneCameras.objects.get(id=zone_id).workplace
-        step = re.search(r'Step (\d+)', workplace)
+        match = re.search(r'Step (\d+)', workplace)
+        step = int(match.group(1))
 
         start_job_step(job_id, step)
         print("start_job_step job step", step)
