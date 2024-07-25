@@ -89,7 +89,7 @@ class ActionsWithPhotos(APIView):
                         {"check_work_time": False, "message": message},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
-            elif algorithm.used_in == "dashboard":
+            elif algorithm.used_in == "dashboard" and "safety_hand_detection" in algorithm.image_name:
                 manifest_connection = ManifestConnection.objects.last()
                 if manifest_connection.status:
                     send_manifest_response(extra)
