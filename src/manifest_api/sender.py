@@ -32,9 +32,11 @@ def send_manifest_response(data):
             if entry['zone_id'] == zone_id:
                 image_path = entry['image']
                 print(image_path)
-                id_image = upload_file(image_path).get('id')
-                list_id_load_images.append(id_image)
+                id_image = upload_file(image_path)
+                if id_image:
+                    list_id_load_images.append(id_image)
         if list_id_load_images:
+            print(list_id_load_images)
             added_notes(job_id, step, list_id_load_images)
             print(f"Added notes for step={step}, job_id={job_id}")
         complete_job_step(job_id, step)
@@ -44,7 +46,7 @@ def send_manifest_response(data):
 
 
 def added_notes(job_id, step, list_id_image):
-    payload = "{\"query\":\"mutation($notes: [JobNoteInput!]!) {\\n    addNotes(notes: $notes)\\n    }\",\"variables\":{\"notes\":[{\"jobId\":" + f'{job_id}' + ",\"step\":" + f'{step}' + ",\"type\":\"text\",\"title\":\"Text note\",\"text\":\"<p>dd</p>\"},"
+    payload = "{\"query\":\"mutation($notes: [JobNoteInput!]!) {\\n    addNotes(notes: $notes)\\n    }\",\"variables\":{\"notes\":["
     for id_image in list_id_image:
         id = id_image.get("id")
         item = "{\"jobId\":" + f'{job_id}' + ",\"step\":" + f'{step}' + ",\"type\":\"photo\",\"title\":\"st4\",\"text\":\"\",\"files\":" + f'{id}' + "},"

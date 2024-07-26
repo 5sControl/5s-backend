@@ -1,3 +1,5 @@
+import json
+
 import requests
 
 from src.manifest_api.models import ManifestConnection
@@ -31,7 +33,7 @@ def upload_file(file_path):
     manifest = ManifestConnection.objects.last()
     host = manifest.host
     token = manifest.token
-    url = f"{host}v3?storage=manifest"
+    url = f"{host}graphql/v3?storage=manifest"
 
     file_name = file_path.split('/')[-1].split('.')[-2]
 
@@ -53,11 +55,17 @@ def upload_file(file_path):
         }
 
         response = requests.request("POST", url, headers=headers, data=payload, files=files)
+        print("upload_file", response.status_code)
+        print("upload_file", response.text)
 
         if response.status_code == 200:
-            return None, response.status_code
+            print(response.text)
+            data = response.json()
+            id_image = data.get('id')
+            print("id_image", id_image)
+            return {"id": id_image}
         else:
-            return response.text
+            return None
 
 
 def get_asset_classes(query, **kwargs):
