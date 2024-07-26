@@ -27,6 +27,39 @@ def send_request(payload):
         return {'error': f'Request exception occurred: {req_err}'}, 400
 
 
+def upload_file(file_path):
+    manifest = ManifestConnection.objects.last()
+    host = manifest.host
+    token = manifest.token
+    url = f"{host}v3?storage=manifest"
+
+    file_name = file_path.split('/')[-1].split('.')[-2]
+
+    payload = {
+        'contentType': 'image',
+        'name': file_name,
+        'multiply': 'false'
+    }
+
+    with open(file_path, 'rb') as file:
+        files = [
+            ('file', (file_name, file, 'application/octet-stream'))
+        ]
+
+        headers = {
+            'Authorization': token,
+            'Cache-Control': 'no-cache',
+            'User-Agent': 'PostmanRuntime/7.37.3',
+        }
+
+        response = requests.request("POST", url, headers=headers, data=payload, files=files)
+
+        if response.status_code == 200:
+            return None, response.status_code
+        else:
+            return response.text
+
+
 def get_asset_classes(query, **kwargs):
     manifest = ManifestConnection.objects.last()
     host = manifest.host
