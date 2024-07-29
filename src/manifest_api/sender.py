@@ -1,10 +1,16 @@
+import logging
 import re
+
+from celery import shared_task
 
 from src.manifest_api.get_data import send_request, upload_file
 from src.manifest_api.models import ManifestConnection
 from src.CameraAlgorithms.models import ZoneCameras
 
+logger = logging.getLogger(__name__)
 
+
+@shared_task
 def send_manifest_response(data):
     manifest_connection = ManifestConnection.objects.last()
 
@@ -43,6 +49,8 @@ def send_manifest_response(data):
         print("complete_job_step job step", step)
 
     print("Sending all jobs to manifest")
+    logger.info("Sending all jobs to manifest")
+    return "success True"
 
 
 def added_notes(job_id, step, list_id_image):
