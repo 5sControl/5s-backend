@@ -99,17 +99,18 @@ class GetWhnetOperation(generics.GenericAPIView):
         data = []
 
         try:
-            data.append(OperationServices.get_whnet_operation())
+            get_whnet_operation = OperationServices.get_whnet_operation()
+            data.extend(get_whnet_operation)
         except Exception as e:
             print(e)
 
         try:
             manifest_steps = get_steps_by_asset_class()[0]
-            data.append(manifest_steps)
+            data.extend(manifest_steps)
         except Exception as e:
             print(e)
 
-        return JsonResponse(data=data[0], status=status.HTTP_200_OK, safe=False)
+        return JsonResponse(data=data, status=status.HTTP_200_OK, safe=False)
 
 
 class FiltrationsDataView(generics.ListAPIView):
