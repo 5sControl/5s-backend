@@ -42,7 +42,7 @@ class GetOperation(generics.GenericAPIView):
 
             return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
         except Exception as e:
-            return []
+            return {}
 
 
 class GetOrders(generics.GenericAPIView):
