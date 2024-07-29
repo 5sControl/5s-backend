@@ -30,7 +30,7 @@ logger = logging.getLogger(__name__)
 class GetOperation(generics.GenericAPIView):
     pagination_class = NoPagination
 
-    @check_database_connection
+    # @check_database_connection
     def get(self, request):
         try:
             from_date, to_date = get_date_interval(request)
