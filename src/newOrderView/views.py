@@ -32,14 +32,17 @@ class GetOperation(generics.GenericAPIView):
 
     @check_database_connection
     def get(self, request):
-        from_date, to_date = get_date_interval(request)
-        cache_key, operation_type_ids = get_cache_data('get_operation', from_date, to_date)
+        try:
+            from_date, to_date = get_date_interval(request)
+            cache_key, operation_type_ids = get_cache_data('get_operation', from_date, to_date)
 
-        response: List[Dict[str, Any]] = get_response(
-            cache_key, from_date, to_date, operation_type_ids, "operation"
-        )
+            response: List[Dict[str, Any]] = get_response(
+                cache_key, from_date, to_date, operation_type_ids, "operation"
+            )
 
-        return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
+            return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
+        except Exception as e:
+            return []
 
 
 class GetOrders(generics.GenericAPIView):
