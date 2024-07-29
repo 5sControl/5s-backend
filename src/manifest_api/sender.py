@@ -12,45 +12,49 @@ logger = logging.getLogger(__name__)
 
 @shared_task
 def send_manifest_response(data):
-    manifest_connection = ManifestConnection.objects.last()
+    try:
+        manifest_connection = ManifestConnection.objects.last()
 
-    asset_class_id = manifest_connection.asset_class_id
-    asset_id = manifest_connection.asset_id
-    location_id = manifest_connection.location_id
-    job_template = manifest_connection.job_template
-    assigned_user = manifest_connection.assigned_user
+        asset_class_id = manifest_connection.asset_class_id
+        asset_id = manifest_connection.asset_id
+        location_id = manifest_connection.location_id
+        job_template = manifest_connection.job_template
+        assigned_user = manifest_connection.assigned_user
 
-    job_id = create_job(location_id, assigned_user, job_template, asset_id)
+        job_id = create_job(location_id, assigned_user, job_template, asset_id)
 
-    if not job_id:
-        return print(f'Could not create job status code {job_id.status_code}')
+        if not job_id:
+            return print(f'Could not create job status code {job_id.status_code}')
 
-    zone_ids = [entry['zone_id'] for entry in data]
+        zone_ids = [entry['zone_id'] for entry in data]
 
-    for zone_id in set(zone_ids):
-        workplace = ZoneCameras.objects.get(id=zone_id).workplace
-        match = re.search(r'Step (\d+)', workplace)
-        step = int(match.group(1))
-        start_job_step(job_id, step)
-        print("start_job_step job step", step)
-        list_id_load_images = []
-        for entry in data:
-            if entry['zone_id'] == zone_id:
-                image_path = entry['image']
-                print(image_path)
-                id_image = upload_file(image_path)
-                if id_image:
-                    list_id_load_images.append(id_image)
-        if list_id_load_images:
-            print(list_id_load_images)
-            added_notes(job_id, step, list_id_load_images)
-            print(f"Added notes for step={step}, job_id={job_id}")
-        complete_job_step(job_id, step)
-        print("complete_job_step job step", step)
+        for zone_id in set(zone_ids):
+            workplace = ZoneCameras.objects.get(id=zone_id).workplace
+            match = re.search(r'Step (\d+)', workplace)
+            step = int(match.group(1))
+            start_job_step(job_id, step)
+            print("start_job_step job step", step)
+            list_id_load_images = []
+            for entry in data:
+                if entry['zone_id'] == zone_id:
+                    image_path = entry['image']
+                    print(image_path)
+                    id_image = upload_file(image_path)
+                    if id_image:
+                        list_id_load_images.append(id_image)
+            if list_id_load_images:
+                print(list_id_load_images)
+                added_notes(job_id, step, list_id_load_images)
+                print(f"Added notes for step={step}, job_id={job_id}")
+            complete_job_step(job_id, step)
+            print("complete_job_step job step", step)
 
-    print("Sending all jobs to manifest")
-    logger.info("Sending all jobs to manifest")
-    return "success True"
+        print("Sending all jobs to manifest")
+        logger.info("Sending all jobs to manifest")
+        return "success True"
+
+    except:
+        return "success False"
 
 
 def added_notes(job_id, step, list_id_image):
