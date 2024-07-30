@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework import status, generics
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.request import Request
 from src.DatabaseConnections.models import ConnectionInfo
@@ -19,7 +20,7 @@ from src.DatabaseConnections.utils import check_database_connection
 from src.OrderView.models import IndexOperations
 from src.OrderView.serializers import (
     ApiConnectionSerializer,
-    ConnectionStatusSerializer,
+    ConnectionInfoSerializer,
     DatabaseConnectionSerializer,
     DeleteConnectionSerializer,
     IndexStanowiskoSerializer,
@@ -160,14 +161,11 @@ class DeleteConectionAPIView(generics.GenericAPIView):
         )
 
 
-class GetConnectionStatusAPIView(generics.RetrieveAPIView):
-    permission_classes = [IsAuthenticated]
-    serializer_class = ConnectionStatusSerializer
-
-    def get_object(self):
-        db_connection = ConnectionInfo.objects.filter(type="database").first()
-        api_connection = ConnectionInfo.objects.filter(type="api").first()
-        return {"db": db_connection, "api": api_connection}
+class GetConnectionStatusAPIView(APIView):
+    def get(self, request):
+        connections = ConnectionInfo.objects.all()
+        serializer = ConnectionInfoSerializer(connections, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class IndexOperationsView(ModelViewSet):
