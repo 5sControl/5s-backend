@@ -15,6 +15,13 @@ class ConnectionInfo(models.Model):
         ("manifest", "Manifest"),
     )
 
+    ERP_SYSTEM_CHOICES = (
+        ("odoo", "ODOO"),
+        ("winkhaus", "Winkhaus"),
+        ("manifest", "Manifest"),
+    )
+
+    erp_system = models.CharField(max_length=20, choices=ERP_SYSTEM_CHOICES, default="winkhaus")
     type = models.CharField(max_length=10, choices=TYPE_CHOICES, default="database")
     dbms = models.CharField(max_length=50, choices=DBMS_CHOICES, default="mssql")
     is_active = models.BooleanField(default=True)
