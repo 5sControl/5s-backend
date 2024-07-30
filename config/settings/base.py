@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "src.Inventory.apps.InventoryConfig",
     "src.Employees.apps.EmployeesConfig",
     "src.Suppliers.apps.SuppliersConfig",
+    "src.manifest_api.apps.ManifestApiConfig",
     # Collections reports
     "src.Reports.apps.ReportsConfig",
     "src.Extension.apps.ExtensionConfig",

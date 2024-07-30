@@ -19,6 +19,8 @@ from src.ImageReport.models import Image
 from src.CameraAlgorithms.models import Camera
 from src.CameraAlgorithms.models import Algorithm
 from src.Mailer.service import check_work_time
+from src.manifest_api.models import ManifestConnection
+from src.manifest_api.sender import send_manifest_response
 from src.Reports.models import Report, SkanyReport
 from src.Reports.serializers import (
     ReportSerializers,
@@ -87,6 +89,12 @@ class ActionsWithPhotos(APIView):
                         {"check_work_time": False, "message": message},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
+            elif algorithm.used_in == "dashboard" and "safety_hand_detection" in algorithm.image_name:
+                manifest_connection = ManifestConnection.objects.last()
+                if manifest_connection.status:
+                    send_manifest_response(extra)
+                else:
+                    logger.info("Manifest not active")
 
             elif algorithm_name == "operation_control":
                 if EMULATE_DB:

@@ -12,6 +12,7 @@ class ConnectionInfo(models.Model):
     DBMS_CHOICES = (
         ("postgres", "PostgreSQL"),
         ("mssql", "Microsoft SQL Server"),
+        ("manifest", "Manifest"),
     )
 
     type = models.CharField(max_length=10, choices=TYPE_CHOICES, default="database")

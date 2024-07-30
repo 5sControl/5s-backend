@@ -27,6 +27,7 @@ routes = [
     path("connector/", include("src.DatabaseConnections.urls"), name="connector"),
     path("healthcheck/", include("src.Healthcheck.urls"), name="healthcheck"),
     path("extension_linkedin/", include("src.Extension.urls"), name="extension-linkedin"),
+    path("manifest_connection/", include("src.manifest_api.urls"), name="manifest-connection")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 

@@ -22,6 +22,8 @@ from ..OrderView.utils import get_package_video_info
 
 import logging
 
+from ..manifest_api.get_data import get_steps_by_asset_class
+
 logger = logging.getLogger(__name__)
 
 
@@ -91,11 +93,24 @@ class GetOrderByDetail(generics.GenericAPIView):
 class GetWhnetOperation(generics.GenericAPIView):
     pagination_class = NoPagination
 
-    @method_decorator(cache_page(30))
-    @check_database_connection
+    # @method_decorator(cache_page(30))
+    # @check_database_connection
     def get(self, request):
-        response: Dict[str, Any] = OperationServices.get_whnet_operation()
-        return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
+        data = []
+
+        try:
+            get_whnet_operation = OperationServices.get_whnet_operation()
+            data.extend(get_whnet_operation)
+        except Exception as e:
+            print(e)
+
+        try:
+            manifest_steps = get_steps_by_asset_class()[0]
+            data.extend(manifest_steps)
+        except Exception as e:
+            print(e)
+
+        return JsonResponse(data=data, status=status.HTTP_200_OK, safe=False)
 
 
 class FiltrationsDataView(generics.ListAPIView):
