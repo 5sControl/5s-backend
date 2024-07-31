@@ -8,7 +8,7 @@ from src.manifest_api.models import ManifestConnection
 def update_active_status(sender, instance, **kwargs):
     sender.objects.exclude(pk=instance.pk).update(password=None)
 
-    if instance.dbms == "manifest":
+    if instance.erp_system == "manifest":
         handle_manifest_connection(instance)
 
 

@@ -1,9 +1,15 @@
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import generics, status
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 
 from src.DatabaseConnections.models import ConnectionInfo
-from src.DatabaseConnections.serilisers import ConnectionInfoSerializer, OdooItemSerializer
+from src.DatabaseConnections.serilisers import \
+    ConnectionInfoSerializer, \
+    OdooItemSerializer, \
+    BaseConnectionInfoSerializer
+
 from src.DatabaseConnections.utils import get_all_items_odoo
 
 
@@ -60,3 +66,10 @@ class GetOdooAllItems(APIView):
             return Response(serializer.data, status=200)
         except Exception as e:
             return Response({'error': str(e)}, status=500)
+
+
+class ConnectionInfoView(ModelViewSet):
+    permission_classes = [IsAuthenticated]
+    pagination_class = None
+    queryset = ConnectionInfo.objects.all()
+    serializer_class = BaseConnectionInfoSerializer
