@@ -11,8 +11,6 @@ def update_active_status(sender, instance, **kwargs):
     if instance.dbms == "manifest":
         handle_manifest_connection(instance)
 
-    instance.password = None
-
 
 def handle_manifest_connection(instance):
     manifest_connection = ManifestConnection()
