@@ -29,6 +29,7 @@ from src.Reports.serializers import (
 )
 from src.Inventory.service import process_item_status
 from src.Reports.service import edit_extra, create_skanyreport
+from src.manifest_api.service import adding_data_to_extra
 
 logger = logging.getLogger(__name__)
 
@@ -89,7 +90,9 @@ class ActionsWithPhotos(APIView):
                         {"check_work_time": False, "message": message},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
-            elif algorithm.used_in == "dashboard" and "safety_hand_detection" in algorithm.image_name:
+
+            elif "safety_hand_detection" in algorithm.image_name:
+                extra = adding_data_to_extra(extra)
                 manifest_connection = ManifestConnection.objects.last()
                 if manifest_connection.status:
                     send_manifest_response(extra)
