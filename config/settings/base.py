@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     "src.manifest_api.apps.ManifestApiConfig",
     # Collections reports
     "src.Reports.apps.ReportsConfig",
-    "src.Extension.apps.ExtensionConfig",
     "src.ImageReport.apps.ImageConfig",
     "src.Mailer.apps.MailerConfig",
     "src.Core.apps.CoreConfig",
