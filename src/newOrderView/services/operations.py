@@ -26,11 +26,12 @@ class OperationServices:
     ) -> List[Dict[str, Any]]:
         workplace_repo: WorkplaceRepository = WorkplaceRepository()
         operation_repo: OperationsRepository = OperationsRepository()
-
-        stanowiska_data: List[Tuple[Any]] = workplace_repo.get_raports(
-            operation_type_ids
-        )
-
+        try:
+            stanowiska_data: List[Tuple[Any]] = workplace_repo.get_raports(
+                operation_type_ids
+            )
+        except Exception as e:
+            print(f"Exception stanowiska_data {e}")
         result_list: List[Dict[str, Any]] = []
 
         for row in stanowiska_data:
