@@ -23,6 +23,7 @@ from ..OrderView.utils import get_package_video_info
 import logging
 
 from ..manifest_api.get_data import get_steps_by_asset_class
+from ..manifest_api.service import get_all_reports_manifest
 
 logger = logging.getLogger(__name__)
 
@@ -45,15 +46,14 @@ class GetOperation(generics.GenericAPIView):
 class GetOrders(generics.GenericAPIView):
     pagination_class = NoPagination
 
-    @check_database_connection
     def get(self, request):
         from_date, to_date = get_date_interval(request)
-        cache_key, operation_type_ids = get_cache_data('get_order', from_date, to_date)
-
-        response: List[Dict[str, Any]] = get_response(
-            cache_key, from_date, to_date, operation_type_ids, "orders"
-        )
-
+        response = get_all_reports_manifest(from_date, to_date)
+        # cache_key, operation_type_ids = get_cache_data('get_order', from_date, to_date)
+        #
+        # response: List[Dict[str, Any]] = get_response(
+        #     cache_key, from_date, to_date, operation_type_ids, "orders"
+        # )
         return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
 
 
@@ -117,6 +117,24 @@ class FiltrationsDataView(generics.ListAPIView):
     serializer_class = FilterOperationsTypeIDSerializer
     pagination_class = NoPagination
     queryset = FiltrationOperationsTypeID.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        response = super().get(request, *args, **kwargs)
+        data = response.data
+
+        all_steps = get_steps_by_asset_class()[0]
+
+        adapted_steps = [
+            {
+                "operation_type_id": step["id"],
+                "name": step["operationName"],
+                "is_active": False
+            }
+            for step in all_steps
+        ]
+
+        combined_data = list(data) + adapted_steps
+        return Response(combined_data)
 
     def put(self, request, *args, **kwargs):
         data = request.data
