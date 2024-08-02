@@ -32,6 +32,8 @@ class OperationServices:
             )
         except Exception as e:
             print(f"Exception stanowiska_data {e}")
+            stanowiska_data = []
+
         result_list: List[Dict[str, Any]] = []
 
         for row in stanowiska_data:
