@@ -17,7 +17,7 @@ def get_response(
     type: str,
 ) -> List[Dict[str, Any]]:
     connector = get_object_or_404(ConnectionInfo, is_active=True).type
-
+    response = []
     if connector == "api":
         if type == "operation":
             response: List[Dict[str, Any]] = connector_services.get_operations(
@@ -28,7 +28,10 @@ def get_response(
                 from_date, to_date
             )
     elif connector == "database":
-        response = cache.get(cache_key)
+        try:
+            response = cache.get(cache_key)
+        except Exception as e:
+            print(f"Redis cash exception: {e}")
         if response is None:
             if type == "operation":
                 response: List[Dict[str, Any]] = OperationServices.get_operations(
