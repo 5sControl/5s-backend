@@ -118,23 +118,23 @@ class FiltrationsDataView(generics.ListAPIView):
     pagination_class = NoPagination
     queryset = FiltrationOperationsTypeID.objects.all()
 
-    def get(self, request, *args, **kwargs):
-        response = super().get(request, *args, **kwargs)
-        data = response.data
-
-        all_steps = get_steps_by_asset_class()[0]
-
-        adapted_steps = [
-            {
-                "operation_type_id": step["id"],
-                "name": step["operationName"],
-                "is_active": False
-            }
-            for step in all_steps
-        ]
-
-        combined_data = list(data) + adapted_steps
-        return Response(combined_data)
+    # def get(self, request, *args, **kwargs):
+    #     response = super().get(request, *args, **kwargs)
+    #     data = response.data
+    #
+    #     all_steps = get_steps_by_asset_class()[0]
+    #
+    #     adapted_steps = [
+    #         {
+    #             "operation_type_id": step["id"],
+    #             "name": step["operationName"],
+    #             "is_active": False
+    #         }
+    #         for step in all_steps
+    #     ]
+    #
+    #     combined_data = list(data) + adapted_steps
+    #     return Response(combined_data)
 
     def put(self, request, *args, **kwargs):
         data = request.data
