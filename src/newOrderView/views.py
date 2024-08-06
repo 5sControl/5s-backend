@@ -39,6 +39,9 @@ class GetOperation(generics.GenericAPIView):
         response: List[Dict[str, Any]] = get_response(
             cache_key, from_date, to_date, operation_type_ids, "operation"
         )
+        response_manifest = get_all_reports_manifest(from_date, to_date)
+
+        response = response + response_manifest
 
         return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
 
@@ -48,12 +51,12 @@ class GetOrders(generics.GenericAPIView):
 
     def get(self, request):
         from_date, to_date = get_date_interval(request)
-        response = get_all_reports_manifest(from_date, to_date)
-        # cache_key, operation_type_ids = get_cache_data('get_order', from_date, to_date)
-        #
-        # response: List[Dict[str, Any]] = get_response(
-        #     cache_key, from_date, to_date, operation_type_ids, "orders"
-        # )
+
+        cache_key, operation_type_ids = get_cache_data('get_order', from_date, to_date)
+
+        response: List[Dict[str, Any]] = get_response(
+            cache_key, from_date, to_date, operation_type_ids, "orders"
+        )
         return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
 
 

@@ -102,7 +102,7 @@ class CreateConnectionAPIView(generics.CreateAPIView):
 
 
 class DeleteConnectionAPIView(generics.DestroyAPIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     queryset = ConnectionInfo.objects.all()
     lookup_field = 'id'
 
