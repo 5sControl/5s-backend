@@ -63,7 +63,7 @@ def edit_response_for_orders(data):
             "oprs": oprs
         })
 
-    sorted_result = sorted(result, key=lambda x: x["oprTypeID"])
+    sorted_result = sorted(result, key=lambda x: x["oprTypeID"], reverse=True)
     return sorted_result
 
 
