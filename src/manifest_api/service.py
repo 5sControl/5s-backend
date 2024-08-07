@@ -71,7 +71,9 @@ def get_all_reports_manifest(from_date, to_date):
     from_date_obj = datetime.strptime(from_date, "%Y-%m-%d")
     to_date_obj = datetime.strptime(to_date, "%Y-%m-%d")
     to_date_obj = to_date_obj.replace(hour=23, minute=59, second=59)
-
+    # filters all operations
+    ## FiltrationOperationsTypeID.objects.filter(is_active=True)
+    # only manifest
     all_steps = get_steps_by_asset_class()[0]
     steps_id = [item["id"] for item in all_steps]
 
