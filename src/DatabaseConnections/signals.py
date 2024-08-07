@@ -6,10 +6,9 @@ from src.manifest_api.models import ManifestConnection
 
 @receiver(pre_save, sender=ConnectionInfo)
 def update_active_status(sender, instance, **kwargs):
-    sender.objects.exclude(pk=instance.pk).update(password=None)
-
-    if instance.erp_system == "manifest":
-        handle_manifest_connection(instance)
+    if instance.pk is None:
+        if instance.erp_system == "manifest":
+            handle_manifest_connection(instance)
 
 
 def handle_manifest_connection(instance):
