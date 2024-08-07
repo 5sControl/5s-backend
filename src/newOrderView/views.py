@@ -39,9 +39,7 @@ class GetOperation(generics.GenericAPIView):
         response: List[Dict[str, Any]] = get_response(
             cache_key, from_date, to_date, operation_type_ids, "operation"
         )
-        response_manifest = get_all_reports_manifest(from_date, to_date)
-
-        response = response + response_manifest
+        # response_manifest = get_all_reports_manifest(from_date, to_date)
 
         return JsonResponse(data=response, status=status.HTTP_200_OK, safe=False)
 
