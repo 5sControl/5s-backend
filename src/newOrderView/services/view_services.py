@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.core.cache import cache
 
 from src.DatabaseConnections.models import ConnectionInfo
+from src.manifest_api.sender import get_all_works_manifest
 from src.manifest_api.service import get_all_reports_manifest
 from src.newOrderView.services.connector import connector_services
 from src.newOrderView.services.operations import OperationServices
@@ -24,6 +25,8 @@ def get_response(
         if type == "operation":
             try:
                 if ConnectionInfo.objects.get(is_active=True, erp_system="manifest"):
+                    # Использовать это при получении данных с манифест
+                    # response_manifest = get_all_works_manifest()
                     response_manifest = get_all_reports_manifest(from_date, to_date)
             except Exception as e:
                 response_manifest = []
