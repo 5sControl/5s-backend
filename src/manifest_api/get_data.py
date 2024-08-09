@@ -149,7 +149,7 @@ def get_steps_by_asset_class():
                     {
                         # "id": step.get("id"),
                         "id": None,
-                        "operationName": f"{asset_name}({asset_id}){template.get('title')}({template.get('id')})",
+                        "operationName": f"{asset_name}({asset_id}).{template.get('title')}({template.get('id')})",
                         "asset_class_id": asset.get("asset_class_id"),
                         "id_asset": asset_id,
                         "location_id": asset.get("location_id"),
@@ -161,7 +161,7 @@ def get_steps_by_asset_class():
                     result = (
                         {
                             "id": step.get("id"),
-                            "operationName": f"{asset_name}({asset_id}){template.get('title')}({template.get('id')}).{step.get('title')}(Step{step.get('step')})",
+                            "operationName": f"{asset_name}({asset_id}).{template.get('title')}({template.get('id')}).{step.get('title')}(Step{step.get('step')})",
                             "asset_class_id": asset.get("asset_class_id"),
                             "id_asset": asset_id,
                             "location_id": asset.get("location_id"),
