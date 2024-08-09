@@ -138,6 +138,10 @@ def get_steps_by_asset_class():
         all_data = response_data.get('allVersionsWithPagination', [])
         for asset in all_assets:
             for template in all_data:
+                try:
+                    creator_by_id = template.get('actualVersion').get('activities')[0].get('createdByUser').get('id')
+                except:
+                    creator_by_id = None
                 asset_name = asset.get("serial_number")
                 asset_id = asset.get("id_asset")
                 steps = template.get('steps', [])
@@ -149,7 +153,8 @@ def get_steps_by_asset_class():
                         "asset_class_id": asset.get("asset_class_id"),
                         "id_asset": asset_id,
                         "location_id": asset.get("location_id"),
-                        "serial_number": asset_name
+                        "serial_number": asset_name,
+                        "creator_by_id": creator_by_id
                     }
                 )
                 for step in steps:
@@ -160,7 +165,8 @@ def get_steps_by_asset_class():
                             "asset_class_id": asset.get("asset_class_id"),
                             "id_asset": asset_id,
                             "location_id": asset.get("location_id"),
-                            "serial_number": asset_name
+                            "serial_number": asset_name,
+                            "creator_by_id": creator_by_id
                         }
                     )
                     data.append(result)
