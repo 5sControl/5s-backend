@@ -3,39 +3,60 @@ import re
 
 from celery import shared_task
 
-from src.manifest_api.get_data import send_request, upload_file
+from src.manifest_api.get_data import send_request, upload_file, get_steps_by_asset_class
 from src.manifest_api.models import ManifestConnection
 from src.CameraAlgorithms.models import ZoneCameras
 
 logger = logging.getLogger(__name__)
 
 
-@shared_task
-def send_manifest_response(data):
-    try:
-        manifest_connection = ManifestConnection.objects.last()
+def find_by_operation_name(name, data):
+    for item in data:
+        if item.get("operationName") == name:
+            return item
+    return None
 
-        asset_class_id = manifest_connection.asset_class_id
-        asset_id = manifest_connection.asset_id
-        location_id = manifest_connection.location_id
-        job_template = manifest_connection.job_template
-        assigned_user = manifest_connection.assigned_user
+
+@shared_task
+def send_manifest_response(extra):
+    data_manifest = get_steps_by_asset_class()[0]
+
+    # try:
+    for item in extra:
+        # print(item)
+        name_workplace = item.get('name_workplace')
+        operations = find_by_operation_name(name_workplace, data_manifest)
+
+        if not operations:
+            continue
+
+        asset_class_id = operations.get('asset_class_id')
+        asset_id = operations.get('id_asset')
+        location_id = operations.get("location_id")
+        job_template = operations.get("template_id")
+        assigned_user = operations.get("creator_by_id")
+
+        print(111111, asset_class_id, asset_id, location_id, job_template, assigned_user)
 
         job_id = create_job(location_id, assigned_user, job_template, asset_id)
 
         if not job_id:
             return print(f'Could not create job status code {job_id.status_code}')
 
-        zone_ids = [entry['zone_id'] for entry in data]
-
+        zone_ids = [entry['zone_id'] for entry in extra]
+        print(set(zone_ids))
         for zone_id in set(zone_ids):
             workplace = ZoneCameras.objects.get(id=zone_id).workplace
-            match = re.search(r'Step (\d+)', workplace)
-            step = int(match.group(1))
+
+            match = re.search(r'Step.*?\(Step(\d+)\)', workplace)
+            try:
+                step = int(match.group(1))
+            except:
+                step = 1
             start_job_step(job_id, step)
             print("start_job_step job step", step)
             list_id_load_images = []
-            for entry in data:
+            for entry in extra:
                 if entry['zone_id'] == zone_id:
                     image_path = entry['image']
                     print(image_path)
@@ -52,9 +73,9 @@ def send_manifest_response(data):
         print("Sending all jobs to manifest")
         logger.info("Sending all jobs to manifest")
         return "success True"
-
-    except:
-        return "success False"
+    return
+    # except:
+    #     return "success False"
 
 
 def added_notes(job_id, step, list_id_image):
