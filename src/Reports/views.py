@@ -111,38 +111,38 @@ class ActionsWithPhotos(APIView):
             logger.critical(f"Error while parsing report: {e}")
             return {"status": False, "message": "The model response is not complete"}
 
-        # action = Report.objects.create(
-        #     camera=camera,
-        #     extra=extra,
-        #     algorithm=algorithm,
-        #     violation_found=violation_found,
-        #     start_tracking=start_tracking_formatted,
-        #     stop_tracking=stop_tracking_formatted,
-        # )
-        #
-        # if algorithm_name == "operation_control":
-        #     create_skanyreport(
-        #         action, extra, not violation_found, data.get("start_tracking"), data.get("stop_tracking")
-        #     )
-        #
-        # if photos:
-        #     for photo in photos:
-        #         if photo.get("image"):
-        #             image = photo.get("image")
-        #             date = photo.get("date")
-        #             photo = Image.objects.create(
-        #                 image=image, date=date, report_id=action
-        #             )
-        # else:
-        #     logger.critical(f"Image in report {action} wasn't found")
-        #     action.delete()
-        #     return Response(
-        #         {
-        #             "status": False,
-        #             "message": "The report was not saved due to an omission in the response from the YOLO",
-        #         },
-        #         status=status.HTTP_400_BAD_REQUEST,
-        #     )
+        action = Report.objects.create(
+            camera=camera,
+            extra=extra,
+            algorithm=algorithm,
+            violation_found=violation_found,
+            start_tracking=start_tracking_formatted,
+            stop_tracking=stop_tracking_formatted,
+        )
+
+        if algorithm_name == "operation_control":
+            create_skanyreport(
+                action, extra, not violation_found, data.get("start_tracking"), data.get("stop_tracking")
+            )
+
+        if photos:
+            for photo in photos:
+                if photo.get("image"):
+                    image = photo.get("image")
+                    date = photo.get("date")
+                    photo = Image.objects.create(
+                        image=image, date=date, report_id=action
+                    )
+        else:
+            logger.critical(f"Image in report {action} wasn't found")
+            action.delete()
+            return Response(
+                {
+                    "status": False,
+                    "message": "The report was not saved due to an omission in the response from the YOLO",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         return Response(
             {"status": True, "message": "Data created successfully"},
