@@ -55,7 +55,7 @@ class ZoneCameras(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True)
     is_active = models.BooleanField(default=False)
     workplace = models.CharField(
-        max_length=50, blank=True, null=True, verbose_name="Workplace db Winkhaus"
+        max_length=250, blank=True, null=True, verbose_name="Workplace db Winkhaus"
     )
     index_workplace = models.IntegerField(
         default=None, null=True, blank=True, verbose_name="Index workplace Winkhaus"
