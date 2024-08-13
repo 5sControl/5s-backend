@@ -231,7 +231,8 @@ def create_camera_algorithms(
                     zone_camera.coords[0] |
                     {
                         "zoneId": zone_camera.id,
-                        "zoneName": zone_camera.name
+                        "zoneName": zone_camera.name,
+                        "approximate_duration": zone_camera.approximate_duration,
                     }
                 )
 
