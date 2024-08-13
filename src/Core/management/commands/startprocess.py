@@ -78,6 +78,7 @@ def start_process() -> None:
                         {
                             "zoneId": zone_camera.id,
                             "zoneName": zone_camera.name,
+                            "approximate_duration": zone_camera.approximate_duration,
                             "coords": zone_camera.coords,
                         }
                     )
