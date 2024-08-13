@@ -23,6 +23,7 @@ def get_response(
 
     if connector == "api":
         if type == "operation":
+            response_manifest = None
             try:
                 if ConnectionInfo.objects.get(is_active=True, erp_system="manifest"):
                     # Использовать это при получении данных с манифест

@@ -35,7 +35,9 @@ def edit_response_for_orders(data):
         operation_tuple = (item.id, item.name, item.operation_type_id)
         operations_map.add(operation_tuple)
 
-    all_operations = [{"oprTypeID": opr_type_id, "oprName": opr_name, "operation_type_id": operation_type_id} for opr_type_id, opr_name, operation_type_id in operations_map]
+    all_operations = [{"oprTypeID": opr_type_id, "oprName": opr_name,
+                       "operation_type_id": operation_type_id}
+                      for opr_type_id, opr_name, operation_type_id in operations_map]
 
     for operation in all_operations:
         oprs = []
@@ -44,6 +46,7 @@ def edit_response_for_orders(data):
             id_value = ordered_dict.get('id')
             extra_value = ordered_dict.get('extra')
             for report in extra_value:
+                print(report)
                 if report.get("id_workplace") == operation.get("operation_type_id"):
                     start_tile = int(datetime.strptime(report.get('date'), "%Y-%m-%d %H:%M:%S.%f").timestamp() * 1000)
                     end_time = start_tile + 600000
@@ -76,10 +79,11 @@ def get_all_reports_manifest(from_date, to_date):
     # only manifest
     all_steps = get_steps_by_asset_class()[0]
     steps_id = [item["id"] for item in all_steps]
-
     unique_reports = set()
 
-    for ids in steps_id:
+    for ids in set(steps_id):
+        if not ids:
+            continue
         queryset = Report.objects.filter(
             Q(date_created__gte=from_date_obj),
             Q(date_created__lte=to_date_obj),
