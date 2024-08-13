@@ -142,10 +142,20 @@ class FiltrationsDataView(generics.ListAPIView):
         data = request.data
         try:
             for item in data:
-                instance = FiltrationOperationsTypeID.objects.get(pk=item["id"])
-                serializer = self.get_serializer(instance, data=item, partial=True)
-                serializer.is_valid(raise_exception=True)
-                serializer.save()
+                operation_type_id = item.get("operation_type_id")
+                instance = FiltrationOperationsTypeID.objects.filter(operation_type_id=operation_type_id).first()
+
+                if item.get("is_active", False):
+                    if instance:
+                        serializer = self.get_serializer(instance, data=item, partial=True)
+                    else:
+                        serializer = self.get_serializer(data=item)
+                    serializer.is_valid(raise_exception=True)
+                    serializer.save()
+                else:
+                    if instance:
+                        instance.delete()
+
             return self.get_response(message="Status updated successfully.")
         except Exception as e:
             return self.get_response(error=str(e), status=400)
