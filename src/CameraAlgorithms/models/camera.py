@@ -55,15 +55,16 @@ class ZoneCameras(models.Model):
     name = models.CharField(max_length=100, blank=True, null=True)
     is_active = models.BooleanField(default=False)
     workplace = models.CharField(
-        max_length=250, blank=True, null=True, verbose_name="Workplace db Winkhaus"
+        max_length=250, blank=True, null=True, verbose_name="Workplace in the system ERP"
     )
     index_workplace = models.IntegerField(
-        default=None, null=True, blank=True, verbose_name="Index workplace Winkhaus"
+        default=None, null=True, blank=True, verbose_name="Index workplace"
     )
     date_created = models.DateTimeField(verbose_name="Date created", auto_now_add=True)
     date_updated = models.DateTimeField(verbose_name="Date updated", auto_now=True)
     approximate_duration = models.IntegerField(
-        verbose_name="Preliminary duration of the operation", default=None, blank=True, null=True)
+        verbose_name="Preliminary operation duration in seconds", default=None, blank=True, null=True
+    )
 
     def __str__(self):
         return self.name
