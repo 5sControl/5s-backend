@@ -62,6 +62,8 @@ class ZoneCameras(models.Model):
     )
     date_created = models.DateTimeField(verbose_name="Date created", auto_now_add=True)
     date_updated = models.DateTimeField(verbose_name="Date updated", auto_now=True)
+    approximate_duration = models.IntegerField(
+        verbose_name="Preliminary duration of the operation", default=None, blank=True, null=True)
 
     def __str__(self):
         return self.name
