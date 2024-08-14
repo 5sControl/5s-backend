@@ -24,7 +24,7 @@ def send_manifest_response(extra):
     for item in extra:
         name_workplace = item.get('name_workplace')
         operations = find_by_operation_name(name_workplace, data_manifest)
-
+        print(111111, operations)
         if not operations:
             continue
 
@@ -37,7 +37,7 @@ def send_manifest_response(extra):
         job_id = create_job(location_id, assigned_user, job_template, asset_id)
 
         if not job_id:
-            return print(f'Could not create job status code {job_id.status_code}')
+            return print(f'Could not create job status code {job_id.status_code}, {job_id.message}')
 
         zone_ids = [entry.get('zone_id') for entry in extra if 'duration_zones' not in entry]
 
