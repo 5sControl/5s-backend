@@ -57,59 +57,59 @@ class ActionViewSet(viewsets.ModelViewSet):
 class ActionsWithPhotos(APIView):
     def post(self, request):
         data = request.data
-        # try:
-        algorithm_name = data.get("algorithm")
-        camera_ip = data.get("camera")
+        try:
+            algorithm_name = data.get("algorithm")
+            camera_ip = data.get("camera")
 
-        algorithm = Algorithm.objects.get(name=algorithm_name)
-        camera = Camera.objects.get(id=camera_ip)
+            algorithm = Algorithm.objects.get(name=algorithm_name)
+            camera = Camera.objects.get(id=camera_ip)
 
-        start_tracking_str = data.get("start_tracking")
-        stop_tracking_str = data.get("stop_tracking")
+            start_tracking_str = data.get("start_tracking")
+            stop_tracking_str = data.get("stop_tracking")
 
-        start_tracking = datetime.strptime(start_tracking_str, "%Y-%m-%d %H:%M:%S.%f")
-        stop_tracking = datetime.strptime(stop_tracking_str, "%Y-%m-%d %H:%M:%S.%f")
+            start_tracking = datetime.strptime(start_tracking_str, "%Y-%m-%d %H:%M:%S.%f")
+            stop_tracking = datetime.strptime(stop_tracking_str, "%Y-%m-%d %H:%M:%S.%f")
 
-        start_tracking_formatted = start_tracking.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
-        stop_tracking_formatted = stop_tracking.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+            start_tracking_formatted = start_tracking.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+            stop_tracking_formatted = stop_tracking.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
-        photos = data.get("photos")
-        violation_found = data.get("violation_found")
+            photos = data.get("photos")
+            violation_found = data.get("violation_found")
 
-        extra = data.get("extra")
+            extra = data.get("extra")
 
-        if algorithm.used_in == "inventory":
-            work_time = check_work_time()
-            if work_time.get("status"):
-                extra = process_item_status(extra)
-            else:
-                message = f"Reporting is currently prohibited. work_time " \
-                          f"{work_time.get('time_start')} -> {work_time.get('time_end')}"
-                logger.warning(message)
-                return Response(
-                    {"check_work_time": False, "message": message},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+            if algorithm.used_in == "inventory":
+                work_time = check_work_time()
+                if work_time.get("status"):
+                    extra = process_item_status(extra)
+                else:
+                    message = f"Reporting is currently prohibited. work_time " \
+                              f"{work_time.get('time_start')} -> {work_time.get('time_end')}"
+                    logger.warning(message)
+                    return Response(
+                        {"check_work_time": False, "message": message},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
 
-        elif "safety_hand_detection" in algorithm.image_name:
-            extra = adding_data_to_extra(extra)
-            manifest_connection = ManifestConnection.objects.last()
-            if manifest_connection.status:
-                send_manifest_response(extra)
-            else:
-                logger.info("Manifest not active")
+            elif "safety_hand_detection" in algorithm.image_name:
+                extra = adding_data_to_extra(extra)
+                manifest_connection = ManifestConnection.objects.last()
+                if manifest_connection.status:
+                    send_manifest_response(extra)
+                else:
+                    logger.info("Manifest not active")
 
-        elif algorithm_name == "operation_control":
-            if EMULATE_DB:
-                logger.warning(f"Operation control extra data is {data}")
-                requests.post(
-                    f"{SERVER_URL}:9876/operation-control/", json=data
-                )
-            extra = edit_extra(extra, camera)
+            elif algorithm_name == "operation_control":
+                if EMULATE_DB:
+                    logger.warning(f"Operation control extra data is {data}")
+                    requests.post(
+                        f"{SERVER_URL}:9876/operation-control/", json=data
+                    )
+                extra = edit_extra(extra, camera)
 
-        # except KeyError as e:
-        #     logger.critical(f"Error while parsing report: {e}")
-        #     return {"status": False, "message": "The model response is not complete"}
+        except KeyError as e:
+            logger.critical(f"Error while parsing report: {e}")
+            return {"status": False, "message": "The model response is not complete"}
 
         action = Report.objects.create(
             camera=camera,
