@@ -15,6 +15,8 @@ from src.newOrderView.repositories.stanowisko import WorkplaceRepository
 
 from ..repositories import OperationsRepository
 from ..utils import add_ms, calculate_duration, convert_to_gmt0, convert_to_unix
+from ...DatabaseConnections.models import ConnectionInfo
+from ...manifest_api.get_data import get_steps_by_asset_class
 
 logger = logging.getLogger(__name__)
 
@@ -220,18 +222,23 @@ class OperationServices:
 
     @staticmethod
     def get_whnet_operation() -> List[Dict[str, Any]]:
-        workplace_repo: WorkplaceRepository = WorkplaceRepository()
-        stanowiska_data: List[Tuple[Any]] = workplace_repo.get_raports()
+        result_list = []
 
-        result_list: List[Dict[str, Any]] = []
+        if ConnectionInfo.objects.filter(is_active=True, erp_system="manifest").exists():
+            result_list = get_steps_by_asset_class()[0]
 
-        for order_row in stanowiska_data:
-            order: Dict[str, Any] = {
-                "id": int(order_row[0]),
-                "operationName": str(order_row[1]).strip(),
-            }
+        if ConnectionInfo.objects.filter(is_active=True, erp_system="winkhaus").exists():
+            workplace_repo: WorkplaceRepository = WorkplaceRepository()
+            stanowiska_data: List[Tuple[Any]] = workplace_repo.get_raports()
 
-            result_list.append(order)
+            result_list: List[Dict[str, Any]] = []
+
+            for order_row in stanowiska_data:
+                order: Dict[str, Any] = {
+                    "id": int(order_row[0]),
+                    "operationName": str(order_row[1]).strip(),
+                }
+                result_list.append(order)
 
         return result_list
 

@@ -97,20 +97,7 @@ class GetWhnetOperation(generics.GenericAPIView):
     # @method_decorator(cache_page(30))
     # @check_database_connection
     def get(self, request):
-        data = []
-
-        try:
-            get_whnet_operation = OperationServices.get_whnet_operation()
-            data.extend(get_whnet_operation)
-        except Exception as e:
-            print(e)
-
-        try:
-            manifest_steps = get_steps_by_asset_class()[0]
-            data.extend(manifest_steps)
-        except Exception as e:
-            print(e)
-
+        data = OperationServices.get_whnet_operation()
         return JsonResponse(data=data, status=status.HTTP_200_OK, safe=False)
 
 
