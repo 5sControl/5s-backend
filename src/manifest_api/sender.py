@@ -39,7 +39,8 @@ def send_manifest_response(extra):
         if not job_id:
             return print(f'Could not create job status code {job_id.status_code}')
 
-        zone_ids = [entry['zone_id'] for entry in extra]
+        zone_ids = [entry.get('zone_id') for entry in extra if 'duration_zones' not in entry]
+
         for zone_id in set(zone_ids):
             workplace = ZoneCameras.objects.get(id=zone_id).workplace
 
