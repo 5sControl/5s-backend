@@ -53,7 +53,7 @@ def send_manifest_response(extra):
             print("start_job_step job step", step)
             list_id_load_images = []
             for entry in extra:
-                if entry['zone_id'] == zone_id:
+                if 'duration_zones' not in entry and entry['zone_id'] == zone_id:
                     image_path = entry['image']
                     print(image_path)
                     id_image = upload_file(image_path)
