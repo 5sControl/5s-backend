@@ -154,7 +154,7 @@ def add_durations_job_steep(job_step_id, durations):
             "time"
         ]
     })
-    print(payload)
+
     response, status_code = send_request(payload, path)
     print(f"Saved time duration to job_id '{job_step_id}',  status_code={status_code}, response={response}")
     if status_code != 200:
