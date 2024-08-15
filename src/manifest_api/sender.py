@@ -23,7 +23,10 @@ def send_manifest_response(extra):
 
     # try:
     for item in extra:
+        durations = item.get("all_durations")
+        all_images = item.get("all_images_zones")
         name_workplace = item.get('name_workplace')
+
         operations = find_by_operation_name(name_workplace, data_manifest)
         if not operations:
             continue
@@ -39,38 +42,31 @@ def send_manifest_response(extra):
         if not job_id:
             return print(f'Could not create job status code {job_id.status_code}, {job_id.message}')
 
-        zone_ids = [entry.get('zone_id') for entry in extra if 'duration_zones' not in entry]
+        match = re.search(r'Step.*?\(Step(\d+)\)', name_workplace)
 
-        for zone_id in set(zone_ids):
-            workplace = ZoneCameras.objects.get(id=zone_id).workplace
+        try:
+            step = int(match.group(1))
+        except:
+            step = 1
 
-            match = re.search(r'Step.*?\(Step(\d+)\)', workplace)
-            try:
-                step = int(match.group(1))
-            except:
-                step = 1
-            start_job_step(job_id, step)
-            print("start_job_step job step", step)
-            list_id_load_images = []
-            duration_zones = extra[-1].get("duration_zones", None)
-            duration = next((zone.get("all_durations")
-                             for zone in duration_zones if zone.get("zone_id") == zone_id), None)
+        start_job_step(job_id, step)
+        print("start_job_step job step", step)
+        list_id_load_images = []
+        for image_path in all_images:
+            print(image_path)
+            id_image = upload_file(image_path)
 
-            for entry in extra:
+            if id_image:
+                list_id_load_images.append(id_image)
 
-                if 'duration_zones' not in entry and entry['zone_id'] == zone_id:
-                    image_path = entry['image']
-                    print(image_path)
-                    id_image = upload_file(image_path)
-                    if id_image:
-                        list_id_load_images.append(id_image)
-            if list_id_load_images:
-                print(list_id_load_images)
-                added_notes(job_id, step, list_id_load_images)
-                print(f"Added notes for step={step}, job_id={job_id}")
-            add_durations_job_steep(job_id, duration)
-            complete_job_step(job_id, step)
-            print("complete_job_step job step", step)
+        if list_id_load_images:
+            print(list_id_load_images)
+            added_notes(job_id, step, list_id_load_images)
+            print(f"Added notes for step={step}, job_id={job_id}")
+
+        add_durations_job_steep(job_id, durations)
+        complete_job_step(job_id, step)
+        print("complete_job_step job step", step)
 
         print("Sending all jobs to manifest")
         logger.info("Sending all jobs to manifest")

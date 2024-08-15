@@ -94,10 +94,10 @@ class ActionsWithPhotos(APIView):
             elif "safety_hand_detection" in algorithm.image_name:
                 extra = adding_data_to_extra(extra)
                 manifest_connection = ManifestConnection.objects.last()
-                # if manifest_connection.status:
-                    # send_manifest_response(extra)
-                # else:
-                #     logger.info("Manifest not active")
+                if manifest_connection.status:
+                    send_manifest_response(extra)
+                else:
+                    logger.info("Manifest not active")
 
             elif algorithm_name == "operation_control":
                 if EMULATE_DB:
