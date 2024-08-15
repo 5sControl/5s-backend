@@ -5,7 +5,6 @@ import re
 from celery import shared_task
 
 from src.manifest_api.get_data import send_request, upload_file, get_steps_by_asset_class
-from src.CameraAlgorithms.models import ZoneCameras
 
 logger = logging.getLogger(__name__)
 
@@ -65,10 +64,9 @@ def send_manifest_response(extra):
         complete_job_step(job_id, step)
         print("complete_job_step job step", step)
 
-        print("Sending all jobs to manifest")
-        logger.info("Sending all jobs to manifest")
-        return "success True"
-    return
+    print("Sending all jobs to manifest")
+    logger.info("Sending all jobs to manifest")
+    return "success True"
     # except:
     #     return "success False"
 
