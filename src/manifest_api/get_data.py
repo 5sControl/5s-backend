@@ -5,11 +5,11 @@ import requests
 from src.manifest_api.models import ManifestConnection
 
 
-def send_request(payload):
+def send_request(payload, path='graphql/v3'):
     manifest = ManifestConnection.objects.last()
     host = manifest.host
     token = manifest.token
-    url = f"{host}graphql/v3"
+    url = f"{host}{path}"
 
     headers = {
         'Content-Type': 'application/json',

@@ -24,7 +24,6 @@ def send_manifest_response(extra):
     for item in extra:
         name_workplace = item.get('name_workplace')
         operations = find_by_operation_name(name_workplace, data_manifest)
-        print(111111, operations)
         if not operations:
             continue
 
@@ -52,7 +51,12 @@ def send_manifest_response(extra):
             start_job_step(job_id, step)
             print("start_job_step job step", step)
             list_id_load_images = []
+            duration_zones = extra[-1].get("duration_zones", None)
+            duration = next((zone.get("all_durations")
+                             for zone in duration_zones if zone.get("zone_id") == zone_id), None)
+
             for entry in extra:
+
                 if 'duration_zones' not in entry and entry['zone_id'] == zone_id:
                     image_path = entry['image']
                     print(image_path)
@@ -63,6 +67,7 @@ def send_manifest_response(extra):
                 print(list_id_load_images)
                 added_notes(job_id, step, list_id_load_images)
                 print(f"Added notes for step={step}, job_id={job_id}")
+            add_durations_job_steep(job_id, duration)
             complete_job_step(job_id, step)
             print("complete_job_step job step", step)
 
@@ -129,3 +134,32 @@ def get_all_works_manifest():
         if job.get("id") == 28:
             print(job)
     return result
+
+
+def add_durations_job_steep(job_step_id, durations):
+    path = "rest/duration-plugin/add"
+
+    payload = {
+        "table": "duration",
+        "insert": [
+            {
+                "time": durations,
+                "job_step_id": job_step_id
+            }
+        ],
+        "returning": [
+            "id",
+            "job_step_id",
+            "time"
+        ]
+    }
+
+    response, status_code = send_request(payload, path)
+    print(f"Saved time duration to job_id '{job_step_id}',  status_code={status_code}, response={response}")
+    if status_code != 200:
+        print(f"Error sending durations status_code={status_code}, response={response}")
+        return [], status_code
+    return {"complete": "success"}
+
+
+
