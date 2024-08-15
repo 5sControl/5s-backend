@@ -40,14 +40,11 @@ def send_manifest_response(extra):
         job_id = create_job(location_id, assigned_user, job_template, asset_id)
 
         if not job_id:
-            return print(f'Could not create job status code {job_id.status_code}, {job_id.message}')
+            print(f'Could not create job status code {job_id.status_code}, {job_id.message}')
+            continue
 
         match = re.search(r'Step.*?\(Step(\d+)\)', name_workplace)
-
-        try:
-            step = int(match.group(1))
-        except:
-            step = 1
+        step = int(match.group(1)) if match else 1
 
         start_job_step(job_id, step)
         print("start_job_step job step", step)
