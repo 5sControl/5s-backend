@@ -10,9 +10,10 @@ from src.newOrderView.models import FiltrationOperationsTypeID
 
 
 def adding_data_to_extra(extra):
+    duration_zones = extra['extra'][-1].get('duration_zones', [])
     data = []
 
-    for item in extra:
+    for item in duration_zones:
 
         try:
             zone = ZoneCameras.objects.get(id=item.get('zone_id'))
@@ -46,7 +47,7 @@ def edit_response_for_orders(data):
             id_value = ordered_dict.get('id')
             extra_value = ordered_dict.get('extra')
             for report in extra_value:
-                # print(report.get("duration"))
+                print(report.get("duration"))
                 if report.get("id_workplace") == operation.get("operation_type_id"):
                     start_tile = int(datetime.strptime(report.get('date'), "%Y-%m-%d %H:%M:%S.%f").timestamp() * 1000)
                     end_time = start_tile + 600000
