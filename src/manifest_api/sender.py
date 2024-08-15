@@ -1,3 +1,4 @@
+import json
 import logging
 import re
 
@@ -139,7 +140,7 @@ def get_all_works_manifest():
 def add_durations_job_steep(job_step_id, durations):
     path = "rest/duration-plugin/add"
 
-    payload = {
+    payload = json.dumps({
         "table": "duration",
         "insert": [
             {
@@ -152,7 +153,7 @@ def add_durations_job_steep(job_step_id, durations):
             "job_step_id",
             "time"
         ]
-    }
+    })
     print(payload)
     response, status_code = send_request(payload, path)
     print(f"Saved time duration to job_id '{job_step_id}',  status_code={status_code}, response={response}")
