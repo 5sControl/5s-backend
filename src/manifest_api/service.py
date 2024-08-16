@@ -49,9 +49,12 @@ def sorted_response(extra):
                 step_id = 1
 
             if template_id not in groups:
-                groups[template_id] = []
+                groups[template_id] = {
+                    "name_workplace": name_workplace,
+                    "steps": []
+                }
 
-            groups[template_id].append(
+            groups[template_id]["steps"].append(
                 {
                     "zone_id": zone_id,
                     "step": step_id,
@@ -61,7 +64,8 @@ def sorted_response(extra):
                 }
             )
 
-    result = [{"template_id": template_id, "steps": steps} for template_id, steps in groups.items()]
+    result = [{"template_id": template_id, "name_workplace": data["name_workplace"], "steps": data["steps"]}
+              for template_id, data in groups.items()]
 
     return result
 

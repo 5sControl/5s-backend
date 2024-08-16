@@ -21,8 +21,6 @@ def find_by_operation_name(name, data):
 def send_manifest_response(extra):
     data_manifest = get_steps_by_asset_class()[0]
     sorted_data = sorted_response(extra)
-
-    # try:
     for item in sorted_data:
         name_workplace = item.get('name_workplace')
 
