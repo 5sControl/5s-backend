@@ -5,6 +5,7 @@ import re
 from celery import shared_task
 
 from src.manifest_api.get_data import send_request, upload_file, get_steps_by_asset_class
+from src.manifest_api.service import sorted_response
 
 logger = logging.getLogger(__name__)
 
@@ -19,11 +20,10 @@ def find_by_operation_name(name, data):
 @shared_task
 def send_manifest_response(extra):
     data_manifest = get_steps_by_asset_class()[0]
+    sorted_data = sorted_response(extra)
 
     # try:
-    for item in extra:
-        durations = item.get("all_durations")
-        all_images = item.get("all_images_zones")
+    for item in sorted_data:
         name_workplace = item.get('name_workplace')
 
         operations = find_by_operation_name(name_workplace, data_manifest)
@@ -33,7 +33,7 @@ def send_manifest_response(extra):
         asset_class_id = operations.get('asset_class_id')
         asset_id = operations.get('id_asset')
         location_id = operations.get("location_id")
-        job_template = operations.get("template_id")
+        job_template = item.get("template_id")
         assigned_user = operations.get("creator_by_id")
 
         job_id = create_job(location_id, assigned_user, job_template, asset_id)
@@ -42,27 +42,29 @@ def send_manifest_response(extra):
             print(f'Could not create job status code {job_id.status_code}, {job_id.message}')
             continue
 
-        match = re.search(r'Step.*?\(Step(\d+)\)', name_workplace)
-        step = int(match.group(1)) if match else 1
+        for step in item.get('steps'):
+            step = step.get('step')
+            all_images = step.get('all_images_zones')
+            durations = step.get('all_durations')
 
-        start_job_step(job_id, step)
-        print("start_job_step job step", step)
-        list_id_load_images = []
-        for image_path in all_images:
-            print(image_path)
-            id_image = upload_file(image_path)
+            start_job_step(job_id, step)
+            print("start_job_step job step", step)
+            list_id_load_images = []
+            for image_path in all_images:
+                print(image_path)
+                id_image = upload_file(image_path)
 
-            if id_image:
-                list_id_load_images.append(id_image)
+                if id_image:
+                    list_id_load_images.append(id_image)
 
-        if list_id_load_images:
-            print(list_id_load_images)
-            added_notes(job_id, step, list_id_load_images)
-            print(f"Added notes for step={step}, job_id={job_id}")
+            if list_id_load_images:
+                print(list_id_load_images)
+                added_notes(job_id, step, list_id_load_images)
+                print(f"Added notes for step={step}, job_id={job_id}")
 
-        add_durations_job_steep(job_id, durations)
-        complete_job_step(job_id, step)
-        print("complete_job_step job step", step)
+            add_durations_job_steep(job_id, durations)
+            complete_job_step(job_id, step)
+            print("complete_job_step job step", step)
 
     print("Sending all jobs to manifest")
     logger.info("Sending all jobs to manifest")
