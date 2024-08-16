@@ -43,7 +43,7 @@ def send_manifest_response(extra):
 
         for step_data in item.get('steps'):
             step = step_data.get('step')
-            all_images = step.get('all_images_zones')
+            all_images = step_data.get('all_images_zones', [])
             durations = step.get('all_durations')
 
             start_job_step(job_id, step)
