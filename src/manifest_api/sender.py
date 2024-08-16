@@ -22,6 +22,7 @@ def send_manifest_response(extra):
     data_manifest = get_steps_by_asset_class()[0]
     sorted_data = sorted_response(extra)
     for item in sorted_data:
+        print("item", item)
         name_workplace = item.get('name_workplace')
 
         operations = find_by_operation_name(name_workplace, data_manifest)
@@ -40,8 +41,8 @@ def send_manifest_response(extra):
             print(f'Could not create job status code {job_id.status_code}, {job_id.message}')
             continue
 
-        for step in item.get('steps'):
-            step = step.get('step')
+        for step_data in item.get('steps'):
+            step = step_data.get('step')
             all_images = step.get('all_images_zones')
             durations = step.get('all_durations')
 

@@ -66,7 +66,7 @@ def sorted_response(extra):
 
     result = [{"template_id": template_id, "name_workplace": data["name_workplace"], "steps": data["steps"]}
               for template_id, data in groups.items()]
-
+    print("result sorted_response", result)
     return result
 
 
