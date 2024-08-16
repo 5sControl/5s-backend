@@ -27,8 +27,8 @@ def get_response(
             try:
                 if ConnectionInfo.objects.get(is_active=True, erp_system="manifest"):
                     # Использовать это при получении данных с манифест
-                    # response_manifest = get_all_works_manifest()
-                    response_manifest = get_all_reports_manifest(from_date, to_date)
+                    response_manifest = get_all_works_manifest()
+                    # response_manifest = get_all_reports_manifest(from_date, to_date)
             except Exception as e:
                 response_manifest = []
                 print(f"Exception operation response manifest: {e}")

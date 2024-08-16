@@ -142,3 +142,35 @@ def get_all_reports_manifest(from_date, to_date):
 
     result = edit_response_for_orders(serializer.data)
     return result
+
+
+def get_jods_manifest(data):
+    result = []
+    operations = FiltrationOperationsTypeID.objects.filter(is_active=True)
+    for operation in operations:
+        oprs = []
+        pattern = r'\.Step:\s*([^(]+)'
+        operation_name = re.search(pattern, operation.name).group(1).strip()
+        for job_step in data:
+
+            if operation_name == job_step.get('job_step')[0].get('title'):
+                dt = datetime.strptime(job_step.get('created_at'), '%Y-%m-%dT%H:%M:%S.%fZ')
+                start_time = int(dt.timestamp() * 1000)
+                end_time = start_time + job_step.get('time') * 1000
+
+                oprs.append(
+                    {
+                        "id": job_step.get('id'),
+                        "orId": job_step.get('job_step_id'),
+                        "sTime": start_time,
+                        "eTime": end_time
+                    },
+
+                )
+
+        result.append({
+            "oprTypeID": operation.operation_type_id,
+            "oprName": operation.name,
+            "oprs": oprs
+        })
+    return result

@@ -5,7 +5,7 @@ import re
 from celery import shared_task
 
 from src.manifest_api.get_data import send_request, upload_file, get_steps_by_asset_class
-from src.manifest_api.service import sorted_response
+from src.manifest_api.service import sorted_response, get_jods_manifest
 
 logger = logging.getLogger(__name__)
 
@@ -125,15 +125,27 @@ def get_id_job_steps(job_id):
 
 
 def get_all_works_manifest():
-    result = []
-    payload = "{\"query\":\"query(\\n    $assetId: Int,\\n    $assetClassId: Int,\\n    $locationId: Int,\\n    $completed: Boolean,\\n    $itemsPerPage: Int,\\n    $pageNumber: Int,\\n    $filters: JobsFiltersInput,\\n    $orderBy: String,\\n    $reverseOrder: Boolean,\\n    $search: JobSearchInput,\\n    $sort: SortInput\\n) {\\n    jobsPage(\\n        assetId: $assetId,\\n        assetClassId: $assetClassId,\\n        locationId: $locationId,\\n        completed: $completed,\\n        itemsPerPage: $itemsPerPage,\\n        pageNumber: $pageNumber,\\n        filters: $filters,\\n        orderBy: $orderBy,\\n        reverseOrder: $reverseOrder,\\n        search: $search,\\n        sort: $sort\\n    ) {\\n        id\\n        parentJobId\\n        assetId\\n        autoplay\\n        locationId\\n        elapsedTime\\n        completedStepPercent\\n        title\\n        description\\n        priority\\n        externalId\\n        templateId\\n        jobType\\n        creationDate\\n        startDate\\n        completionDate\\n        status\\n        assignedUser\\n        associatedGroupChatId\\n        teamSetupCompleted\\n        workItemType\\n        hasOpenFaults\\n        newJobPromptCancelled\\n        faults {\\n            id\\n            resolvedAt\\n            description\\n            createdByUserId\\n            jobStepId\\n        }\\n        asset {\\n            id\\n            assetTagId\\n            assetClass {\\n                id\\n                name\\n                make\\n                model\\n            }\\n            serialNumber\\n        }\\n        location {\\n            locationId\\n            name\\n        }\\n        template {\\n            id\\n            title\\n            actualVersion {\\n                id\\n                name\\n                state\\n                rootTemplateId\\n            }\\n            versions {\\n                id\\n                name\\n                state\\n                rootTemplateId\\n                description\\n                createdAt\\n            }\\n        }\\n        jobsWithNotActualTemplateVersion {\\n            id\\n            template {\\n                id\\n                title\\n                actualVersion {\\n                    id\\n                    name\\n                    state\\n                    rootTemplateId\\n                }\\n            }\\n        }\\n        customEvidence {\\n            id\\n            name\\n            states\\n        }\\n        assignedUserDetails {\\n            id\\n            firstName\\n            lastName\\n            email\\n            isOnline\\n            avatarDetails {\\n                url\\n            }\\n        }\\n        contributors {\\n            id\\n            firstName\\n            lastName\\n            email\\n            isOnline\\n            avatarDetails {\\n                url\\n            }\\n        }\\n        notes {\\n            id\\n            step\\n            note {\\n                id\\n                text\\n                title\\n                type\\n                customEvidenceId\\n                meterEvidence\\n                meterEvidenceFault\\n                shapeNote {\\n                    mode\\n                }\\n                model {\\n                    id\\n                    name\\n                }\\n                files {\\n                    id\\n                    name\\n                    url\\n                }\\n                choiceNotes {\\n                    id\\n                    title\\n                    assetClass {\\n                        name\\n                    }\\n                    template {\\n                        id\\n                        title\\n                    }\\n                }\\n                meter {\\n                    id\\n                    name\\n                    unit {\\n                        name\\n                        valueType\\n                        description\\n                    }\\n                }\\n            }\\n        }\\n        steps {\\n            id\\n            resolveFault\\n            resolveDate\\n            completed\\n            startDate\\n            completionDate\\n            noteTypesOrder\\n            title\\n            step\\n            assignedUser\\n            requiredEvidence\\n            evidenceRequirements\\n            highlights {\\n                type\\n            }\\n            repairerDetails {\\n                id\\n                firstName\\n                lastName\\n                email\\n            }\\n            meterRequirements {\\n                value\\n                evaluationType\\n                meterId\\n                jobStepId\\n                noteId\\n            }\\n            notes {\\n                id\\n                text\\n                type\\n                title\\n                autoplay\\n                templateId\\n                actionType\\n                meter {\\n                    name\\n                }\\n                shapeNote {\\n                    mode\\n                }\\n                model {\\n                    id\\n                    name\\n                }\\n                files {\\n                    id\\n                    name\\n                    url\\n                }\\n                choiceNotes {\\n                    id\\n                    title\\n                    assetClass {\\n                        id\\n                        name\\n                    }\\n                    template {\\n                        id\\n                        title\\n                    }\\n                }\\n                model {\\n                    id\\n                    name\\n                }\\n                files {\\n                    name\\n                    fileType\\n                    url\\n                }\\n            }\\n        }\\n    }\\n}\\n\",\"variables\":{\"pageNumber\":1,\"itemsPerPage\":300000000,\"filters\":{\"locationId\":[],\"priority\":[],\"assetId\":[],\"faultFlag\":[],\"assetClass\":[],\"templates\":4,\"status\":[\"Assigned\",\"InProgress\",\"Unassigned\"],\"assignedUserId\":[]},\"sort\":{\"propertyName\":\"id\",\"reverse\":true},\"search\":{}}}"
+    path = "rest/duration-plugin/get"
 
-    data, status_code = send_request(payload)
-    all_jobs = data.get("data").get("jobsPage")
-    print(len(all_jobs))
-    for job in all_jobs:
-        if job.get("id") == 28:
-            print(job)
+    payload = json.dumps({
+        "table": "duration",
+        "conditions": {},
+        "joins": [
+            {
+                "table": "job_step",
+                "first": "job_step.id",
+                "second": "duration.job_step_id",
+                "third": "",
+                "type": "left"
+            }
+        ],
+        "orderBy": {
+            "duration.id": "asc"
+        }
+    })
+
+    data, status_code = send_request(payload, path)
+    result = get_jods_manifest(data)
     return result
 
 
