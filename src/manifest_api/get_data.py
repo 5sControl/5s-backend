@@ -113,14 +113,15 @@ def get_all_assets():
     asset_classes = response.get('data').get('assets')
     for assets in asset_classes:
         for asset in assets.get("assets"):
-            result.append(
-                {
-                    "asset_class_id": asset.get("assetClassId"),
-                    'id_asset': asset.get('id'),
-                    "location_id": asset.get('locationId'),
-                    "serial_number": asset.get('serialNumber'),
-                 }
-            )
+            if asset.get("status") == "active":
+                result.append(
+                    {
+                        "asset_class_id": asset.get("assetClassId"),
+                        'id_asset': asset.get('id'),
+                        "location_id": asset.get('locationId'),
+                        "serial_number": asset.get('serialNumber'),
+                     }
+                )
     return result
 
 
