@@ -103,11 +103,11 @@ class GetWhnetOperation(generics.GenericAPIView):
 class FiltrationsDataView(generics.ListAPIView):
     serializer_class = FilterOperationsTypeIDSerializer
     pagination_class = NoPagination
-    queryset = FiltrationOperationsTypeID.objects.all()
+    queryset = FiltrationOperationsTypeID.objects.filter(is_active=True)
 
     def get(self, request, *args, **kwargs):
         response = super().get(request, *args, **kwargs)
-        data = list(response.data)
+        db_data = list(response.data)
 
         all_steps = get_steps_by_asset_class()[0]
 
@@ -120,33 +120,54 @@ class FiltrationsDataView(generics.ListAPIView):
             for step in all_steps
         ]
 
-        combined_data = data + adapted_steps
+        combined_data = db_data + adapted_steps
 
-        return Response(combined_data)
+        unique_data = {}
+        for item in combined_data:
+            name = item["name"]
+            if name not in unique_data or item["is_active"]:
+                unique_data[name] = item
+
+        result_data = list(unique_data.values())
+        return Response(result_data)
 
     def put(self, request, *args, **kwargs):
         data = request.data
         try:
             for item in data:
                 operation_type_id = item.get("operation_type_id")
-                instance = FiltrationOperationsTypeID.objects.filter(operation_type_id=operation_type_id).first()
+                is_active = item.get("is_active", False)
+                name = item.get("name")
 
-                if item.get("is_active", False):
-                    if instance:
+                # Check if the record exists in the database by operation_type_id or name
+                instance = FiltrationOperationsTypeID.objects.filter(
+                    operation_type_id=operation_type_id,
+                    name=name
+                ).first()
+
+                if instance:
+                    if is_active:
+                        # If the record exists and is_active is True, update it
                         serializer = self.get_serializer(instance, data=item, partial=True)
+                        serializer.is_valid(raise_exception=True)
+                        serializer.save()
                     else:
-                        serializer = self.get_serializer(data=item)
-                    serializer.is_valid(raise_exception=True)
-                    serializer.save()
+                        # If the record exists and is_active is False, delete it
+                        if instance.is_active:
+                            instance.delete()
                 else:
-                    if instance:
-                        instance.delete()
+                    if is_active:
+                        # If the record does not exist and is_active is True, create it
+                        serializer = self.get_serializer(data=item)
+                        serializer.is_valid(raise_exception=True)
+                        serializer.save()
 
             return self.get_response(message="Status updated successfully.")
         except Exception as e:
             return self.get_response(error=str(e), status=400)
 
     def get_response(self, message=None, error=None, status=200):
+        """Helper method to format the response."""
         response_data = {}
         if message:
             response_data["message"] = message
