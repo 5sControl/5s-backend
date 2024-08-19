@@ -124,7 +124,7 @@ def get_id_job_steps(job_id):
     return ids
 
 
-def get_all_works_manifest():
+def get_all_works_manifest(from_date, to_date):
     path = "rest/duration-plugin/get"
 
     payload = json.dumps({
@@ -145,7 +145,7 @@ def get_all_works_manifest():
     })
 
     data, status_code = send_request(payload, path)
-    result = get_jods_manifest(data)
+    result = get_jods_manifest(data, from_date, to_date)
     return result
 
 
