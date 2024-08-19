@@ -147,7 +147,6 @@ def get_all_reports_manifest(from_date, to_date):
 def get_jods_manifest(data, from_date, to_date):
 
     result = []
-    # TODO: Filter the data between from_date and to_date
     # Add the filtering logic here
     # You can uncomment and adjust the following if-statement to filter data
     operations = FiltrationOperationsTypeID.objects.filter(is_active=True)
