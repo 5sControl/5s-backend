@@ -148,9 +148,13 @@ def get_jods_manifest(data):
     result = []
     operations = FiltrationOperationsTypeID.objects.filter(is_active=True)
     for operation in operations:
+        print(operation.name)
         oprs = []
         pattern = r'\.Step:\s*([^(]+)'
-        operation_name = re.search(pattern, operation.name).group(1).strip()
+        try:
+            operation_name = re.search(pattern, operation.name).group(1).strip()
+        except Exception as e:
+            print(e)
         for job_step in data:
 
             if operation_name == job_step.get('job_step')[0].get('title'):
