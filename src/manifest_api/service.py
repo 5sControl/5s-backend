@@ -164,8 +164,11 @@ def get_jods_manifest(data, from_date, to_date):
 
         for job_step in data:
             if operation_name == job_step.get('job_step')[0].get('title'):
-                dt = datetime.strptime(job_step.get('created_at'), '%Y-%m-%dT%H:%M:%S.%fZ')
-                start_time = int(dt.timestamp() * 1000)
+                if job_step.get('start_time'):
+                    start_time = job_step.get('start_time')
+                else:
+                    dt = datetime.strptime(job_step.get('created_at'), '%Y-%m-%dT%H:%M:%S.%fZ')
+                    start_time = int(dt.timestamp() * 1000)
                 end_time = start_time + job_step.get('time') * 1000
                 oprs.append(
                     {
