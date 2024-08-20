@@ -1,6 +1,7 @@
 import json
 import logging
 import re
+from datetime import datetime
 
 from celery import shared_task
 
@@ -152,13 +153,16 @@ def get_all_works_manifest(from_date, to_date):
 
 
 def add_durations_job_steep(job_step_id, durations, start_time):
+    print("start_time", start_time)
     path = "rest/duration-plugin/add"
-
+    dt = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S.%f')
+    obj_start_time = int(dt.timestamp() * 1000)
+    print("obj_start_time", obj_start_time)
     payload = json.dumps({
         "table": "duration",
         "insert": [
             {
-                "start_time": start_time,
+                "start_time": obj_start_time,
                 "time": durations,
                 "job_step_id": job_step_id
             }
