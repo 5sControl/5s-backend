@@ -11,6 +11,7 @@ from src.newOrderView.models import FiltrationOperationsTypeID
 
 
 def adding_data_to_extra(extra):
+    print("extra save reports", extra)
     duration_zones = extra[-1].get('duration_zones', [])
     data = []
 

@@ -42,6 +42,7 @@ def send_manifest_response(extra):
             continue
         list_ids_job_steps = get_id_job_steps(job_id)
         for step_data in item.get('steps'):
+            print("step_data", step_data)
             step = step_data.get('step')
             all_images = step_data.get('all_images_zones', [])
             durations = step_data.get('all_durations')
@@ -170,7 +171,8 @@ def add_durations_job_steep(job_step_id, durations, start_time):
     })
 
     response, status_code = send_request(payload, path)
-    print(f"Saved time duration to job_id '{job_step_id}',  status_code={status_code}, response={response}")
+    print(f"Saved time duration to job_id '{job_step_id}', "
+          f"start_time={start_time}, status_code={status_code}, response={response}")
     if status_code != 200:
         print(f"Error sending durations status_code={status_code}, response={response}")
         return [], status_code
