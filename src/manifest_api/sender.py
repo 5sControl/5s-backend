@@ -45,6 +45,7 @@ def send_manifest_response(extra):
             step = step_data.get('step')
             all_images = step_data.get('all_images_zones', [])
             durations = step_data.get('all_durations')
+            start_time = step_data.get('start_time')
 
             start_job_step(job_id, step)
             print("start_job_step job step", step)
@@ -61,7 +62,7 @@ def send_manifest_response(extra):
                 added_notes(job_id, step, list_id_load_images)
                 print(f"Added notes for step={step}, job_id={job_id}")
 
-            add_durations_job_steep(list_ids_job_steps[step - 1], durations)
+            add_durations_job_steep(list_ids_job_steps[step - 1], durations, start_time)
             complete_job_step(job_id, step)
             print("complete_job_step job step", step)
 
@@ -149,13 +150,14 @@ def get_all_works_manifest(from_date, to_date):
     return result
 
 
-def add_durations_job_steep(job_step_id, durations):
+def add_durations_job_steep(job_step_id, durations, start_time):
     path = "rest/duration-plugin/add"
 
     payload = json.dumps({
         "table": "duration",
         "insert": [
             {
+                "start_time": start_time,
                 "time": durations,
                 "job_step_id": job_step_id
             }
