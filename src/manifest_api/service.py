@@ -11,7 +11,6 @@ from src.newOrderView.models import FiltrationOperationsTypeID
 
 
 def adding_data_to_extra(extra):
-    print("extra save reports", extra)
     duration_zones = extra[-1].get('duration_zones', [])
     data = []
 
@@ -36,6 +35,7 @@ def sorted_response(extra):
         name_workplace = item.get('name_workplace')
         zone_id = item.get('zone_id')
         id_workplace = item.get('id_workplace')
+        start_time = item.get('start_time')
         all_durations = item.get('all_durations')
         all_images_zones = item.get("all_images_zones")
 
@@ -60,6 +60,7 @@ def sorted_response(extra):
                     "zone_id": zone_id,
                     "step": step_id,
                     "id_workplace": id_workplace,
+                    "start_time": start_time,
                     "all_durations": all_durations,
                     "all_images_zones": all_images_zones
                 }
@@ -67,7 +68,6 @@ def sorted_response(extra):
 
     result = [{"template_id": template_id, "name_workplace": data["name_workplace"], "steps": data["steps"]}
               for template_id, data in groups.items()]
-    print("result sorted_response", result)
     return result
 
 
