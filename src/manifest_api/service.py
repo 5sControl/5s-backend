@@ -176,7 +176,7 @@ def get_jods_manifest(data, from_date, to_date):
                     {
                         "id": job_step.get('id'),
                         "orId": job_step.get('job_step_id'),
-                        "sTime": start_time,
+                        "sTime": int(start_time),
                         "eTime": end_time
                     },
 
