@@ -180,7 +180,7 @@ def get_jobs_manifest(data, from_date_str, to_date_str, type_operations):
                     if type_operations == 'orders':
                         result.append(
                             {
-                                "id": job_step.get('id'),
+                                "order_id": job_step.get('id'),
                                 "duration": job_step.get('time'),
                             }
                         )
