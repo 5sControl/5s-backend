@@ -5,6 +5,7 @@ from datetime import datetime
 
 from celery import shared_task
 
+from src.OrderView.utils import get_package_video_info
 from src.manifest_api.get_data import send_request, upload_file, get_steps_by_asset_class
 from src.manifest_api.service import sorted_response, get_jods_manifest
 
@@ -216,7 +217,7 @@ def get_operation_by_details_manifest(operation_id):
         # "frsName": firstName,
         # "lstName": lastName,
         "status": data.get("job_step")[0].get("completed"),
-        # "video": video_data,
+        "video": get_package_video_info(data.get("start_time"), "192.168.1.164"),
     }
 
     if status_code != 200:
