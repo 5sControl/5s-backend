@@ -7,7 +7,7 @@ from celery import shared_task
 
 from src.OrderView.utils import get_package_video_info, get_skany_video_info
 from src.manifest_api.get_data import send_request, upload_file, get_steps_by_asset_class
-from src.manifest_api.service import sorted_response, get_jods_manifest
+from src.manifest_api.service import sorted_response, get_jobs_manifest
 
 logger = logging.getLogger(__name__)
 
@@ -149,7 +149,7 @@ def get_all_works_manifest(from_date, to_date):
     })
 
     data, status_code = send_request(payload, path)
-    result = get_jods_manifest(data, from_date, to_date)
+    result = get_jobs_manifest(data, from_date, to_date)
     return result
 
 

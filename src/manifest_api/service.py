@@ -1,6 +1,6 @@
 import re
 from django.db.models import Q
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from src.CameraAlgorithms.models.camera import ZoneCameras
 from src.Reports.models import Report
@@ -145,11 +145,14 @@ def get_all_reports_manifest(from_date, to_date):
     return result
 
 
-def get_jods_manifest(data, from_date, to_date):
+def get_jobs_manifest(data, from_date_str, to_date_str):
+    from_date = datetime.strptime(from_date_str, '%Y-%m-%d')
+    to_date = datetime.strptime(to_date_str, '%Y-%m-%d') + timedelta(days=1) - timedelta(milliseconds=1)
+
+    from_date_ms = int(from_date.timestamp() * 1000)
+    to_date_ms = int(to_date.timestamp() * 1000)
 
     result = []
-    # Add the filtering logic here
-    # You can uncomment and adjust the following if-statement to filter data
     operations = FiltrationOperationsTypeID.objects.filter(is_active=True)
     for operation in operations:
         oprs = []
@@ -171,16 +174,17 @@ def get_jods_manifest(data, from_date, to_date):
                     start_time = int(dt.timestamp() * 1000)
                     # test orders view
                 # end_time = start_time + job_step.get('time') * 1000
-                end_time = start_time + job_step.get('time') * 1000 * 10
-                oprs.append(
-                    {
-                        "id": job_step.get('id'),
-                        "orId": job_step.get('job_step_id'),
-                        "sTime": int(start_time),
-                        "eTime": end_time
-                    },
+                end_time = start_time + job_step.get('time') * 1000 * 20
 
-                )
+                if from_date_ms <= start_time <= to_date_ms:
+                    oprs.append(
+                        {
+                            "id": job_step.get('id'),
+                            "orId": job_step.get('job_step_id'),
+                            "sTime": start_time,
+                            "eTime": end_time
+                        },
+                    )
 
         result.append({
             "oprTypeID": operation.operation_type_id,
