@@ -43,7 +43,7 @@ def get_response(
 
         elif type == "orders":
             if ConnectionInfo.objects.filter(is_active=True, erp_system="manifest"):
-                result = get_all_works_manifest(from_date, to_date)
+                result = get_all_works_manifest(from_date, to_date, "orders")
                 return result
             else:
                 try:

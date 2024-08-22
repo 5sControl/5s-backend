@@ -145,7 +145,7 @@ def get_all_reports_manifest(from_date, to_date):
     return result
 
 
-def get_jobs_manifest(data, from_date_str, to_date_str):
+def get_jobs_manifest(data, from_date_str, to_date_str, type_operations):
     from_date = datetime.strptime(from_date_str, '%Y-%m-%d')
     to_date = datetime.strptime(to_date_str, '%Y-%m-%d') + timedelta(days=1) - timedelta(milliseconds=1)
 
@@ -177,18 +177,26 @@ def get_jobs_manifest(data, from_date_str, to_date_str):
                 end_time = start_time + job_step.get('time') * 1000 * 20
 
                 if from_date_ms <= start_time <= to_date_ms:
-                    oprs.append(
-                        {
-                            "id": job_step.get('id'),
-                            "orId": job_step.get('job_step_id'),
-                            "sTime": start_time,
-                            "eTime": end_time
-                        },
-                    )
-
-        result.append({
-            "oprTypeID": operation.operation_type_id,
-            "oprName": operation.name,
-            "oprs": oprs
-        })
+                    if type_operations == 'orders':
+                        result.append(
+                            {
+                                "id": job_step.get('id'),
+                                "duration": job_step.get('time'),
+                            }
+                        )
+                    else:
+                        oprs.append(
+                            {
+                                "id": job_step.get('id'),
+                                "orId": job_step.get('job_step_id'),
+                                "sTime": start_time,
+                                "eTime": end_time
+                            },
+                        )
+        if type_operations != 'orders':
+            result.append({
+                "oprTypeID": operation.operation_type_id,
+                "oprName": operation.name,
+                "oprs": oprs
+            })
     return result
