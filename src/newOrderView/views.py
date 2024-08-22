@@ -19,10 +19,12 @@ from src.manifest_api.get_data import get_steps_by_asset_class
 from .services import OperationServices
 from .services.view_services import get_response
 from .utils import get_cache_data, get_date_interval, find_camera_by_workspace
+from src.DatabaseConnections.models import ConnectionInfo
 from ..OrderView.utils import get_package_video_info
 
 import logging
 
+from ..manifest_api.sender import get_operation_by_details_manifest
 
 logger = logging.getLogger(__name__)
 
@@ -79,14 +81,19 @@ class GetMachine(generics.GenericAPIView):
 
 
 class GetOrderByDetail(generics.GenericAPIView):
-    pagination_class = NoPagination
+    # pagination_class = NoPagination
 
     @check_database_connection
     def get(self, request):
         operation_id: int = request.GET.get("operation")
-        response: Dict[str, Any] = OperationServices.get_operation_by_details(
-            operation_id
-        )
+        if ConnectionInfo.objects.filter(is_active=True, erp_system="manifest"):
+            data = get_operation_by_details_manifest(operation_id)
+            return JsonResponse(data=data, status=status.HTTP_200_OK)
+
+        elif ConnectionInfo.objects.filter(is_active=True, erp_system="winkhaus"):
+            response: Dict[str, Any] = OperationServices.get_operation_by_details(
+                operation_id
+            )
         return JsonResponse(data=response, status=status.HTTP_200_OK)
 
 

@@ -183,4 +183,43 @@ def add_durations_job_steep(job_step_id, durations, start_time):
     return {"complete": "success"}
 
 
+def get_operation_by_details_manifest(operation_id):
+    path = "rest/duration-plugin/get"
 
+    payload = json.dumps({
+        "table": "duration",
+        "conditions": {
+            "duration.id": f"{operation_id}"
+        },
+        "joins": [
+            {
+                "table": "job_step",
+                "first": "job_step.id",
+                "second": "duration.job_step_id",
+                "type": "left"
+            }
+        ],
+        "orderBy": {
+            "duration.id": "asc"
+        },
+        "limit": 3
+    })
+    response, status_code = send_request(payload, path)
+    data = response[0]
+    result = {
+        "id": data.get("id"),
+        "orId": data.get("job_step_id"),
+        "oprName": data.get("job_step")[0].get("title"),
+        # "elType": elementType,
+        "sTime": data.get("start_time"),
+        "eTime": int(data.get("start_time")) + int(data.get("time") * 1000),
+        # "frsName": firstName,
+        # "lstName": lastName,
+        "status": data.get("job_step")[0].get("completed"),
+        # "video": video_data,
+    }
+
+    if status_code != 200:
+        print(f"Error sending durations status_code={status_code}, response={response}")
+        return [], status_code
+    return result
