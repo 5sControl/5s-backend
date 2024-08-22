@@ -169,7 +169,9 @@ def get_jods_manifest(data, from_date, to_date):
                 else:
                     dt = datetime.strptime(job_step.get('created_at'), '%Y-%m-%dT%H:%M:%S.%fZ')
                     start_time = int(dt.timestamp() * 1000)
-                end_time = start_time + job_step.get('time') * 1000
+                    # test orders view
+                # end_time = start_time + job_step.get('time') * 1000
+                end_time = start_time + job_step.get('time') * 1000 * 10
                 oprs.append(
                     {
                         "id": job_step.get('id'),
