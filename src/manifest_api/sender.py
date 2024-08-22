@@ -207,6 +207,7 @@ def get_operation_by_details_manifest(operation_id):
     })
     response, status_code = send_request(payload, path)
     data = response[0]
+    time = int(data.get("start_time"))-10800000
     result = {
         "id": data.get("id"),
         "orId": data.get("job_step_id"),
@@ -217,7 +218,7 @@ def get_operation_by_details_manifest(operation_id):
         # "frsName": firstName,
         # "lstName": lastName,
         "status": data.get("job_step")[0].get("completed"),
-        "video": get_skany_video_info(data.get("start_time"), "192.168.1.164"),
+        "video": get_skany_video_info(time, "192.168.1.164"),
     }
 
     if status_code != 200:
