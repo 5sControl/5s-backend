@@ -143,6 +143,30 @@ def get_all_reports_manifest(from_date, to_date):
     return result
 
 
+def get_unique_data(data):
+    unique_dict = {}
+
+    for d in data:
+        key = frozenset(d.items())
+        unique_dict[key] = d
+
+    unique_data = list(unique_dict.values())
+
+    return unique_data
+
+
+def extract_name_operations(text):
+    pattern = r'Template:\s*(.*?)\s*\(.*?\)\.\s*Step:\s*(.*?)\s*\(.*?\)'
+    matches = re.search(pattern, text)
+
+    if matches:
+        template_value = matches.group(1)
+        step_value = matches.group(2)
+        return f"{template_value}, {step_value}"
+    else:
+        return text
+
+
 def get_jobs_manifest(data, from_date_str, to_date_str, type_operations):
     from_date = datetime.strptime(from_date_str, '%Y-%m-%d')
     to_date = datetime.strptime(to_date_str, '%Y-%m-%d') + timedelta(days=1) - timedelta(milliseconds=1)
@@ -194,7 +218,10 @@ def get_jobs_manifest(data, from_date_str, to_date_str, type_operations):
         if type_operations != 'orders':
             result.append({
                 "oprTypeID": operation.operation_type_id,
-                "oprName": operation.name,
+                "oprName": extract_name_operations(operation.name),
                 "oprs": oprs
             })
-    return result
+    if type_operations != 'orders':
+        return result
+    unique_data = get_unique_data(result)
+    return unique_data
