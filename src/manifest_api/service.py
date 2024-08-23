@@ -167,28 +167,33 @@ def extract_name_operations(text):
         return text
 
 
+def get_objects_operations(data, name_operations):
+    for item in data:
+        if item.get('operationName') == name_operations:
+            return item
+
+
 def get_jobs_manifest(data, from_date_str, to_date_str, type_operations):
     from_date = datetime.strptime(from_date_str, '%Y-%m-%d')
     to_date = datetime.strptime(to_date_str, '%Y-%m-%d') + timedelta(days=1) - timedelta(milliseconds=1)
 
     from_date_ms = int(from_date.timestamp() * 1000)
     to_date_ms = int(to_date.timestamp() * 1000)
+    data_operations_manifest = get_steps_by_asset_class()[0]
 
     result = []
     operations = FiltrationOperationsTypeID.objects.filter(is_active=True)
     for operation in operations:
+        obj_operations_manifest = get_objects_operations(data_operations_manifest, operation.name)
+        manifest_id_asset = obj_operations_manifest.get('id_asset')
+        manifest_template_id = obj_operations_manifest.get('template_id')
+
         oprs = []
-        pattern = r'\.Step:\s*([^(]+)'
-
-        match = re.search(pattern, operation.name)
-
-        if match:
-            operation_name = match.group(1).strip()
-        else:
-            operation_name = operation.name
 
         for job_step in data:
-            if operation_name == job_step.get('job_step')[0].get('title'):
+            asset_id = job_step.get('job_step')[0].get('jobs')[0].get("asset_id")
+            template_id = job_step.get('job_step')[0].get('jobs')[0].get("template_id")
+            if asset_id == manifest_id_asset and template_id == manifest_template_id:
                 if job_step.get('start_time'):
                     start_time = int(job_step.get('start_time'))
                 else:

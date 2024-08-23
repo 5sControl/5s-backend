@@ -133,13 +133,31 @@ def get_all_works_manifest(from_date, to_date, type_operations="operations"):
 
     payload = json.dumps({
         "table": "duration",
-        "conditions": {},
+        "conditions": {
+        },
         "joins": [
             {
                 "table": "job_step",
                 "first": "job_step.id",
                 "second": "duration.job_step_id",
-                "third": "",
+                "type": "left"
+            },
+            {
+                "table": "jobs",
+                "first": "jobs.id",
+                "second": "job_step.job_id",
+                "type": "left"
+            },
+            {
+                "table": "assets",
+                "first": "assets.id",
+                "second": "jobs.asset_id",
+                "type": "left"
+            },
+            {
+                "table": "templates",
+                "first": "templates.id",
+                "second": "jobs.template_id",
                 "type": "left"
             }
         ],
