@@ -199,6 +199,7 @@ def get_jobs_manifest(data, from_date_str, to_date_str, type_operations):
                 end_time = start_time + job_step.get('time') * 1000 * 20
 
                 if from_date_ms <= start_time <= to_date_ms:
+                    print(f"Durations {(end_time - start_time) / 1000}, id job {job_step.get('id')}")
                     if type_operations == 'orders':
                         result.append(
                             {
@@ -209,12 +210,13 @@ def get_jobs_manifest(data, from_date_str, to_date_str, type_operations):
                     else:
                         oprs.append(
                             {
-                                "id": job_step.get('id'),
-                                "orId": job_step.get('job_step_id'),
+                                "id": job_step.get('job_step_id'),
+                                "orId": job_step.get('id'),
                                 "sTime": start_time,
                                 "eTime": end_time
                             },
                         )
+
         if type_operations != 'orders':
             result.append({
                 "oprTypeID": operation.operation_type_id,
