@@ -179,7 +179,7 @@ def get_jobs_manifest(data, from_date_str, to_date_str, type_operations):
                         result.append(
                             {
                                 "orId": str(job_step.get('id')),
-                                "duration": job_step.get('time'),
+                                "duration": int(job_step.get('time')) * 1000,
                             }
                         )
                     else:
