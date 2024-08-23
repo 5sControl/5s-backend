@@ -190,7 +190,7 @@ def get_operation_by_details_manifest(operation_id):
     payload = json.dumps({
         "table": "duration",
         "conditions": {
-            "duration.id": f"{operation_id}"
+            "job_step.id": f"{operation_id}"
         },
         "joins": [
             {
