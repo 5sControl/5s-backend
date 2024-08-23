@@ -199,7 +199,6 @@ def get_jobs_manifest(data, from_date_str, to_date_str, type_operations):
                 # end_time = start_time + job_step.get('time') * 1000 * 20
 
                 if from_date_ms <= start_time <= to_date_ms:
-                    print(f"Durations {(end_time - start_time) / 1000}, id job {job_step.get('id')}")
                     if type_operations == 'orders':
                         result.append(
                             {
