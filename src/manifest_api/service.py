@@ -195,8 +195,8 @@ def get_jobs_manifest(data, from_date_str, to_date_str, type_operations):
                     dt = datetime.strptime(job_step.get('created_at'), '%Y-%m-%dT%H:%M:%S.%fZ')
                     start_time = int(dt.timestamp() * 1000)
                     # test orders view
-                # end_time = start_time + job_step.get('time') * 1000
-                end_time = start_time + job_step.get('time') * 1000 * 20
+                end_time = start_time + job_step.get('time') * 1000
+                # end_time = start_time + job_step.get('time') * 1000 * 20
 
                 if from_date_ms <= start_time <= to_date_ms:
                     print(f"Durations {(end_time - start_time) / 1000}, id job {job_step.get('id')}")
