@@ -146,19 +146,19 @@ def get_steps_by_asset_class():
                 asset_name = asset.get("serial_number")
                 asset_id = asset.get("id_asset")
                 steps = template.get('steps', [])
-                data.append(
-                    {
-                        # "id": step.get("id"),
-                        "id": None,
-                        "operationName": f"Asset: {asset_name}({asset_id}). Template: {template.get('title')}({template.get('id')})",
-                        "asset_class_id": asset.get("asset_class_id"),
-                        "template_id": template.get('id'),
-                        "id_asset": asset_id,
-                        "location_id": asset.get("location_id"),
-                        "serial_number": asset_name,
-                        "creator_by_id": creator_by_id
-                    }
-                )
+                # data.append(
+                #     {
+                #         # "id": step.get("id"),
+                #         "id": None,
+                #         "operationName": f"Asset: {asset_name}({asset_id}). Template: {template.get('title')}({template.get('id')})",
+                #         "asset_class_id": asset.get("asset_class_id"),
+                #         "template_id": template.get('id'),
+                #         "id_asset": asset_id,
+                #         "location_id": asset.get("location_id"),
+                #         "serial_number": asset_name,
+                #         "creator_by_id": creator_by_id
+                #     }
+                # )
                 for step in steps:
                     result = (
                         {
