@@ -225,7 +225,8 @@ def get_operation_by_details_manifest(operation_id):
     })
     response, status_code = send_request(payload, path)
     data = response[0]
-    time = int(data.get("start_time"))-10800000
+    time = int(data.get("start_time"))+10800000
+    print(f"find_time: {convert_milliseconds(time)}")
     result = {
         "id": data.get("id"),
         "orId": data.get("job_step_id"),
@@ -243,3 +244,9 @@ def get_operation_by_details_manifest(operation_id):
         print(f"Error sending durations status_code={status_code}, response={response}")
         return [], status_code
     return result
+
+
+def convert_milliseconds(ms):
+    dt = datetime.utcfromtimestamp(ms / 1000.0)
+    formatted_time = dt.strftime('%Y-%m-%d %H:%M:%S')
+    return formatted_time
