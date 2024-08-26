@@ -16,13 +16,14 @@ def get_skany_video_info(time: time, camera_ip: str) -> Dict[str, Any]:
     }
     print("request data for video: ", request_data)
     url = f"{ONVIF_SERVICE_URL}:3456/is_video_available/"
-    try:
-        response: requests = requests.post(
-            url=f"{url}",
-            json=request_data,
-        )
-    except Exception:
-        return {"status": False}
+    # try:
+    response: requests = requests.post(
+        url=f"{url}",
+        json=request_data,
+    )
+    print(response)
+    # except Exception:
+    #     return {"status": False}
 
     result: Dict[str, Any] = response.json()
     print("video result: ", result)
