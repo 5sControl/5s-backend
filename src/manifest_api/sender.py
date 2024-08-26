@@ -225,7 +225,7 @@ def get_operation_by_details_manifest(operation_id):
     })
     response, status_code = send_request(payload, path)
     data = response[0]
-    time = int(data.get("start_time"))+10800000
+    time = int(data.get("start_time"))
     print(f"find_time: {convert_milliseconds(time)}")
     result = {
         "id": data.get("id"),
