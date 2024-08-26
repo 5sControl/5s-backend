@@ -21,7 +21,6 @@ def get_skany_video_info(time: time, camera_ip: str) -> Dict[str, Any]:
         url=f"{url}",
         json=request_data,
     )
-    print(response)
     # except Exception:
     #     return {"status": False}
 
