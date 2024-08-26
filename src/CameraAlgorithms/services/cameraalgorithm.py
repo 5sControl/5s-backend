@@ -70,10 +70,12 @@ def create_camera(camera: Dict[str, str]) -> None:
         "password": password,
     }
 
-    is_camera_exist: Iterable[Camera] = Camera.objects.filter(
-        id=ip, name=name, username=username, password=password
-    ).exists()
+    is_camera_exist = Camera.objects.filter(id=ip).exists()
+
     if is_camera_exist:
+        camera_obj_to_update: Camera = Camera.objects.get(id=ip)
+        camera_obj_to_update.name = name
+        camera_obj_to_update.save()
         return
 
     if not check_connection({"ip": ip, "username": username, "password": password}):
