@@ -178,7 +178,7 @@ def get_all_works_manifest(from_date_str, to_date_str, type_operations="operatio
     })
 
     data, status_code = send_request(payload, path)
-    result = get_jobs_manifest(data, from_date)
+    result = get_jobs_manifest(data, type_operations)
     return result
 
 
