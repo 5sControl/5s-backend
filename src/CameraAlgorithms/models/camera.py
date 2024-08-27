@@ -30,6 +30,7 @@ class Camera(models.Model):
         return self.id
 
     def save(self, *args, **kwargs):
+        print("camera", self.id, "password", self.password)
         if self.password:
             self.password = encrypt(self.password)
         if not self.name:
