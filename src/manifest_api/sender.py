@@ -1,7 +1,7 @@
 import json
 import logging
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from celery import shared_task
 
@@ -128,12 +128,23 @@ def get_id_job_steps(job_id):
     return ids
 
 
-def get_all_works_manifest(from_date, to_date, type_operations="operations"):
+def get_all_works_manifest(from_date_str, to_date_str, type_operations="operations"):
+    from_date = datetime.strptime(from_date_str, '%Y-%m-%d')
+    to_date = datetime.strptime(to_date_str, '%Y-%m-%d') + timedelta(days=1) - timedelta(milliseconds=1)
+
+    from_date_ms = int(from_date.timestamp() * 1000)
+    to_date_ms = int(to_date.timestamp() * 1000)
+
+
     path = "rest/duration-plugin/get"
 
     payload = json.dumps({
         "table": "duration",
         "conditions": {
+            "duration.start_time": {
+                "OP": "BETWEEN",
+                "value": [from_date_ms, to_date_ms]
+            }
         },
         "joins": [
             {
@@ -167,7 +178,7 @@ def get_all_works_manifest(from_date, to_date, type_operations="operations"):
     })
 
     data, status_code = send_request(payload, path)
-    result = get_jobs_manifest(data, from_date, to_date, type_operations)
+    result = get_jobs_manifest(data, from_date)
     return result
 
 

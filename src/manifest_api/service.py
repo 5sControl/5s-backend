@@ -173,14 +173,9 @@ def get_objects_operations(data, name_operations):
             return item
 
 
-def get_jobs_manifest(data, from_date_str, to_date_str, type_operations):
-    from_date = datetime.strptime(from_date_str, '%Y-%m-%d')
-    to_date = datetime.strptime(to_date_str, '%Y-%m-%d') + timedelta(days=1) - timedelta(milliseconds=1)
+def get_jobs_manifest(data, type_operations):
 
-    from_date_ms = int(from_date.timestamp() * 1000)
-    to_date_ms = int(to_date.timestamp() * 1000)
     data_operations_manifest = get_steps_by_asset_class()[0]
-
     result = []
     operations = FiltrationOperationsTypeID.objects.filter(is_active=True)
     for operation in operations:
@@ -203,23 +198,22 @@ def get_jobs_manifest(data, from_date_str, to_date_str, type_operations):
                 end_time = start_time + job_step.get('time') * 1000
                 # end_time = start_time + job_step.get('time') * 1000 * 20
 
-                if from_date_ms <= start_time <= to_date_ms:
-                    if type_operations == 'orders':
-                        result.append(
-                            {
-                                "orId": str(job_step.get('id')),
-                                "duration": int(job_step.get('time')) * 1000,
-                            }
-                        )
-                    else:
-                        oprs.append(
-                            {
-                                "id": job_step.get('job_step_id'),
-                                "orId": job_step.get('id'),
-                                "sTime": start_time,
-                                "eTime": end_time
-                            },
-                        )
+                if type_operations == 'orders':
+                    result.append(
+                        {
+                            "orId": str(job_step.get('id')),
+                            "duration": int(job_step.get('time')) * 1000,
+                        }
+                    )
+                else:
+                    oprs.append(
+                        {
+                            "id": job_step.get('job_step_id'),
+                            "orId": job_step.get('id'),
+                            "sTime": start_time,
+                            "eTime": end_time
+                        },
+                    )
 
         if type_operations != 'orders':
             result.append({
