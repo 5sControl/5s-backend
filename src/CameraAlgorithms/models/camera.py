@@ -70,20 +70,18 @@ class ZoneCameras(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        from src.CameraAlgorithms.models import CameraAlgorithm
-        if CameraAlgorithm.objects.filter(algorithm__used_in="inventory"):
-            if self.coords:
-                from src.Inventory.service import is_valid_coordinates
-                self.coords = is_valid_coordinates(self.coords, "zone")
+        if self.coords:
+            from src.Inventory.service import is_valid_coordinates
+            self.coords = is_valid_coordinates(self.coords, "zone")
 
-            utils = HandleItemUtils()
-            is_update = bool(self.pk)
-            coords_updated = (
-                self.pk and self.coords != self.__class__.objects.get(pk=self.pk).coords
-            )
+        utils = HandleItemUtils()
+        is_update = bool(self.pk)
+        coords_updated = (
+            self.pk and self.coords != self.__class__.objects.get(pk=self.pk).coords
+        )
 
-            super().save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
-            if not is_update or coords_updated:
-                logger.warning("Restarting CameraAlgorithm with new zone coors")
-                utils.save_new_zone(self.pk)
+        if not is_update or coords_updated:
+            logger.warning("Restarting CameraAlgorithm with new zone coors")
+            utils.save_new_zone(self.pk)

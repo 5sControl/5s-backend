@@ -59,7 +59,7 @@ class HandleItemUtils:
 
         camera_algorithms: List[CameraAlgorithm] = self.get_camera_algorithms_by_zone_id(zone_id)
         logger.warning(f"With zone {zone_id} was found {camera_algorithms}")
-
+        print(f"<<<<{camera_algorithms}>>>>>")
         for camera_algorithm_obj in camera_algorithms:
             camera_obj: Camera = Camera.objects.get(id=camera_algorithm_obj.camera.pk)
             zone: List[Dict[str, int]] = camera_algorithm_obj.zones
