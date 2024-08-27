@@ -281,16 +281,17 @@ def create_single_camera_algorithms(
     )
 
     algorithm_items: Iterable[Items] = Items.objects.filter(camera=camera_obj.id)
-    for item in algorithm_items:
-        areas.append(
-            {
-                "itemId": item.id,
-                "itemName": item.name,
-                "coords": item.coords,
-                "lowStockLevel": item.low_stock_level,
-                "task": item.object_type,
-            }
-        )
+    if algorithm_data.get("used_in") == "inventory":
+        for item in algorithm_items:
+            areas.append(
+                {
+                    "itemId": item.id,
+                    "itemName": item.name,
+                    "coords": item.coords,
+                    "lowStockLevel": item.low_stock_level,
+                    "task": item.object_type,
+                }
+            )
 
     for zone_id in zones:
         zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
