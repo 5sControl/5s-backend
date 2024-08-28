@@ -239,6 +239,9 @@ def get_operation_by_details_manifest(operation_id):
     data = response[0]
     time = int(data.get("start_time"))
     print(f"find_time: {convert_milliseconds(time)}")
+    ip_camera = data.get("ip_camera")
+    if not ip_camera:
+        ip_camera = "192.168.1.164"
     result = {
         "id": data.get("id"),
         "orId": data.get("job_step_id"),
@@ -249,7 +252,7 @@ def get_operation_by_details_manifest(operation_id):
         # "frsName": firstName,
         # "lstName": lastName,
         "status": data.get("job_step")[0].get("completed"),
-        "video": get_skany_video_info(time, "192.168.1.164"),
+        "video": get_skany_video_info(time, ip_camera),
     }
 
     if status_code != 200:
