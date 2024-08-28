@@ -26,7 +26,7 @@ def send_manifest_response(extra):
     for item in sorted_data:
         print("item", item)
         name_workplace = item.get('name_workplace')
-
+        ip_camera = item.get("all_images_zones")[0][0].split('/')[1]
         operations = find_by_operation_name(name_workplace, data_manifest)
         if not operations:
             continue
@@ -65,7 +65,7 @@ def send_manifest_response(extra):
                 added_notes(job_id, step, list_id_load_images)
                 print(f"Added notes for step={step}, job_id={job_id}")
 
-            add_durations_job_steep(list_ids_job_steps[step - 1], durations, start_time)
+            add_durations_job_steep(list_ids_job_steps[step - 1], durations, start_time, ip_camera)
             complete_job_step(job_id, step)
             print("complete_job_step job step", step)
 
@@ -182,7 +182,7 @@ def get_all_works_manifest(from_date_str, to_date_str, type_operations="operatio
     return result
 
 
-def add_durations_job_steep(job_step_id, durations, start_time):
+def add_durations_job_steep(job_step_id, durations, start_time, ip_camera):
     print("start_time", start_time)
     path = "rest/duration-plugin/add"
     dt = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S.%f')
@@ -194,7 +194,8 @@ def add_durations_job_steep(job_step_id, durations, start_time):
             {
                 "start_time": obj_start_time,
                 "time": durations,
-                "job_step_id": job_step_id
+                "job_step_id": job_step_id,
+                "ip_camera": ip_camera
             }
         ],
         "returning": [
