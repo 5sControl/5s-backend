@@ -26,7 +26,7 @@ def send_manifest_response(extra):
     for item in sorted_data:
         print("item", item)
         name_workplace = item.get('name_workplace')
-        ip_camera = item.get("all_images_zones")[0].split('/')[1]
+        ip_camera = item['steps'][0]['all_images_zones'][0].split('/')[1]
         operations = find_by_operation_name(name_workplace, data_manifest)
         if not operations:
             continue
