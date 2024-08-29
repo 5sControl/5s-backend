@@ -29,46 +29,50 @@ def adding_data_to_extra(extra):
 
 
 def sorted_response(extra):
-    groups = {}
+    try:
+        groups = {}
 
-    for item in extra:
-        name_workplace = item.get('name_workplace')
-        zone_id = item.get('zone_id')
-        id_workplace = item.get('id_workplace')
-        start_time = item.get('start_time')
-        all_durations = item.get('all_durations')
-        all_images_zones = item.get("all_images_zones")
+        for item in extra:
+            name_workplace = item.get('name_workplace')
+            zone_id = item.get('zone_id')
+            id_workplace = item.get('id_workplace')
+            start_time = item.get('start_time')
+            all_durations = item.get('all_durations')
+            all_images_zones = item.get("all_images_zones")
 
-        template_match = re.search(r'Template:.*\((\d+)\)', name_workplace)
-        step_match = re.search(r'\.Step:.*\((Step\d+)\)', name_workplace)
+            template_match = re.search(r'Template:.*\((\d+)\)', name_workplace)
+            step_match = re.search(r'\.Step:.*\((Step\d+)\)', name_workplace)
 
-        if template_match:
-            template_id = int(template_match.group(1))
-            if step_match:
-                step_id = int(re.search(r'Step(\d+)', step_match.group(1)).group(1))
-            else:
-                step_id = 1
+            if template_match:
+                template_id = int(template_match.group(1))
+                if step_match:
+                    step_id = int(re.search(r'Step(\d+)', step_match.group(1)).group(1))
+                else:
+                    step_id = 1
 
-            if template_id not in groups:
-                groups[template_id] = {
-                    "name_workplace": name_workplace,
-                    "steps": []
-                }
+                if template_id not in groups:
+                    groups[template_id] = {
+                        "name_workplace": name_workplace,
+                        "steps": []
+                    }
 
-            groups[template_id]["steps"].append(
-                {
-                    "zone_id": zone_id,
-                    "step": step_id,
-                    "id_workplace": id_workplace,
-                    "start_time": start_time,
-                    "all_durations": all_durations,
-                    "all_images_zones": all_images_zones
-                }
-            )
+                groups[template_id]["steps"].append(
+                    {
+                        "zone_id": zone_id,
+                        "step": step_id,
+                        "id_workplace": id_workplace,
+                        "start_time": start_time,
+                        "all_durations": all_durations,
+                        "all_images_zones": all_images_zones
+                    }
+                )
 
-    result = [{"template_id": template_id, "name_workplace": data["name_workplace"], "steps": data["steps"]}
-              for template_id, data in groups.items()]
-    return result
+        result = [{"template_id": template_id, "name_workplace": data["name_workplace"], "steps": data["steps"]}
+                  for template_id, data in groups.items()]
+        return result
+    except Exception as e:
+        print(f"Exception error for sorted_response sender manifest: {e}")
+        return None
 
 
 def edit_response_for_orders(data):
