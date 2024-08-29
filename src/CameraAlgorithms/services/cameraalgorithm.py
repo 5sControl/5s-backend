@@ -296,13 +296,23 @@ def create_single_camera_algorithms(
     for zone_id in zones:
         zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
 
-        stelag.append(
-            {
-                "zoneId": zone_camera.id,
-                "zoneName": zone_camera.name,
-                "coords": zone_camera.coords,
-            }
-        )
+        if algorithm_data.get("used_in") == "inventory":
+            stelag.append(
+                {
+                    "zoneId": zone_camera.id,
+                    "zoneName": zone_camera.name,
+                    "coords": zone_camera.coords,
+                }
+            )
+        else:
+            stelag.append(
+                {
+                    "coords": zone_camera.coords,
+                    "zoneId": zone_camera.id,
+                    "zoneName": zone_camera.name,
+                    "approximate_duration": zone_camera.approximate_duration
+                }
+            )
     if algorithm_data.get("used_in") == "inventory":
 
         new_data: Dict[str, Any] = {
@@ -312,7 +322,7 @@ def create_single_camera_algorithms(
         data.append(new_data)
         request["extra"] = data
     else:
-        request["extra"] = stelag
+        request["extra"] = [{"coords": stelag}]
 
     response: Dict[str, Any] = send_run_request(request)
     logger.warning("Successfully")
