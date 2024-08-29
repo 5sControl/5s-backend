@@ -305,14 +305,17 @@ def create_single_camera_algorithms(
                 }
             )
         else:
-            stelag.append(
-                {
-                    "coords": zone_camera.coords,
-                    "zoneId": zone_camera.id,
-                    "zoneName": zone_camera.name,
-                    "approximate_duration": zone_camera.approximate_duration
+            zone_data = {
+                "x1": zone_camera.coords["x1"],
+                "x2": zone_camera.coords["x2"],
+                "y1": zone_camera.coords["y1"],
+                "y2": zone_camera.coords["y2"],
+                "zoneId": zone_camera.id,
+                "zoneName": zone_camera.name,
+                "approximate_duration": zone_camera.approximate_duration
                 }
-            )
+            stelag.append(zone_data)
+
     if algorithm_data.get("used_in") == "inventory":
 
         new_data: Dict[str, Any] = {
