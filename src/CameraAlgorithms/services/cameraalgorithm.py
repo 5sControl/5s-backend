@@ -303,13 +303,16 @@ def create_single_camera_algorithms(
                 "coords": zone_camera.coords,
             }
         )
+    if algorithm_data.get("used_in") == "inventory":
 
-    new_data: Dict[str, Any] = {
-        "areas": areas,
-        "zones": stelag,
-    }
-    data.append(new_data)
-    request["extra"] = data
+        new_data: Dict[str, Any] = {
+            "areas": areas,
+            "zones": stelag,
+        }
+        data.append(new_data)
+        request["extra"] = data
+    else:
+        request["extra"] = stelag
 
     response: Dict[str, Any] = send_run_request(request)
     logger.warning("Successfully")
