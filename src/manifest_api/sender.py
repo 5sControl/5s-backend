@@ -31,6 +31,7 @@ def send_manifest_response(extra):
         ip_camera = item['steps'][0]['all_images_zones'][0].split('/')[1]
         operations = find_by_operation_name(name_workplace, data_manifest)
         if not operations:
+            print(f"The operation was not found in the manifest. name_workplace={name_workplace}")
             continue
 
         asset_class_id = operations.get('asset_class_id')
