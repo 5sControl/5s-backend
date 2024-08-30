@@ -44,7 +44,7 @@ class ManifestConnection(models.Model):
         }
 
         try:
-            response = requests.post(url, json=data, headers=headers)
+            response = requests.post(url, json=data, headers=headers, verify=False)
             response.raise_for_status()
             response_data = response.json()
             token = response_data.get('user').get('token')
