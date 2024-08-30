@@ -19,7 +19,7 @@ def send_request(payload, path='graphql/v3'):
 
     response = None
     try:
-        response = requests.post(url, headers=headers, data=payload)
+        response = requests.post(url, headers=headers, data=payload, verify=False)
         response.raise_for_status()
         data = response.json()
         return data, response.status_code
@@ -54,7 +54,7 @@ def upload_file(file_path):
             'User-Agent': 'PostmanRuntime/7.37.3',
         }
 
-        response = requests.request("POST", url, headers=headers, data=payload, files=files)
+        response = requests.request("POST", url, headers=headers, data=payload, files=files, verify=False)
         print("upload_file", response.status_code)
         print("upload_file", response.text)
 
@@ -94,7 +94,7 @@ def get_asset_classes(query, **kwargs):
 
     response = None
     try:
-        response = requests.post(url, headers=headers, data=payload)
+        response = requests.post(url, headers=headers, data=payload, verify=False)
         response.raise_for_status()
         data = response.json()
         return data, response.status_code
