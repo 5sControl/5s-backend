@@ -32,7 +32,7 @@ logger = logging.getLogger(__name__)
 class GetOperation(generics.GenericAPIView):
     pagination_class = NoPagination
 
-    @check_database_connection
+    # @check_database_connection
     def get(self, request):
         from_date, to_date = get_date_interval(request)
         cache_key, operation_type_ids = get_cache_data('get_operation', from_date, to_date)
