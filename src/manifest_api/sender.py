@@ -109,7 +109,7 @@ def start_job_step(job_id, step):
     payload = "{\"query\":\"mutation($jobId: Int!,$step: Int!) {\\n    startJobStep(jobId: $jobId, step: $step)\\n    }\",\"variables\":{\"jobId\":"f"{job_id}"",\"step\":"f"{step}""}}"
     response, status_code = send_request(payload)
     print("start_job_step status_code", status_code)
-    print("start_job_step", start_job_step)
+    print("start_job_step", response)
     if status_code != 200:
         return [], status_code
     return {"step": "success"}
