@@ -94,12 +94,13 @@ def added_notes(job_id, step, list_id_image):
 
 
 def create_job(location_id, assigned_user_id, job_template, asset_id):
+    print("starting create job", f"location_id={location_id}, assigned_user_id={assigned_user_id}, job_template={job_template}, asset_id={asset_id}")
     payload = "{\"query\":\"mutation ($job: JobInput! ) { \\n    addJob (data: $job) \\n    }\",\"variables\":{\"job\":{\"title\":\"test job with 5s\",\"locationId\":" + f"{location_id}" + ",\"priority\":\"2\",\"assignedUserId\":" + f"{assigned_user_id}" + ",\"jobTemplate\":" + f"{job_template}" + ",\"assetId\":" + f"{asset_id}" + "}}}"
 
     response, status_code = send_request(payload)
     if status_code != 200:
         return None, status_code
-
+    print("response create_job", response)
     job_id = response.get('data').get('addJob')
     return job_id
 
