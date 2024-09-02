@@ -118,6 +118,7 @@ def complete_job_step(job_id, step):
 
     response, status_code = send_request(payload)
     print("complete_job_step status_code", status_code)
+    print("Response complete_job_step\n\n", response, '\n\n')
     if status_code != 200:
         return [], status_code
     return {"complete": "success"}
