@@ -254,7 +254,7 @@ def get_operation_by_details_manifest(operation_id):
         "oprName": data.get("job_step")[0].get("title"),
         # "elType": elementType,
         "sTime": int(data.get("start_time")),
-        "eTime": int(data.get("start_time")) + int(data.get("time") * 1000),
+        "eTime": int(data.get("start_time")) + (int(data.get("time")) * 1000),
         # "frsName": firstName,
         # "lstName": lastName,
         "status": data.get("job_step")[0].get("completed"),
