@@ -46,7 +46,8 @@ def send_manifest_response(extra):
             print(f'Could not create job status code {job_id.status_code}, {job_id.message}')
             continue
         list_ids_job_steps = get_id_job_steps(job_id)
-        for step_data in item.get('steps'):
+        sorted_steps = sorted(item.get('steps'), key=lambda x: x['step'])
+        for step_data in sorted_steps:
             print("step_data", step_data)
             step = step_data.get('step')
             all_images = step_data.get('all_images_zones', [])
