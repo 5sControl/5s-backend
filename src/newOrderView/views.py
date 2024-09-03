@@ -83,7 +83,7 @@ class GetMachine(generics.GenericAPIView):
 class GetOrderByDetail(generics.GenericAPIView):
     # pagination_class = NoPagination
 
-    @check_database_connection
+    # @check_database_connection
     def get(self, request):
         operation_id: int = request.GET.get("operation")
         if ConnectionInfo.objects.filter(is_active=True, erp_system="manifest"):
