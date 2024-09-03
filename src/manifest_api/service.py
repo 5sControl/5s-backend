@@ -1,6 +1,7 @@
 import re
 from django.db.models import Q
 from datetime import datetime, timedelta
+from collections import defaultdict
 
 from src.CameraAlgorithms.models.camera import ZoneCameras
 from src.Reports.models import Report
@@ -155,8 +156,8 @@ def get_unique_data(data):
         unique_dict[key] = d
 
     unique_data = list(unique_dict.values())
-
-    return unique_data
+    result = sum_durations_by_or_id(unique_data)
+    return result
 
 
 def extract_name_operations(text):
@@ -177,8 +178,15 @@ def get_objects_operations(data, name_operations):
             return item
 
 
-def get_jobs_manifest(data, type_operations):
+def sum_durations_by_or_id(data):
+    duration_sum = defaultdict(int)
+    for item in data:
+        duration_sum[item['orId']] += item['duration']
+    result = [{"orId": key, "duration": value} for key, value in duration_sum.items()]
+    return result
 
+
+def get_jobs_manifest(data, type_operations):
     data_operations_manifest = get_steps_by_asset_class()[0]
     result = []
     operations = FiltrationOperationsTypeID.objects.filter(is_active=True)
@@ -188,7 +196,6 @@ def get_jobs_manifest(data, type_operations):
         manifest_template_id = obj_operations_manifest.get('template_id')
 
         oprs = []
-
         for job_step in data:
             asset_id = job_step.get('job_step')[0].get('jobs')[0].get("asset_id")
             template_id = job_step.get('job_step')[0].get('jobs')[0].get("template_id")
@@ -205,7 +212,7 @@ def get_jobs_manifest(data, type_operations):
                 if type_operations == 'orders':
                     result.append(
                         {
-                            "orId": str(job_step.get('id')),
+                            "orId": str(job_step.get('job_step')[0].get('job_id')),
                             "duration": int(job_step.get('time')) * 1000,
                         }
                     )
