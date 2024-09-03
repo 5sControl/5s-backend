@@ -148,18 +148,6 @@ def get_all_reports_manifest(from_date, to_date):
     return result
 
 
-def get_unique_data(data):
-    unique_dict = {}
-
-    for d in data:
-        key = frozenset(d.items())
-        unique_dict[key] = d
-
-    unique_data = list(unique_dict.values())
-    result = sum_durations_by_or_id(unique_data)
-    return result
-
-
 def extract_name_operations(text):
     pattern = r'Template:\s*(.*?)\s*\(.*?\)\.\s*Step:\s*(.*?)\s*\(.*?\)'
     matches = re.search(pattern, text)
@@ -179,11 +167,24 @@ def get_objects_operations(data, name_operations):
 
 
 def sum_durations_by_or_id(data):
+    result = []
+
+    for job_step in data:
+        result.append(
+                {
+                    "orId": str(job_step.get('job_step')[0].get('job_id')),
+                    "duration": int(job_step.get('time')) * 1000,
+                }
+            )
+
     duration_sum = defaultdict(int)
-    for item in data:
+
+    for item in result:
         duration_sum[item['orId']] += item['duration']
-    result = [{"orId": key, "duration": value} for key, value in duration_sum.items()]
-    return result
+
+    unic_result = [{"orId": key, "duration": value} for key, value in duration_sum.items()]
+
+    return unic_result
 
 
 def get_jobs_manifest(data, type_operations):
@@ -194,7 +195,8 @@ def get_jobs_manifest(data, type_operations):
         obj_operations_manifest = get_objects_operations(data_operations_manifest, operation.name)
         manifest_id_asset = obj_operations_manifest.get('id_asset')
         manifest_template_id = obj_operations_manifest.get('template_id')
-
+        if type_operations == 'orders':
+            return sum_durations_by_or_id(data)
         oprs = []
         for job_step in data:
             asset_id = job_step.get('job_step')[0].get('jobs')[0].get("asset_id")
@@ -209,22 +211,14 @@ def get_jobs_manifest(data, type_operations):
                 end_time = start_time + int(job_step.get('time')) * 1000
                 # end_time = start_time + job_step.get('time') * 1000 * 20
 
-                if type_operations == 'orders':
-                    result.append(
-                        {
-                            "orId": str(job_step.get('job_step')[0].get('job_id')),
-                            "duration": int(job_step.get('time')) * 1000,
-                        }
-                    )
-                else:
-                    oprs.append(
-                        {
-                            "id": job_step.get('job_step_id'),
-                            "orId": job_step.get('id'),
-                            "sTime": start_time,
-                            "eTime": end_time
-                        },
-                    )
+                oprs.append(
+                    {
+                        "id": job_step.get('job_step_id'),
+                        "orId": job_step.get('id'),
+                        "sTime": start_time,
+                        "eTime": end_time
+                    },
+                )
 
         if type_operations != 'orders':
             result.append({
@@ -234,5 +228,3 @@ def get_jobs_manifest(data, type_operations):
             })
     if type_operations != 'orders':
         return result
-    unique_data = get_unique_data(result)
-    return unique_data
