@@ -197,11 +197,16 @@ def get_jobs_manifest(data, type_operations):
         manifest_template_id = obj_operations_manifest.get('template_id')
         if type_operations == 'orders':
             return sum_durations_by_or_id(data)
+
+        operation_step = int(operation.name.split('(')[-1][-2])
+
         oprs = []
         for job_step in data:
+            job_step_id = job_step.get('job_step')[0].get('step')
             asset_id = job_step.get('job_step')[0].get('jobs')[0].get("asset_id")
             template_id = job_step.get('job_step')[0].get('jobs')[0].get("template_id")
-            if asset_id == manifest_id_asset and template_id == manifest_template_id:
+
+            if asset_id == manifest_id_asset and template_id == manifest_template_id and job_step_id == operation_step:
                 if job_step.get('start_time'):
                     start_time = int(job_step.get('start_time'))
                 else:
