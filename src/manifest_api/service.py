@@ -188,33 +188,30 @@ def sum_durations_by_or_id(data):
 
 
 def get_jobs_manifest(data, type_operations):
-    data_operations_manifest = get_steps_by_asset_class()[0]
     result = []
     operations = FiltrationOperationsTypeID.objects.filter(is_active=True)
     for operation in operations:
-        obj_operations_manifest = get_objects_operations(data_operations_manifest, operation.name)
-        manifest_id_asset = obj_operations_manifest.get('id_asset')
-        manifest_template_id = obj_operations_manifest.get('template_id')
         if type_operations == 'orders':
             return sum_durations_by_or_id(data)
 
-        operation_step = int(operation.name.split('(')[-1][-2])
-
         oprs = []
+
         for job_step in data:
             job_step_id = job_step.get('job_step')[0].get('step')
+            job_step_name = job_step.get('job_step')[0].get('title')
             asset_id = job_step.get('job_step')[0].get('jobs')[0].get("asset_id")
+            asset_name = job_step.get('job_step')[0].get('jobs')[0].get("assets")[0].get('serial_number')
             template_id = job_step.get('job_step')[0].get('jobs')[0].get("template_id")
+            template_name = job_step.get('job_step')[0].get('jobs')[0].get("templates")[0].get('title')
+            job_step_operation_name = f"Asset: {asset_name}({asset_id}). Template: {template_name}({template_id}).Step: {job_step_name}(Step{job_step_id})"
 
-            if asset_id == manifest_id_asset and template_id == manifest_template_id and job_step_id == operation_step:
+            if operation.name == job_step_operation_name:
                 if job_step.get('start_time'):
                     start_time = int(job_step.get('start_time'))
                 else:
                     dt = datetime.strptime(job_step.get('created_at'), '%Y-%m-%dT%H:%M:%S.%fZ')
                     start_time = int(dt.timestamp() * 1000)
-                    # test orders view
                 end_time = start_time + int(job_step.get('time')) * 1000
-                # end_time = start_time + job_step.get('time') * 1000 * 20
                 oprs.append(
                     {
                         "id": job_step.get('job_step_id'),
