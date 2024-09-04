@@ -68,9 +68,14 @@ def sorted_response(extra):
                     }
                 )
 
+        for data in groups.values():
+            data["steps"].sort(key=lambda x: x["step"])
+
         result = [{"template_id": template_id, "name_workplace": data["name_workplace"], "steps": data["steps"]}
                   for template_id, data in groups.items()]
+
         return result
+
     except Exception as e:
         print(f"Exception error for sorted_response sender manifest: {e}")
         return None
