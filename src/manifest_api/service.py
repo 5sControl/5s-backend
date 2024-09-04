@@ -210,11 +210,10 @@ def get_jobs_manifest(data, type_operations):
                     # test orders view
                 end_time = start_time + int(job_step.get('time')) * 1000
                 # end_time = start_time + job_step.get('time') * 1000 * 20
-
                 oprs.append(
                     {
                         "id": job_step.get('job_step_id'),
-                        "orId": job_step.get('id'),
+                        "orId": str(job_step.get('job_step')[0].get('job_id')),
                         "sTime": start_time,
                         "eTime": end_time
                     },
