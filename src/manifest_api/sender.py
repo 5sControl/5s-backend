@@ -68,7 +68,7 @@ def send_manifest_response(extra):
                 print(list_id_load_images)
                 added_notes(job_id, step, list_id_load_images)
                 print(f"Added notes for step={step}, job_id={job_id}")
-
+            print(f"<<<list_ids_job_steps={list_ids_job_steps}>>>")
             add_durations_job_steep(list_ids_job_steps[step - 1], durations, start_time, ip_camera)
             complete_job_step(job_id, step)
             print("complete_job_step job step", step)
