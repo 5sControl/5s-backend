@@ -208,7 +208,7 @@ def get_jobs_manifest(data, type_operations):
             asset_name = job_step.get('job_step')[0].get('jobs')[0].get("assets")[0].get('serial_number')
             template_id = job_step.get('job_step')[0].get('jobs')[0].get("template_id")
             template_name = job_step.get('job_step')[0].get('jobs')[0].get("templates")[0].get('title')
-            job_step_operation_name = f"Asset: {asset_name}({asset_id}). Template: {template_name}({template_id}).Step: {job_step_name}(Step{job_step_id})"
+            job_step_operation_name = f"Asset:{asset_name}({asset_id}). Template: {template_name}({template_id}).Step: {job_step_name}(Step{job_step_id})"
 
             if operation.name == job_step_operation_name:
                 if job_step.get('start_time'):
