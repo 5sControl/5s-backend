@@ -45,7 +45,7 @@ def send_manifest_response(extra):
         if not job_id:
             print(f'Could not create job status code {job_id.status_code}, {job_id.message}')
             continue
-        list_ids_job_steps = get_id_job_steps(job_id)
+        list_ids_job_steps = get_id_job_steps(job_id).sort()
         sorted_steps = sorted(item.get('steps'), key=lambda x: x['step'])
         for step_data in sorted_steps:
             print("step_data", step_data)
@@ -191,6 +191,7 @@ def get_all_works_manifest(from_date_str, to_date_str, type_operations="operatio
 
 def add_durations_job_steep(job_step_id, durations, start_time, ip_camera):
     print("start_time", start_time)
+    print("job_step_id", job_step_id)
     path = "rest/duration-plugin/add"
     dt = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S.%f')
     obj_start_time = int(dt.timestamp() * 1000)
