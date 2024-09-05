@@ -228,9 +228,12 @@ def get_jobs_manifest(data, type_operations):
 
         if type_operations != 'orders':
             result.append({
+                "filtration_operation_id": operation.id,
                 "oprTypeID": operation.operation_type_id,
                 "oprName": extract_name_operations(operation.name),
                 "oprs": oprs
             })
     if type_operations != 'orders':
-        return result
+        sorted_data = sorted(result, key=lambda x: x["filtration_operation_id"])
+
+        return sorted_data
