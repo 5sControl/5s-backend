@@ -246,7 +246,7 @@ def get_operation_by_details_manifest(operation_id):
     data = response[0]
     job_id = data.get("job_step")[0].get("job_id")
     connect = ConnectionInfo.objects.filter(is_active=True).first()
-    url = f"{connect.host}main/work/{job_id}"
+    url = f"{connect.host}main/work/1/{job_id}"
     time = int(data.get("start_time"))
     print(f"find_time: {convert_milliseconds(time)}")
     ip_camera = data.get("ip_camera")
