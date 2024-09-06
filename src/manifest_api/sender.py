@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from celery import shared_task
 
 from src.OrderView.utils import get_package_video_info, get_skany_video_info
+from src.DatabaseConnections.models import ConnectionInfo
 from src.manifest_api.get_data import send_request, upload_file, get_steps_by_asset_class
 from src.manifest_api.service import sorted_response, get_jobs_manifest
 
@@ -243,6 +244,9 @@ def get_operation_by_details_manifest(operation_id):
     })
     response, status_code = send_request(payload, path)
     data = response[0]
+    job_id = data.get("job_step")[0].get("job_id")
+    connect = ConnectionInfo.objects.filter(is_active=True).first()
+    url = f"{connect.host}main/work/{job_id}"
     time = int(data.get("start_time"))
     print(f"find_time: {convert_milliseconds(time)}")
     ip_camera = data.get("ip_camera")
@@ -252,6 +256,7 @@ def get_operation_by_details_manifest(operation_id):
         "id": data.get("id"),
         "orId": data.get("job_step_id"),
         "oprName": data.get("job_step")[0].get("title"),
+        "url": url,
         # "elType": elementType,
         "sTime": int(data.get("start_time")),
         "eTime": int(data.get("start_time")) + (int(data.get("time")) * 1000),
