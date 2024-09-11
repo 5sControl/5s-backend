@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
+import requests
 
 
 class ConnectionInfo(models.Model):
@@ -47,3 +48,24 @@ class ConnectionInfo(models.Model):
 def update_active_status(sender, instance, **kwargs):
     if instance.is_active:
         sender.objects.exclude(pk=instance.pk).update(is_active=False)
+
+        if instance.erp_system == "manifest":
+
+            url = f"{instance.host}rest/signin"
+            data = {
+                'email': instance.username,
+                'password': instance.password
+            }
+            headers = {
+                'Content-Type': 'application/json',
+                'User-Agent': 'PostmanRuntime/7.37.3',
+            }
+
+            try:
+                response = requests.post(url, json=data, headers=headers)
+                response.raise_for_status()
+                response_data = response.json()
+                token = response_data.get('user').get('token')
+
+            except requests.exceptions.RequestException as e:
+                raise ValueError(f"Error while requesting token: {e}")
