@@ -85,3 +85,8 @@ class ZoneCameras(models.Model):
         if not is_update or coords_updated:
             logger.warning("Restarting CameraAlgorithm with new zone coors")
             utils.save_new_zone(self.pk)
+
+    class Meta:
+        verbose_name = "Camera zone"
+        verbose_name_plural = "Camera zone"
+        db_table = "camera_zones"
