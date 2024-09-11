@@ -24,6 +24,11 @@ class SMTPSettings(models.Model):
         else:
             raise ValueError('SMTP configuration is incorrect')
 
+    class Meta:
+        verbose_name = "SMTP settings"
+        verbose_name_plural = "SMTP settings"
+        db_table = "smtp_settings"
+
 
 class Emails(models.Model):
     """
@@ -35,6 +40,11 @@ class Emails(models.Model):
 
     def __str__(self):
         return self.email
+
+    class Meta:
+        verbose_name = "Emails"
+        verbose_name_plural = "Emails"
+        db_table = "emails"
 
 
 class DayOfWeek(models.Model):
@@ -53,6 +63,11 @@ class DayOfWeek(models.Model):
     def __str__(self):
         return self.day
 
+    class Meta:
+        verbose_name = "Day of week"
+        verbose_name_plural = "Day of week"
+        db_table = "days_of_week"
+
 
 class WorkingTime(models.Model):
     """
@@ -66,3 +81,7 @@ class WorkingTime(models.Model):
     def __str__(self):
         return f"{self.time_end} - {self.time_start}"
 
+    class Meta:
+        verbose_name = "Working time"
+        verbose_name_plural = "Working time"
+        db_table = "working_time"
