@@ -20,3 +20,4 @@ class Image(models.Model):
     class Meta:
         verbose_name = "ImageReport"
         verbose_name_plural = "ImageReports"
+        db_table = "images_reports"
