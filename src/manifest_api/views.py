@@ -1,16 +1,7 @@
-from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from src.manifest_api.get_data import get_asset_classes, get_steps_by_asset_class
-from src.manifest_api.models import ManifestConnection
-from src.manifest_api.serializers import ManifestConnectionSerializer
-
-
-class ManifestConnectionViewSet(viewsets.ModelViewSet):
-    pagination_class = None
-    queryset = ManifestConnection.objects.all()
-    serializer_class = ManifestConnectionSerializer
 
 
 class AssetClassesView(APIView):

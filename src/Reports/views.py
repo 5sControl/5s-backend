@@ -19,7 +19,7 @@ from src.ImageReport.models import Image
 from src.CameraAlgorithms.models import Camera
 from src.CameraAlgorithms.models import Algorithm
 from src.Mailer.service import check_work_time
-from src.manifest_api.models import ManifestConnection
+from src.DatabaseConnections.models import ConnectionInfo
 from src.manifest_api.sender import send_manifest_response
 from src.Reports.models import Report, SkanyReport
 from src.Reports.serializers import (
@@ -93,8 +93,8 @@ class ActionsWithPhotos(APIView):
 
             elif "safety_hand_detection" in algorithm.image_name:
                 extra = adding_data_to_extra(extra)
-                manifest_connection = ManifestConnection.objects.last()
-                if manifest_connection.status:
+                manifest_connection = ConnectionInfo.objects.filter(is_active=True, erp_system="manifest").first()
+                if manifest_connection:
                     send_manifest_response(extra)
                 else:
                     logger.info("Manifest not active")

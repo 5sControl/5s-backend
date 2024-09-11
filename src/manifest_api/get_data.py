@@ -1,15 +1,14 @@
-import json
-
+from src.DatabaseConnections.models import ConnectionInfo
 import requests
-
-from src.manifest_api.models import ManifestConnection
 
 
 def send_request(payload, path='graphql/v3'):
-    manifest = ManifestConnection.objects.last()
+    from src.manifest_api.sender import get_token_manifest
+    manifest = ConnectionInfo.objects.filter(is_active=True, erp_system="manifest").first()
+
     host = manifest.host
-    token = manifest.token
     url = f"{host}{path}"
+    token = get_token_manifest()
 
     headers = {
         'Content-Type': 'application/json',
@@ -30,9 +29,10 @@ def send_request(payload, path='graphql/v3'):
 
 
 def upload_file(file_path):
-    manifest = ManifestConnection.objects.last()
+    from src.manifest_api.sender import get_token_manifest
+    manifest = ConnectionInfo.objects.filter(is_active=True, erp_system="manifest").first()
     host = manifest.host
-    token = manifest.token
+    token = get_token_manifest()
     url = f"{host}graphql/v3?storage=manifest"
 
     file_name = file_path.split('/')[-1].split('.')[-2]
@@ -67,9 +67,10 @@ def upload_file(file_path):
 
 
 def get_asset_classes(query, **kwargs):
-    manifest = ManifestConnection.objects.last()
+    from src.manifest_api.sender import get_token_manifest
+    manifest = ConnectionInfo.objects.filter(is_active=True, erp_system="manifest").first()
     host = manifest.host
-    token = manifest.token
+    token = get_token_manifest()
     url = f"{host}graphql/v3"
     asset_class_id = None
 

@@ -1,9 +1,10 @@
 import json
 import logging
-import re
+import requests
 from datetime import datetime, timedelta
 
 from celery import shared_task
+from django.http import JsonResponse
 
 from src.OrderView.utils import get_package_video_info, get_skany_video_info
 from src.DatabaseConnections.models import ConnectionInfo
@@ -11,6 +12,35 @@ from src.manifest_api.get_data import send_request, upload_file, get_steps_by_as
 from src.manifest_api.service import sorted_response, get_jobs_manifest
 
 logger = logging.getLogger(__name__)
+
+
+def get_token_manifest():
+    connection = ConnectionInfo.objects.filter(is_active=True, erp_system="manifest").first()
+    if not connection:
+        return JsonResponse({'error': 'Active connection not found'}, status=400)
+
+    host = connection.host
+    username = connection.username
+    password = connection.password
+
+    url = f"{host}rest/signin"
+    data = {
+        'email': username,
+        'password': password
+    }
+    headers = {
+        'Content-Type': 'application/json',
+        'User-Agent': 'PostmanRuntime/7.37.3',
+    }
+
+    try:
+        response = requests.post(url, json=data, headers=headers)
+        response.raise_for_status()
+        response_data = response.json()
+        token = response_data.get('user').get('token')
+        return token
+    except requests.exceptions.RequestException as e:
+        return JsonResponse({'error': f"Error while requesting token: {e}"}, status=400)
 
 
 def find_by_operation_name(name, data):
