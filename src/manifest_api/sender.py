@@ -124,7 +124,7 @@ def send_orders_to_manifest(report_id):
         "returning": "id"
     }
 
-    response, status_code = send_request(payload, path="/rest/duration-plugin/add")
+    response, status_code = send_request(payload, path="rest/duration-plugin/add")
     if status_code != 200:
         return None, status_code
     order_id = response[0].get("id")
@@ -144,7 +144,7 @@ def send_orders_jobs_to_manifest(duration_id, order_id):
         "returning": "id"
     }
 
-    response, status_code = send_request(payload, path="/rest/duration-plugin/add")
+    response, status_code = send_request(payload, path="rest/duration-plugin/add")
     if status_code != 200:
         return None, status_code
     orders_jobs = response[0].get("id")
