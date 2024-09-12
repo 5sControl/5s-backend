@@ -91,14 +91,6 @@ class ActionsWithPhotos(APIView):
                         status=status.HTTP_400_BAD_REQUEST,
                     )
 
-            elif "safety_hand_detection" in algorithm.image_name:
-                extra = adding_data_to_extra(extra)
-                manifest_connection = ConnectionInfo.objects.filter(is_active=True, erp_system="manifest").first()
-                if manifest_connection:
-                    send_manifest_response(extra)
-                else:
-                    logger.info("Manifest not active")
-
             elif algorithm_name == "operation_control":
                 if EMULATE_DB:
                     logger.warning(f"Operation control extra data is {data}")
@@ -124,6 +116,14 @@ class ActionsWithPhotos(APIView):
             create_skanyreport(
                 action, extra, not violation_found, data.get("start_tracking"), data.get("stop_tracking")
             )
+
+        elif "safety_hand_detection" in algorithm.image_name:
+            extra = adding_data_to_extra(extra)
+            manifest_connection = ConnectionInfo.objects.filter(is_active=True, erp_system="manifest").first()
+            if manifest_connection:
+                send_manifest_response(extra, report_id=action.id)
+            else:
+                logger.info("Manifest not active")
 
         if photos:
             for photo in photos:

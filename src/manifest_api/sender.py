@@ -51,11 +51,14 @@ def find_by_operation_name(name, data):
 
 
 @shared_task
-def send_manifest_response(extra):
+def send_manifest_response(extra, report_id):
+
     data_manifest = get_steps_by_asset_class()[0]
     sorted_data = sorted_response(extra)
     if not sorted_data:
         return
+    order_id = send_orders_to_manifest(report_id)
+
     for item in sorted_data:
         print("item", item)
         name_workplace = item.get('name_workplace')
@@ -97,15 +100,57 @@ def send_manifest_response(extra):
                 added_notes(job_id, step, list_id_load_images)
                 print(f"Added notes for step={step}, job_id={job_id}")
             print(f"<<<duration_job_steps={duration_job_steps}>>>")
-            add_durations_job_steep(duration_job_steps, durations, start_time, ip_camera)
+            id_duration = add_durations_job_steep(duration_job_steps, durations, start_time, ip_camera)
             complete_job_step(job_id, step)
             print("complete_job_step job step", step)
+
+            send_orders_jobs_to_manifest(id_duration, order_id)
 
     print("Sending all jobs to manifest")
     logger.info("Sending all jobs to manifest")
     return "success True"
     # except:
     #     return "success False"
+
+
+def send_orders_to_manifest(report_id):
+    payload = {
+        "table": "orders",
+        "insert": [
+            {
+                "report_id": report_id
+            }
+        ],
+        "returning": "id"
+    }
+
+    response, status_code = send_request(payload, path="/rest/duration-plugin/add")
+    if status_code != 200:
+        return None, status_code
+    order_id = response[0].get("id")
+    print(f"send_orders_to_manifest id={order_id}")
+    return order_id
+
+
+def send_orders_jobs_to_manifest(duration_id, order_id):
+    payload = {
+        "table": "orders_jobs",
+        "insert": [
+            {
+                "duration_id": duration_id,
+                "order_id": order_id
+            }
+        ],
+        "returning": "id"
+    }
+
+    response, status_code = send_request(payload, path="/rest/duration-plugin/add")
+    if status_code != 200:
+        return None, status_code
+    orders_jobs = response[0].get("id")
+    print(f"send_orders_jobs_to_manifest id={orders_jobs}")
+    return orders_jobs
+
 
 
 def added_notes(job_id, step, list_id_image):
@@ -248,7 +293,7 @@ def add_durations_job_steep(job_step_id, durations, start_time, ip_camera):
     if status_code != 200:
         print(f"Error sending durations status_code={status_code}, response={response}")
         return [], status_code
-    return {"complete": "success"}
+    return response[0].get("id")
 
 
 def get_operation_by_details_manifest(operation_id):
