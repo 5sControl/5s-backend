@@ -114,7 +114,7 @@ def send_manifest_response(extra, report_id):
 
 
 def send_orders_to_manifest(report_id):
-    payload = {
+    payload = json.dumps({
         "table": "orders",
         "insert": [
             {
@@ -122,7 +122,7 @@ def send_orders_to_manifest(report_id):
             }
         ],
         "returning": "id"
-    }
+    })
 
     response, status_code = send_request(payload, path="rest/duration-plugin/add")
     if status_code != 200:
@@ -133,7 +133,7 @@ def send_orders_to_manifest(report_id):
 
 
 def send_orders_jobs_to_manifest(duration_id, order_id):
-    payload = {
+    payload = json.dumps({
         "table": "orders_jobs",
         "insert": [
             {
@@ -142,7 +142,7 @@ def send_orders_jobs_to_manifest(duration_id, order_id):
             }
         ],
         "returning": "id"
-    }
+    })
 
     response, status_code = send_request(payload, path="rest/duration-plugin/add")
     if status_code != 200:
