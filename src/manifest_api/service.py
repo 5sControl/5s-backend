@@ -202,19 +202,20 @@ def get_jobs_manifest(data, type_operations):
             order_id = orders.get('id')
             for job_order in orders.get('orders_jobs'):
                 job = job_order.get('duration')[0]
-                job_step_id = job.get('job_step')[0].get('step')
+                job_step = job.get('job_step')[0].get('step')
+                job_step_id = job.get('job_step')[0].get('id')
                 job_step_name = job.get('job_step')[0].get('title')
                 asset_id = job_order.get('jobs')[0].get('assets')[0].get('id')
                 asset_name = job_order.get('jobs')[0].get('assets')[0].get('serial_number')
                 template_id = job_order.get('jobs')[0].get('templates')[0].get('id')
                 template_name = job_order.get('jobs')[0].get('templates')[0].get('title')
-                job_step_operation_name = f"Asset:{asset_name}({asset_id}). Template: {template_name}({template_id}).Step: {job_step_name}(Step{job_step_id})"
+                job_step_operation_name = f"Asset:{asset_name}({asset_id}). Template: {template_name}({template_id}).Step: {job_step_name}(Step{job_step})"
                 if operation.name == job_step_operation_name:
                     start_time = int(job.get('start_time'))
                     end_time = start_time + int(job.get('time')) * 1000
                     oprs.append(
                         {
-                            "id": job_order.get('job_step_id'),
+                            "id": job_step_id,
                             "orId": order_id,
                             "sTime": start_time,
                             "eTime": end_time
