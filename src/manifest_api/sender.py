@@ -216,7 +216,6 @@ def get_all_works_manifest(from_date_str, to_date_str, type_operations="operatio
     from_date_ms = int(from_date.timestamp() * 1000)
     to_date_ms = int(to_date.timestamp() * 1000)
 
-    print(from_date_ms, to_date_ms)
     path = "rest/duration-plugin/get"
 
     payload = json.dumps({
