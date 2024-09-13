@@ -104,7 +104,7 @@ def send_manifest_response(extra, report_id):
             complete_job_step(job_id, step)
             print("complete_job_step job step", step)
 
-            send_orders_jobs_to_manifest(id_duration, order_id)
+            send_orders_jobs_to_manifest(id_duration, order_id, job_id)
 
     print("Sending all jobs to manifest")
     logger.info("Sending all jobs to manifest")
@@ -132,13 +132,14 @@ def send_orders_to_manifest(report_id):
     return order_id
 
 
-def send_orders_jobs_to_manifest(duration_id, order_id):
+def send_orders_jobs_to_manifest(duration_id, order_id, job_id):
     payload = json.dumps({
         "table": "orders_jobs",
         "insert": [
             {
                 "duration_id": duration_id,
-                "order_id": order_id
+                "order_id": order_id,
+                "job_id": job_id
             }
         ],
         "returning": "id"
@@ -150,7 +151,6 @@ def send_orders_jobs_to_manifest(duration_id, order_id):
     orders_jobs = response[0].get("id")
     print(f"send_orders_jobs_to_manifest id={orders_jobs}")
     return orders_jobs
-
 
 
 def added_notes(job_id, step, list_id_image):
@@ -216,7 +216,7 @@ def get_all_works_manifest(from_date_str, to_date_str, type_operations="operatio
     from_date_ms = int(from_date.timestamp() * 1000)
     to_date_ms = int(to_date.timestamp() * 1000)
 
-
+    print(from_date_ms, to_date_ms)
     path = "rest/duration-plugin/get"
 
     payload = json.dumps({
