@@ -174,22 +174,20 @@ def get_objects_operations(data, name_operations):
 def sum_durations_by_or_id(data):
     result = []
 
-    for job_step in data:
+    for order in data:
+        order_job = order.get('orders_jobs')
+        durations = 0
+
+        for job in order_job:
+            durations += int(job.get("duration")[0].get("time"))
+
         result.append(
                 {
-                    "orId": str(job_step.get('job_step')[0].get('job_id')),
-                    "duration": int(job_step.get('time')) * 1000,
+                    "orId": order.get('id'),
+                    "duration": durations * 1000
                 }
             )
-
-    duration_sum = defaultdict(int)
-
-    for item in result:
-        duration_sum[item['orId']] += item['duration']
-
-    unic_result = [{"orId": key, "duration": value} for key, value in duration_sum.items()]
-
-    return unic_result
+    return result
 
 
 def get_jobs_manifest(data, type_operations):
@@ -200,31 +198,28 @@ def get_jobs_manifest(data, type_operations):
             return sum_durations_by_or_id(data)
 
         oprs = []
-
-        for job_step in data:
-            job_step_id = job_step.get('job_step')[0].get('step')
-            job_step_name = job_step.get('job_step')[0].get('title')
-            asset_id = job_step.get('job_step')[0].get('jobs')[0].get("asset_id")
-            asset_name = job_step.get('job_step')[0].get('jobs')[0].get("assets")[0].get('serial_number')
-            template_id = job_step.get('job_step')[0].get('jobs')[0].get("template_id")
-            template_name = job_step.get('job_step')[0].get('jobs')[0].get("templates")[0].get('title')
-            job_step_operation_name = f"Asset:{asset_name}({asset_id}). Template: {template_name}({template_id}).Step: {job_step_name}(Step{job_step_id})"
-
-            if operation.name == job_step_operation_name:
-                if job_step.get('start_time'):
-                    start_time = int(job_step.get('start_time'))
-                else:
-                    dt = datetime.strptime(job_step.get('created_at'), '%Y-%m-%dT%H:%M:%S.%fZ')
-                    start_time = int(dt.timestamp() * 1000)
-                end_time = start_time + int(job_step.get('time')) * 1000
-                oprs.append(
-                    {
-                        "id": job_step.get('job_step_id'),
-                        "orId": str(job_step.get('job_step')[0].get('job_id')),
-                        "sTime": start_time,
-                        "eTime": end_time
-                    },
-                )
+        for orders in data:
+            order_id = orders.get('id')
+            for job_order in orders.get('orders_jobs'):
+                job = job_order.get('duration')[0]
+                job_step_id = job.get('job_step')[0].get('step')
+                job_step_name = job.get('job_step')[0].get('title')
+                asset_id = job_order.get('jobs')[0].get('assets')[0].get('id')
+                asset_name = job_order.get('jobs')[0].get('assets')[0].get('serial_number')
+                template_id = job_order.get('jobs')[0].get('templates')[0].get('id')
+                template_name = job_order.get('jobs')[0].get('templates')[0].get('title')
+                job_step_operation_name = f"Asset:{asset_name}({asset_id}). Template: {template_name}({template_id}).Step: {job_step_name}(Step{job_step_id})"
+                if operation.name == job_step_operation_name:
+                    start_time = int(job.get('start_time'))
+                    end_time = start_time + int(job.get('time')) * 1000
+                    oprs.append(
+                        {
+                            "id": job_order.get('job_step_id'),
+                            "orId": order_id,
+                            "sTime": start_time,
+                            "eTime": end_time
+                        },
+                    )
 
         if type_operations != 'orders':
             result.append({

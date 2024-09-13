@@ -220,7 +220,7 @@ def get_all_works_manifest(from_date_str, to_date_str, type_operations="operatio
     path = "rest/duration-plugin/get"
 
     payload = json.dumps({
-        "table": "duration",
+        "table": "orders",
         "conditions": {
             "duration.start_time": {
                 "OP": "BETWEEN",
@@ -229,15 +229,27 @@ def get_all_works_manifest(from_date_str, to_date_str, type_operations="operatio
         },
         "joins": [
             {
-                "table": "job_step",
-                "first": "job_step.id",
-                "second": "duration.job_step_id",
+                "table": "orders_jobs",
+                "first": "orders.id",
+                "second": "orders_jobs.order_id",
+                "type": "left"
+            },
+            {
+                "table": "duration",
+                "first": "orders_jobs.duration_id",
+                "second": "duration.id",
                 "type": "left"
             },
             {
                 "table": "jobs",
                 "first": "jobs.id",
-                "second": "job_step.job_id",
+                "second": "orders_jobs.job_id",
+                "type": "left"
+            },
+            {
+                "table": "job_step",
+                "first": "job_step.id",
+                "second": "duration.job_step_id",
                 "type": "left"
             },
             {
@@ -254,7 +266,7 @@ def get_all_works_manifest(from_date_str, to_date_str, type_operations="operatio
             }
         ],
         "orderBy": {
-            "duration.id": "asc"
+            "orders.id": "asc"
         }
     })
 
