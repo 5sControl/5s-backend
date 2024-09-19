@@ -121,7 +121,7 @@ def get_all_assets():
                         "serial_number": asset.get('serialNumber'),
                      }
                 )
-    return result
+    return result, status_code
 
 
 def get_steps_by_asset_class():
@@ -145,19 +145,6 @@ def get_steps_by_asset_class():
                 asset_name = asset.get("serial_number")
                 asset_id = asset.get("id_asset")
                 steps = template.get('steps', [])
-                # data.append(
-                #     {
-                #         # "id": step.get("id"),
-                #         "id": None,
-                #         "operationName": f"Asset: {asset_name}({asset_id}). Template: {template.get('title')}({template.get('id')})",
-                #         "asset_class_id": asset.get("asset_class_id"),
-                #         "template_id": template.get('id'),
-                #         "id_asset": asset_id,
-                #         "location_id": asset.get("location_id"),
-                #         "serial_number": asset_name,
-                #         "creator_by_id": creator_by_id
-                #     }
-                # )
                 for step in steps:
                     result = (
                         {
@@ -194,3 +181,60 @@ def get_erp_products():
         )
     return data, status_code
 
+
+def get_erp_operations():
+    data = []
+
+    payload = "{\"query\":\"query(\\n  $itemsPerPage: Int\\n  $pageNumber: Int\\n  $filters: TemplateVersionsFiltersInput\\n  $orderBy: String\\n  $reverseOrder: Boolean\\n  $search: TemplateVersionSearchInput\\n  $sort: SortInput\\n) {\\n  allVersionsWithPagination(\\n    itemsPerPage: $itemsPerPage\\n    pageNumber: $pageNumber\\n    filters: $filters\\n    orderBy: $orderBy\\n    reverseOrder: $reverseOrder\\n    search: $search\\n    sort: $sort\\n  ) {\\n    id\\n    title\\n    createdAt\\n    assetClass {\\n      name\\n      id\\n    }\\n    author {\\n      id\\n    }\\n    customEvidence {\\n      id\\n      name\\n    }\\n    createdBy {\\n      firstName\\n      lastName\\n      avatarDetails {\\n        url\\n      }\\n    }\\n    steps {\\n        id\\n      step\\n      title\\n      noteTypesOrder\\n      requiredEvidence\\n      evidenceRequirements\\n      highlights {\\n        id\\n        position\\n        rotation\\n        type\\n        data\\n      }\\n      notes {\\n        autoplay\\n        id\\n        userId\\n        animationName\\n        modelViewId\\n        type\\n        meterRequirements {\\n          id\\n          value\\n          evaluationType\\n          meterId\\n        }\\n      }\\n    }\\n    actualVersion {\\n      id\\n      name\\n      state\\n      rootTemplateId\\n      templateId\\n      description\\n      activities {\\n        id\\n        action\\n        comment\\n        createdByUser {\\n          id\\n          firstName\\n          lastName\\n          avatarDetails {\\n            id\\n            url\\n          }\\n          isOnline\\n        }\\n        createdAt\\n      }\\n    }\\n    versions {\\n      id\\n      name\\n      state\\n      rootTemplateId\\n      description\\n      templateId\\n      activities {\\n        id\\n        action\\n        comment\\n        createdByUser {\\n          id\\n          firstName\\n          lastName\\n          avatarDetails {\\n            id\\n            url\\n          }\\n          isOnline\\n        }\\n        createdAt\\n      }\\n    }\\n  }\\n}\\n\",\"variables\":{\"pageNumber\":null,\"itemsPerPage\":3,\"filters\":{\"asset_class_id\":[],\"type\":[],\"status\":[\"published\"]},\"search\":{},\"sort\":{\"propertyName\":\"id\",\"reverse\":true}}}"
+
+    response, status_code = send_request(payload)
+    if status_code != 200:
+        return [], status_code
+
+    templates = response.get('data').get('allVersionsWithPagination')
+
+    for template in templates:
+        steps = template.get('steps')
+        for step in steps:
+            data.append(
+                {
+                    "id": step.get('id'),
+                    "name": step.get('title')
+                }
+            )
+    return data, status_code
+
+
+def get_erp_equipment():
+    data = []
+    response, status_code = get_all_assets()
+    if status_code != 200:
+        return [], status_code
+    for asset in response:
+        data.append(
+            {
+                "id": asset.get("id_asset"),
+                "name": asset.get("serial_number")
+            }
+        )
+    return data, status_code
+
+
+def get_erp_employees():
+    data = []
+
+    payload = "{\"query\":\"query {\\n    users {\\n        id, firstName, lastName, email, title, description, enabled, roles {\\n            id, name, description}\\n        }\\n    }\",\"variables\":{}}"
+    response, status_code = send_request(payload)
+    if status_code != 200:
+        return [], status_code
+    employees = response.get("data").get("users")
+    for employee in employees:
+        data.append(
+            {
+                "id": employee.get("id"),
+                "firstName": employee.get("firstName"),
+                "lastName": employee.get("lastName")
+            }
+        )
+
+    return data, status_code
