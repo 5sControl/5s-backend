@@ -5,6 +5,8 @@ from datetime import datetime, timedelta
 
 from celery import shared_task
 from django.http import JsonResponse
+from rest_framework.response import Response
+from rest_framework import status
 
 from src.OrderView.utils import get_package_video_info, get_skany_video_info
 from src.DatabaseConnections.models import ConnectionInfo
@@ -270,6 +272,9 @@ def get_all_works_manifest(from_date_str, to_date_str, type_operations="operatio
     })
 
     data, status_code = send_request(payload, path)
+    if status_code != 200:
+        print("get_all_works_manifest", status_code, data)
+        return []
     result = get_jobs_manifest(data, type_operations)
     return result
 
