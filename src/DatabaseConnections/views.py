@@ -11,7 +11,6 @@ from src.DatabaseConnections.serilisers import \
     BaseConnectionInfoSerializer
 
 from src.DatabaseConnections.utils import get_all_items_odoo
-from src.manifest_api.get_data import get_erp_reference
 
 
 class ActiveResourceView(generics.GenericAPIView):
@@ -74,12 +73,3 @@ class ConnectionInfoView(ModelViewSet):
     pagination_class = None
     queryset = ConnectionInfo.objects.all()
     serializer_class = BaseConnectionInfoSerializer
-
-
-class ConnectionErpReferenceView(APIView):
-    def get(self, request):
-        if ConnectionInfo.objects.filter(is_active=True, erp_system="manifest").exists():
-            data, status_code = get_erp_reference()
-            return Response(data, status=status_code)
-        else:
-            return Response([], status=400)

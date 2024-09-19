@@ -26,7 +26,8 @@ routes = [
     path("suppliers/", include("src.Suppliers.urls"), name="suppliers"),
     path("connector/", include("src.DatabaseConnections.urls"), name="connector"),
     path("healthcheck/", include("src.Healthcheck.urls"), name="healthcheck"),
-    path("manifest_connection/", include("src.manifest_api.urls"), name="manifest-connection")
+    path("manifest_connection/", include("src.manifest_api.urls"), name="manifest-connection"),
+    path("erp-reference/", include("src.references.urls"), name="reference-erp")
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
