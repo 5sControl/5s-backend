@@ -173,3 +173,18 @@ def get_steps_by_asset_class():
                     )
                     data.append(result)
         return data, status_code
+
+
+def get_erp_reference():
+    data = []
+    payload = "{\"query\":\"query(\\n  $itemsPerPage: Int\\n  $pageNumber: Int\\n  $filters: TemplateVersionsFiltersInput\\n  $orderBy: String\\n  $reverseOrder: Boolean\\n  $search: TemplateVersionSearchInput\\n  $sort: SortInput\\n) {\\n  allVersionsWithPagination(\\n    itemsPerPage: $itemsPerPage\\n    pageNumber: $pageNumber\\n    filters: $filters\\n    orderBy: $orderBy\\n    reverseOrder: $reverseOrder\\n    search: $search\\n    sort: $sort\\n  ) {\\n    id\\n    title\\n    createdAt\\n    assetClass {\\n      name\\n      id\\n    }\\n    author {\\n      id\\n    }\\n    customEvidence {\\n      id\\n      name\\n    }\\n    createdBy {\\n      firstName\\n      lastName\\n      avatarDetails {\\n        url\\n      }\\n    }\\n    steps {\\n        id\\n      step\\n      title\\n      noteTypesOrder\\n      requiredEvidence\\n      evidenceRequirements\\n      highlights {\\n        id\\n        position\\n        rotation\\n        type\\n        data\\n      }\\n      notes {\\n        autoplay\\n        id\\n        userId\\n        animationName\\n        modelViewId\\n        type\\n        meterRequirements {\\n          id\\n          value\\n          evaluationType\\n          meterId\\n        }\\n      }\\n    }\\n    actualVersion {\\n      id\\n      name\\n      state\\n      rootTemplateId\\n      templateId\\n      description\\n      activities {\\n        id\\n        action\\n        comment\\n        createdByUser {\\n          id\\n          firstName\\n          lastName\\n          avatarDetails {\\n            id\\n            url\\n          }\\n          isOnline\\n        }\\n        createdAt\\n      }\\n    }\\n    versions {\\n      id\\n      name\\n      state\\n      rootTemplateId\\n      description\\n      templateId\\n      activities {\\n        id\\n        action\\n        comment\\n        createdByUser {\\n          id\\n          firstName\\n          lastName\\n          avatarDetails {\\n            id\\n            url\\n          }\\n          isOnline\\n        }\\n        createdAt\\n      }\\n    }\\n  }\\n}\\n\",\"variables\":{\"pageNumber\":null,\"itemsPerPage\":3,\"filters\":{\"asset_class_id\":[],\"type\":[],\"status\":[\"published\"]},\"search\":{},\"sort\":{\"propertyName\":\"id\",\"reverse\":true}}}"
+
+    response, status_code = send_request(payload)
+    if status_code != 200:
+        return [], status_code
+
+    response_data = response.get('data')
+    if response_data:
+        # all_assets = get_all_assets() # asset_class_id
+        all_data = response_data.get('allVersionsWithPagination', []) # template
+        return {"templates": all_data}, status_code
