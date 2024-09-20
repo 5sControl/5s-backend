@@ -11,7 +11,7 @@ from src.DatabaseConnections.repositories.ms_repository import WinHRepository
 
 logger = logging.getLogger(__name__)
 
-erp_service = config("ERP-SERVICE", default="localhost")
+erp_service = config("ERP_SERVICE", default="erp-service")
 
 
 class CreateConnectionManager:
