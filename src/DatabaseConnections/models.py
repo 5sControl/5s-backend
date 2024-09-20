@@ -66,6 +66,13 @@ def update_active_status(sender, instance, **kwargs):
                 response.raise_for_status()
                 response_data = response.json()
                 token = response_data.get('user').get('token')
-
             except requests.exceptions.RequestException as e:
                 raise ValueError(f"Error while requesting token: {e}")
+
+        elif instance.erp_system == "odoo":
+            from src.odoo_api.service import authenticate_user
+            user_id = authenticate_user(instance.host, instance.database, instance.username, instance.password)
+            if user_id:
+                print(f"Authorization in Odoo is successful, user_id: {user_id}")
+            else:
+                raise ValueError("Login to Odoo failed.")
