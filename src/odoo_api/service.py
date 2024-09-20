@@ -11,7 +11,7 @@ def authenticate_user(host, database, username, password):
     response = session.get(f"{host}/web/login")
 
     if response.status_code != 200:
-        raise ValueError(f"Ошибка при получении CSRF-токена: {response.status_code}")
+        raise ValueError(f"Error receiving CSRF token: {response.status_code}")
 
     data = {
         "jsonrpc": "2.0",
