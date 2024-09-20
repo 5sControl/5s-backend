@@ -232,8 +232,7 @@ def get_erp_employees():
         data.append(
             {
                 "id": employee.get("id"),
-                "firstName": employee.get("firstName"),
-                "lastName": employee.get("lastName")
+                "name": f'{employee.get("firstName")} {employee.get("lastName")}'
             }
         )
 
