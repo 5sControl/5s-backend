@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from src.DatabaseConnections.models import ConnectionInfo
 from src.DatabaseConnections.services import get_data_five_control
 from src.manifest_api.get_data import get_erp_products, get_erp_operations, get_erp_equipment, get_erp_employees
+from src.odoo_api.service import odoo_get_data, edit_answer_from_odoo
 
 
 class ErpReferenceProductsView(APIView):
@@ -10,6 +11,11 @@ class ErpReferenceProductsView(APIView):
         if ConnectionInfo.objects.filter(is_active=True, erp_system="manifest").exists():
             data, status_code = get_erp_products()
             return Response(data, status=status_code)
+        elif ConnectionInfo.objects.filter(is_active=True, erp_system="odoo").exists():
+            table_name = "product.product"
+            data, status_code = odoo_get_data(table_name)
+            return Response(data, status=status_code)
+
         elif not ConnectionInfo.objects.filter(is_active=True):
             data, status_code = get_data_five_control("products")
             return Response(data, status=status_code)
@@ -22,6 +28,12 @@ class ReferenceOperationsView(APIView):
         if ConnectionInfo.objects.filter(is_active=True, erp_system="manifest").exists():
             data, status_code = get_erp_operations()
             return Response(data, status=status_code)
+
+        elif ConnectionInfo.objects.filter(is_active=True, erp_system="odoo").exists():
+            table_name = "mrp.workorder"
+            data, status_code = odoo_get_data(table_name)
+            return Response(data, status=status_code)
+
         elif not ConnectionInfo.objects.filter(is_active=True):
             data, status_code = get_data_five_control("operations")
             return Response(data, status=status_code)
@@ -34,6 +46,14 @@ class ReferenceEquipmentView(APIView):
         if ConnectionInfo.objects.filter(is_active=True, erp_system="manifest").exists():
             data, status_code = get_erp_equipment()
             return Response(data, status=status_code)
+
+        elif ConnectionInfo.objects.filter(is_active=True, erp_system="odoo").exists():
+            table_name = "mrp.bom"
+            fields = ["id", "display_name"]
+            data, status_code = odoo_get_data(table_name, fields)
+            result = edit_answer_from_odoo(data)
+            return Response(result, status=status_code)
+
         elif not ConnectionInfo.objects.filter(is_active=True):
             data, status_code = get_data_five_control("equipment")
             return Response(data, status=status_code)
@@ -46,6 +66,12 @@ class ReferenceEmployeesView(APIView):
         if ConnectionInfo.objects.filter(is_active=True, erp_system="manifest").exists():
             data, status_code = get_erp_employees()
             return Response(data, status=status_code)
+
+        elif ConnectionInfo.objects.filter(is_active=True, erp_system="odoo").exists():
+            table_name = "mrp.workcenter"
+            data, status_code = odoo_get_data(table_name)
+            return Response(data, status=status_code)
+
         elif not ConnectionInfo.objects.filter(is_active=True):
             data, status_code = get_data_five_control("employees")
             return Response(data, status=status_code)
