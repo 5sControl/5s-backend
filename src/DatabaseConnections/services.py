@@ -1,10 +1,17 @@
 import logging
+import requests
+import os
+
+from decouple import config
+
 from typing import Any, Dict
 
 from src.DatabaseConnections.models import ConnectionInfo
 from src.DatabaseConnections.repositories.ms_repository import WinHRepository
 
 logger = logging.getLogger(__name__)
+
+erp_service = config("ERP-SERVICE", default="localhost")
 
 
 class CreateConnectionManager:
@@ -60,3 +67,9 @@ class CreateConnectionManager:
             return True
         except ConnectionInfo.DoesNotExist:
             return False
+
+
+def get_data_five_control(type_data):
+    url = f"http://{erp_service}:3005/production-catalog/{type_data}"
+    response = requests.get(url)
+    return response.json(), response.status_code
