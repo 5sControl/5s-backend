@@ -106,7 +106,7 @@ def send_manifest_response(extra, report_id):
             complete_job_step(job_id, step)
             print("complete_job_step job step", step)
 
-            send_orders_jobs_to_manifest(id_duration, order_id, job_id)
+            send_orders_jobs_to_manifest(order_id, job_id)
 
     print("Sending all jobs to manifest")
     logger.info("Sending all jobs to manifest")
@@ -134,12 +134,11 @@ def send_orders_to_manifest(report_id):
     return order_id
 
 
-def send_orders_jobs_to_manifest(duration_id, order_id, job_id):
+def send_orders_jobs_to_manifest(order_id, job_id):
     payload = json.dumps({
         "table": "orders_jobs",
         "insert": [
             {
-                "duration_id": duration_id,
                 "order_id": order_id,
                 "job_id": job_id
             }
@@ -287,19 +286,18 @@ def add_durations_job_steep(job_step_id, durations, start_time, ip_camera):
     obj_start_time = int(dt.timestamp() * 1000)
     print("obj_start_time", obj_start_time)
     payload = json.dumps({
-        "table": "duration",
+        "table": "job_step_ext",
         "insert": [
             {
                 "start_time": obj_start_time,
-                "time": durations,
-                "job_step_id": job_step_id,
-                "ip_camera": ip_camera
-            }
+                "duration": durations,
+                "job_step_id": job_step_id
+                }
         ],
         "returning": [
             "id",
             "job_step_id",
-            "time"
+            "duration"
         ]
     })
 
