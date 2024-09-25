@@ -1,8 +1,5 @@
 import logging
 import requests
-import os
-
-from decouple import config
 
 from typing import Any, Dict
 
@@ -10,8 +7,6 @@ from src.DatabaseConnections.models import ConnectionInfo
 from src.DatabaseConnections.repositories.ms_repository import WinHRepository
 
 logger = logging.getLogger(__name__)
-
-erp_service = config("ERP_SERVICE", default="erp-service")
 
 
 class CreateConnectionManager:
@@ -70,6 +65,10 @@ class CreateConnectionManager:
 
 
 def get_data_five_control(type_data):
-    url = f"http://{erp_service}:3005/production-catalog/{type_data}"
+    connection = ConnectionInfo.objects.filter(is_active=True, erp_system="5s_control").first()
+    host = connection.host
+    port = connection.port
+
+    url = f"{host}:{port}/production-catalog/{type_data}"
     response = requests.get(url)
     return response.json(), response.status_code

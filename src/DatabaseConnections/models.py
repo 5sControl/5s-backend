@@ -20,6 +20,7 @@ class ConnectionInfo(models.Model):
         ("odoo", "ODOO"),
         ("winkhaus", "Winkhaus"),
         ("manifest", "Manifest"),
+        ("5s_control", "5sControl"),
     )
 
     erp_system = models.CharField(max_length=20, choices=ERP_SYSTEM_CHOICES, default="winkhaus")
