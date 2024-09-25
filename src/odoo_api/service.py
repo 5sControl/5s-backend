@@ -72,7 +72,7 @@ def odoo_get_data(table_name, fields=["id", "name"]):
                 password,
                 table_name,
                 'search_read',
-                [],
+                [[('create_uid', '=', user_id)]],
                 {
                     "fields": fields,
                     'order': 'write_date desc'
