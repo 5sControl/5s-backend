@@ -25,6 +25,7 @@ from ..OrderView.utils import get_package_video_info
 import logging
 
 from ..manifest_api.sender import get_operation_by_details_manifest
+from ..odoo_api.service import odoo_get_data, details_for_operation
 
 logger = logging.getLogger(__name__)
 
@@ -85,15 +86,20 @@ class GetOrderByDetail(generics.GenericAPIView):
 
     # @check_database_connection
     def get(self, request):
+        response = {}
         operation_id: int = request.GET.get("operation")
-        if ConnectionInfo.objects.filter(is_active=True, erp_system="manifest"):
+        connection = ConnectionInfo.objects.get(is_active=True)
+
+        if connection.erp_system == "manifest":
             data = get_operation_by_details_manifest(operation_id)
             return JsonResponse(data=data, status=status.HTTP_200_OK)
 
-        elif ConnectionInfo.objects.filter(is_active=True, erp_system="winkhaus"):
+        elif connection.erp_system == "winkhaus":
             response: Dict[str, Any] = OperationServices.get_operation_by_details(
                 operation_id
             )
+        elif connection.erp_system == "odoo":
+            response = details_for_operation(operation_id)
         return JsonResponse(data=response, status=status.HTTP_200_OK)
 
 
@@ -110,32 +116,53 @@ class GetWhnetOperation(generics.GenericAPIView):
 class FiltrationsDataView(generics.ListAPIView):
     serializer_class = FilterOperationsTypeIDSerializer
     pagination_class = NoPagination
-    queryset = FiltrationOperationsTypeID.objects.filter(is_active=True)
+    connection = ConnectionInfo.objects.get(is_active=True)
+    typ_erp = connection.erp_system
+    queryset = FiltrationOperationsTypeID.objects.filter(is_active=True, type_erp=typ_erp)
 
     def get(self, request, *args, **kwargs):
         response = super().get(request, *args, **kwargs)
         db_data = list(response.data)
+        adapted_steps = []
+        odoo_data = []
+        connection = ConnectionInfo.objects.get(is_active=True)
 
-        all_steps = get_steps_by_asset_class()[0]
+        if connection.erp_system == "odoo":
+            odoo_operations, status_code = odoo_get_data("mrp.workorder")
+            if status_code == 200:
+                for item in odoo_operations:
+                    odoo_data.append(
+                        {
+                            "operation_type_id": item.get("id"),
+                            "name": item.get("name"),
+                            "is_active": False,
+                            "type_erp": "odoo"
+                        }
+                    )
+            else:
+                print(f"Error fetching Odoo data: {status_code}")
 
-        adapted_steps = [
-            {
-                "operation_type_id": step["id"],
-                "name": step["operationName"],
-                "is_active": False
-            }
-            for step in all_steps
-        ]
+        if connection.erp_system == "manifest":
+            all_steps = get_steps_by_asset_class()[0]
+            adapted_steps = [
+                {
+                    "operation_type_id": step["id"],
+                    "name": step["operationName"],
+                    "is_active": False
+                }
+                for step in all_steps
+            ]
 
-        combined_data = db_data + adapted_steps
+        combined_data = db_data + adapted_steps + odoo_data
 
-        unique_data = {}
+        unique_names = set()
+        result_data = []
         for item in combined_data:
             name = item["name"]
-            if name not in unique_data or item["is_active"]:
-                unique_data[name] = item
+            if name not in unique_names or item["is_active"]:
+                unique_names.add(name)
+                result_data.append(item)
 
-        result_data = list(unique_data.values())
         return Response(result_data)
 
     def put(self, request, *args, **kwargs):

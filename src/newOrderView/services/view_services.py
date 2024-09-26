@@ -9,6 +9,7 @@ from src.manifest_api.service import get_all_reports_manifest
 from src.newOrderView.services.connector import connector_services
 from src.newOrderView.services.operations import OperationServices
 from src.newOrderView.services.order import OrderServices
+from src.odoo_api.service import get_all_order_odoo, sorted_data_odoo
 
 
 def get_response(
@@ -20,32 +21,49 @@ def get_response(
 ) -> List[Dict[str, Any]]:
     connector = get_object_or_404(ConnectionInfo, is_active=True).type
     response = []
-
+    connection = ConnectionInfo.objects.get(is_active=True)
     if connector == "api":
         if type == "operation":
-            response_manifest = None
-            try:
-                if ConnectionInfo.objects.get(is_active=True, erp_system="manifest"):
-                    response_manifest = get_all_works_manifest(from_date, to_date)
-            except Exception as e:
-                response_manifest = []
-                print(f"Exception operation response manifest: {e}")
+            response_manifest = []
+            response_odoo = []
+
 
             try:
-                response_winkhaus: List[Dict[str, Any]] = connector_services.get_operations(
-                    from_date, to_date
-                )
+                if connection.erp_system == "manifest":
+                    response_manifest = get_all_works_manifest(from_date, to_date)
+            except Exception as e:
+                print(f"Exception operation response manifest: {e}")
+
+                # Retrieving data from Odoo
+            if connection.erp_system == "odoo":
+                try:
+                    data_odoo = get_all_order_odoo(from_date, to_date)
+                    response_odoo = sorted_data_odoo(data_odoo, type)
+                    print(response_odoo)
+                except Exception as e:
+                    print(f"Exception operation response odoo: {e}")
+                    response_odoo = []
+
+               # Receiving data from Winkhaus
+            try:
+                response_winkhaus = connector_services.get_operations(from_date, to_date)
             except Exception as e:
                 print(f"Exception operation: {e}")
                 response_winkhaus = []
 
-            response = response_manifest + response_winkhaus
+            response = response_manifest + response_winkhaus + response_odoo
 
         elif type == "orders":
-            if ConnectionInfo.objects.filter(is_active=True, erp_system="manifest"):
+            if connection.erp_system == "manifest":
                 result = get_all_works_manifest(from_date, to_date, "orders")
                 return result
-            else:
+
+            if connection.erp_system == "odoo":
+                data_odoo = get_all_order_odoo(from_date, to_date)
+                odoo_result = sorted_data_odoo(data_odoo, "orders")
+                return odoo_result
+
+            if connection.erp_system == "winkhaus":
                 try:
                     response: List[Dict[str, Any]] = connector_services.get_orders(
                         from_date, to_date
