@@ -116,7 +116,7 @@ class FiltrationsDataView(generics.ListAPIView):
     pagination_class = NoPagination
     connection = ConnectionInfo.objects.get(is_active=True)
     typ_erp = connection.erp_system
-    queryset = FiltrationOperationsTypeID.objects.filter(is_active=True, type_erp=typ_erp)
+    queryset = FiltrationOperationsTypeID.objects.filter(type_erp=typ_erp)
 
     def get(self, request, *args, **kwargs):
         response = super().get(request, *args, **kwargs)

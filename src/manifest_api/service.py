@@ -1,13 +1,12 @@
 import re
 from django.db.models import Q
 from datetime import datetime, timedelta
-from collections import defaultdict
 
 from src.CameraAlgorithms.models.camera import ZoneCameras
 from src.Reports.models import Report
 from src.Reports.serializers import ReportSerializersForManifest
 from src.manifest_api.get_data import get_steps_by_asset_class
-
+from src.DatabaseConnections.models import ConnectionInfo
 from src.newOrderView.models import FiltrationOperationsTypeID
 
 
@@ -179,7 +178,7 @@ def sum_durations_by_or_id(data):
         durations = 0
 
         for job in order_job:
-            durations += int(job.get("duration")[0].get("time"))
+            durations += int(job.get('jobs')[0].get("job_step")[0].get("job_step_ext")[0].get("duration"))
 
         result.append(
                 {
@@ -192,7 +191,10 @@ def sum_durations_by_or_id(data):
 
 def get_jobs_manifest(data, type_operations):
     result = []
-    operations = FiltrationOperationsTypeID.objects.filter(is_active=True)
+
+    connection = ConnectionInfo.objects.get(is_active=True)
+    typ_erp = connection.erp_system
+    operations = FiltrationOperationsTypeID.objects.filter(type_erp=typ_erp)
     for operation in operations:
         if type_operations == 'orders':
             return sum_durations_by_or_id(data)
@@ -201,18 +203,19 @@ def get_jobs_manifest(data, type_operations):
         for orders in data:
             order_id = orders.get('id')
             for job_order in orders.get('orders_jobs'):
-                job = job_order.get('duration')[0]
+                job = job_order.get('jobs')[0]
                 job_step = job.get('job_step')[0].get('step')
                 job_step_id = job.get('job_step')[0].get('id')
                 job_step_name = job.get('job_step')[0].get('title')
+
                 asset_id = job_order.get('jobs')[0].get('assets')[0].get('id')
                 asset_name = job_order.get('jobs')[0].get('assets')[0].get('serial_number')
                 template_id = job_order.get('jobs')[0].get('templates')[0].get('id')
                 template_name = job_order.get('jobs')[0].get('templates')[0].get('title')
-                job_step_operation_name = f"Asset:{asset_name}({asset_id}). Template: {template_name}({template_id}).Step: {job_step_name}(Step{job_step})"
+                job_step_operation_name = f"Asset: {asset_name}({asset_id}). Template: {template_name}({template_id}).Step: {job_step_name}(Step{job_step})"
                 if operation.name == job_step_operation_name:
-                    start_time = int(job.get('start_time'))
-                    end_time = start_time + int(job.get('time')) * 1000
+                    start_time = int(job_order.get('jobs')[0].get("job_step")[0].get('job_step_ext')[0].get('start_time'))
+                    end_time = start_time + int(job_order.get('jobs')[0].get("job_step")[0].get('job_step_ext')[0].get('duration')) * 1000
                     oprs.append(
                         {
                             "id": job_step_id,

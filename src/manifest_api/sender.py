@@ -222,7 +222,7 @@ def get_all_works_manifest(from_date_str, to_date_str, type_operations="operatio
     payload = json.dumps({
         "table": "orders",
         "conditions": {
-            "duration.start_time": {
+            "job_step_ext.start_time": {
                 "OP": "BETWEEN",
                 "value": [from_date_ms, to_date_ms]
             }
@@ -235,12 +235,6 @@ def get_all_works_manifest(from_date_str, to_date_str, type_operations="operatio
                 "type": "left"
             },
             {
-                "table": "duration",
-                "first": "orders_jobs.duration_id",
-                "second": "duration.id",
-                "type": "left"
-            },
-            {
                 "table": "jobs",
                 "first": "jobs.id",
                 "second": "orders_jobs.job_id",
@@ -248,8 +242,14 @@ def get_all_works_manifest(from_date_str, to_date_str, type_operations="operatio
             },
             {
                 "table": "job_step",
+                "first": "jobs.id",
+                "second": "job_step.job_id",
+                "type": "left"
+            },
+            {
+                "table": "job_step_ext",
                 "first": "job_step.id",
-                "second": "duration.job_step_id",
+                "second": "job_step_ext.job_step_id",
                 "type": "left"
             },
             {
@@ -269,11 +269,9 @@ def get_all_works_manifest(from_date_str, to_date_str, type_operations="operatio
             "orders.id": "asc"
         }
     })
-
     data, status_code = send_request(payload, path)
     if status_code != 200:
         print("get_all_works_manifest", status_code, data)
-        return []
     result = get_jobs_manifest(data, type_operations)
     return result
 
