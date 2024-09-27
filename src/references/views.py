@@ -4,23 +4,31 @@ from rest_framework.views import APIView
 from src.DatabaseConnections.models import ConnectionInfo
 from src.manifest_api.get_data import get_erp_products, get_erp_operations, get_erp_equipment, get_erp_employees
 from src.odoo_api.service import odoo_get_data, edit_answer_from_odoo
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def build_redirect_url(host, port, reference_type):
-    """Function for generating a URL for redirection"""
-    return f"http://{host}:{port}/api/{reference_type}/"
+    """Function for generating URL for redirection"""
+    return f"{host}:{port}/api/{reference_type}/"
 
 
 class ErpReferenceView(APIView):
     def get(self, request, reference_type):
+        if not reference_type:
+            return Response({"error": "reference_type is required"}, status=400)
         connector = ConnectionInfo.objects.get(is_active=True)
         if connector.erp_system == "5s_control":
             host = connector.host
             port = connector.port
+
             if not host or not port:
+                logger.error("Host or port not specified for system 5s_control")
                 return Response({"error": "Host or port not specified"}, status=500)
 
             url = build_redirect_url(host, port, reference_type)
+            logger.info(f"Redirecting to {url}")
             return redirect(url)
 
         elif connector.erp_system == "manifest":
