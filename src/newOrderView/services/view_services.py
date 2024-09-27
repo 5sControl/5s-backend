@@ -39,7 +39,6 @@ def get_response(
                 try:
                     data_odoo = get_all_order_odoo(from_date, to_date)
                     response_odoo = sorted_data_odoo(data_odoo, type)
-                    print(response_odoo)
                 except Exception as e:
                     print(f"Exception operation response odoo: {e}")
                     response_odoo = []
