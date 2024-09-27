@@ -62,13 +62,3 @@ class CreateConnectionManager:
             return True
         except ConnectionInfo.DoesNotExist:
             return False
-
-
-def get_data_five_control(type_data):
-    connection = ConnectionInfo.objects.filter(is_active=True, erp_system="5s_control").first()
-    host = connection.host
-    port = connection.port
-
-    url = f"{host}:{port}/production-catalog/{type_data}"
-    response = requests.get(url)
-    return response.json(), response.status_code
