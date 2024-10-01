@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 def build_redirect_url(host, port, reference_type):
     """Function for generating URL for redirection"""
-    return f"{host}:{port}/api/{reference_type}/"
+    return f"{host}:{port}/{reference_type}/"
 
 
 class ErpReferenceView(APIView):
