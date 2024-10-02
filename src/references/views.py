@@ -17,6 +17,10 @@ def proxy_request(request, url):
     headers = {
         'Content-Type': request.headers.get('Content-Type', 'application/json')
     }
+
+    if url.endswith('/'):
+        url = url.rstrip('/')
+
     try:
         if method == 'GET':
             response = requests.get(url, headers=headers, params=request.GET, allow_redirects=False)
