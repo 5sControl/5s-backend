@@ -31,6 +31,9 @@ def proxy_request(request, url):
         else:
             return Response({"error": "Unsupported HTTP method"}, status=405)
 
+        if response.status_code == 204:
+            return Response(status=204)
+
         return Response(response.json(), status=response.status_code)
     except requests.exceptions.RequestException as e:
         logger.error(f"Error when proxying request:{e}")
