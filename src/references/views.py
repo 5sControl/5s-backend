@@ -21,10 +21,10 @@ def proxy_request(request, url):
             response = requests.get(url, headers=headers, params=request.GET)
         elif method == 'POST':
             response = requests.post(url, headers=headers, json=request.data)
-        elif method == 'PUT':
-            response = requests.put(url, headers=headers, json=request.data)
+        elif method == 'PATCH':
+            response = requests.patch(url, headers=headers, json=request.data)
         elif method == 'DELETE':
-            response = requests.delete(url, headers=headers)
+            response = requests.delete(url, headers=headers, json=request.data)
         else:
             return Response({"error": "Unsupported HTTP method"}, status=405)
 
