@@ -18,9 +18,6 @@ def proxy_request(request, url):
         'Content-Type': request.headers.get('Content-Type', 'application/json')
     }
 
-    if url.endswith('/'):
-        url = url.rstrip('/')
-
     try:
         if method == 'GET':
             response = requests.get(url, headers=headers, params=request.GET, allow_redirects=False)
@@ -34,24 +31,11 @@ def proxy_request(request, url):
         else:
             return Response({"error": "Unsupported HTTP method"}, status=405)
 
-        # Проверяем, есть ли редирект
-        if response.status_code in [301, 302] and 'Location' in response.headers:
-            redirect_url = response.headers['Location']
-            print(f"Redirecting to {redirect_url} with method {method}")
-            # Повторяем запрос с сохранением метода
-            if method == 'GET':
-                response = requests.get(redirect_url, headers=headers, params=request.GET)
-            elif method == 'POST':
-                response = requests.post(redirect_url, headers=headers, json=request.data)
-            elif method == 'PATCH':
-                response = requests.patch(redirect_url, headers=headers, json=request.data)
-            elif method == 'DELETE':
-                response = requests.delete(redirect_url, headers=headers)
-
         return Response(response.json(), status=response.status_code)
     except requests.exceptions.RequestException as e:
         logger.error(f"Error when proxying request:{e}")
         return Response({"error": "Error connecting to external service"}, status=500)
+
 
 def build_redirect_url(host, port, reference_type):
     """Function to generate URL for redirection."""
@@ -65,7 +49,7 @@ class ErpReferenceView(APIView):
     def post(self, request, reference_type):
         return self.handle_request(request, reference_type)
 
-    def put(self, request, reference_type):
+    def patch(self, request, reference_type):
         return self.handle_request(request, reference_type)
 
     def delete(self, request, reference_type):
