@@ -19,22 +19,35 @@ def proxy_request(request, url):
     }
     try:
         if method == 'GET':
-            response = requests.get(url, headers=headers, params=request.GET)
+            response = requests.get(url, headers=headers, params=request.GET, allow_redirects=False)
         elif method == 'POST':
-            response = requests.post(url, headers=headers, json=request.data)
+            response = requests.post(url, headers=headers, json=request.data, allow_redirects=False)
         elif method == 'PATCH':
-            response = requests.patch(url, headers=headers, json=request.data)
+            response = requests.patch(url, headers=headers, json=request.data, allow_redirects=False)
         elif method == 'DELETE':
-            response = requests.delete(url, headers=headers)
+            response = requests.delete(url, headers=headers, allow_redirects=False)
             print('Response DELETED:', response.status_code)
         else:
             return Response({"error": "Unsupported HTTP method"}, status=405)
+
+        # Проверяем, есть ли редирект
+        if response.status_code in [301, 302] and 'Location' in response.headers:
+            redirect_url = response.headers['Location']
+            print(f"Redirecting to {redirect_url} with method {method}")
+            # Повторяем запрос с сохранением метода
+            if method == 'GET':
+                response = requests.get(redirect_url, headers=headers, params=request.GET)
+            elif method == 'POST':
+                response = requests.post(redirect_url, headers=headers, json=request.data)
+            elif method == 'PATCH':
+                response = requests.patch(redirect_url, headers=headers, json=request.data)
+            elif method == 'DELETE':
+                response = requests.delete(redirect_url, headers=headers)
 
         return Response(response.json(), status=response.status_code)
     except requests.exceptions.RequestException as e:
         logger.error(f"Error when proxying request:{e}")
         return Response({"error": "Error connecting to external service"}, status=500)
-
 
 def build_redirect_url(host, port, reference_type):
     """Function to generate URL for redirection."""
