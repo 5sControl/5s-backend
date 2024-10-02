@@ -24,7 +24,8 @@ def proxy_request(request, url):
         elif method == 'PATCH':
             response = requests.patch(url, headers=headers, json=request.data)
         elif method == 'DELETE':
-            response = requests.delete(url, headers=headers, json=request.data)
+            response = requests.delete(url, headers=headers)
+            print('Response DELETED:', response.status_code)
         else:
             return Response({"error": "Unsupported HTTP method"}, status=405)
 
@@ -36,7 +37,7 @@ def proxy_request(request, url):
 
 def build_redirect_url(host, port, reference_type):
     """Function to generate URL for redirection."""
-    return f"{host}:{port}/{reference_type}/"
+    return f"{host}:{port}/{reference_type}"
 
 
 class ErpReferenceView(APIView):
@@ -55,7 +56,6 @@ class ErpReferenceView(APIView):
     def handle_request(self, request, reference_type):
         if not reference_type:
             return Response({"error": "reference_type is required"}, status=400)
-
         connector = ConnectionInfo.objects.get(is_active=True)
 
         if connector.erp_system == "5s_control":
@@ -67,7 +67,7 @@ class ErpReferenceView(APIView):
                 return Response({"error": "Host or port not specified"}, status=500)
 
             url = build_redirect_url(host, port, reference_type)
-            logger.info(f"Proxying a request to {url}")
+            print(f"Proxying a request to {url}")
 
             return proxy_request(request, url)
 
