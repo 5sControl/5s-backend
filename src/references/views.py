@@ -98,8 +98,6 @@ class ErpReferenceView(APIView):
                 table_name = "mrp.bom"
             elif reference_type == "employees":
                 table_name = "mrp.workcenter"
-            elif reference_type == "product-categories":
-                table_name = "product.category"
             else:
                 return Response([], status=400)
 
