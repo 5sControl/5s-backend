@@ -65,7 +65,7 @@ class IndexStanowiskoSerializer(serializers.ModelSerializer):
         ]
 
 
-class ConnectionInfoSerializer(serializers.ModelSerializer):
+class OrderConnectionInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ConnectionInfo
         fields = '__all__'

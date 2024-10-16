@@ -16,11 +16,11 @@ from src.OrderView.services.order_list_service import order_list_service
 from src.OrderView.services.order_service import order_service
 from src.newOrderView.repositories.stanowisko import WorkplaceRepository
 from src.OrderView.serializers import (
-    ConnectionInfoSerializer,
     IndexStanowiskoSerializer,
     OperationNameSerializer,
     OrderDataByZlecenieSerializer,
     ProductSerializer,
+    OrderConnectionInfoSerializer,
 )
 
 
@@ -86,7 +86,7 @@ class OperationNameApiView(generics.GenericAPIView):
 
 class CreateConnectionAPIView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
-    serializer_class = ConnectionInfoSerializer
+    serializer_class = OrderConnectionInfoSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -118,7 +118,7 @@ class DeleteConnectionAPIView(generics.DestroyAPIView):
 class GetConnectionStatusAPIView(APIView):
     def get(self, request):
         connections = ConnectionInfo.objects.all()
-        serializer = ConnectionInfoSerializer(connections, many=True)
+        serializer = OrderConnectionInfoSerializer(connections, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

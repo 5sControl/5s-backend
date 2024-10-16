@@ -8,11 +8,13 @@ from django.http import JsonResponse
 from src.Core.const import ONVIFFINDER_SERVICE_URL
 
 from src.Core.management.commands.startprocess import start_process
-from src.Core.serializers import SystemMessagesSerializer
+from src.Core.serializers import SystemMessagesSerializer, EmptySerializer
 from src.Core.models import SystemMessage
 
 
 class FindCameraAPIView(generics.GenericAPIView):
+    serializer_class = EmptySerializer
+
     def get(self, request, *args, **kwargs):
         cameras_response = requests.get(f"{ONVIFFINDER_SERVICE_URL}:7654/get_all_onvif_cameras/")
         try:
