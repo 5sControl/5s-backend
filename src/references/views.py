@@ -61,7 +61,7 @@ class ErpReferenceView(APIView):
     def handle_request(self, request, reference_type):
         if not reference_type:
             return Response({"error": "reference_type is required"}, status=400)
-        connector = ConnectionInfo.objects.get(is_active=True)
+        connector = ConnectionInfo.objects.filter(is_active=True).first()
 
         if connector.erp_system == "5s_control":
             host = connector.host

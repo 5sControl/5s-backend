@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 
 from src.DatabaseConnections.models import ConnectionInfo
-from src.DatabaseConnections.serilisers import \
+from src.DatabaseConnections.serializers import \
     ConnectionInfoSerializer, \
     OdooItemSerializer, \
     BaseConnectionInfoSerializer

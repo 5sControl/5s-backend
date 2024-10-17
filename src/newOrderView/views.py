@@ -114,9 +114,13 @@ class GetWhnetOperation(generics.GenericAPIView):
 class FiltrationsDataView(generics.ListAPIView):
     serializer_class = FilterOperationsTypeIDSerializer
     pagination_class = NoPagination
-    connection = ConnectionInfo.objects.get(is_active=True)
-    typ_erp = connection.erp_system
-    queryset = FiltrationOperationsTypeID.objects.filter(type_erp=typ_erp)
+
+    try:
+        connection = ConnectionInfo.objects.get(is_active=True)
+        typ_erp = connection.erp_system
+        queryset = FiltrationOperationsTypeID.objects.filter(type_erp=typ_erp)
+    except:
+        queryset = FiltrationOperationsTypeID.objects.all()
 
     def get(self, request, *args, **kwargs):
         response = super().get(request, *args, **kwargs)

@@ -21,7 +21,7 @@ def get_response(
 ) -> List[Dict[str, Any]]:
     connector = get_object_or_404(ConnectionInfo, is_active=True).type
     response = []
-    connection = ConnectionInfo.objects.get(is_active=True)
+    connection = ConnectionInfo.objects.filter(is_active=True).first()
     if connector == "api":
         if type == "operation":
             response_manifest = []

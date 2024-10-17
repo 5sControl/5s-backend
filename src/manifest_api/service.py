@@ -192,7 +192,7 @@ def sum_durations_by_or_id(data):
 def get_jobs_manifest(data, type_operations):
     result = []
 
-    connection = ConnectionInfo.objects.get(is_active=True)
+    connection = ConnectionInfo.objects.filter(is_active=True).first()
     typ_erp = connection.erp_system
     operations = FiltrationOperationsTypeID.objects.filter(type_erp=typ_erp)
     for operation in operations:
