@@ -116,7 +116,7 @@ class FiltrationsDataView(generics.ListAPIView):
     pagination_class = NoPagination
 
     try:
-        connection = ConnectionInfo.objects.get(is_active=True)
+        connection = ConnectionInfo.objects.get(used_in_orders_view=True)
         typ_erp = connection.erp_system
         queryset = FiltrationOperationsTypeID.objects.filter(type_erp=typ_erp)
     except:
@@ -127,7 +127,7 @@ class FiltrationsDataView(generics.ListAPIView):
         db_data = list(response.data)
         adapted_steps = []
         odoo_data = []
-        connection = ConnectionInfo.objects.get(is_active=True)
+        connection = ConnectionInfo.objects.get(used_in_orders_view=True)
 
         if connection.erp_system == "odoo":
             odoo_operations, status_code = odoo_get_data("mrp.workorder")

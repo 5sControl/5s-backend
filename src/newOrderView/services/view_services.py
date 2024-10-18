@@ -19,14 +19,13 @@ def get_response(
     operation_type_ids: List[id],
     type: str,
 ) -> List[Dict[str, Any]]:
-    connector = get_object_or_404(ConnectionInfo, is_active=True).type
+    connector = get_object_or_404(ConnectionInfo, used_in_orders_view=True).type
     response = []
-    connection = ConnectionInfo.objects.filter(is_active=True).first()
+    connection = ConnectionInfo.objects.filter(used_in_orders_view=True).first()
     if connector == "api":
         if type == "operation":
             response_manifest = []
             response_odoo = []
-
 
             try:
                 if connection.erp_system == "manifest":
@@ -55,6 +54,8 @@ def get_response(
         elif type == "orders":
             if connection.erp_system == "manifest":
                 result = get_all_works_manifest(from_date, to_date, "orders")
+                if result is None:
+                    return []
                 return result
 
             if connection.erp_system == "odoo":

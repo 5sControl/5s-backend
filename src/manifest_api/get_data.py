@@ -4,7 +4,7 @@ import requests
 
 def send_request(payload, path='graphql/v3'):
     from src.manifest_api.sender import get_token_manifest
-    manifest = ConnectionInfo.objects.filter(is_active=True, erp_system="manifest").first()
+    manifest = ConnectionInfo.objects.filter(used_in_orders_view=True, erp_system="manifest").first()
 
     host = manifest.host
     url = f"{host}{path}"

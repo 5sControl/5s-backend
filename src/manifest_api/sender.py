@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_token_manifest():
-    connection = ConnectionInfo.objects.filter(is_active=True, erp_system="manifest").first()
+    connection = ConnectionInfo.objects.filter(used_in_orders_view=True, erp_system="manifest").first()
     if not connection:
         return JsonResponse({'error': 'Active connection not found'}, status=400)
 
