@@ -119,7 +119,7 @@ class ActionsWithPhotos(APIView):
 
         elif "safety_hand_detection" in algorithm.image_name:
             extra = adding_data_to_extra(extra)
-            manifest_connection = ConnectionInfo.objects.filter(is_active=True, erp_system="manifest").first()
+            manifest_connection = ConnectionInfo.objects.filter(used_in_orders_view=True, erp_system="manifest").first()
             if manifest_connection:
                 send_manifest_response(extra, report_id=action.id)
             else:
