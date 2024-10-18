@@ -27,7 +27,7 @@ class ConnectionInfo(models.Model):
     type = models.CharField(max_length=10, choices=TYPE_CHOICES, default="database")
     dbms = models.CharField(max_length=50, choices=DBMS_CHOICES, default="mssql")
     is_active = models.BooleanField(default=True)
-    # used_in_orders_view = models.BooleanField(default=False)
+    used_in_orders_view = models.BooleanField(default=False)
     #  api
     host = models.CharField(max_length=250, blank=True, null=True)
     #  db
@@ -48,8 +48,8 @@ class ConnectionInfo(models.Model):
 
 @receiver(pre_save, sender=ConnectionInfo)
 def update_active_status(sender, instance, **kwargs):
-    # if instance.used_in_orders_view:
-    #     sender.objects.exclude(pk=instance.pk).update(used_in_orders_view=False)
+    if instance.used_in_orders_view:
+        sender.objects.exclude(pk=instance.pk).update(used_in_orders_view=False)
 
     if instance.is_active:
         sender.objects.exclude(pk=instance.pk).update(is_active=False)
