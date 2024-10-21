@@ -86,7 +86,7 @@ class GetOrderByDetail(generics.GenericAPIView):
     def get(self, request):
         response = {}
         operation_id: int = request.GET.get("operation")
-        connection = ConnectionInfo.objects.get(is_active=True)
+        connection = ConnectionInfo.objects.get(used_in_orders_view=True)
 
         if connection.erp_system == "manifest":
             data = get_operation_by_details_manifest(operation_id)
