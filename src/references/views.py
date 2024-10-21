@@ -15,6 +15,7 @@ def proxy_request(request, url):
     """Function for proxying requests to a specified URL."""
     method = request.method
     print("method", method)
+    print("all headers", request.headers)
     headers = {
         'Content-Type': request.headers.get('Content-Type', 'application/json'),
     }
