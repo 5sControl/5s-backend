@@ -39,7 +39,7 @@ def authenticate_user(host, database, username, password):
 
 def odoo_login():
 
-    connection = ConnectionInfo.objects.filter(is_active=True, erp_system="odoo").first()
+    connection = ConnectionInfo.objects.filter(erp_system="odoo").first()
     url = connection.host
     db = connection.database
     username = connection.username
@@ -54,7 +54,7 @@ def odoo_login():
 
 
 def odoo_get_data(table_name, fields=["id", "name"]):
-    connection = ConnectionInfo.objects.filter(is_active=True, erp_system="odoo").first()
+    connection = ConnectionInfo.objects.filter(erp_system="odoo").first()
     url = connection.host
     db = connection.database
     username = connection.username
@@ -170,7 +170,7 @@ def sorted_data_odoo(data, type_operation):
 
 
 def get_all_order_odoo(from_date, to_date):
-    connection = ConnectionInfo.objects.filter(is_active=True, erp_system="odoo").first()
+    connection = ConnectionInfo.objects.filter(used_in_orders_view=True, erp_system="odoo").first()
     url = connection.host
     db = connection.database
     username = connection.username
@@ -268,7 +268,7 @@ def get_all_order_odoo(from_date, to_date):
 
 
 def details_for_operation(order_id):
-    connection = ConnectionInfo.objects.filter(is_active=True, erp_system="odoo").first()
+    connection = ConnectionInfo.objects.filter(used_in_orders_view=True, erp_system="odoo").first()
     url = connection.host
     db = connection.database
     username = connection.username
