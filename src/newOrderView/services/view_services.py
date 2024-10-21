@@ -22,6 +22,14 @@ def get_response(
     connector = get_object_or_404(ConnectionInfo, used_in_orders_view=True).type
     response = []
     connection = ConnectionInfo.objects.filter(used_in_orders_view=True).first()
+
+    try:
+        cached_response = cache.get(cache_key)
+        if cached_response is not None:
+            return cached_response
+    except Exception as e:
+        print(f"Redis cache get exception: {e}")
+
     if connector == "api":
         if type == "operation":
             response_manifest = []
@@ -88,5 +96,11 @@ def get_response(
                 )
 
             cache.set(cache_key, response, timeout=120)
+
+    if response:
+        try:
+            cache.set(cache_key, response, timeout=120)  # Кэшируем на 120 секунд
+        except Exception as e:
+            print(f"Redis cache set exception: {e}")
 
     return response
