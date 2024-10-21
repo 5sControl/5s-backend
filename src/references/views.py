@@ -18,6 +18,7 @@ def proxy_request(request, url):
     print("all headers", request.headers)
     headers = {
         'Content-Type': request.headers.get('Content-Type', 'application/json'),
+        'authorization': request.headers.get('Authorization')
     }
 
     try:
