@@ -16,7 +16,8 @@ def proxy_request(request, url):
     print("method", method)
     # {key: value for key, value in request.headers.items()}
     headers = {
-        'Content-Type': request.headers.get('Content-Type', 'application/json')
+        'Content-Type': request.headers.get('Content-Type', 'application/json'),
+        'user_id': 1, "user_name": "Dima"
     }
 
     try:
