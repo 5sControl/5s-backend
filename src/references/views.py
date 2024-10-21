@@ -1,4 +1,5 @@
 import requests
+from rest_framework.permissions import IsAuthenticated
 
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -49,6 +50,8 @@ def build_redirect_url(host, port, reference_type):
 
 
 class ErpReferenceView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, reference_type):
         return self.handle_request(request, reference_type)
 
