@@ -14,9 +14,7 @@ def proxy_request(request, url):
     """Function for proxying requests to a specified URL."""
     method = request.method
     print("method", method)
-    headers = {
-        'Content-Type': request.headers.get('Content-Type', 'application/json')
-    }
+    headers = {key: value for key, value in request.headers.items()}
 
     try:
         if method == 'GET':
