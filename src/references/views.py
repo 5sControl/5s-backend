@@ -55,7 +55,7 @@ def build_redirect_url(host, port, reference_type):
 
 
 class ErpReferenceView(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, reference_type):
         return self.handle_request(request, reference_type)
