@@ -17,7 +17,6 @@ def proxy_request(request, url):
     """Function for proxying requests to a specified URL."""
     method = request.method
     print("method", method)
-    print("all request headers", request.headers)
 
     username = get_username_from_token(request.headers.get('Authorization'))
 
@@ -42,7 +41,6 @@ def proxy_request(request, url):
 
         if response.status_code == 204:
             return Response(status=204)
-        print("sending_headers", headers)
         return Response(response.json(), status=response.status_code)
     except requests.exceptions.RequestException as e:
         logger.error(f"Error when proxying request:{e}")
