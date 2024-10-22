@@ -6,6 +6,8 @@ from rest_framework.views import APIView
 from src.DatabaseConnections.models import ConnectionInfo
 from src.manifest_api.get_data import get_erp_products, get_erp_operations, get_erp_equipment, get_erp_employees
 from src.odoo_api.service import odoo_get_data, edit_answer_from_odoo
+from src.references.service import get_username_from_token
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -15,10 +17,14 @@ def proxy_request(request, url):
     """Function for proxying requests to a specified URL."""
     method = request.method
     print("method", method)
-    print("all headers", request.headers)
+    print("all request headers", request.headers)
+
+    username = get_username_from_token(request.headers.get('Authorization'))
+
     headers = {
         'Content-Type': request.headers.get('Content-Type', 'application/json'),
-        'Authorization': request.headers.get('Authorization')
+        'Authorization': request.headers.get('Authorization'),
+        'X-Username': username
     }
 
     try:
@@ -36,7 +42,7 @@ def proxy_request(request, url):
 
         if response.status_code == 204:
             return Response(status=204)
-
+        print("sending_headers", headers)
         return Response(response.json(), status=response.status_code)
     except requests.exceptions.RequestException as e:
         logger.error(f"Error when proxying request:{e}")
