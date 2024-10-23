@@ -11,7 +11,7 @@ import requests
 def send_user_data_to_service(sender, instance, created, **kwargs):
 
     connection = ConnectionInfo.objects.get(erp_system="5s_control")
-    url = f"{connection.host}:{connection.port}/items/employee/"
+    url = f"{connection.host}:{connection.port}/reference-items/employee/"
     if created:
         user_data = {
             'id': instance.id,
