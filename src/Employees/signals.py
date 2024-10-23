@@ -20,7 +20,6 @@ def send_user_data_to_service(sender, instance, created, **kwargs):
 
         try:
             response = requests.post(url, json=user_data)
-            print("Send data to DB erp", response)
             response.raise_for_status()
         except requests.RequestException as e:
             print(f"Failed to send user data: {e}")
