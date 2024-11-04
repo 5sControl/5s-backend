@@ -4,8 +4,8 @@ from django.shortcuts import get_object_or_404
 from django.core.cache import cache
 
 from src.DatabaseConnections.models import ConnectionInfo
+from src.Reports.service import get_reports_orders_5s
 from src.manifest_api.sender import get_all_works_manifest
-from src.manifest_api.service import get_all_reports_manifest
 from src.newOrderView.services.connector import connector_services
 from src.newOrderView.services.operations import OperationServices
 from src.newOrderView.services.order import OrderServices
@@ -34,6 +34,7 @@ def get_response(
         if type == "operation":
             response_manifest = []
             response_odoo = []
+            response_5s = []
 
             try:
                 if connection.erp_system == "manifest":
@@ -50,6 +51,10 @@ def get_response(
                     print(f"Exception operation response odoo: {e}")
                     response_odoo = []
 
+                # Receiving data from 5s_control
+            if connection.erp_system == "5s_control":
+                response_5s = get_reports_orders_5s(from_date, to_date, "operations")
+
                # Receiving data from Winkhaus
             try:
                 response_winkhaus = connector_services.get_operations(from_date, to_date)
@@ -57,7 +62,7 @@ def get_response(
                 print(f"Exception operation: {e}")
                 response_winkhaus = []
 
-            response = response_manifest + response_winkhaus + response_odoo
+            response = response_manifest + response_winkhaus + response_odoo + response_5s
 
         elif type == "orders":
             if connection.erp_system == "manifest":
@@ -70,6 +75,10 @@ def get_response(
                 data_odoo = get_all_order_odoo(from_date, to_date)
                 odoo_result = sorted_data_odoo(data_odoo, "orders")
                 return odoo_result
+
+            if connection.erp_system == "5s_control":
+                response_5s = get_reports_orders_5s(from_date, to_date, "orders")
+                return response_5s
 
             if connection.erp_system == "winkhaus":
                 try:

@@ -124,7 +124,7 @@ class SearchReportSerializers(serializers.ModelSerializer):
         return data if filtered_extra else None
 
 
-class ReportSerializersForManifest(serializers.ModelSerializer):
+class ReportSerializersForOrders5s(serializers.ModelSerializer):
     extra = serializers.SerializerMethodField()
 
     class Meta:
