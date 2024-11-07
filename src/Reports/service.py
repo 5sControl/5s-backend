@@ -101,7 +101,7 @@ def edit_response_for_orders_by_5s(data, type_operation):
         operations = FiltrationOperationsTypeID.objects.filter(type_erp=connection.erp_system)
 
         for item in operations:
-            all_operations.add((item.name, item.id))
+            all_operations.add((item.name, item.operation_type_id))
 
         for workplace_name, operation_id in all_operations:
             oprs = []
@@ -114,11 +114,10 @@ def edit_response_for_orders_by_5s(data, type_operation):
                         duration_zones = report.get("duration_zones")
                         if duration_zones:
                             for zone in duration_zones:
-                                print(zone.get("workplace_name"), workplace_name)
-                                if zone.get("workplace_name", "").lower() == workplace_name.lower():
+                                if zone.get("zone_id") == operation_id:
                                     try:
-                                        start_time = int(datetime.strptime(zone.get('start_time'), "%Y-%m-%d %H:%M:%S.%f")
-                                                         .timestamp() * 1000)
+                                        start_time = int(datetime.strptime(zone.get('start_time'),
+                                                                           "%Y-%m-%d %H:%M:%S.%f").timestamp() * 1000)
                                         end_time = start_time + (zone.get('all_durations') * 1000)
 
                                         oprs.append({

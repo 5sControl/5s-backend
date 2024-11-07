@@ -15,6 +15,7 @@ from src.newOrderView.models import FiltrationOperationsTypeID
 from src.newOrderView.repositories.order import OrderRepository
 from src.newOrderView.serializers import FilterOperationsTypeIDSerializer
 from src.manifest_api.get_data import get_steps_by_asset_class
+from src.CameraAlgorithms.models import ZoneCameras
 
 from .services import OperationServices
 from .services.view_services import get_response
@@ -127,6 +128,7 @@ class FiltrationsDataView(generics.ListAPIView):
         db_data = list(response.data)
         adapted_steps = []
         odoo_data = []
+        five_s_data = []
         connection = ConnectionInfo.objects.get(used_in_orders_view=True)
 
         if connection.erp_system == "odoo":
@@ -156,7 +158,19 @@ class FiltrationsDataView(generics.ListAPIView):
                 for step in all_steps
             ]
 
-        combined_data = db_data + adapted_steps + odoo_data
+        if connection.erp_system == "5s_control":
+            name_zones = ZoneCameras.objects.values('name', 'id')
+            for zone in name_zones:
+                five_s_data.append(
+                        {
+                            "operation_type_id": zone["id"],
+                            "name": zone["name"],
+                            "is_active": False,
+                            "type_erp": "5s_control"
+                        }
+                )
+
+        combined_data = db_data + adapted_steps + odoo_data + five_s_data
 
         unique_names = set()
         result_data = []
