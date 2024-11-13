@@ -29,7 +29,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_status(self, obj):
         if obj.is_superuser:
-            return "owner"
+            return "superuser"
         elif obj.is_staff:
             return "admin"
         else:

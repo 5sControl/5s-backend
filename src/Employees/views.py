@@ -7,7 +7,6 @@ from rest_framework.views import APIView
 
 from src.Core.permissions import IsSuperuserPermission
 
-from src.Employees.services import user_manager
 from src.Employees.serializers import UserSerializer, CreateUserSerializer
 
 
@@ -23,19 +22,29 @@ class CreateUserView(generics.CreateAPIView):
         username = serializer.validated_data.get("username")
         password = serializer.validated_data.get("password")
 
-        if not User.objects.filter(username=username).exists():
-            if user_type.lower() == "admin":
-                user_manager.create_admin(username, password)
-            elif user_type.lower() == "worker":
-                user_manager.create_worker(username, password)
-            else:
-                return Response(
-                    data={"error": 'User Type must be "Admin" or "Worker"'},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-        else:
+        if User.objects.filter(username=username).exists():
             return Response(
                 data={"error": 'User Exists'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if user_type.lower() == "admin":
+            user = User.objects.create_user(
+                username=username,
+                password=password,
+                is_staff=True,
+                is_superuser=False,
+            )
+        elif user_type.lower() == "worker":
+            user = User.objects.create_user(
+                username=username,
+                password=password,
+                is_staff=False,
+                is_superuser=False,
+            )
+        else:
+            return Response(
+                data={"error": 'User Type must be "Admin" or "Worker"'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
