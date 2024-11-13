@@ -9,17 +9,19 @@ import requests
 
 @receiver(post_save, sender=User)
 def send_user_data_to_service(sender, instance, created, **kwargs):
+    try:
+        connection = ConnectionInfo.objects.get(erp_system="5s_control")
+        url = f"{connection.host}:{connection.port}/reference-items/employee/"
+        if created:
+            user_data = {
+                'id': instance.id,
+                'username': instance.username,
+            }
 
-    connection = ConnectionInfo.objects.get(erp_system="5s_control")
-    url = f"{connection.host}:{connection.port}/reference-items/employee/"
-    if created:
-        user_data = {
-            'id': instance.id,
-            'username': instance.username,
-        }
-
-        try:
-            response = requests.post(url, json=user_data)
-            response.raise_for_status()
-        except requests.RequestException as e:
-            print(f"Failed to send user data: {e}")
+            try:
+                response = requests.post(url, json=user_data)
+                response.raise_for_status()
+            except requests.RequestException as e:
+                print(f"Failed to send user data: {e}")
+    except Exception as e:
+        print(e)
