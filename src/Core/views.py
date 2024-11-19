@@ -16,7 +16,7 @@ class FindCameraAPIView(generics.GenericAPIView):
     serializer_class = EmptySerializer
 
     def get(self, request, *args, **kwargs):
-        cameras_response = requests.get(f"{ONVIFFINDER_SERVICE_URL}:7654/get_all_onvif_cameras/")
+        cameras_response = requests.get(f"{ONVIFFINDER_SERVICE_URL}:7654/get_all_rtsp_cameras/")
         try:
             cameras = cameras_response.json()
         except ValueError as e:
