@@ -25,6 +25,7 @@ from ..OrderView.utils import get_package_video_info
 
 import logging
 
+from ..erp_5s.service import get_operations_data
 from ..manifest_api.sender import get_operation_by_details_manifest
 from ..odoo_api.service import odoo_get_data, details_for_operation
 
@@ -108,7 +109,7 @@ class GetWhnetOperation(generics.GenericAPIView):
     # @method_decorator(cache_page(30))
     # @check_database_connection
     def get(self, request):
-        data = OperationServices.get_whnet_operation()
+        data = OperationServices.get_whet_operation()
         return JsonResponse(data=data, status=status.HTTP_200_OK, safe=False)
 
 
@@ -159,12 +160,12 @@ class FiltrationsDataView(generics.ListAPIView):
             ]
 
         if connection.erp_system == "5s_control":
-            name_zones = ZoneCameras.objects.values('name', 'id')
-            for zone in name_zones:
+            operations = get_operations_data()
+            for operation in operations:
                 five_s_data.append(
                         {
-                            "operation_type_id": zone["id"],
-                            "name": zone["name"],
+                            "operation_type_id": operation["id"],
+                            "name": operation["operationName"],
                             "is_active": False,
                             "type_erp": "5s_control"
                         }
