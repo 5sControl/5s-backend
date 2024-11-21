@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.core.cache import cache
 
 from src.DatabaseConnections.models import ConnectionInfo
-from src.Reports.service import get_reports_orders_5s
+from src.erp_5s.service import get_reports_orders_5s
 from src.manifest_api.sender import get_all_works_manifest
 from src.newOrderView.services.connector import connector_services
 from src.newOrderView.services.operations import OperationServices

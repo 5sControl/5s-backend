@@ -11,7 +11,10 @@ DATABASES = {
         "PASSWORD": config("DB_PASSWORD", default=None),
         "HOST": config("DB_HOST", default=None),
         "PORT": config("DB_PORT", default=None),
-        "CONN_MAX_AGE": None
+        "CONN_MAX_AGE": None,
+        "OPTIONS": {
+            "options": "-c search_path=erp,public"
+        },
     },
 
     "database_for_test": {
@@ -21,6 +24,9 @@ DATABASES = {
         "PASSWORD": config("DB_PASSWORD", default=None),
         "HOST": config("DB_HOST", default=None),
         "PORT": config("TEST_DB_PORT", default=None),
+        "OPTIONS": {
+            "options": "-c search_path=erp,public"
+        },
     },
 }
 
