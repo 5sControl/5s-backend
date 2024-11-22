@@ -66,7 +66,7 @@ CORS_ORIGIN_WHITELIST = [
     "https://crucial-heron-vastly.ngrok-free.app",
     "https://5scontrol.serveo.net",
     "https://office.5scontrol.com",
-    "http://127.0.0.1:5173",
+    "http://localhost:5173",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -78,7 +78,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://pleasant-bluejay-next.ngrok-free.app",
     "https://5scontrol.serveo.net",
     "https://office.5scontrol.com",
-    "http://127.0.0.1:5173",
+    "http://localhost:5173",
 ]
 
 CORS_ORIGIN_WHITELIST.extend(existing_cors_whitelist)
