@@ -41,9 +41,7 @@ def get_orders_with_details(from_date_obj, to_date_obj):
         queryset=OrderItems.objects.prefetch_related(filtered_operations)
     )
 
-    orders = Orders.objects.prefetch_related(
-        filtered_items
-    )
+    orders = Orders.objects.prefetch_related(filtered_items)
 
     serializer = OrdersSerializer(orders, many=True)
     return serializer.data
@@ -78,14 +76,14 @@ def edit_response_for_orders_by_5s(data, type_operation):
 
                             delta = finished_at_dt - started_at_dt
                             duration += delta.total_seconds()
-
-            result.append(
-                {
-                    "orId": order_id,
-                    "duration": duration * 1000,
-                    "duration_expected": duration_expected * 1000
-                }
-            )
+            if duration != 0:
+                result.append(
+                    {
+                        "orId": order_id,
+                        "duration": duration * 1000,
+                        "duration_expected": duration_expected * 1000
+                    }
+                )
         return result
 
     else:
