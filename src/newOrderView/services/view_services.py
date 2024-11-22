@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.core.cache import cache
 
 from src.DatabaseConnections.models import ConnectionInfo
-from src.erp_5s.service import get_reports_orders_5s
+from src.erp_5s.service import get_reports_orders_view
 from src.manifest_api.sender import get_all_works_manifest
 from src.newOrderView.services.connector import connector_services
 from src.newOrderView.services.operations import OperationServices
@@ -53,7 +53,7 @@ def get_response(
 
                 # Receiving data from 5s_control
             if connection.erp_system == "5s_control":
-                response_5s = get_reports_orders_5s(from_date, to_date, "operations")
+                response_5s = get_reports_orders_view(from_date, to_date, "operations")
 
                # Receiving data from Winkhaus
             try:
@@ -77,7 +77,7 @@ def get_response(
                 return odoo_result
 
             if connection.erp_system == "5s_control":
-                response_5s = get_reports_orders_5s(from_date, to_date, "orders")
+                response_5s = get_reports_orders_view(from_date, to_date, "orders")
                 return response_5s
 
             if connection.erp_system == "winkhaus":

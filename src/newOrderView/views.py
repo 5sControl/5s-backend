@@ -25,7 +25,7 @@ from ..OrderView.utils import get_package_video_info
 
 import logging
 
-from ..erp_5s.service import get_operations_data
+from ..erp_5s.service import get_operations_data, get_detail_information_by_operation
 from ..manifest_api.sender import get_operation_by_details_manifest
 from ..odoo_api.service import odoo_get_data, details_for_operation
 
@@ -82,13 +82,14 @@ class GetMachine(generics.GenericAPIView):
 
 
 class GetOrderByDetail(generics.GenericAPIView):
-    # pagination_class = NoPagination
-
-    # @check_database_connection
     def get(self, request):
         response = {}
         operation_id: int = request.GET.get("operation")
         connection = ConnectionInfo.objects.get(used_in_orders_view=True)
+
+        if connection.erp_system == "5s_control":
+            data = get_detail_information_by_operation(operation_id)
+            return JsonResponse(data=data, status=status.HTTP_200_OK)
 
         if connection.erp_system == "manifest":
             data = get_operation_by_details_manifest(operation_id)
