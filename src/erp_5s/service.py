@@ -106,17 +106,17 @@ def edit_response_for_orders_by_5s(data, type_operation):
                             timespans = operation.get("timespans")
                             if not timespans:
                                 continue
-                            if operation.get("id") == operation_id:
-                                for timespan in timespans:
+                            for timespan in timespans:
+                                if operation.get("operation").get("id") == operation_id:
                                     started_at = timespan.get("started_at")
                                     finished_at = timespan.get("finished_at")
 
                                     if started_at and finished_at:
 
-                                        started_at_dt = datetime.strptime(started_at, "%d.%m.%Y %H:%M:%S")\
-                                                            .timestamp() * 1000
-                                        finished_at_dt = datetime.strptime(finished_at, "%d.%m.%Y %H:%M:%S")\
-                                                             .timestamp() * 1000
+                                        started_at_dt = datetime.strptime(started_at,
+                                                                          "%d.%m.%Y %H:%M:%S").timestamp() * 1000
+                                        finished_at_dt = datetime.strptime(finished_at,
+                                                                           "%d.%m.%Y %H:%M:%S").timestamp() * 1000
                                         oprs.append({
                                             "id": operation_id,
                                             "orId": str(id_value),
