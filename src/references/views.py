@@ -46,7 +46,7 @@ def proxy_request(request, url):
             print('Response DELETED:', response.status_code)
         else:
             return Response({"error": "Unsupported HTTP method"}, status=405)
-        print(f"all_response = {response.text}")
+        print(f"all_response_headers = {response.headers}")
         if response.status_code == 204:
             return Response(status=204)
         return Response(response.json(), status=response.status_code)
