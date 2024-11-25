@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from src.DatabaseConnections.models import ConnectionInfo
 from src.manifest_api.get_data import get_erp_products, get_erp_operations, get_erp_equipment, get_erp_employees
-from src.odoo_api.service import odoo_get_data, edit_answer_from_odoo
+from src.odoo_api.service import odoo_get_data
 from src.references.service import get_username_from_token
 
 import logging
@@ -20,7 +20,6 @@ def proxy_request(request, url):
     print("method", method)
 
     username = get_username_from_token(request.headers.get('Authorization'))
-    print("request.headers=", request.headers)
 
     if request.headers.get('Content-Type') == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
         headers = {
@@ -47,7 +46,6 @@ def proxy_request(request, url):
             print('Response DELETED:', response.status_code)
         else:
             return Response({"error": "Unsupported HTTP method"}, status=405)
-        print(f"all_response_headers = {response.headers}")
 
         # Check if the response is a file
         if 'Content-Disposition' in response.headers:
