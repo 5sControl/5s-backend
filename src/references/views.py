@@ -1,4 +1,5 @@
 import requests
+from django.http import StreamingHttpResponse
 from rest_framework.permissions import IsAuthenticated
 
 from rest_framework.response import Response
@@ -22,7 +23,6 @@ def proxy_request(request, url):
     print("request.headers=", request.headers)
 
     if request.headers.get('Content-Type') == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-
         headers = {
             'Content-Type': request.headers.get('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
             'Authorization': request.headers.get('Authorization'),
@@ -48,6 +48,15 @@ def proxy_request(request, url):
         else:
             return Response({"error": "Unsupported HTTP method"}, status=405)
         print(f"all_response_headers = {response.headers}")
+
+        # Check if the response is a file
+        if 'Content-Disposition' in response.headers:
+            return StreamingHttpResponse(
+                streaming_content=response.iter_content(chunk_size=8192),
+                content_type=response.headers.get('Content-Type'),
+                status=response.status_code
+            )
+
         if response.status_code == 204:
             return Response(status=204)
         return Response(response.json(), status=response.status_code)
