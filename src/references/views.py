@@ -20,7 +20,7 @@ def proxy_request(request, url):
 
     username = get_username_from_token(request.headers.get('Authorization'))
     print("request.headers=", request.headers)
-    print()
+
     if request.headers.get('Content-Type') == 'application/json':
         headers = {
             'Content-Type': request.headers.get('Content-Type', 'application/json'),
@@ -42,7 +42,7 @@ def proxy_request(request, url):
             print('Response DELETED:', response.status_code)
         else:
             return Response({"error": "Unsupported HTTP method"}, status=405)
-
+        print(f"all_response = {response}")
         if response.status_code == 204:
             return Response(status=204)
         return Response(response.json(), status=response.status_code)
