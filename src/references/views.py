@@ -28,7 +28,11 @@ def proxy_request(request, url):
             'X-Username': username
         }
     else:
-        headers = request.headers
+        headers = {
+            'Content-Type': request.headers.get('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
+            'Authorization': request.headers.get('Authorization'),
+            'X-Username': username
+        }
 
     try:
         if method == 'GET':
@@ -42,7 +46,7 @@ def proxy_request(request, url):
             print('Response DELETED:', response.status_code)
         else:
             return Response({"error": "Unsupported HTTP method"}, status=405)
-        print(f"all_response = {response}")
+        print(f"all_response = {response.text}")
         if response.status_code == 204:
             return Response(status=204)
         return Response(response.json(), status=response.status_code)
