@@ -20,6 +20,7 @@ def proxy_request(request, url):
 
     username = get_username_from_token(request.headers.get('Authorization'))
     print("request.headers=", request.headers)
+    print()
     if request.headers.get('Content-Type') == 'application/json':
         headers = {
             'Content-Type': request.headers.get('Content-Type', 'application/json'),
