@@ -21,15 +21,16 @@ def proxy_request(request, url):
     username = get_username_from_token(request.headers.get('Authorization'))
     print("request.headers=", request.headers)
 
-    if request.headers.get('Content-Type') == 'application/json':
+    if request.headers.get('Content-Type') == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+
         headers = {
-            'Content-Type': request.headers.get('Content-Type', 'application/json'),
+            'Content-Type': request.headers.get('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
             'Authorization': request.headers.get('Authorization'),
             'X-Username': username
         }
     else:
         headers = {
-            'Content-Type': request.headers.get('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
+            'Content-Type': request.headers.get('Content-Type', 'application/json'),
             'Authorization': request.headers.get('Authorization'),
             'X-Username': username
         }
