@@ -19,12 +19,15 @@ def proxy_request(request, url):
     print("method", method)
 
     username = get_username_from_token(request.headers.get('Authorization'))
-
-    headers = {
-        'Content-Type': request.headers.get('Content-Type', 'application/json'),
-        'Authorization': request.headers.get('Authorization'),
-        'X-Username': username
-    }
+    print("request.headers=", request.headers)
+    if request.headers.get('Content-Type') == 'application/json':
+        headers = {
+            'Content-Type': request.headers.get('Content-Type', 'application/json'),
+            'Authorization': request.headers.get('Authorization'),
+            'X-Username': username
+        }
+    else:
+        headers = request.headers
 
     try:
         if method == 'GET':
