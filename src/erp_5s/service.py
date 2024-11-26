@@ -147,7 +147,7 @@ def get_reports_orders_view(from_date, to_date, type_operation):
 
 
 def get_detail_information_by_operation(operation_id):
-    timestamp = OrderOperationTimespan.objects.first(id=operation_id)
+    timestamp = OrderOperationTimespan.objects.get(id=operation_id)
     order_operation = timestamp.order_operation
     order_item = order_operation.order_item
 
