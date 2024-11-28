@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("auth", "0014_remove_group_custom_permission"),
+        # ("auth", "0014_remove_group_custom_permission"),
     ]
 
     operations = [
