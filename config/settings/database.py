@@ -13,7 +13,7 @@ DATABASES = {
         "PORT": config("DB_PORT", default=None),
         "CONN_MAX_AGE": None,
         "OPTIONS": {
-            "options": "-c search_path=erp,public"
+            "options": "-c search_path=public,erp"
         },
     },
 
@@ -25,7 +25,7 @@ DATABASES = {
         "HOST": config("DB_HOST", default=None),
         "PORT": config("TEST_DB_PORT", default=None),
         "OPTIONS": {
-            "options": "-c search_path=erp,public"
+            "options": "-c search_path=public,erp"
         },
     },
 }
