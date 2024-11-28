@@ -55,6 +55,8 @@ INSTALLED_APPS = [
     "src.Core.apps.CoreConfig",
 ]
 
+AUTH_USER_MODEL = 'Employees.CustomUser'
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",

@@ -1,6 +1,6 @@
 from django.db import models
 
-from django.contrib.auth.models import User
+from src.Employees.models import CustomUser
 
 
 class References(models.Model):
@@ -123,7 +123,7 @@ class OrderOperationTimespan(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     order_operation = models.ForeignKey('OrderOperations', on_delete=models.CASCADE)
-    employee = models.ForeignKey(User, null=True, on_delete=models.SET_NULL)
+    employee = models.ForeignKey(CustomUser, null=True, on_delete=models.SET_NULL)
 
     class Meta:
         managed = False

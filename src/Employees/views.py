@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from src.Employees.models import CustomUser
 
 from rest_framework.response import Response
 from rest_framework import status, generics
@@ -22,21 +22,21 @@ class CreateUserView(generics.CreateAPIView):
         username = serializer.validated_data.get("username")
         password = serializer.validated_data.get("password")
 
-        if User.objects.filter(username=username).exists():
+        if CustomUser.objects.filter(username=username).exists():
             return Response(
                 data={"error": 'User Exists'},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
         if user_type.lower() == "admin":
-            user = User.objects.create_user(
+            user = CustomUser.objects.create_user(
                 username=username,
                 password=password,
                 is_staff=True,
                 is_superuser=False,
             )
         elif user_type.lower() == "worker":
-            user = User.objects.create_user(
+            user = CustomUser.objects.create_user(
                 username=username,
                 password=password,
                 is_staff=False,
@@ -54,7 +54,7 @@ class CreateUserView(generics.CreateAPIView):
 class UserListApiView(generics.ListAPIView):
     pagination_class = None
     permission_classes = [IsAuthenticated, IsSuperuserPermission]
-    queryset = User.objects.all()
+    queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
 
 
