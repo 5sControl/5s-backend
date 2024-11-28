@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from django.contrib.auth.models import User
+from src.Employees.models import CustomUser
 from django.contrib.auth.hashers import make_password
 
 
@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
     status = serializers.SerializerMethodField()
 
     class Meta:
-        model = User
+        model = CustomUser
         ref_name = "user-ser"
         fields = [
             "id",
