@@ -24,7 +24,7 @@ class ReferenceItems(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'reference_items'
+        db_table = 'erp"."reference_items'
         app_label = 'erp_5s'
 
 
