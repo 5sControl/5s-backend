@@ -1,5 +1,6 @@
 import jwt
-from django.contrib.auth.models import User
+
+from src.Employees.models import CustomUser
 from jwt import InvalidTokenError
 from config.settings.base import SECRET_KEY
 
@@ -21,8 +22,8 @@ def get_username_from_token(auth_header):
         if not user_id:
             return None
 
-        user = User.objects.get(id=user_id)
+        user = CustomUser.objects.get(id=user_id)
         return user.username if user else None
 
-    except (InvalidTokenError, User.DoesNotExist):
+    except (InvalidTokenError, CustomUser.DoesNotExist):
         return None
