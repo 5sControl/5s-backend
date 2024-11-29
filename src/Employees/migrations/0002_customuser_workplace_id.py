@@ -6,7 +6,6 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("erp_5s", "0003_alter_referenceitems_table"),
         ("Employees", "0001_initial"),
     ]
 
