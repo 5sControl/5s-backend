@@ -9,6 +9,9 @@ class References(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         managed = False
         db_table = 'references'
@@ -21,6 +24,9 @@ class ReferenceItems(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     reference = models.ForeignKey('References', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
 
     class Meta:
         managed = False

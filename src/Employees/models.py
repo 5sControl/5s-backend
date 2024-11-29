@@ -16,6 +16,9 @@ class CustomUser(AbstractUser):
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default=WORKER)
     workplace = models.ForeignKey('erp_5s.ReferenceItems', null=True, on_delete=models.SET_NULL, default=None)
 
+    def __str__(self):
+        return self.username
+
     class Meta:
         verbose_name = "Custom User"
         verbose_name_plural = "Custom Users"
