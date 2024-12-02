@@ -1,13 +1,14 @@
 from src.Employees.models import CustomUser
+from src.Core.permissions import IsSuperuserPermission
+
+from src.Employees.serializers import UserSerializer, CreateUserSerializer
 
 from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
-from src.Core.permissions import IsSuperuserPermission
-
-from src.Employees.serializers import UserSerializer, CreateUserSerializer
+from django.contrib.auth.hashers import make_password
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -52,9 +53,18 @@ class UserDetailApiView(generics.RetrieveUpdateDestroyAPIView):
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
+
+        password = request.data.get('password')
+        if password:
+            if request.user != instance and request.user.role != CustomUser.ADMIN and request.user.role != CustomUser.SUPERUSER:
+                return Response({"detail": "You cannot change another user's password."}, status=403)
+
+            instance.password = make_password(password)
+
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
         self.perform_update(serializer)
+
         return Response(serializer.data)
 
     def perform_destroy(self, instance):
