@@ -30,9 +30,8 @@ def get_orders_with_details(from_date_obj, to_date_obj):
             Prefetch(
                 'orderoperationtimespan_set',
                 queryset=OrderOperationTimespan.objects.filter(
-                    Q(started_at__lte=to_date_obj, finished_at__gte=from_date_obj) |
-                    Q(started_at__gte=from_date_obj, started_at__lte=to_date_obj) |
-                    Q(finished_at__gte=from_date_obj, finished_at__lte=to_date_obj)
+                    Q(started_at__range=(from_date_obj, to_date_obj)) |
+                    Q(finished_at__range=(from_date_obj, to_date_obj))
                 ).select_related('employee')
             )
         )
