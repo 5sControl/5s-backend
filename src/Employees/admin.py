@@ -1,5 +1,3 @@
-# admin.py
-
 from django import forms
 from django.contrib import admin
 from src.Employees.models import CustomUser

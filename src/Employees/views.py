@@ -18,49 +18,44 @@ class CreateUserView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        user_type = serializer.validated_data.get("user_type")
-        username = serializer.validated_data.get("username")
-        password = serializer.validated_data.get("password")
+        if CustomUser.objects.filter(username=serializer.validated_data["username"]).exists():
+            return Response({"error": "User already exists"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if CustomUser.objects.filter(username=username).exists():
-            return Response(
-                data={"error": 'User Exists'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        if user_type.lower() == "admin":
-            user = CustomUser.objects.create_user(
-                username=username,
-                password=password,
-                is_staff=True,
-                is_superuser=False,
-            )
-        elif user_type.lower() == "worker":
-            user = CustomUser.objects.create_user(
-                username=username,
-                password=password,
-                is_staff=False,
-                is_superuser=False,
-            )
-        else:
-            return Response(
-                data={"error": 'User Type must be "Admin" or "Worker"'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        return Response(status=status.HTTP_201_CREATED)
+    def perform_create(self, serializer):
+        serializer.save()
 
 
 class UserListApiView(generics.ListAPIView):
-    pagination_class = None
     permission_classes = [IsAuthenticated, IsSuperuserPermission]
-    queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
+    queryset = CustomUser.objects.all()
+    pagination_class = None
 
 
 class UserInfoFromToken(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        user_serializer = UserSerializer(request.user)
-        return Response(user_serializer.data, status=status.HTTP_200_OK)
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class UserDetailApiView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated, IsSuperuserPermission]
+    serializer_class = UserSerializer
+    queryset = CustomUser.objects.all()
+    lookup_field = 'pk'
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data)
+
+    def perform_destroy(self, instance):
+        instance.delete()
