@@ -16,7 +16,7 @@ from src.newOrderView.repositories.stanowisko import WorkplaceRepository
 from ..repositories import OperationsRepository
 from ..utils import add_ms, calculate_duration, convert_to_gmt0, convert_to_unix
 from ...DatabaseConnections.models import ConnectionInfo
-from ...erp_5s.service import get_operations_data
+from ...erp_5s.service import get_workplace_data
 from ...manifest_api.get_data import get_steps_by_asset_class
 
 logger = logging.getLogger(__name__)
@@ -229,7 +229,7 @@ class OperationServices:
             result_list = get_steps_by_asset_class()[0]
 
         if ConnectionInfo.objects.filter(is_active=True, erp_system="5s_control").exists():
-            result_list = get_operations_data()
+            result_list = get_workplace_data()
 
         if ConnectionInfo.objects.filter(is_active=True, erp_system="winkhaus").exists():
             workplace_repo: WorkplaceRepository = WorkplaceRepository()

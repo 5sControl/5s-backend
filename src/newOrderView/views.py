@@ -15,7 +15,6 @@ from src.newOrderView.models import FiltrationOperationsTypeID
 from src.newOrderView.repositories.order import OrderRepository
 from src.newOrderView.serializers import FilterOperationsTypeIDSerializer
 from src.manifest_api.get_data import get_steps_by_asset_class
-from src.CameraAlgorithms.models import ZoneCameras
 
 from .services import OperationServices
 from .services.view_services import get_response
@@ -25,7 +24,7 @@ from ..OrderView.utils import get_package_video_info
 
 import logging
 
-from ..erp_5s.service import get_operations_data, get_detail_information_by_operation
+from ..erp_5s.service import get_workplace_data, get_detail_information_by_operation
 from ..manifest_api.sender import get_operation_by_details_manifest
 from ..odoo_api.service import odoo_get_data, details_for_operation
 
@@ -161,7 +160,7 @@ class FiltrationsDataView(generics.ListAPIView):
             ]
 
         if connection.erp_system == "5s_control":
-            operations = get_operations_data()
+            operations = get_workplace_data()
             for operation in operations:
                 five_s_data.append(
                         {
