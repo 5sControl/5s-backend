@@ -4,7 +4,7 @@ from django.db.models import Prefetch, Q
 
 from src.CameraAlgorithms.models import ZoneCameras
 from src.OrderView.utils import get_skany_video_info
-from src.erp_5s.models import Orders, OrderItems, OrderOperations, OrderOperationTimespan, ReferenceItems
+from src.erp_5s.models import Orders, OrderItems, OrderOperations, OrderOperationTimespan
 from src.erp_5s.models import Operations
 from src.newOrderView.models import FiltrationOperationsTypeID
 from src.erp_5s.serializers import OrdersSerializer, OrderOperationsSerializer, OperationsSerializer
@@ -30,8 +30,9 @@ def get_orders_with_details(from_date_obj, to_date_obj):
             Prefetch(
                 'orderoperationtimespan_set',
                 queryset=OrderOperationTimespan.objects.filter(
-                    Q(started_at__range=(from_date_obj, to_date_obj)) |
-                    Q(finished_at__range=(from_date_obj, to_date_obj))
+                    Q(started_at__lte=to_date_obj, finished_at__gte=from_date_obj) |
+                    Q(started_at__gte=from_date_obj, started_at__lte=to_date_obj) |
+                    Q(finished_at__gte=from_date_obj, finished_at__lte=to_date_obj)
                 ).select_related('employee')
             )
         )
@@ -44,8 +45,45 @@ def get_orders_with_details(from_date_obj, to_date_obj):
 
     orders = Orders.objects.prefetch_related(filtered_items)
 
-    serializer = OrdersSerializer(orders, many=True)
-    return serializer.data
+    result = []
+    for order in orders:
+        order_data = {
+            'id': order.id,
+            'order_number': order.order_number,
+            'name': order.name,
+            'status': order.status,
+            'order_items': []
+        }
+        for item in order.orderitems_set.all():
+            item_data = {
+                'id': item.id,
+                'name': item.name,
+                'quantity': item.quantity,
+                'operations': []
+            }
+            for operation in item.orderoperations_set.all():
+                operation_data = {
+                    'id': operation.id,
+                    'operation_id': operation.operation.id,
+                    'operation_name': operation.operation.name,
+                    'timespans': []
+                }
+                for timespan in operation.orderoperationtimespan_set.all():
+                    timespan_data = {
+                        'id': timespan.id,
+                        'started_at': timespan.started_at,
+                        'finished_at': timespan.finished_at,
+                        'employee': {
+                            'id': timespan.employee.id,
+                            'username': timespan.employee.username
+                        } if timespan.employee else None
+                    }
+                    operation_data['timespans'].append(timespan_data)
+                item_data['operations'].append(operation_data)
+            order_data['order_items'].append(item_data)
+        result.append(order_data)
+
+    return result
 
 
 def edit_response_for_orders_view(data, type_operation):
@@ -72,8 +110,15 @@ def edit_response_for_orders_view(data, type_operation):
                         finished_at = timespan.get("finished_at")
 
                         if started_at and finished_at:
-                            started_at_dt = datetime.strptime(started_at, "%d.%m.%Y %H:%M:%S")
-                            finished_at_dt = datetime.strptime(finished_at, "%d.%m.%Y %H:%M:%S")
+                            if isinstance(started_at, str):
+                                started_at_dt = datetime.strptime(started_at, "%d.%m.%Y %H:%M:%S")
+                            else:
+                                started_at_dt = started_at
+
+                            if isinstance(finished_at, str):
+                                finished_at_dt = datetime.strptime(finished_at, "%d.%m.%Y %H:%M:%S")
+                            else:
+                                finished_at_dt = finished_at
 
                             delta = finished_at_dt - started_at_dt
                             duration += delta.total_seconds()
@@ -102,26 +147,32 @@ def edit_response_for_orders_view(data, type_operation):
                 if orders_items:
                     for item in orders_items:
                         operations = item.get("operations", [])
-
                         for operation in operations:
                             timespans = operation.get("timespans")
                             if not timespans:
                                 continue
                             for timespan in timespans:
-                                if operation.get("operation").get("id") == operation_id:
+                                if operation.get("operation_id") == operation_id:
                                     started_at = timespan.get("started_at")
                                     finished_at = timespan.get("finished_at")
-                                    if started_at and finished_at:
+                                    if isinstance(started_at, str):
+                                        started_at_dt = datetime.strptime(started_at, "%d.%m.%Y %H:%M:%S")
+                                    else:
+                                        started_at_dt = started_at
 
-                                        started_at_dt = datetime.strptime(started_at,
-                                                                          "%d.%m.%Y %H:%M:%S").timestamp() * 1000
-                                        finished_at_dt = datetime.strptime(finished_at,
-                                                                           "%d.%m.%Y %H:%M:%S").timestamp() * 1000
+                                    if isinstance(finished_at, str):
+                                        finished_at_dt = datetime.strptime(finished_at, "%d.%m.%Y %H:%M:%S")
+                                    else:
+                                        finished_at_dt = finished_at
+
+                                    if started_at_dt and finished_at_dt:
+                                        started_at_ts = started_at_dt.timestamp() * 1000
+                                        finished_at_ts = finished_at_dt.timestamp() * 1000
                                         oprs.append({
                                             "id": timespan.get("id"),
                                             "orId": str(id_value),
-                                            "sTime": started_at_dt,
-                                            "eTime": finished_at_dt
+                                            "sTime": started_at_ts,
+                                            "eTime": finished_at_ts
                                         })
 
             result.append({
@@ -132,7 +183,6 @@ def edit_response_for_orders_view(data, type_operation):
 
         sorted_result = sorted(result, key=lambda x: x["oprTypeID"], reverse=True)
         return sorted_result
-        # return data
 
 
 def get_reports_orders_view(from_date, to_date, type_operation):

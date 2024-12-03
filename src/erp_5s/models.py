@@ -14,7 +14,7 @@ class References(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'references'
+        db_table = '"erp"."references"'
         app_label = 'erp_5s'
 
 
@@ -30,7 +30,7 @@ class ReferenceItems(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'erp"."reference_items'
+        db_table = '"erp"."reference_items"'
         app_label = 'erp_5s'
 
 
@@ -42,9 +42,12 @@ class Operations(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         managed = False
-        db_table = 'operations'
+        db_table = '"erp"."operations"'
         app_label = 'erp_5s'
 
 
@@ -54,9 +57,12 @@ class Items(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         managed = False
-        db_table = 'items'
+        db_table = '"erp"."items"'
         app_label = 'erp_5s'
 
 
@@ -73,9 +79,12 @@ class Orders(models.Model):
     order_year = models.IntegerField(null=True, blank=True)
     estimated_at = models.DateField(null=True, blank=True)
 
+    def __str__(self):
+        return f"Order #{self.id}"
+
     class Meta:
         managed = False
-        db_table = 'orders'
+        db_table = '"erp"."orders"'
         app_label = 'erp_5s'
 
 
@@ -89,9 +98,12 @@ class OrderItems(models.Model):
     order = models.ForeignKey('Orders', on_delete=models.CASCADE)
     item = models.ForeignKey('Items', on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         managed = False
-        db_table = 'order_items'
+        db_table = '"erp"."order_items"'
         app_label = 'erp_5s'
 
 
@@ -103,9 +115,12 @@ class OrderOperations(models.Model):
     operation = models.ForeignKey('Operations', on_delete=models.CASCADE)
     order_item = models.ForeignKey('OrderItems', on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"order_operations_{self.id}"
+
     class Meta:
         managed = False
-        db_table = 'order_operations'
+        db_table = '"erp"."order_operations"'
         app_label = 'erp_5s'
 
 
@@ -116,9 +131,12 @@ class OrderOperationDynamicInfo(models.Model):
     reference_item = models.ForeignKey('ReferenceItems', on_delete=models.CASCADE)
     order_operation = models.ForeignKey('OrderOperations', on_delete=models.CASCADE)
 
+    def __str__(self):
+        return f"order_operation_dynamic_info_{self.id}"
+
     class Meta:
         managed = False
-        db_table = 'order_operation_dynamic_info'
+        db_table = '"erp"."order_operation_dynamic_info"'
         app_label = 'erp_5s'
 
 
@@ -131,7 +149,10 @@ class OrderOperationTimespan(models.Model):
     order_operation = models.ForeignKey('OrderOperations', on_delete=models.CASCADE)
     employee = models.ForeignKey(CustomUser, null=True, on_delete=models.SET_NULL)
 
+    def __str__(self):
+        return f"order_operation_timespan_{self.id}"
+
     class Meta:
         managed = False
-        db_table = 'order_operation_timespan'
+        db_table = '"erp"."order_operation_timespan"'
         app_label = 'erp_5s'
