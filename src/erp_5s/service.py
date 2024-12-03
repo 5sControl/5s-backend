@@ -11,7 +11,7 @@ from src.erp_5s.serializers import OrdersSerializer, OrderOperationsSerializer, 
 
 
 def get_workplace_data():
-    items = ReferenceItems.objects.filter(reference__name="workplace")
+    items = Operations.objects.all()
     serializer = OperationsSerializer(items, many=True)
     return serializer.data
 
