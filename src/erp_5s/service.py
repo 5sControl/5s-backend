@@ -197,15 +197,11 @@ def get_reports_orders_view(from_date, to_date, type_operation):
 
 def get_detail_information_by_operation(operation_id):
     timestamp = OrderOperationTimespan.objects.get(id=operation_id)
-    order_operation = timestamp.order_operation
-    order_item = order_operation.order_item
+    workplace_id = timestamp.employee.workplace_id
+    order_id = timestamp.order_operation.order_id
+    order = Orders.objects.get(id=order_id)
 
-    order = order_item.order
-
-    order_serializer = OrdersSerializer(order)
-    order_operation_serializer = OrderOperationsSerializer(order_operation)
-
-    camera_zone = ZoneCameras.objects.get(index_workplace=order_operation.operation.id)
+    camera_zone = ZoneCameras.objects.get(index_workplace=workplace_id)
     camera_id = camera_zone.camera.id
 
     sTime = int(timestamp.started_at.timestamp() * 1000) if timestamp.started_at else None
