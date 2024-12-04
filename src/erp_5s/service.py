@@ -196,16 +196,21 @@ def get_reports_orders_view(from_date, to_date, type_operation):
 
 
 def get_detail_information_by_operation(operation_id):
+    videos = []
+
     timestamp = OrderOperationTimespan.objects.get(id=operation_id)
     workplace_id = timestamp.employee.workplace_id
     order_id = timestamp.order_operation.order_id
     order = Orders.objects.get(id=order_id)
 
-    camera_zone = ZoneCameras.objects.get(index_workplace=workplace_id)
-    camera_id = camera_zone.camera.id
-
     sTime = int(timestamp.started_at.timestamp() * 1000) if timestamp.started_at else None
     eTime = int(timestamp.finished_at.timestamp() * 1000) if timestamp.finished_at else None
+
+    cameras_zones = ZoneCameras.objects.filter(index_workplace=workplace_id)
+    for zone_camera in cameras_zones:
+        camera_id = zone_camera.camera.id
+        video = get_skany_video_info(sTime, camera_id)
+        videos.append(video)
 
     result = {
         "id": timestamp.id,
@@ -218,6 +223,6 @@ def get_detail_information_by_operation(operation_id):
         "frsName": timestamp.employee.username,
         # "lstName": lastName,
         "status": order.status,
-        "video": get_skany_video_info(sTime, camera_id),
+        "videos": videos,
     }
     return result
