@@ -4,15 +4,15 @@ from django.db.models import Prefetch, Q
 
 from src.CameraAlgorithms.models import ZoneCameras
 from src.OrderView.utils import get_skany_video_info
-from src.erp_5s.models import Orders, OrderItems, OrderOperations, OrderOperationTimespan
+from src.erp_5s.models import Orders, OrderItems, OrderOperations, OrderOperationTimespan, ReferenceItems
 from src.erp_5s.models import Operations
 from src.newOrderView.models import FiltrationOperationsTypeID
-from src.erp_5s.serializers import OrdersSerializer, OrderOperationsSerializer, OperationsSerializer
+from src.erp_5s.serializers import ReferenceItemsSerializer
 
 
 def get_workplace_data():
-    items = Operations.objects.all()
-    serializer = OperationsSerializer(items, many=True)
+    items = ReferenceItems.objects.filter(reference__name="workplace")
+    serializer = ReferenceItemsSerializer(items, many=True)
     return serializer.data
 
 

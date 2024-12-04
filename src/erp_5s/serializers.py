@@ -12,9 +12,12 @@ class ReferencesSerializer(serializers.ModelSerializer):
 
 
 class ReferenceItemsSerializer(serializers.ModelSerializer):
+    # rename field operationName -> workplace_name
+    operationName = serializers.CharField(source='name')
+
     class Meta:
         model = ReferenceItems
-        fields = '__all__'
+        fields = ["id", "operationName"]
 
 
 class OperationsSerializer(serializers.ModelSerializer):
