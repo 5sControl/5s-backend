@@ -5,6 +5,13 @@ from src.erp_5s.models import References, ReferenceItems, Operations, Items, Ord
     OrderOperationDynamicInfo, OrderOperationTimespan
 
 
+class ReferenceItemsSerializerEmployees(serializers.ModelSerializer):
+
+    class Meta:
+        model = ReferenceItems
+        fields = ["id", "name"]
+
+
 class ReferencesSerializer(serializers.ModelSerializer):
     class Meta:
         model = References

@@ -10,6 +10,9 @@ from rest_framework.views import APIView
 
 from django.contrib.auth.hashers import make_password
 
+from src.erp_5s.models import ReferenceItems
+from src.erp_5s.serializers import ReferenceItemsSerializerEmployees
+
 
 class CreateUserView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated, IsSuperuserPermission]
@@ -69,3 +72,12 @@ class UserDetailApiView(generics.RetrieveUpdateDestroyAPIView):
 
     def perform_destroy(self, instance):
         instance.delete()
+
+
+class WorkplaceEmployees(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        items = ReferenceItems.objects.filter(reference__name="workplace")
+        serializer = ReferenceItemsSerializerEmployees(items, many=True)
+        return Response(serializer.data, status=200)
