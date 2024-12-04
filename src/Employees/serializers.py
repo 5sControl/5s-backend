@@ -1,15 +1,17 @@
 from rest_framework import serializers
 
 from src.Employees.models import CustomUser
+from src.erp_5s.serializers import ReferenceItemsSerializerEmployees
 
 
 class UserSerializer(serializers.ModelSerializer):
+    workplace = ReferenceItemsSerializerEmployees()
+    date_joined = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
+
     class Meta:
         model = CustomUser
         fields = ["id", "username", "password", "first_name", "last_name", "date_joined", "role", "workplace"]
         read_only_fields = ["date_joined"]
-
-    date_joined = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
 
     def update(self, instance, validated_data):
         password = validated_data.pop('password', None)
