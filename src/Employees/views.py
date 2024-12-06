@@ -59,9 +59,10 @@ class UserDetailApiView(generics.RetrieveUpdateDestroyAPIView):
 
         password = request.data.get('password')
         if password:
-            if request.user != instance and request.user.role != \
-                    CustomUser.ADMIN and request.user.role != CustomUser.SUPERUSER:
+            if request.user != instance and request.user.role not in [CustomUser.ADMIN, CustomUser.SUPERUSER]:
                 return Response({"detail": "You cannot change another user's password."}, status=403)
+            if not password.strip():
+                return Response({"detail": "Password cannot be empty."}, status=400)
 
             instance.password = make_password(password)
 

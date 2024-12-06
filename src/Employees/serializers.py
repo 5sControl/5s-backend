@@ -7,11 +7,16 @@ from src.erp_5s.serializers import ReferenceItemsSerializerEmployees
 
 class UserSerializer(serializers.ModelSerializer):
     workplace = serializers.SerializerMethodField()
+    workplace_id = serializers.PrimaryKeyRelatedField(
+        queryset=ReferenceItems.objects.filter(reference__name="workplace"),
+        write_only=True,
+        required=False
+    )
     date_joined = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
 
     class Meta:
         model = CustomUser
-        fields = ["id", "username", "password", "first_name", "last_name", "date_joined", "role", "workplace"]
+        fields = ["id", "username", "password", "first_name", "last_name", "date_joined", "role", "workplace", "workplace_id"]
         read_only_fields = ["date_joined"]
 
     def get_workplace(self, obj):
@@ -24,16 +29,25 @@ class UserSerializer(serializers.ModelSerializer):
         return None
 
     def update(self, instance, validated_data):
-        password = validated_data.pop('password', None)
+        workplace = validated_data.pop("workplace_id", None)
+        if workplace:
+            instance.workplace_id = workplace.id
+
+        password = validated_data.pop("password", None)
         if password:
-            if not instance.check_password(password):
-                instance.set_password(password)
-                instance.save()
-            return super().update(instance, validated_data)
+            instance.set_password(password)
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+
+        instance.save()
+        return instance
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    workplace = serializers.PrimaryKeyRelatedField(
+        queryset=ReferenceItems.objects.filter(reference__name="workplace"), write_only=True)
 
     class Meta:
         model = CustomUser
@@ -41,7 +55,10 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         password = validated_data.pop('password')
+        workplace = validated_data.pop('workplace', None)
         user = CustomUser(**validated_data)
+        if workplace:
+            user.workplace_id = workplace.id
         user.set_password(password)
         user.save()
         return user
