@@ -14,7 +14,7 @@ class CustomUser(AbstractUser):
     ]
 
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default=WORKER)
-    workplace = models.ForeignKey('erp_5s.ReferenceItems', null=True, on_delete=models.SET_NULL, default=None)
+    workplace_id = models.IntegerField(blank=True, null=True, default=None)
 
     def __str__(self):
         return self.username
