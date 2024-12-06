@@ -12,12 +12,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name="customuser",
-            name="workplace",
-            field=models.ForeignKey(
-                default=None,
-                null=True,
-                on_delete=django.db.models.deletion.SET_NULL,
-                to="erp_5s.referenceitems",
-            ),
+            name="workplace_id",
+            field=models.IntegerField(blank=True, default=None, null=True),
         ),
     ]
