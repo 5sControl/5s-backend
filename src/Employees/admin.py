@@ -16,7 +16,7 @@ class CustomUserAdminForm(forms.ModelForm):
 
 class CustomUserAdmin(admin.ModelAdmin):
     form = CustomUserAdminForm
-    list_display = ('username', 'email', 'role', 'workplace_name')
+    list_display = ('username', 'email', 'role')
     search_fields = ('username', 'email', 'role')
     list_filter = ('role',)
 
