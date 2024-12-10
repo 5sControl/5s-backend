@@ -171,4 +171,4 @@ class CameraWithAlgorithmsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Camera
-        fields = ("id", "name", "algorithms")
+        fields = ("id", "name", "username", "password", "algorithms")
