@@ -152,3 +152,23 @@ class CameraSerializer(serializers.ModelSerializer):
 
     def get_password(self, obj):
         return decrypt(obj.password)
+
+
+class CameraAlgorithmNestedSerializer(serializers.ModelSerializer):
+    algorithm = AlgorithmSerializer()
+
+    class Meta:
+        model = CameraAlgorithm
+        fields = ("algorithm", "process_id", "is_active")
+
+
+class CameraWithAlgorithmsSerializer(serializers.ModelSerializer):
+    algorithms = serializers.SerializerMethodField()
+
+    def get_algorithms(self, obj):
+        algorithms = CameraAlgorithm.objects.filter(camera=obj).select_related("algorithm")
+        return CameraAlgorithmNestedSerializer(algorithms, many=True).data
+
+    class Meta:
+        model = Camera
+        fields = ("id", "name", "algorithms")
