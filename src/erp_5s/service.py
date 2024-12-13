@@ -12,12 +12,12 @@ from src.erp_5s.serializers import ReferenceItemsSerializer, OrderOperationsSeri
 
 def get_operations():
     result = []
-    operations = OrderOperations.objects.all()
+    operations = Operations.objects.all()
     for operation in operations:
         result.append(
             {
                 "id": operation.id,
-                "operationName": operation.operation.name
+                "operationName": operation.name
             }
         )
     return result
