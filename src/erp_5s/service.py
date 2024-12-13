@@ -7,7 +7,20 @@ from src.OrderView.utils import get_skany_video_info
 from src.erp_5s.models import Orders, OrderItems, OrderOperations, OrderOperationTimespan, ReferenceItems
 from src.erp_5s.models import Operations
 from src.newOrderView.models import FiltrationOperationsTypeID
-from src.erp_5s.serializers import ReferenceItemsSerializer
+from src.erp_5s.serializers import ReferenceItemsSerializer, OrderOperationsSerializer
+
+
+def get_operations():
+    result = []
+    operations = OrderOperations.objects.all()
+    for operation in operations:
+        result.append(
+            {
+                "id": operation.id,
+                "operationName": operation.operation.name
+            }
+        )
+    return result
 
 
 def get_workplace_data():

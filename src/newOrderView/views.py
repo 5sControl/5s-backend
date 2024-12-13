@@ -24,7 +24,7 @@ from ..OrderView.utils import get_package_video_info
 
 import logging
 
-from ..erp_5s.service import get_workplace_data, get_detail_information_by_operation
+from ..erp_5s.service import get_workplace_data, get_detail_information_by_operation, get_operations
 from ..manifest_api.sender import get_operation_by_details_manifest
 from ..odoo_api.service import odoo_get_data, details_for_operation
 
@@ -160,7 +160,7 @@ class FiltrationsDataView(generics.ListAPIView):
             ]
 
         if connection.erp_system == "5s_control":
-            operations = get_workplace_data()
+            operations = get_operations()
             for operation in operations:
                 five_s_data.append(
                         {
