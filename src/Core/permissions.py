@@ -20,6 +20,11 @@ class IsSuperuserPermission(permissions.BasePermission):
         return request.user.is_authenticated and request.user.is_superuser
 
 
+class IsAdminPermission(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.role == CustomUser.ADMIN
+
+
 class IsStaffPermission(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.is_staff
