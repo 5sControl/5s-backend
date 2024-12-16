@@ -1,5 +1,5 @@
 from src.Employees.models import CustomUser
-from src.Core.permissions import IsSuperuserPermission
+from src.Core.permissions import IsAdminOrSuperuserPermission
 
 from src.Employees.serializers import UserSerializer, CreateUserSerializer
 
@@ -15,7 +15,7 @@ from src.erp_5s.serializers import ReferenceItemsSerializerEmployees
 
 
 class CreateUserView(generics.CreateAPIView):
-    permission_classes = [IsAuthenticated, IsSuperuserPermission]
+    permission_classes = [IsAuthenticated, IsAdminOrSuperuserPermission]
     serializer_class = CreateUserSerializer
 
     def create(self, request, *args, **kwargs):
@@ -33,7 +33,7 @@ class CreateUserView(generics.CreateAPIView):
 
 
 class UserListApiView(generics.ListAPIView):
-    permission_classes = [IsAuthenticated, IsSuperuserPermission]
+    permission_classes = [IsAuthenticated, IsAdminOrSuperuserPermission]
     serializer_class = UserSerializer
     queryset = CustomUser.objects.all()
     pagination_class = None
@@ -48,7 +48,7 @@ class UserInfoFromToken(APIView):
 
 
 class UserDetailApiView(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [IsAuthenticated, IsSuperuserPermission]
+    permission_classes = [IsAuthenticated, IsAdminOrSuperuserPermission]
     serializer_class = UserSerializer
     queryset = CustomUser.objects.all()
     lookup_field = 'pk'
