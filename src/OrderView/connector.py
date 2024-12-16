@@ -1,5 +1,6 @@
 from typing import Any, Iterable, Optional
 import pyodbc
+from django.shortcuts import get_object_or_404
 
 from src.Core.types import Query
 from src.DatabaseConnections.models import ConnectionInfo
@@ -53,7 +54,7 @@ class MsSqlConnector:
             return False
 
     def get_database_connection(self):
-        connection_data = ConnectionInfo.objects.get(type="database")
+        connection_data = get_object_or_404(ConnectionInfo, type="database")
 
         server = connection_data.server
         database = connection_data.database

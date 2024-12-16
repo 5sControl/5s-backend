@@ -1,14 +1,17 @@
-from django.contrib.auth.models import User
+from src.Employees.models import CustomUser
+from src.Core.permissions import IsSuperuserPermission
+
+from src.Employees.serializers import UserSerializer, CreateUserSerializer
 
 from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
-from src.Core.permissions import IsSuperuserPermission
+from django.contrib.auth.hashers import make_password
 
-from src.Employees.services import user_manager
-from src.Employees.serializers import UserSerializer, CreateUserSerializer
+from src.erp_5s.models import ReferenceItems
+from src.erp_5s.serializers import ReferenceItemsSerializerEmployees
 
 
 class CreateUserView(generics.CreateAPIView):
@@ -19,39 +22,64 @@ class CreateUserView(generics.CreateAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        user_type = serializer.validated_data.get("user_type")
-        username = serializer.validated_data.get("username")
-        password = serializer.validated_data.get("password")
+        if CustomUser.objects.filter(username=serializer.validated_data["username"]).exists():
+            return Response({"error": "User already exists"}, status=status.HTTP_400_BAD_REQUEST)
 
-        if not User.objects.filter(username=username).exists():
-            if user_type.lower() == "admin":
-                user_manager.create_admin(username, password)
-            elif user_type.lower() == "worker":
-                user_manager.create_worker(username, password)
-            else:
-                return Response(
-                    data={"error": 'User Type must be "Admin" or "Worker"'},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-        else:
-            return Response(
-                data={"error": 'User Exists'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        return Response(status=status.HTTP_201_CREATED)
+    def perform_create(self, serializer):
+        serializer.save()
 
 
 class UserListApiView(generics.ListAPIView):
-    pagination_class = None
     permission_classes = [IsAuthenticated, IsSuperuserPermission]
-    queryset = User.objects.all()
     serializer_class = UserSerializer
+    queryset = CustomUser.objects.all()
+    pagination_class = None
 
 
 class UserInfoFromToken(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        user_serializer = UserSerializer(request.user)
-        return Response(user_serializer.data, status=status.HTTP_200_OK)
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class UserDetailApiView(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated, IsSuperuserPermission]
+    serializer_class = UserSerializer
+    queryset = CustomUser.objects.all()
+    lookup_field = 'pk'
+
+    def update(self, request, *args, **kwargs):
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+
+        password = request.data.get('password')
+        if password:
+            if request.user != instance and request.user.role not in [CustomUser.ADMIN, CustomUser.SUPERUSER]:
+                return Response({"detail": "You cannot change another user's password."}, status=403)
+            if not password.strip():
+                return Response({"detail": "Password cannot be empty."}, status=400)
+
+            instance.password = make_password(password)
+
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+
+        return Response(serializer.data)
+
+    def perform_destroy(self, instance):
+        instance.delete()
+
+
+class WorkplaceEmployees(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        items = ReferenceItems.objects.filter(reference__name="workplace")
+        serializer = ReferenceItemsSerializerEmployees(items, many=True)
+        return Response(serializer.data, status=200)

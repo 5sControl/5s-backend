@@ -1,10 +1,13 @@
 from rest_framework import serializers
+from collections import defaultdict
 
 from src.Reports.models import Report, SkanyReport
 from src.ImageReport.serializers import PhotoSerializers
 from src.CameraAlgorithms.serializers import AlgorithmSerializer, CameraReportSerializer
 
 from datetime import datetime
+
+from src.newOrderView.models import FiltrationOperationsTypeID
 
 
 class ReportSerializers(serializers.ModelSerializer):
@@ -119,3 +122,23 @@ class SearchReportSerializers(serializers.ModelSerializer):
             data.update({key: value for item in filtered_extra for key, value in item.items()})
 
         return data if filtered_extra else None
+
+
+class ReportSerializersForOrders5s(serializers.ModelSerializer):
+    extra = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Report
+        fields = [
+            "id",
+            "extra"
+        ]
+
+    def get_extra(self, obj):
+        extra = obj.extra
+        item_id = self.context.get('item_id')
+        if item_id:
+            filtered_extra = [item for item in extra if item.get('itemId') == item_id]
+        else:
+            filtered_extra = obj.extra
+        return filtered_extra

@@ -65,6 +65,12 @@ class IndexStanowiskoSerializer(serializers.ModelSerializer):
         ]
 
 
+class OrderConnectionInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ConnectionInfo
+        fields = '__all__'
+
+
 class DeleteConnectionSerializer(serializers.Serializer):
     pass
 

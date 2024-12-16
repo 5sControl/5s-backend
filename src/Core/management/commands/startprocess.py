@@ -46,6 +46,7 @@ def start_process() -> None:
             coords = zone_camera.coords
             coords[0]["zoneId"] = zone_camera.id
             coords[0]["zoneName"] = zone_camera.name
+            coords[0]["approximate_duration"] = zone_camera.approximate_duration
 
             all_cords.append(coords[0])
 
@@ -78,6 +79,7 @@ def start_process() -> None:
                         {
                             "zoneId": zone_camera.id,
                             "zoneName": zone_camera.name,
+                            "approximate_duration": zone_camera.approximate_duration,
                             "coords": zone_camera.coords,
                         }
                     )

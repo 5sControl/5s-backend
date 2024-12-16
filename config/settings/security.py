@@ -1,3 +1,10 @@
+from decouple import config
+
+existing_cors_whitelist = config("CORS_ORIGIN_WHITELIST", default="").split(',')
+existing_csrf_origins = config("CSRF_TRUSTED_ORIGINS", default="").split(',')
+
+
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -57,7 +64,8 @@ CORS_ORIGIN_WHITELIST = [
     "https://grand-alien-apparently.ngrok-free.app",
     "https://pleasant-bluejay-next.ngrok-free.app",
     "https://crucial-heron-vastly.ngrok-free.app",
-    "https://5scontrol.serveo.net",
+    "https://office.5scontrol.com",
+    "http://localhost:5173",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
@@ -67,5 +75,9 @@ CSRF_TRUSTED_ORIGINS = [
     "https://grand-alien-apparently.ngrok-free.app",
     "https://crucial-heron-vastly.ngrok-free.app",
     "https://pleasant-bluejay-next.ngrok-free.app",
-    "https://5scontrol.serveo.net",
+    "https://office.5scontrol.com",
+    "http://localhost:5173",
 ]
+
+CORS_ORIGIN_WHITELIST.extend(existing_cors_whitelist)
+CSRF_TRUSTED_ORIGINS.extend(existing_csrf_origins)

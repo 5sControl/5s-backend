@@ -32,7 +32,7 @@ class CameraAlgorithmLogAdmin(admin.ModelAdmin):
 
 @admin.register(ZoneCameras)
 class ZoneCamerasAdmin(admin.ModelAdmin):
-    readonly_fields = ["is_active"]
+    readonly_fields = ["is_active", "camera", "workplace"]
     list_display = (
         "camera",
         "name",

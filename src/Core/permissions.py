@@ -1,6 +1,6 @@
 from rest_framework import permissions
 
-from django.contrib.auth.models import User
+from src.Employees.models import CustomUser
 
 
 class IsAdminOrReadOnly(permissions.BasePermission):
@@ -12,7 +12,7 @@ class IsAdminOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        return User.objects.filter(username=request.user)
+        return CustomUser.objects.filter(username=request.user)
 
 
 class IsSuperuserPermission(permissions.BasePermission):

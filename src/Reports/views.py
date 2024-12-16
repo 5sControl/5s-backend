@@ -19,6 +19,8 @@ from src.ImageReport.models import Image
 from src.CameraAlgorithms.models import Camera
 from src.CameraAlgorithms.models import Algorithm
 from src.Mailer.service import check_work_time
+from src.DatabaseConnections.models import ConnectionInfo
+from src.manifest_api.sender import send_manifest_response
 from src.Reports.models import Report, SkanyReport
 from src.Reports.serializers import (
     ReportSerializers,
@@ -27,6 +29,7 @@ from src.Reports.serializers import (
 )
 from src.Inventory.service import process_item_status
 from src.Reports.service import edit_extra, create_skanyreport
+from src.manifest_api.service import adding_data_to_extra
 
 logger = logging.getLogger(__name__)
 
@@ -113,6 +116,14 @@ class ActionsWithPhotos(APIView):
             create_skanyreport(
                 action, extra, not violation_found, data.get("start_tracking"), data.get("stop_tracking")
             )
+
+        elif "safety_hand_detection" in algorithm.image_name:
+            extra = adding_data_to_extra(extra)
+            manifest_connection = ConnectionInfo.objects.filter(used_in_orders_view=True, erp_system="manifest").first()
+            if manifest_connection:
+                send_manifest_response(extra, report_id=action.id)
+            else:
+                logger.info("Manifest not active")
 
         if photos:
             for photo in photos:

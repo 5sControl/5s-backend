@@ -74,6 +74,7 @@ class HandleItemUtils:
             config: Dict[str, List[Any]] = {"zonesID": zone}
             algorithm_data: Dict[str, Any] = {
                 "name": camera_algorithm_obj.algorithm.name,
+                "used_in": camera_algorithm_obj.algorithm.used_in,
                 "config": config,
             }
             logger.warning("Stopping process")

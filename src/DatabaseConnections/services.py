@@ -1,4 +1,6 @@
 import logging
+import requests
+
 from typing import Any, Dict
 
 from src.DatabaseConnections.models import ConnectionInfo

@@ -3,19 +3,16 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.exceptions import NotFound
 
 from src.Core.paginators import NoPagination
 from src.Core.permissions import IsStaffPermission, IsSuperuserPermission
 
-from .models import Camera, ZoneCameras
+from src.CameraAlgorithms.models import Camera, ZoneCameras
 from src.CameraAlgorithms.models import Algorithm, CameraAlgorithm, CameraAlgorithmLog
-from src.CameraAlgorithms.services.security import decrypt
-from .services.tasks import uploading_algorithm
-from .services.cameraalgorithm import (
-    CreateCameraAlgorithms,
-    DeleteCamera,
-)
-from .serializers import (
+from src.CameraAlgorithms.services.tasks import uploading_algorithm
+from src.CameraAlgorithms.services.cameraalgorithm import CreateCameraAlgorithms, DeleteCamera
+from src.CameraAlgorithms.serializers import (
     AlgorithmDetailSerializer,
     CameraAlgorithmFullSerializer,
     CameraModelSerializer,
@@ -24,7 +21,7 @@ from .serializers import (
     ZoneCameraSerializer,
     UniqueImageNameSerializer,
     AlgorithmInfoSerializer,
-    CameraSerializer,
+    CameraSerializer, CameraWithAlgorithmsSerializer,
 )
 
 
@@ -49,6 +46,23 @@ class AlgorithmProcessApiView(generics.ListAPIView):
     pagination_class = NoPagination
 
 
+class CameraAlgorithmProcessApiView(generics.ListAPIView):
+    serializer_class = CameraWithAlgorithmsSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = NoPagination
+
+    def get_queryset(self):
+        camera_ip = self.kwargs.get("camera_ip")
+        queryset = Camera.objects.all()
+
+        if camera_ip:
+            queryset = queryset.filter(id=camera_ip)
+            if not queryset.exists():
+                raise NotFound(f"No data found for camera_ip: {camera_ip}")
+
+        return queryset
+
+
 class DeleteCameraAPIView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated, IsSuperuserPermission | IsStaffPermission]
     queryset = Camera.objects.all()
@@ -60,7 +74,7 @@ class DeleteCameraAPIView(generics.DestroyAPIView):
 
 
 class CreateCameraAlgorithmsApiView(generics.GenericAPIView):
-    permission_classes = [IsAuthenticated, IsSuperuserPermission | IsStaffPermission]
+    permission_classes = [IsAuthenticated]
     serializer_class = CreateCameraAlgorithmSerializer
 
     def post(self, request, *args, **kwargs):

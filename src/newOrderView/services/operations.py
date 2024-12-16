@@ -15,6 +15,9 @@ from src.newOrderView.repositories.stanowisko import WorkplaceRepository
 
 from ..repositories import OperationsRepository
 from ..utils import add_ms, calculate_duration, convert_to_gmt0, convert_to_unix
+from ...DatabaseConnections.models import ConnectionInfo
+from ...erp_5s.service import get_workplace_data
+from ...manifest_api.get_data import get_steps_by_asset_class
 
 logger = logging.getLogger(__name__)
 
@@ -26,10 +29,13 @@ class OperationServices:
     ) -> List[Dict[str, Any]]:
         workplace_repo: WorkplaceRepository = WorkplaceRepository()
         operation_repo: OperationsRepository = OperationsRepository()
-
-        stanowiska_data: List[Tuple[Any]] = workplace_repo.get_raports(
-            operation_type_ids
-        )
+        try:
+            stanowiska_data: List[Tuple[Any]] = workplace_repo.get_raports(
+                operation_type_ids
+            )
+        except Exception as e:
+            print(f"Exception stanowiska_data {e}")
+            stanowiska_data = []
 
         result_list: List[Dict[str, Any]] = []
 
@@ -216,19 +222,27 @@ class OperationServices:
         return result_list
 
     @staticmethod
-    def get_whnet_operation() -> List[Dict[str, Any]]:
-        workplace_repo: WorkplaceRepository = WorkplaceRepository()
-        stanowiska_data: List[Tuple[Any]] = workplace_repo.get_raports()
+    def get_whet_operation() -> List[Dict[str, Any]]:
+        result_list = []
 
-        result_list: List[Dict[str, Any]] = []
+        if ConnectionInfo.objects.filter(is_active=True, erp_system="manifest").exists():
+            result_list = get_steps_by_asset_class()[0]
 
-        for order_row in stanowiska_data:
-            order: Dict[str, Any] = {
-                "id": int(order_row[0]),
-                "operationName": str(order_row[1]).strip(),
-            }
+        if ConnectionInfo.objects.filter(is_active=True, erp_system="5s_control").exists():
+            result_list = get_workplace_data()
 
-            result_list.append(order)
+        if ConnectionInfo.objects.filter(is_active=True, erp_system="winkhaus").exists():
+            workplace_repo: WorkplaceRepository = WorkplaceRepository()
+            stanowiska_data: List[Tuple[Any]] = workplace_repo.get_raports()
+
+            result_list: List[Dict[str, Any]] = []
+
+            for order_row in stanowiska_data:
+                order: Dict[str, Any] = {
+                    "id": int(order_row[0]),
+                    "operationName": str(order_row[1]).strip(),
+                }
+                result_list.append(order)
 
         return result_list
 

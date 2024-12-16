@@ -1,6 +1,12 @@
 from django.contrib import admin
 
-from .models import SystemMessage
+from src.Core.models import SystemMessage, CustomPermission
+
+
+@admin.register(CustomPermission)
+class CustomPermissionAdmin(admin.ModelAdmin):
+    list_display = ('codename', 'name')
+    search_fields = ('codename', 'name')
 
 
 @admin.register(SystemMessage)

@@ -70,10 +70,12 @@ def create_camera(camera: Dict[str, str]) -> None:
         "password": password,
     }
 
-    is_camera_exist: Iterable[Camera] = Camera.objects.filter(
-        id=ip, name=name, username=username, password=password
-    ).exists()
+    is_camera_exist = Camera.objects.filter(id=ip).exists()
+
     if is_camera_exist:
+        camera_obj_to_update: Camera = Camera.objects.get(id=ip)
+        camera_obj_to_update.name = name
+        camera_obj_to_update.save()
         return
 
     if not check_connection({"ip": ip, "username": username, "password": password}):
@@ -222,18 +224,23 @@ def create_camera_algorithms(
 
         else:
             # Runs for any custom algorithm
+            new_coords = []
             for zone_id in zones:
                 zone_camera: ZoneCameras = ZoneCameras.objects.get(
                     id=zone_id["id"], camera=camera_obj
                 )
-                coords: Dict[str, Any] = zone_camera.coords
-                coords[0]["zoneId"] = zone_camera.id
-                coords[0]["zoneName"] = zone_camera.name
+                new_coords.append(
+                    zone_camera.coords[0] |
+                    {
+                        "zoneId": zone_camera.id,
+                        "zoneName": zone_camera.name,
+                        "approximate_duration": zone_camera.approximate_duration,
+                    }
+                )
 
-                data.append([{"coords": coords}])
-
-            if len(data) > 0:
-                request["extra"] = data[0]
+                # data.append([{"coords": coords}])
+            if len(new_coords) > 0:
+                request["extra"] = [{"coords": new_coords}]
             else:
                 request["extra"] = data
 
@@ -274,34 +281,53 @@ def create_single_camera_algorithms(
     )
 
     algorithm_items: Iterable[Items] = Items.objects.filter(camera=camera_obj.id)
-    for item in algorithm_items:
-        areas.append(
-            {
-                "itemId": item.id,
-                "itemName": item.name,
-                "coords": item.coords,
-                "lowStockLevel": item.low_stock_level,
-                "task": item.object_type,
-            }
-        )
+    if algorithm_data.get("used_in") == "inventory":
+        for item in algorithm_items:
+            areas.append(
+                {
+                    "itemId": item.id,
+                    "itemName": item.name,
+                    "coords": item.coords,
+                    "lowStockLevel": item.low_stock_level,
+                    "task": item.object_type,
+                }
+            )
 
     for zone_id in zones:
         zone_camera = ZoneCameras.objects.get(id=zone_id["id"], camera=camera_obj)
 
-        stelag.append(
-            {
-                "zoneId": zone_camera.id,
-                "zoneName": zone_camera.name,
-                "coords": zone_camera.coords,
-            }
-        )
+        if algorithm_data.get("used_in") == "inventory":
+            stelag.append(
+                {
+                    "zoneId": zone_camera.id,
+                    "zoneName": zone_camera.name,
+                    "coords": zone_camera.coords,
+                }
+            )
+        else:
+            for coord in zone_camera.coords:
+                zone_data = {
+                    "x1": coord["x1"],
+                    "x2": coord["x2"],
+                    "y1": coord["y1"],
+                    "y2": coord["y2"],
+                    "zoneId": zone_camera.id,
+                    "zoneName": zone_camera.name,
+                    "approximate_duration": zone_camera.approximate_duration
+                }
 
-    new_data: Dict[str, Any] = {
-        "areas": areas,
-        "zones": stelag,
-    }
-    data.append(new_data)
-    request["extra"] = data
+                stelag.append(zone_data)
+
+    if algorithm_data.get("used_in") == "inventory":
+
+        new_data: Dict[str, Any] = {
+            "areas": areas,
+            "zones": stelag,
+        }
+        data.append(new_data)
+        request["extra"] = data
+    else:
+        request["extra"] = [{"coords": stelag}]
 
     response: Dict[str, Any] = send_run_request(request)
     logger.warning("Successfully")
