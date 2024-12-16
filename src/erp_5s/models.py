@@ -148,6 +148,7 @@ class OrderOperationTimespan(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     order_operation = models.ForeignKey('OrderOperations', on_delete=models.CASCADE)
     employee = models.ForeignKey(CustomUser, null=True, on_delete=models.SET_NULL)
+    workplace_number = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return f"order_operation_timespan_{self.id}"

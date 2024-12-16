@@ -212,7 +212,8 @@ def get_detail_information_by_operation(operation_id):
     videos = []
 
     timestamp = OrderOperationTimespan.objects.get(id=operation_id)
-    workplace_id = timestamp.employee.workplace_id
+    # workplace_id = timestamp.employee.workplace_id
+    workplace_id = timestamp.workplace_number
     order_id = timestamp.order_operation.order_id
     order = Orders.objects.get(id=order_id)
 
@@ -220,10 +221,14 @@ def get_detail_information_by_operation(operation_id):
     eTime = int(timestamp.finished_at.timestamp() * 1000) if timestamp.finished_at else None
 
     cameras_zones = ZoneCameras.objects.filter(index_workplace=workplace_id)
-    for zone_camera in cameras_zones:
-        camera_id = zone_camera.camera.id
-        video = get_skany_video_info(sTime, camera_id)
-        videos.append(video)
+
+    if workplace_id:
+        for zone_camera in cameras_zones:
+            camera_id = zone_camera.camera.id
+            video = get_skany_video_info(sTime, camera_id)
+
+            if video not in videos:
+                videos.append(video)
 
     result = {
         "id": timestamp.id,
