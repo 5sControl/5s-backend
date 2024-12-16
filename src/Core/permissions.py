@@ -28,3 +28,14 @@ class IsAdminPermission(permissions.BasePermission):
 class IsStaffPermission(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.is_authenticated and request.user.is_staff
+
+
+class IsAdminOrSuperuserPermission(permissions.BasePermission):
+    """
+    Permission to allow access to superusers and users with the 'admin' role.
+    """
+    def has_permission(self, request, view):
+        return (
+            request.user.is_authenticated and
+            (request.user.is_superuser or request.user.role == CustomUser.ADMIN)
+        )
