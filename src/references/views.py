@@ -7,7 +7,6 @@ from rest_framework.views import APIView
 from src.DatabaseConnections.models import ConnectionInfo
 from src.manifest_api.get_data import get_erp_products, get_erp_operations, get_erp_equipment, get_erp_employees
 from src.odoo_api.service import odoo_get_data
-from src.references.service import get_username_from_token
 
 import logging
 
@@ -19,19 +18,15 @@ def proxy_request(request, url):
     method = request.method
     print("method", method)
 
-    username = get_username_from_token(request.headers.get('Authorization'))
-
     if request.headers.get('Content-Type') == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
         headers = {
             'Content-Type': request.headers.get('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'),
             'Authorization': request.headers.get('Authorization'),
-            'X-Username': username
         }
     else:
         headers = {
             'Content-Type': request.headers.get('Content-Type', 'application/json'),
             'Authorization': request.headers.get('Authorization'),
-            'X-Username': username
         }
 
     try:
