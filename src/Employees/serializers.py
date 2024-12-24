@@ -45,9 +45,12 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
     workplace = serializers.PrimaryKeyRelatedField(
-        queryset=ReferenceItems.objects.filter(reference__name="workplace"), write_only=True)
+        queryset=ReferenceItems.objects.filter(reference__name="workplace"),
+        write_only=True,
+        required=False,
+        allow_null=True
+    )
 
     class Meta:
         model = CustomUser
