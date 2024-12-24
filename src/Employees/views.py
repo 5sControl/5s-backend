@@ -69,14 +69,14 @@ class UserDetailApiView(generics.RetrieveUpdateDestroyAPIView):
 
         if 'workplace_id' in request.data:
             workplace_id = request.data.get('workplace_id')
-
+            print(workplace_id)
             if workplace_id is None:
                 instance.workplace_id = None
             else:
                 if not ReferenceItems.objects.filter(id=workplace_id).exists():
                     raise ValidationError({"workplace_id": "Workplace with this ID does not exist."})
 
-                instance.workplace_id = workplace_id
+            instance.workplace_id = workplace_id
 
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)

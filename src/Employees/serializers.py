@@ -10,7 +10,8 @@ class UserSerializer(serializers.ModelSerializer):
     workplace_id = serializers.PrimaryKeyRelatedField(
         queryset=ReferenceItems.objects.filter(reference__name="workplace"),
         write_only=True,
-        required=False
+        required=False,
+        allow_null=True
     )
     date_joined = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
 
@@ -30,8 +31,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         workplace = validated_data.pop("workplace_id", None)
-        if workplace:
-            instance.workplace_id = workplace.id
+        instance.workplace_id = workplace.id if workplace else None
 
         password = validated_data.pop("password", None)
         if password:
