@@ -1,0 +1,82 @@
+name: Build and deploy django (stage)
+
+env:
+  DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
+  DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+  DOCKER_TAG: ${{ github.event.pull_request.title }}
+  PR_BODY: ${{ github.event.pull_request.body }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  ACTIONS_STEP_DEBUG: true
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - stage
+
+jobs:
+  Build:
+    if: github.event.pull_request.merged == true
+    runs-on: self-hosted-stage
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Get metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: 5scontrol/django
+          tags: |
+            stage-${{env.DOCKER_TAG}}
+            stage-latest
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ env.DOCKERHUB_TOKEN }}
+        continue-on-error: false
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=5scontrol/django:stage-cache
+          cache-to: type=registry,ref=5scontrol/django:stage-cache,mode=max
+        continue-on-error: false
+        env:
+          DOCKER_BUILDKIT: 1
+
+  Deploy:
+    runs-on: self-hosted-stage
+    needs: Build
+
+    steps:
+      - name: Pull the latest Docker image
+        working-directory: /home/admin1/reps/server
+        run: |
+          echo "Pulling latest Docker image for django..."
+          DJANGO_TAG=stage-${{ env.DOCKER_TAG }} docker-compose pull django
+
+      - name: Stop and remove the old server container
+        working-directory: /home/admin1/reps/server
+        run: |
+          echo "Stopping and removing the old server container..."
+          docker-compose rm -fs db django
+
+      - name: Recreate and restart server container
+        working-directory: /home/admin1/reps/server
+        run: |
+          echo "Recreating and restarting the server container..."
+          DJANGO_TAG=stage-${{ env.DOCKER_TAG }} docker-compose up -d --no-deps db django
