@@ -13,7 +13,7 @@ class Command(BaseCommand):
         username = "admin"
         email = "admin@example.com"
         password = "admin"
-        role = "superuser"
+        role = "admin"
 
         user = CustomUser.objects.filter(username=username).first()
 

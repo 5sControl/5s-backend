@@ -1,0 +1,80 @@
+name: Build and deploy django
+
+env:
+  DOCKERHUB_USERNAME: ${{ vars.DOCKERHUB_USERNAME }}
+  DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+  ACTIONS_STEP_DEBUG: true
+
+on:
+  push:
+    branches: [development]
+
+jobs:
+  Build:
+    name: Build and Push Docker Images
+    runs-on: self-hosted-dev
+
+    env:
+      NODE_ENV: development
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+
+      - name: Get the short Git commit hash
+        id: vars
+        run: |
+          echo "COMMIT_HASH=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Get metadata.
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: 5scontrol/django
+          tags: |
+            ${{ env.COMMIT_HASH }}
+            latest
+        continue-on-error: false
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ env.DOCKERHUB_TOKEN }}
+        continue-on-error: false
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=5scontrol/django:cache
+          cache-to: type=registry,ref=5scontrol/django:cache,mode=max
+        continue-on-error: false
+        env:
+          DOCKER_BUILDKIT: 1
+
+  Deploy:
+    name: Deploy to Server
+    runs-on: self-hosted-dev
+    needs: Build
+
+    steps:
+      - name: Pull the latest Docker image
+        working-directory: /home/server/reps/server-/
+        run: docker-compose pull django
+
+      - name: Stop and remove the old server container
+        working-directory: /home/server/reps/server-/
+        run: docker-compose rm -fs db django
+
+      - name: Recreate and restart server container
+        working-directory: /home/server/reps/server-/
+        run: docker-compose up -d --no-deps db django
