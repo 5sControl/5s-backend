@@ -1,8 +1,8 @@
-from django.contrib.auth.views import PasswordResetConfirmView
 from django.urls import path
 
 from src.Employees.views import CreateUserView, UserListApiView, UserInfoFromToken, UserDetailApiView, \
-    WorkplaceEmployees, PasswordResetRequestView, PasswordResetCompleteView
+    WorkplaceEmployees, PasswordResetRequestView, PasswordResetCompleteView, PasswordResetConfirmView
+
 
 urlpatterns = [
     path("create/", CreateUserView.as_view()),

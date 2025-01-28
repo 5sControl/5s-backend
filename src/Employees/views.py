@@ -1,7 +1,12 @@
 import smtplib
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.utils.http import urlsafe_base64_encode
+from django.http import HttpResponse
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
+from django.contrib.auth.hashers import make_password
+from django.shortcuts import render
+from django.contrib import messages
+
 from email.message import EmailMessage
 
 from rest_framework.response import Response
@@ -10,15 +15,13 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError
 
-from django.contrib.auth.hashers import make_password
 
 from src.Employees.models import CustomUser
+from src.Employees.serializers import UserSerializer, CreateUserSerializer, PasswordResetRequestSerializer
+from src.Employees.forms import PasswordResetForm
 from src.Core.permissions import IsAdminOrSuperuserPermission
 
-from src.Employees.serializers import UserSerializer, CreateUserSerializer, PasswordResetRequestSerializer
-
 from src.Mailer.models import SMTPSettings
-from src.Mailer.service import NGROK_URL
 from src.erp_5s.models import ReferenceItems
 from src.erp_5s.serializers import ReferenceItemsSerializerEmployees
 
@@ -156,10 +159,35 @@ class PasswordResetCompleteView(APIView):
 
 
 class PasswordResetConfirmView(APIView):
-    def post(self, request, uidb64, token):
-        serializer = PasswordResetRequestSerializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            return Response({"message": "Password has been reset successfully."}, status=status.HTTP_200_OK)
+    def get(self, request, uidb64, token):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = CustomUser.objects.get(pk=uid)
+        except (CustomUser.DoesNotExist, ValueError, TypeError):
+            return HttpResponse("Invalid link", status=400)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if not PasswordResetTokenGenerator().check_token(user, token):
+            return HttpResponse("The reset link is invalid or expired.", status=400)
+
+        form = PasswordResetForm()
+        return render(request, "password_reset_confirm.html", {"form": form, "validlink": True})
+
+    def post(self, request, uidb64, token):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = CustomUser.objects.get(pk=uid)
+        except (CustomUser.DoesNotExist, ValueError, TypeError):
+            return HttpResponse("Invalid link", status=400)
+
+        if not PasswordResetTokenGenerator().check_token(user, token):
+            return HttpResponse("The reset link is invalid or expired.", status=400)
+
+        form = PasswordResetForm(request.POST)
+        if form.is_valid():
+            new_password = form.cleaned_data.get("new_password")
+            user.set_password(new_password)
+            user.save()
+            messages.success(request, "Your password has been reset successfully.")
+            return render(request, "password_reset_confirm.html", {"form": form, "success": True})
+        else:
+            return render(request, "password_reset_confirm.html", {"form": form, "validlink": True})
