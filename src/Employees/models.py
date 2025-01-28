@@ -20,6 +20,7 @@ class CustomUser(AbstractUser):
 
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default=WORKER)
     workplace_id = models.IntegerField(blank=True, null=True, default=None)
+    email = models.EmailField(null=True, blank=True, unique=True, default=None)
 
     def __str__(self):
         return self.username
