@@ -1,11 +1,9 @@
 import smtplib
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.http import HttpResponse
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.contrib.auth.hashers import make_password
-from django.shortcuts import render
-from django.contrib import messages
+from django.utils.timezone import now
 
 from email.message import EmailMessage
 
@@ -16,9 +14,9 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError
 
 
-from src.Employees.models import CustomUser
-from src.Employees.serializers import UserSerializer, CreateUserSerializer, PasswordResetRequestSerializer
-from src.Employees.forms import PasswordResetForm
+from src.Employees.models import CustomUser, PasswordResetCode
+from src.Employees.serializers import UserSerializer, CreateUserSerializer, PasswordResetRequestSerializer, \
+    SetNewPasswordSerializer, VerifyResetCodeSerializer
 from src.Core.permissions import IsAdminOrSuperuserPermission
 
 from src.Mailer.models import SMTPSettings
@@ -118,7 +116,6 @@ class PasswordResetRequestView(APIView):
             except CustomUser.DoesNotExist:
                 return Response({"error": "User with this email does not exist."}, status=status.HTTP_404_NOT_FOUND)
 
-            # Генерация токена и ссылки для сброса пароля
             token = PasswordResetTokenGenerator().make_token(user)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             reset_link = f"{request.build_absolute_uri('/api/employees/password-reset/confirm/')}{uid}/{token}/"
@@ -128,7 +125,6 @@ class PasswordResetRequestView(APIView):
             message = f"Use the following link to reset your password:\n\n{reset_link}\n\n" \
                       f"If you did not request this, please ignore this email."
 
-            # Отправка email
             try:
                 smtp_settings = SMTPSettings.objects.first()
                 if not smtp_settings:
@@ -153,41 +149,85 @@ class PasswordResetRequestView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class PasswordResetCompleteView(APIView):
-    def get(self, request):
-        return Response({"message": "Your password has been reset successfully!"}, status=status.HTTP_200_OK)
+class SendPasswordResetCodeView(APIView):
+    def post(self, request):
+        serializer = PasswordResetRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            user = CustomUser.objects.get(email=email)
+            reset_code = PasswordResetCode.objects.create(user=user)
+
+            try:
+                smtp_settings = SMTPSettings.objects.first()
+                if not smtp_settings:
+                    return Response({"error": "Email service is not configured."},
+                                    status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+                subject = "Password Reset Code"
+                message = f"Your password reset code is: {reset_code.code}"
+
+                with smtplib.SMTP_SSL(smtp_settings.server, smtp_settings.port) as smtp:
+                    smtp.login(smtp_settings.username, smtp_settings.password)
+
+                    email_message = EmailMessage()
+                    email_message['Subject'] = subject
+                    email_message['From'] = smtp_settings.username
+                    email_message['To'] = email
+                    email_message.set_content(message)
+
+                    smtp.send_message(email_message)
+
+                return Response({"message": "The code for resetting the password is sent to your email."},
+                                status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({"error": "Failed to send email. Please try again later."},
+                                status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class PasswordResetConfirmView(APIView):
-    def get(self, request, uidb64, token):
-        try:
-            uid = urlsafe_base64_decode(uidb64).decode()
-            user = CustomUser.objects.get(pk=uid)
-        except (CustomUser.DoesNotExist, ValueError, TypeError):
-            return HttpResponse("Invalid link", status=400)
+class VerifyResetCodeView(APIView):
+    def post(self, request):
+        serializer = VerifyResetCodeSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            code = serializer.validated_data['code']
 
-        if not PasswordResetTokenGenerator().check_token(user, token):
-            return HttpResponse("The reset link is invalid or expired.", status=400)
+            try:
+                reset_code = PasswordResetCode.objects.get(user__email=email, code=code)
+            except PasswordResetCode.DoesNotExist:
+                return Response({"error": "Invalid code"}, status=status.HTTP_400_BAD_REQUEST)
 
-        form = PasswordResetForm()
-        return render(request, "password_reset_confirm.html", {"form": form, "validlink": True})
+            if reset_code.expires_at < now():
+                return Response({"error": "Code has expired"}, status=status.HTTP_400_BAD_REQUEST)
 
-    def post(self, request, uidb64, token):
-        try:
-            uid = urlsafe_base64_decode(uidb64).decode()
-            user = CustomUser.objects.get(pk=uid)
-        except (CustomUser.DoesNotExist, ValueError, TypeError):
-            return HttpResponse("Invalid link", status=400)
+            return Response({"message": "Code is valid"}, status=status.HTTP_200_OK)
 
-        if not PasswordResetTokenGenerator().check_token(user, token):
-            return HttpResponse("The reset link is invalid or expired.", status=400)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        form = PasswordResetForm(request.POST)
-        if form.is_valid():
-            new_password = form.cleaned_data.get("new_password")
-            user.set_password(new_password)
+
+class SetNewPasswordView(APIView):
+    def post(self, request):
+        serializer = SetNewPasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            code = serializer.validated_data['code']
+            new_password = serializer.validated_data['new_password']
+
+            try:
+                reset_code = PasswordResetCode.objects.get(user__email=email, code=code)
+            except PasswordResetCode.DoesNotExist:
+                return Response({"error": "Invalid code"}, status=status.HTTP_400_BAD_REQUEST)
+
+            if reset_code.expires_at < now():
+                return Response({"error": "Code has expired"}, status=status.HTTP_400_BAD_REQUEST)
+
+            user = reset_code.user
+            user.password = make_password(new_password)
             user.save()
-            messages.success(request, "Your password has been reset successfully.")
-            return render(request, "password_reset_confirm.html", {"form": form, "success": True})
-        else:
-            return render(request, "password_reset_confirm.html", {"form": form, "validlink": True})
+
+            reset_code.delete()
+
+            return Response({"message": "Password has been reset successfully"}, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
