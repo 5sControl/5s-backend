@@ -17,7 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ["id", "username", "password", "first_name", "last_name", "date_joined", "role", "workplace", "workplace_id"]
+        fields = ["id", "username", "email", "password", "first_name", "last_name", "date_joined", "role", "workplace", "workplace_id"]
         read_only_fields = ["date_joined"]
 
     def get_workplace(self, obj):
@@ -54,7 +54,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['username', 'password', 'first_name', 'last_name', 'role', 'workplace']
+        fields = ['username', 'password', 'email', 'first_name', 'last_name', 'role', 'workplace']
 
     def create(self, validated_data):
         password = validated_data.pop('password')
@@ -65,3 +65,29 @@ class CreateUserSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+    def validate_email(self, value):
+        if not CustomUser.objects.filter(email=value).exists():
+            raise serializers.ValidationError("User with such an email was not found.")
+        return value
+
+
+class VerifyResetCodeSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    code = serializers.CharField(max_length=6)
+
+
+class SetNewPasswordSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    code = serializers.CharField(max_length=6)
+    new_password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)
+
+    def validate(self, data):
+        if data['new_password'] != data['confirm_password']:
+            raise serializers.ValidationError("Passwords do not match")
+        return data
