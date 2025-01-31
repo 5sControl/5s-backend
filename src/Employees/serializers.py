@@ -68,6 +68,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
 
 
 class PasswordResetRequestSerializer(serializers.Serializer):
+    language_code = serializers.CharField(max_length=2, required=False, default="en")
     email = serializers.EmailField()
 
     def validate_email(self, value):

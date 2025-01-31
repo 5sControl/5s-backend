@@ -20,6 +20,7 @@ from src.Employees.serializers import UserSerializer, CreateUserSerializer, Pass
 from src.Core.permissions import IsAdminOrSuperuserPermission
 
 from src.Mailer.models import SMTPSettings
+from src.Mailer.service import text_message_reset_password
 from src.erp_5s.models import ReferenceItems
 from src.erp_5s.serializers import ReferenceItemsSerializerEmployees
 
@@ -154,9 +155,10 @@ class SendPasswordResetCodeView(APIView):
         serializer = PasswordResetRequestSerializer(data=request.data)
         if serializer.is_valid():
             email = serializer.validated_data['email']
+            language_code = serializer.validated_data.get('language_code', 'en')
             user = CustomUser.objects.get(email=email)
             reset_code = PasswordResetCode.objects.create(user=user)
-
+            print(reset_code.code, language_code)
             try:
                 smtp_settings = SMTPSettings.objects.first()
                 if not smtp_settings:
@@ -164,7 +166,7 @@ class SendPasswordResetCodeView(APIView):
                                     status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
                 subject = "Password Reset Code"
-                message = f"Your password reset code is: {reset_code.code}"
+                message = text_message_reset_password(reset_code.code, language_code)
 
                 with smtplib.SMTP_SSL(smtp_settings.server, smtp_settings.port) as smtp:
                     smtp.login(smtp_settings.username, smtp_settings.password)

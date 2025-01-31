@@ -42,10 +42,19 @@ def send_notification_email(item, count, image_path, item_status):
     message = ""
 
     if item_status == "Out of stock":
-        message = f"{item['name']} is currently out of stock.\n To avoid any inconvenience, we recommend that you take action to replenish your stock of {item['low_stock_level']} as soon as possible.\n\n{NGROK_URL}inventory/\n\n You are receiving this email because your email account was entered in 5S Control system to receive notifications regarding low stock levels of inventory."
+        message = f"{item['name']} is currently out of stock.\n To avoid any inconvenience, we recommend that " \
+                  f"you take action to replenish your stock of {item['low_stock_level']} as soon as possible." \
+                  f"\n\n{NGROK_URL}inventory/\n\n You are receiving this email because your email account was " \
+                  f"entered in 5S Control system to receive notifications regarding low stock levels of inventory."
 
     if item_status == 'Low stock level':
-        message = f"Current stock of {item['name']}: {count} {used_algorithm}. Low stock level of {item['name']}: {item['low_stock_level']}. The inventory level of {item['name']} in your stock has fallen to a low level. This means that there are only a limited number of units left in stock and that the item may soon become unavailable. To avoid any inconvenience, we recommend that you take action to replenish your stock of {item['name']} as soon as possible.\n\n{NGROK_URL}inventory\n\nYou are receiving this email because your email account was entered in 5S Control system to receive notifications regarding low stock levels of inventory."
+        message = f"Current stock of {item['name']}: {count} {used_algorithm}. Low stock level of {item['name']}: " \
+                  f"{item['low_stock_level']}. The inventory level of {item['name']} in your stock has " \
+                  f"fallen to a low level. This means that there are only a limited number of units left in stock " \
+                  f"and that the item may soon become unavailable. To avoid any inconvenience, we recommend that " \
+                  f"you take action to replenish your stock of {item['name']} as soon as possible." \
+                  f"\n\n{NGROK_URL}inventory\n\nYou are receiving this email because your email account was " \
+                  f"entered in 5S Control system to receive notifications regarding low stock levels of inventory."
 
         # send notification ODOO
         try:
@@ -178,3 +187,29 @@ def check_work_time():
         return {"status": status, "time_start": time_start, "time_end": time_end}
     else:
         return {"status": True}
+
+
+def text_message_reset_password(code, language_code="en"):
+    support_email = "support@5scontrol.com"
+    data_text = {
+        "en": f"Password Reset for your 5SControl Account\n\nHello!\nYou requested a password reset for your account."
+              f"\nTo complete the password reset, please copy and enter the following verification code on the "
+              f"password reset page: \n\n{code}\n\nThis code is valid for 15 minutes. If you did not request a "
+              f"password reset, please ignore this email.\nIf you have any questions or concerns, please contact "
+              f"our support team at {support_email}.\nSincerely, 5sControl.",
+        "ru": f"Сброс пароля для вашей учетной записи 5SControl.\n\nЗдравствуйте!\nВы запросили сброс пароля для "
+              f"своей учетной записи.\nДля завершения сброса пароля, пожалуйста, скопируйте и введите следующий код "
+              f"подтверждения на странице сброса пароля:\n\n{code}\n\nЭтот код действителен в течение 15 минут. "
+              f"Если вы не запрашивали сброс пароля, пожалуйста, проигнорируйте это письмо.\nЕсли у вас возникли "
+              f"вопросы или проблемы, свяжитесь с нашей службой поддержки по адресу {support_email}.\n"
+              f"С уважением, 5sControl.",
+        "pl": f"Reset hasła do Twojego konta 5SControl \n\nCześć!\nPoprosiłeś o zresetowanie hasła do swojego konta."
+              f"\nAby ukończyć resetowanie hasła, skopiuj i wprowadź następujący kod weryfikacyjny na stronie "
+              f"resetowania hasła:\n\n{code}\n\nTen kod jest ważny przez 15 minut. Jeśli nie prosiłeś o resetowanie "
+              f"hasła, zignoruj ten e-mail.\nJeśli masz jakieś pytania lub wątpliwości, skontaktuj się z naszym "
+              f"zespołem pomocy technicznej pod adresem {support_email}. Z poważaniem, 5sControl."
+    }
+    text_answer = data_text.get(language_code)
+    if not text_answer:
+        text_answer = data_text.get("en")
+    return text_answer
