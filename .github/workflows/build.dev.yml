@@ -73,8 +73,8 @@ jobs:
 
       - name: Stop and remove the old server container
         working-directory: /home/server/reps/server-/
-        run: docker-compose rm -fs db django
+        run: docker-compose rm -fs db django redis-service 5scontrol_front
 
       - name: Recreate and restart server container
         working-directory: /home/server/reps/server-/
-        run: docker-compose up -d --no-deps db django
+        run: docker-compose up -d --no-deps db django redis-service 5scontrol_front
