@@ -230,6 +230,10 @@ def get_detail_information_by_operation(operation_id):
             if video not in videos:
                 videos.append(video)
 
+    if not timestamp.employee:
+        username = timestamp.employee.username
+    else:
+        username = None
     result = {
         "id": timestamp.id,
         "orId": order.id,
@@ -238,7 +242,7 @@ def get_detail_information_by_operation(operation_id):
         # "elType": elementType,
         "sTime": sTime,
         "eTime": eTime,
-        "frsName": timestamp.employee.username,
+        "frsName": username,
         # "lstName": lastName,
         "status": order.status,
         "videos": videos,
