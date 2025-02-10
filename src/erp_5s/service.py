@@ -1,9 +1,16 @@
+import base64
+import json
 from datetime import datetime
+from email import encoders
+from email.mime.base import MIMEBase
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 from django.db.models import Prefetch, Q
+from django.http import HttpResponse
 
 from src.CameraAlgorithms.models import ZoneCameras
-from src.OrderView.utils import get_skany_video_info
+from src.OrderView.utils import get_skany_video_info, get_playlist_camera
 from src.erp_5s.models import Orders, OrderItems, OrderOperations, OrderOperationTimespan, ReferenceItems
 from src.erp_5s.models import Operations
 from src.newOrderView.models import FiltrationOperationsTypeID
@@ -226,8 +233,13 @@ def get_detail_information_by_operation(operation_id):
         for zone_camera in cameras_zones:
             camera_id = zone_camera.camera.id
             video = get_skany_video_info(sTime, camera_id)
+            get_playlist_camera(sTime, eTime, camera_id)
 
             if video not in videos:
+                if not eTime:
+                    eTime = int(datetime.now().timestamp() * 1000)
+                playlist_content = get_playlist_camera(sTime, eTime, camera_id)
+                video['playlist'] = base64.b64encode(playlist_content).decode('utf-8')
                 videos.append(video)
 
     if not timestamp.employee:
@@ -248,3 +260,4 @@ def get_detail_information_by_operation(operation_id):
         "videos": videos,
     }
     return result
+
