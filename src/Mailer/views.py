@@ -18,11 +18,14 @@ class SMTPSettingsListCreateView(generics.ListCreateAPIView):
     serializer_class = SMTPSettingsSerializer
 
     def get_queryset(self):
-        return SMTPSettings.objects.latest('id')
+        return SMTPSettings.objects.all().order_by('-id')
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset)
+        if not queryset.exists():
+            return Response({"detail": "No SMTP settings found."}, status=status.HTTP_404_NOT_FOUND)
+        latest_setting = queryset.first()
+        serializer = self.get_serializer(latest_setting)
         return Response(serializer.data)
 
 
