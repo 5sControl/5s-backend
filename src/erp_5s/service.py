@@ -223,6 +223,7 @@ def get_detail_information_by_operation(operation_id):
     workplace_id = timestamp.workplace_number
     order_id = timestamp.order_operation.order_id
     order = Orders.objects.get(id=order_id)
+    timespan_id = timestamp.id
 
     sTime = int(timestamp.started_at.timestamp() * 1000) if timestamp.started_at else None
     eTime = int(timestamp.finished_at.timestamp() * 1000) if timestamp.finished_at else None
@@ -233,14 +234,15 @@ def get_detail_information_by_operation(operation_id):
         for zone_camera in cameras_zones:
             camera_id = zone_camera.camera.id
             video = get_skany_video_info(sTime, camera_id)
-            get_playlist_camera(sTime, eTime, camera_id)
+            if video.get("status") == True:
+                get_playlist_camera(sTime, eTime, camera_id, timespan_id)
 
-            if video not in videos:
-                if not eTime:
-                    eTime = int(datetime.now().timestamp() * 1000)
-                playlist_content = get_playlist_camera(sTime, eTime, camera_id)
-                video['playlist'] = base64.b64encode(playlist_content).decode('utf-8')
-                videos.append(video)
+                if video not in videos:
+                    if not eTime:
+                        eTime = int(datetime.now().timestamp() * 1000)
+                    playlist_content = get_playlist_camera(sTime, eTime, camera_id, timespan_id)
+                    video['playlist'] = base64.b64encode(playlist_content).decode('utf-8')
+                    videos.append(video)
 
     if not timestamp.employee:
         username = timestamp.employee.username

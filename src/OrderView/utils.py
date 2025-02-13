@@ -52,11 +52,12 @@ def get_package_video_info(time: time, camera_ip: str) -> Dict[str, Any]:
     return result
 
 
-def get_playlist_camera(time_start, time_end, camera_ip):
+def get_playlist_camera(time_start, time_end, camera_ip, timespan_id):
     request_dat = {
         "timeStart": time_start,
         "timeEnd": time_end,
-        "cameraIp": camera_ip
+        "cameraIp": camera_ip,
+        "timespanId": timespan_id
     }
     url = f"{ONVIF_SERVICE_URL}:3456/create_manifest/"
     try:
