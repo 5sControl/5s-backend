@@ -34,6 +34,7 @@ CORS_ALLOW_METHODS = [
 CORS_ALLOW_HEADERS = [
     'accept',
     'accept-encoding',
+    'access-control-allow-origin',
     'authorization',
     'content-type',
     'dnt',
