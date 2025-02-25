@@ -69,6 +69,19 @@ class DayOfWeek(models.Model):
         db_table = "days_of_week"
 
 
+class WorkingTimeDaysOfWeek(models.Model):
+    """
+    Working time days of week
+    """
+    working_time = models.ForeignKey("WorkingTime", on_delete=models.CASCADE)
+    day_of_week = models.ForeignKey("DayOfWeek", on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = "Working time days of week"
+        verbose_name_plural = "Working time day of week"
+        db_table = "working_time_days_of_week"
+
+
 class WorkingTime(models.Model):
     """
     Working time MinMax
@@ -76,7 +89,7 @@ class WorkingTime(models.Model):
 
     time_start = models.TimeField(verbose_name="Start time")
     time_end = models.TimeField(verbose_name="End time")
-    days_of_week = models.ManyToManyField(DayOfWeek, blank=True)
+    days_of_week = models.ManyToManyField(DayOfWeek, through="WorkingTimeDaysOfWeek", blank=True)
 
     def __str__(self):
         return f"{self.time_end} - {self.time_start}"
@@ -85,3 +98,6 @@ class WorkingTime(models.Model):
         verbose_name = "Working time"
         verbose_name_plural = "Working time"
         db_table = "working_time"
+
+
+
