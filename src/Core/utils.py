@@ -16,7 +16,7 @@ def sender(operation, data, cstm_port=None):
         service_url = SERVER_URL
 
     if operation == "add_camera":
-        url = "/cameras"
+        url = "api/cam-stream/cameras"
         port = 3010
     elif operation == "run":
         url = "/run"
