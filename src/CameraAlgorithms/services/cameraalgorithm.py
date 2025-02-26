@@ -32,11 +32,11 @@ def CreateCameraAlgorithms(camera_algorithm_data: Dict[str, Any]) -> None:
 
 def check_connection(camera_data: Dict[str, str]) -> bool:
     try:
-        response = sender("add_camera", camera_data)
+        sender("add_camera", camera_data)
     except requests.exceptions.HTTPError as e:
         raise SenderError("/add_camera") from e
 
-    return response["status"]
+    return True
 
 
 def DeleteCamera(camera_instance: Camera) -> Dict[str, Any]:
