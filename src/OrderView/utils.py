@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_skany_video_info(time: time, camera_ip: str) -> Dict[str, Any]:
-    url = f"{ONVIF_SERVICE_URL}:3010/videos/availability?time={time}&cameraIp={camera_ip}"
+    url = f"{ONVIF_SERVICE_URL}:3010/api/cam-stream/videos/availability?time={time}&cameraIp={camera_ip}"
     try:
         response = requests.get(url)
         response.raise_for_status()
@@ -31,7 +31,7 @@ def get_playlist_camera(time_start, time_end, camera_ip, timespan_id):
         "cameraIp": camera_ip,
         "timespanId": timespan_id
     }
-    url = f"{ONVIF_SERVICE_URL}:3010/videos/create-manifest/"
+    url = f"{ONVIF_SERVICE_URL}:3010/api/cam-stream/videos/create-manifest/"
     try:
         response = requests.post(
             url=url,
