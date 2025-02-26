@@ -19,8 +19,9 @@ def get_skany_video_info(time: time, camera_ip: str) -> Dict[str, Any]:
         return {"status": False}
 
     result: Dict[str, Any] = response.json()
-    print("video result: ", result)
     result["camera_ip"]: str = camera_ip
+    result["status"] = True
+    print("video result: ", result)
     return result
 
 
@@ -29,7 +30,7 @@ def get_playlist_camera(time_start, time_end, camera_ip, timespan_id):
         "timeStart": time_start,
         "timeEnd": time_end,
         "cameraIp": camera_ip,
-        "timespanId": timespan_id
+        "timespanId": f"{timespan_id}"
     }
     url = f"{ONVIF_SERVICE_URL}:3010/api/cam-stream/videos/create-manifest/"
     try:
