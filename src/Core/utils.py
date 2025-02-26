@@ -39,7 +39,7 @@ def sender(operation, data, cstm_port=None):
         service_url = ALGORITHMS_CONTROLLER_SERVICE_URL
 
 
-    if ONVIF_SERVICE_URL and port == 3456:
+    if ONVIF_SERVICE_URL and port == 3010:
         service_url = ONVIF_SERVICE_URL
 
     if cstm_port:
