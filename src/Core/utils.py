@@ -18,26 +18,24 @@ def sender(operation, data, cstm_port=None):
     if operation == "add_camera":
         url = "/cameras"
         port = 3010
-    if operation == "run":
+    elif operation == "run":
         url = "/run"
         port = 3333
-
-    if operation == "stop":
+    elif operation == "stop":
         url = "/stop"
         port = 3333
-
-    if operation == "search":
+    elif operation == "search":
         url = f"/image/search?image_name={data}"
         port = 3333
-
-    if operation == "loading":
+    elif operation == "loading":
         url = f"/image/download?image_name={data}"
         port = 3333
-
+    else:
+        logger.error(f"Unknown operation: {operation}")
+        return {"error": "Unknown operation"}
 
     if ALGORITHMS_CONTROLLER_SERVICE_URL and port == 3333:
         service_url = ALGORITHMS_CONTROLLER_SERVICE_URL
-
 
     if ONVIF_SERVICE_URL and port == 3010:
         service_url = ONVIF_SERVICE_URL
@@ -47,15 +45,21 @@ def sender(operation, data, cstm_port=None):
     else:
         link = f"{service_url}:{port}{url}"
 
-    if operation in ["search", "loading"]:
-        request = requests.get(f"{service_url}:{port}{url}")
-        logger.warning(f"Request status from sender docker_image -> {request}")
-    else:
-        request = requests.post(link, json=data)
-        logger.warning(f"request status from sender -> {request}")
+    logger.warning(f"Sending request to {link} with data {data}")
+
+    try:
+        if operation in ["search", "loading"]:
+            request = requests.get(link)
+        else:
+            request = requests.post(link, json=data)
+
+        logger.warning(f"Request status from sender -> {request.status_code}")
         request.raise_for_status()
 
-    result = request.json()
-    logger.warning(f"result from sender -> {result}")
+        result = request.json()
+        logger.warning(f"Result from sender -> {result}")
+        return result
 
-    return result
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Request failed: {e}")
+        return {"error": str(e)}
