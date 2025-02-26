@@ -6,7 +6,7 @@ from src.Core.const import SERVER_URL, ALGORITHMS_CONTROLLER_SERVICE_URL, ONVIF_
 logger = logging.getLogger(__name__)
 
 
-def Sender(operation, data, cstm_port=None):
+def sender(operation, data, cstm_port=None):
     url = None
     port = None
 
@@ -16,12 +16,11 @@ def Sender(operation, data, cstm_port=None):
         service_url = SERVER_URL
 
     if operation == "add_camera":
-        url = "/add_camera"
-        port = 3456
+        url = "/cameras"
+        port = 3010
     if operation == "run":
         url = "/run"
         port = 3333
-        # data["server_url"] = service_url
 
     if operation == "stop":
         url = "/stop"

@@ -4,7 +4,7 @@ import logging
 from typing import Any, Dict, Iterable, List, Optional, Set
 
 from src.Core.exceptions import InvalidResponseError, SenderError, CameraConnectionError
-from src.Core.utils import Sender
+from src.Core.utils import sender
 from src.Core.const import DJANGO_SERVICE_URL
 from src.Inventory.models import Items
 from src.OrderView.models import IndexOperations
@@ -32,7 +32,7 @@ def CreateCameraAlgorithms(camera_algorithm_data: Dict[str, Any]) -> None:
 
 def check_connection(camera_data: Dict[str, str]) -> bool:
     try:
-        response = Sender("add_camera", camera_data)
+        response = sender("add_camera", camera_data)
     except requests.exceptions.HTTPError as e:
         raise SenderError("/add_camera") from e
 
@@ -381,7 +381,7 @@ def get_algorithms_to_delete(camera_obj: Camera, algorithms: Set[str]) -> List[s
 def send_run_request(request: Dict[str, Any]) -> Dict[str, Any]:
     logger.warning(f"Request data for algorithm {request}")
     try:
-        response = Sender("run", request)
+        response = sender("run", request)
     except requests.exceptions.HTTPError as e:
         raise SenderError("/run") from e
     if not response["status"]:
@@ -407,7 +407,7 @@ def stop_camera_algorithm(pid: int) -> Dict[str, Any]:
     camera_id = CameraAlgorithm.objects.get(process_id=pid).camera.id
 
     try:
-        response = Sender("stop", {"pid": pid}, cstm_port=cstm_port)
+        response = sender("stop", {"pid": pid}, cstm_port=cstm_port)
     except requests.exceptions.HTTPError as e:
         raise SenderError("/stop") from e
 

@@ -5,7 +5,7 @@ from django.http import HttpResponse
 
 from src.CameraAlgorithms.models import Camera
 
-from src.Core.utils import Sender
+from src.Core.utils import sender
 
 
 class UsedInChoice(models.TextChoices):
@@ -36,7 +36,7 @@ class Algorithm(models.Model):
     def save(self, *args, **kwargs):
 
         if self.is_available:
-            result = Sender("search", self.image_name)
+            result = sender("search", self.image_name)
             if result.get('status'):
                 if result.get("download"):
                     self.download_status = True
