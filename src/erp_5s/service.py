@@ -241,7 +241,7 @@ def get_detail_information_by_operation(operation_id):
                     if not eTime:
                         eTime = int(datetime.now().timestamp() * 1000)
                     playlist_content = get_playlist_camera(sTime, eTime, camera_id, timespan_id)
-                    video['playlist'] = base64.b64encode(playlist_content).decode('utf-8')
+                    video['playlist'] = playlist_content.decode('utf-8')
                     videos.append(video)
 
     if not timestamp.employee:
