@@ -17,7 +17,10 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ["id", "username", "email", "password", "first_name", "last_name", "date_joined", "role", "workplace", "workplace_id"]
+        fields = [
+            "id", "username", "email", "password", "first_name", "last_name", "date_joined",
+            "role", "workplace", "workplace_id", "work_start_time", "work_end_time"
+        ]
         read_only_fields = ["date_joined"]
 
     def get_workplace(self, obj):
