@@ -4,7 +4,7 @@ import logging
 from typing import Any, Dict, Iterable, List, Optional, Set
 
 from src.Core.exceptions import InvalidResponseError, SenderError, CameraConnectionError
-from src.Core.utils import Sender
+from src.Core.utils import sender
 from src.Core.const import DJANGO_SERVICE_URL
 from src.Inventory.models import Items
 from src.OrderView.models import IndexOperations
@@ -32,11 +32,11 @@ def CreateCameraAlgorithms(camera_algorithm_data: Dict[str, Any]) -> None:
 
 def check_connection(camera_data: Dict[str, str]) -> bool:
     try:
-        response = Sender("add_camera", camera_data)
+        sender("add_camera", camera_data)
     except requests.exceptions.HTTPError as e:
         raise SenderError("/add_camera") from e
 
-    return response["status"]
+    return True
 
 
 def DeleteCamera(camera_instance: Camera) -> Dict[str, Any]:
@@ -57,41 +57,31 @@ def DeleteCamera(camera_instance: Camera) -> Dict[str, Any]:
     }
 
 
-def create_camera(camera: Dict[str, str]) -> None:
-    ip: str = camera["ip"]
-    name: str = camera["name"]
-    username: str = camera["username"]
-    password: str = camera["password"]
-
-    camera_data: Dict[str, str] = {
-        "id": ip,
-        "name": name,
-        "username": username,
-        "password": password,
+def create_camera(camera: dict[str, str]) -> None:
+    """Creates or updates the camera object in the database."""
+    camera_data = {
+        "id": camera["ip"],
+        "name": camera["name"],
+        "username": camera["username"],
+        "password": camera["password"],
     }
 
-    is_camera_exist = Camera.objects.filter(id=ip).exists()
+    camera_obj, created = Camera.objects.get_or_create(
+        id=camera_data["id"],
+        defaults={"is_active": True, **camera_data}
+    )
 
-    if is_camera_exist:
-        camera_obj_to_update: Camera = Camera.objects.get(id=ip)
-        camera_obj_to_update.name = name
-        camera_obj_to_update.save()
-        return
-
-    if not check_connection({"ip": ip, "username": username, "password": password}):
-        raise CameraConnectionError(ip)
-
-    try:
-        camera_obj_to_update: Camera = Camera.objects.get(id=ip)
-    except Camera.DoesNotExist:
-        Camera.objects.create(**camera_data, is_active=True)
-        return
+    if created:
+        check_connection({
+            "ip": camera_data["id"],
+            "username": camera_data["username"],
+            "password": camera_data["password"]
+        })
     else:
-        camera_obj_to_update.name: str = name
-        camera_obj_to_update.username: str = username
-        camera_obj_to_update.password: str = password
-        camera_obj_to_update.save()
-        return
+        camera_obj.name = camera_data["name"]
+        camera_obj.username = camera_data["username"]
+        # camera_obj.password = camera_data["password"]
+        camera_obj.save()
 
 
 def create_camera_algorithms(
@@ -381,7 +371,7 @@ def get_algorithms_to_delete(camera_obj: Camera, algorithms: Set[str]) -> List[s
 def send_run_request(request: Dict[str, Any]) -> Dict[str, Any]:
     logger.warning(f"Request data for algorithm {request}")
     try:
-        response = Sender("run", request)
+        response = sender("run", request)
     except requests.exceptions.HTTPError as e:
         raise SenderError("/run") from e
     if not response["status"]:
@@ -407,7 +397,7 @@ def stop_camera_algorithm(pid: int) -> Dict[str, Any]:
     camera_id = CameraAlgorithm.objects.get(process_id=pid).camera.id
 
     try:
-        response = Sender("stop", {"pid": pid}, cstm_port=cstm_port)
+        response = sender("stop", {"pid": pid}, cstm_port=cstm_port)
     except requests.exceptions.HTTPError as e:
         raise SenderError("/stop") from e
 

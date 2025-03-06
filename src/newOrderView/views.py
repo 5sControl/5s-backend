@@ -2,8 +2,6 @@ from typing import Dict, List, Any, Optional
 
 from django.http import JsonResponse
 from django.core.cache import cache
-from django.views.decorators.cache import cache_page
-from django.utils.decorators import method_decorator
 
 from rest_framework import generics, status
 from rest_framework.response import Response
@@ -20,7 +18,7 @@ from .services import OperationServices
 from .services.view_services import get_response
 from .utils import get_cache_data, get_date_interval, find_camera_by_workspace
 from src.DatabaseConnections.models import ConnectionInfo
-from ..OrderView.utils import get_package_video_info
+from ..OrderView.utils import get_skany_video_info
 
 import logging
 
@@ -265,7 +263,7 @@ class GetOrderPackaging(APIView):
             )
 
         for operation_time in operation_times:
-            video_info = get_package_video_info(operation_time, camera)
+            video_info = get_skany_video_info(operation_time, camera)
 
             if video_info.get("status"):
                 result.append(video_info)

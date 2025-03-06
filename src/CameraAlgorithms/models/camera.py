@@ -5,6 +5,7 @@ from django.core.validators import RegexValidator
 
 from src.Inventory.utils import HandleItemUtils
 from src.CameraAlgorithms.services.security import encrypt
+from src.Mailer.models import WorkingTimeDaysOfWeek
 
 logger = logging.getLogger(__name__)
 
@@ -90,3 +91,13 @@ class ZoneCameras(models.Model):
         verbose_name = "Camera zone"
         verbose_name_plural = "Camera zone"
         db_table = "camera_zones"
+
+
+class CameraSchedule(models.Model):
+    camera = models.ForeignKey(Camera, on_delete=models.CASCADE)
+    working_time_day = models.ForeignKey(WorkingTimeDaysOfWeek, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = "Camera Schedule"
+        verbose_name_plural = "Camera Schedule"
+        db_table = "camera_schedule"

@@ -5,7 +5,7 @@ from dateutil.parser import parse
 import logging
 
 from src.CameraAlgorithms.services.cameraalgorithm import stop_and_update_algorithm, create_camera_algorithms
-from src.Core.utils import Sender
+from src.Core.utils import sender
 from src.CameraAlgorithms.models.algorithm import Algorithm, CameraAlgorithm, Camera
 
 logger = logging.getLogger(__name__)
@@ -16,7 +16,7 @@ def uploading_algorithm(id_algorithm, image_name):
     """Background loading of the algorithm"""
 
     algorithm = Algorithm.objects.get(id=id_algorithm)
-    result = Sender("loading", image_name)
+    result = sender("loading", image_name)
     if result.get("status"):
         date_created = parse(result.get("date"))
         algorithm.date_created = date_created
