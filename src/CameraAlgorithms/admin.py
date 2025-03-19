@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models.camera import Camera, ZoneCameras
+from .models.camera import Camera, ZoneCameras, CameraSchedule
 from .models.algorithm import Algorithm, CameraAlgorithm, CameraAlgorithmLog
 
 
@@ -43,3 +43,13 @@ class ZoneCamerasAdmin(admin.ModelAdmin):
         "date_created",
         "date_updated",
     )
+
+
+@admin.register(CameraSchedule)
+class CameraScheduleAdmin(admin.ModelAdmin):
+    list_filter = ("camera", "working_time_day")
+    list_display = ("camera", "working_time_day_display")
+
+    def working_time_day_display(self, obj):
+        return str(obj.working_time_day) if obj.working_time_day else "—"
+    working_time_day_display.short_description = "Working Time Day"

@@ -8,7 +8,7 @@ from django.http import JsonResponse
 from rest_framework.response import Response
 from rest_framework import status
 
-from src.OrderView.utils import get_package_video_info, get_skany_video_info
+from src.OrderView.utils import get_skany_video_info
 from src.DatabaseConnections.models import ConnectionInfo
 from src.manifest_api.get_data import send_request, upload_file, get_steps_by_asset_class
 from src.manifest_api.service import sorted_response, get_jobs_manifest
