@@ -17,11 +17,11 @@ The connections between the project repositories are illustrated by the followin
 > Please note that to ensure system stability and perfomance you can use one of the Official 5S algorithms instead of Your Algorithm.
 
 <p align="center">
-  <img src="https://github.com/5sControl/5s-user-documentation/blob/main/assets/5S%20scheme%20(1).png" alt="5controlS-diagram" />
+  <img src="https://github.com/5sControl/5s-user-documentation/blob/main/assets/5S%20scheme%20(1).png" alt="5Scontrol-diagram" />
 </p>
 
 
-**5controlS Platform:**
+**5Scontrol Platform:**
 1. [5s-webserver](https://github.com/5sControl/5s-webserver)
 2. [5s-backend](https://github.com/5sControl/5s-backend)
 3. [5s-frontend](https://github.com/5sControl/5s-frontend)
@@ -119,14 +119,14 @@ Swagger will open where you will see a list of available URLs.
 
 [User Documentation](https://github.com/5sControl/Manufacturing-Automatization-Enterprise/wiki)
 
-[Installation Guide Pt.1](https://5controls.com/blog/installing-5s-control-software)
+[Installation Guide Pt.1](https://5Scontrol.com/blog/installing-5s-control-software)
 
-[Installation Guide Pt.2](https://5controls.com/blog/installing-5s-control-software-part-2-docker)
+[Installation Guide Pt.2](https://5Scontrol.com/blog/installing-5s-control-software-part-2-docker)
 
 # **Contributing**
 Thank you for considering contributing to 5sControl. We truly believe that we can build an outstanding product together!
 
-We welcome a variety of ways to contribute. Read below to learn how you can take part in improving 5controlS.
+We welcome a variety of ways to contribute. Read below to learn how you can take part in improving 5Scontrol.
 
 ## **Code of conduct**
 
